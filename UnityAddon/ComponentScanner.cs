@@ -39,7 +39,7 @@ namespace UnityAddon
             container.RegisterType<ApplicationContext>();
             container.RegisterType<BeanFactory>();
             container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>();
-
+            
             container.BuildUp(this);
         }
 
@@ -63,17 +63,6 @@ namespace UnityAddon
 
                 BeanDefinitionContainer.RegisterBeanDefinition(beanDef);
                 BeanFactory.CreateFactory(beanDef);
-
-                if (beanDef.IsConfiguration())
-                {
-                    foreach (var beanMethod in MethodSelector.GetAllMethodsByAttribute<BeanAttribute>(beanDef.GetBeanType()))
-                    {
-                        var methodBeanDef = new MethodBeanDefinition(beanMethod);
-
-                        BeanDefinitionContainer.RegisterBeanDefinition(methodBeanDef);
-                        BeanFactory.CreateFactory(methodBeanDef);
-                    }
-                }
             }
         }
     }

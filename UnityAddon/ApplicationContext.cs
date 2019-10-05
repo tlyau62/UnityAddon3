@@ -16,12 +16,14 @@ namespace UnityAddon
         private IUnityContainer _container;
         private ComponentScanner _componentScanner;
         private string[] _baseNamespaces;
+        public ConfigurationParser _configurationParser;
 
         [InjectionConstructor]
-        public ApplicationContext(ComponentScanner componentScanner, [Dependency("baseNamespaces")]params string[] baseNamespaces)
+        public ApplicationContext(ComponentScanner componentScanner, ConfigurationParser configurationParser, [Dependency("baseNamespaces")]params string[] baseNamespaces)
         {
             _baseNamespaces = baseNamespaces;
             _componentScanner = componentScanner;
+            _configurationParser = configurationParser;
 
             Init();
         }
@@ -35,7 +37,7 @@ namespace UnityAddon
 
         protected void Config()
         {
-            // registries for both before and after component scan
+            // singleton dependencies need by both before and after component scan
             _container.RegisterInstance("baseNamespaces", _baseNamespaces, new SingletonLifetimeManager());
             _container.RegisterType<IAsyncLocalFactory<Stack<IInvocation>>, AsyncLocalFactory<Stack<IInvocation>>>(new SingletonLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())));
             _container.RegisterType<IAsyncLocalFactory<Stack<ResolveStackEntry>>, AsyncLocalFactory<Stack<ResolveStackEntry>>>(new SingletonLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())));
@@ -44,7 +46,7 @@ namespace UnityAddon
 
             // config internal
             _componentScanner.ScanComponents(GetType().Namespace);
-
+            
             _container.AddNewExtension<BeanBuildStrategyExtension>();
 
             _container.BuildUp(this);
@@ -53,6 +55,7 @@ namespace UnityAddon
         protected void Init()
         {
             _componentScanner.ScanComponents(_baseNamespaces);
+            _configurationParser.ParseScannedConfigurations();
         }
     }
 }

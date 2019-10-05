@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityAddon.Reflection;
 
 namespace UnityAddon.Bean
 {
@@ -12,6 +13,7 @@ namespace UnityAddon.Bean
         bool HasBeanDefinition(Type type, string name = null);
         AbstractBeanDefinition GetBeanDefinition(Type type, string name = null);
         void RegisterBeanDefinition(AbstractBeanDefinition beanDefinition);
+        IEnumerable<AbstractBeanDefinition> FindBeanDefinitionByAttribute<TAttribute>() where TAttribute : Attribute;
     }
 
     [Component]
@@ -61,6 +63,17 @@ namespace UnityAddon.Bean
             }
 
             return _container[type].Get(name);
+        }
+
+        /// <summary>
+        /// Find all implementation types by attribute
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<AbstractBeanDefinition> FindBeanDefinitionByAttribute<TAttribute>() where TAttribute : Attribute
+        {
+            return _container
+                .Where(ent => ent.Key.HasAttribute<TAttribute>()) // find all implementation types
+                .Select(ent => ent.Value.Get()); // implementation type must have only 1 bean definition
         }
 
         private IEnumerable<Type> GetAllAssignableTypes(Type type)

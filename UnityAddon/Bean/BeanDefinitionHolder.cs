@@ -52,7 +52,7 @@ namespace UnityAddon.Bean
         /// <summary>
         /// Throw exception if not a single definition is found.
         /// </summary>
-        public AbstractBeanDefinition Get(string name)
+        public AbstractBeanDefinition Get(string name = null)
         {
             return Find(name).Single();
         }
