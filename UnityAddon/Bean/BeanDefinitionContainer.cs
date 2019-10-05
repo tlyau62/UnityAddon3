@@ -43,11 +43,21 @@ namespace UnityAddon.Bean
             return _container[type].Exist(name);
         }
 
+        /// <summary>
+        /// Name starting with # is special name used in resolution.
+        /// It refers to the same bean definition that can be resolved with "name = null".
+        /// The only difference between starting with a '#' and without is the bean factory method.
+        /// </summary>
         public AbstractBeanDefinition GetBeanDefinition(Type type, string name)
         {
             if (!_container.ContainsKey(type))
             {
                 throw new InvalidOperationException();
+            }
+
+            if (name != null && name.StartsWith("#"))
+            {
+                name = null;
             }
 
             return _container[type].Get(name);
