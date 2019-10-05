@@ -6,6 +6,7 @@ using Unity.Lifetime;
 using Unity.Injection;
 using System.Collections.Generic;
 using System;
+using UnityAddon.BeanBuildStrategies;
 
 namespace UnityAddon
 {
@@ -44,7 +45,7 @@ namespace UnityAddon
             // config internal
             _componentScanner.ScanComponents(GetType().Namespace);
 
-            _container.AddNewExtension<BeanUnityExtension>();
+            _container.AddNewExtension<BeanBuildStrategyExtension>();
 
             _container.BuildUp(this);
         }
