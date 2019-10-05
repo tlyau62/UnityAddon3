@@ -57,6 +57,11 @@ namespace UnityAddon
                 throw new InvalidOperationException($"Instance for {typeof(T).GetType()} is not set.");
             }
 
+            if (typeof(T) is IDisposable)
+            {
+                ((IDisposable)currentContext.Value).Dispose();
+            }
+
             currentContext.Value = default(T);
         }
     }
