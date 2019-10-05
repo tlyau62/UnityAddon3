@@ -45,6 +45,7 @@ namespace UnityAddon.BeanBuildStrategies
             var stackExist = StackFactory.Exist();
             Stack<ResolveStackEntry> stack = stackExist ? StackFactory.Get() : StackFactory.Set();
 
+            // check null dep
             if (!context.Container.IsRegistered(context.RegistrationType, context.Name))
             {
                 if (stack.Count == 0)
@@ -58,6 +59,8 @@ namespace UnityAddon.BeanBuildStrategies
             }
 
             var ctx = context;
+
+            // check cirular dep
             if (stack.Any(ent => ent.ResolveType == ctx.RegistrationType && ent.ResolveName == ctx.Name))
             {
                 stack.Push(new ResolveStackEntry(context.RegistrationType, context.Name));
