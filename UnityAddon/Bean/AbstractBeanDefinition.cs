@@ -49,6 +49,16 @@ namespace UnityAddon.Bean
 
         public TypeBeanDefinition(Type type) : base(type)
         {
+            if (!type.HasAttribute<ComponentAttribute>(true))
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (type.HasAttribute<ConfigurationAttribute>() && !type.IsPublic)
+            {
+                throw new InvalidOperationException();
+            }
+
             _type = type;
         }
 
