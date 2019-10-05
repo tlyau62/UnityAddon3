@@ -11,7 +11,9 @@ using UnityAddon.Bean;
 namespace UnityAddon.BeanBuildStrategies
 {
     /// <summary>
-    /// Map supertype to implementation type
+    /// Map supertype to implementation type.
+    /// #: special name used in resolving a special bean factory.
+    /// Typically, all bean factory is registered without a name.
     /// </summary>
     [Component]
     public class BeanTypeMappingStrategy : BuilderStrategy
@@ -21,10 +23,16 @@ namespace UnityAddon.BeanBuildStrategies
 
         public override void PreBuildUp(ref BuilderContext context)
         {
-            if (BeanDefinitionContainer.HasBeanDefinition(context.Type) && (context.Name == null || (context.Name != null && !context.Name.StartsWith("#")))) // bad
+            if (BeanDefinitionContainer.HasBeanDefinition(context.Type))
             {
-                context.RegistrationType = context.Type = BeanDefinitionContainer.GetBeanDefinition(context.Type, context.Name).GetBeanType(); // redirect to factory with unity cache
-                context.Name = null; // factory has no name
+                var beanDef = BeanDefinitionContainer.GetBeanDefinition(context.Type, context.Name);
+
+                context.RegistrationType = context.Type = beanDef.GetBeanType();
+
+                if (context.Name != null && !context.Name.StartsWith("#"))
+                {
+                    context.Name = null;
+                }
             }
 
             base.PreBuildUp(ref context);
