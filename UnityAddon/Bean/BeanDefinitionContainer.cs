@@ -10,7 +10,7 @@ namespace UnityAddon.Bean
     public interface IBeanDefinitionContainer
     {
         bool HasBeanDefinition(Type type, string name = null);
-        AbstractBeanDefinition GetBeanDefinition(Type type, string name);
+        AbstractBeanDefinition GetBeanDefinition(Type type, string name = null);
         void RegisterBeanDefinition(AbstractBeanDefinition beanDefinition);
     }
 

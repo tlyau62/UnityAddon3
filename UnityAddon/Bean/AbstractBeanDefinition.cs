@@ -39,6 +39,8 @@ namespace UnityAddon.Bean
 
             return qAttr != null ? qAttr.Values : new string[0];
         }
+
+        public abstract MethodBase GetConstructor();
     }
 
     public class TypeBeanDefinition : AbstractBeanDefinition
@@ -54,6 +56,16 @@ namespace UnityAddon.Bean
         {
             return _type;
         }
+
+        public override MethodBase GetConstructor()
+        {
+            return DefaultConstructor.Select(_type);
+        }
+
+        public bool IsConfiguration()
+        {
+            return _type.HasAttribute<ConfigurationAttribute>();
+        }
     }
 
     public class MethodBeanDefinition : AbstractBeanDefinition
@@ -62,12 +74,27 @@ namespace UnityAddon.Bean
 
         public MethodBeanDefinition(MethodInfo method) : base(method)
         {
+            if (method.HasAttribute<BeanAttribute>() && !method.IsVirtual)
+            {
+                throw new InvalidOperationException();
+            }
+
             _method = method;
         }
 
         public override Type GetBeanType()
         {
             return _method.ReturnType;
+        }
+
+        public Type GetConfigType()
+        {
+            return _method.DeclaringType;
+        }
+
+        public override MethodBase GetConstructor()
+        {
+            return _method;
         }
     }
 }

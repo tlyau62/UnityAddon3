@@ -32,7 +32,7 @@ namespace UnityAddon.Bean
         /// Find a bean definition by qualifers.
         /// If not found, find by bean name as fallback.
         /// </summary>
-        public AbstractBeanDefinition[] Find(string name)
+        public AbstractBeanDefinition[] Find(string name = null)
         {
             if (name == null)
             {

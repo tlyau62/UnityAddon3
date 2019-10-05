@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Unity;
 using Unity.Lifetime;
+using Unity.Injection;
 
 namespace UnityAddon
 {
@@ -61,16 +62,19 @@ namespace UnityAddon
                 var beanDef = new TypeBeanDefinition(component);
 
                 BeanDefinitionContainer.RegisterBeanDefinition(beanDef);
-                RegisterBeanDefinition(beanDef);
+                BeanFactory.CreateFactory(beanDef);
+
+                if (beanDef.IsConfiguration())
+                {
+                    foreach (var beanMethod in MethodSelector.GetAllMethodsByAttribute<BeanAttribute>(beanDef.GetBeanType()))
+                    {
+                        var methodBeanDef = new MethodBeanDefinition(beanMethod);
+
+                        BeanDefinitionContainer.RegisterBeanDefinition(methodBeanDef);
+                        BeanFactory.CreateFactory(methodBeanDef);
+                    }
+                }
             }
-        }
-
-        public void RegisterBeanDefinition(AbstractBeanDefinition beanDefinition)
-        {
-            var type = beanDefinition.GetBeanType();
-            var scope = beanDefinition.GetBeanScope();
-
-            Container.RegisterFactory(type, BeanFactory.CreateFactory(type), (IFactoryLifetimeManager)Activator.CreateInstance(scope));
         }
     }
 }

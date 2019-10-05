@@ -44,7 +44,7 @@ namespace UnityAddon
 
         public override void PreBuildUp(ref BuilderContext context)
         {
-            if (BeanDefinitionContainer.HasBeanDefinition(context.Type))
+            if (BeanDefinitionContainer.HasBeanDefinition(context.Type) && (context.Name == null || (context.Name != null && !context.Name.StartsWith("#")))) // bad
             {
                 context.RegistrationType = context.Type = BeanDefinitionContainer.GetBeanDefinition(context.Type, context.Name).GetBeanType(); // redirect to factory with unity cache
                 context.Name = null; // factory has no name
@@ -62,13 +62,18 @@ namespace UnityAddon
     [Component]
     public class BeanDependencyValidatorStrategy : BuilderStrategy
     {
-        public static IAsyncLocalFactory<Stack<Type>> stackStore = new AsyncLocalFactory<Stack<Type>>(() => new Stack<Type>());
-
-        public static Stack<Type> stack => stackStore.Exist() ? stackStore.Get() : stackStore.Set();
+        [Dependency]
+        public IAsyncLocalFactory<Stack<ResolveStackEntry>> StackFactory { get; set; }
 
         public override void PostBuildUp(ref BuilderContext context)
         {
-            stack.Pop();
+            var stack = StackFactory.Get();
+            var entry = stack.Pop();
+
+            if (entry.IsBaseResolve)
+            {
+                StackFactory.Delete();
+            }
 
             base.PostBuildUp(ref context);
         }
@@ -80,19 +85,33 @@ namespace UnityAddon
         /// <param name="context"></param>
         public override void PreBuildUp(ref BuilderContext context)
         {
+            var stackExist = StackFactory.Exist();
+            Stack<ResolveStackEntry> stack = stackExist ? StackFactory.Get() : StackFactory.Set();
+
             if (!context.Container.IsRegistered(context.RegistrationType, context.Name))
             {
-                throw new InvalidOperationException(context.RegistrationType + " not found in " + stack.Peek() + ".");
+                if (stack.Count == 0)
+                {
+                    throw new InvalidOperationException($"{context.RegistrationType} with name {context.Name} is not found.");
+                }
+                else
+                {
+                    throw new InvalidOperationException($"{context.RegistrationType} with name {context.Name} is not found in {stack.Peek()}.");
+                }
             }
 
-            if (stack.Contains(context.RegistrationType)) // each type is resolved once => O(n) time in total
+            var ctx = context;
+            if (stack.Any(ent => ent.ResolveType == ctx.RegistrationType && ent.ResolveName == ctx.Name))
             {
-                stack.Push(context.RegistrationType);
+                stack.Push(new ResolveStackEntry(context.RegistrationType, context.Name));
+                var ex = new InvalidOperationException("circular dep: " + string.Join("->", stack.Select(t => $"type {t.ResolveType}, name: {t.ResolveName}").ToArray()));
 
-                throw new InvalidOperationException("circular dep: " + string.Join("->", stack.Select(t => t.ToString()).ToArray()));
+                StackFactory.Delete();
+
+                throw ex;
             }
 
-            stack.Push(context.RegistrationType);
+            stack.Push(new ResolveStackEntry(context.RegistrationType, context.Name, !stackExist));
 
             base.PreBuildUp(ref context);
         }
@@ -119,6 +138,20 @@ namespace UnityAddon
             }
 
             base.PostBuildUp(ref context);
+        }
+    }
+
+    public class ResolveStackEntry
+    {
+        public Type ResolveType { get; set; }
+        public string ResolveName { get; set; }
+        public bool IsBaseResolve { get; set; } // true: the 1st call to container.resolve
+
+        public ResolveStackEntry(Type resolveType, string resolveName, bool isBaseResolve = false)
+        {
+            ResolveType = resolveType;
+            ResolveName = resolveName;
+            IsBaseResolve = isBaseResolve;
         }
     }
 }

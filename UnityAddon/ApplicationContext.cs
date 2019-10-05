@@ -3,6 +3,9 @@ using UnityAddon.Attributes;
 using UnityAddon.Bean;
 using Unity;
 using Unity.Lifetime;
+using Unity.Injection;
+using System.Collections.Generic;
+using System;
 
 namespace UnityAddon
 {
@@ -31,7 +34,10 @@ namespace UnityAddon
 
         protected void Config()
         {
+            // registries for both before and after component scan
             _container.RegisterInstance("baseNamespaces", _baseNamespaces, new SingletonLifetimeManager());
+            _container.RegisterType<IAsyncLocalFactory<Stack<IInvocation>>, AsyncLocalFactory<Stack<IInvocation>>>(new SingletonLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())));
+            _container.RegisterType<IAsyncLocalFactory<Stack<ResolveStackEntry>>, AsyncLocalFactory<Stack<ResolveStackEntry>>>(new SingletonLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())));
 
             _componentScanner = new ComponentScanner(_container);
 

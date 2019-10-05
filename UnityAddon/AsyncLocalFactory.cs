@@ -47,7 +47,7 @@ namespace UnityAddon
 
         public bool Exist()
         {
-            return currentContext.Value != null;
+            return !Equals(currentContext.Value, default(T));
         }
 
         public void Delete()
