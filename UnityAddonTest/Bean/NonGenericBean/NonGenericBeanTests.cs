@@ -38,13 +38,17 @@ namespace UnityAddonTest.Dependency.Bean.NonGenericBean
     public class NonGenericBeanTests
     {
         [Fact]
-        public void BuildStrategy_DependencyOnBean_BeanInjected()
+        public void BuildStrategy_DependencyOnNonGenericBean_BeanInjected()
         {
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            Assert.Same(container.Resolve<IB>(), container.Resolve<A>().b);
-            Assert.Same(container.Resolve<IC>(), container.Resolve<IB>().c);
+            var a = container.Resolve<AbstractA>();
+            var b = container.Resolve<IB>();
+            var c = container.Resolve<IC>();
+
+            Assert.Same(a.b, b);
+            Assert.Same(b.c, c);
         }
     }
 }
