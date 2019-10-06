@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Unity.Lifetime;
+using System.Runtime.InteropServices;
 
 namespace UnityAddon.Bean
 {
@@ -36,8 +37,19 @@ namespace UnityAddon.Bean
         public virtual string[] GetBeanQualifiers()
         {
             var qAttr = _member.GetAttribute<QualifierAttribute>();
+            var gAttr = _member.GetAttribute<GuidAttribute>();
+            var qualifiers = new List<string>();
 
-            return qAttr != null ? qAttr.Values : new string[0];
+            if (qAttr != null)
+            {
+                qualifiers.AddRange(qAttr.Values);
+            }
+            if (gAttr != null)
+            {
+                qualifiers.Add(gAttr.Value);
+            }
+
+            return qualifiers.ToArray();
         }
 
         public abstract MethodBase GetConstructor();

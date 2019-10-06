@@ -9,7 +9,7 @@ namespace UnityAddon.Attributes
     [AttributeUsage(AttributeTargets.Class)]
     public class QualifierAttribute : Attribute
     {
-        public string[] Values { get; set; }
+        public string[] Values { get; set; } = new string[0];
 
         public QualifierAttribute(params string[] values)
         {
