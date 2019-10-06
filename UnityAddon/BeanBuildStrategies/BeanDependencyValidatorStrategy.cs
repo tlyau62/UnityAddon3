@@ -44,26 +44,28 @@ namespace UnityAddon.BeanBuildStrategies
         {
             var stackExist = StackFactory.Exist();
             Stack<ResolveStackEntry> stack = stackExist ? StackFactory.Get() : StackFactory.Set();
+            var name = context.Name;
+            var type = context.RegistrationType.IsGenericType ?
+                    context.RegistrationType.GetGenericTypeDefinition() :
+                    context.RegistrationType;
 
             // check null dep
-            if (!context.Container.IsRegistered(context.RegistrationType, context.Name))
+            if (!context.Container.IsRegistered(type, name))
             {
                 if (stack.Count == 0)
                 {
-                    throw new InvalidOperationException($"{context.RegistrationType} with name {context.Name} is not found.");
+                    throw new InvalidOperationException($"{type} with name {name} is not found.");
                 }
                 else
                 {
-                    throw new InvalidOperationException($"{context.RegistrationType} with name {context.Name} is not found in {stack.Peek()}.");
+                    throw new InvalidOperationException($"{type} with name {name} is not found in {stack.Peek()}.");
                 }
             }
 
-            var ctx = context;
-
             // check cirular dep
-            if (stack.Any(ent => ent.ResolveType == ctx.RegistrationType && ent.ResolveName == ctx.Name))
+            if (stack.Any(ent => ent.ResolveType == type && ent.ResolveName == name))
             {
-                stack.Push(new ResolveStackEntry(context.RegistrationType, context.Name));
+                stack.Push(new ResolveStackEntry(type, name));
                 var ex = new InvalidOperationException("circular dep: " + string.Join("->", stack.Select(t => $"type {t.ResolveType}, name: {t.ResolveName}").ToArray()));
 
                 StackFactory.Delete();
@@ -71,7 +73,7 @@ namespace UnityAddon.BeanBuildStrategies
                 throw ex;
             }
 
-            stack.Push(new ResolveStackEntry(context.RegistrationType, context.Name, !stackExist));
+            stack.Push(new ResolveStackEntry(type, name, !stackExist));
 
             base.PreBuildUp(ref context);
         }

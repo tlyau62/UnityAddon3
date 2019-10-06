@@ -20,9 +20,16 @@ namespace UnityAddon.BeanBuildStrategies
         [Dependency]
         public BeanPostConstructStrategy BeanPostConstructStrategy { get; set; }
 
+        [Dependency]
+        public BeanGenericTypeMappingStrategy BeanGenericTypeMappingStrategy { get; set; }
+
+        /// <summary>
+        /// In order
+        /// </summary>
         protected override void Initialize()
         {
             Context.Strategies.Add(BeanTypeMappingStrategy, UnityBuildStage.TypeMapping);
+            Context.Strategies.Add(BeanGenericTypeMappingStrategy, UnityBuildStage.TypeMapping);
             Context.Strategies.Add(BeanDependencyValidatorStrategy, UnityBuildStage.PreCreation);
             Context.Strategies.Add(BeanPostConstructStrategy, UnityBuildStage.PostInitialization);
         }
