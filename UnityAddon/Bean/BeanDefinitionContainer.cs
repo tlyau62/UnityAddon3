@@ -88,7 +88,8 @@ namespace UnityAddon.Bean
                 type = type.BaseType;
             }
 
-            return types;
+            // reload type
+            return types.Select(t => Type.GetType($"{t.Namespace}.{t.Name}, {t.Assembly.FullName}"));
         }
     }
 }

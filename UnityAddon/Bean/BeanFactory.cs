@@ -37,7 +37,8 @@ namespace UnityAddon.Bean
             {
                 Container.RegisterFactory(type, (c, t, n) =>
                 {
-                    var obj = ((ConstructorInfo)ctor).Invoke(ParameterFill.FillAllParamaters(ctor, c));
+                    var ctorInfo = ((ConstructorInfo)ctor);
+                    var obj = Activator.CreateInstance(t, ParameterFill.FillAllParamaters(ctor, c));
 
                     return PropertyFill.FillAllProperties(obj, c);
                 }, scope);
