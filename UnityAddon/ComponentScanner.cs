@@ -27,6 +27,9 @@ namespace UnityAddon
         [Dependency]
         public BeanFactory BeanFactory { get; set; }
 
+        [Dependency("entryAssembly")]
+        public Assembly EntryAssembly { get; set; }
+
         [InjectionConstructor]
         public ComponentScanner()
         {
@@ -39,7 +42,7 @@ namespace UnityAddon
             container.RegisterType<ApplicationContext>();
             container.RegisterType<BeanFactory>();
             container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>();
-            
+
             container.BuildUp(this);
         }
 
@@ -53,7 +56,11 @@ namespace UnityAddon
 
         public void ScanComponents(string namesp)
         {
-            var components = Assembly.GetExecutingAssembly().GetTypes()
+            var components = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(asm => asm.HasAttribute<ComponentScanAttribute>() || asm == EntryAssembly)
+                //.Select(asm => Assembly.Load(asm.FullName))
+                .SelectMany(asm => asm.GetTypes())
+                .Where(t => t.Namespace != null)
                 .Where(t => new Regex($"^{namesp.Replace(".", "\\.")}(\\..*)?$").IsMatch(t.Namespace))
                 .Where(t => t.HasAttribute<ComponentAttribute>(true));
 

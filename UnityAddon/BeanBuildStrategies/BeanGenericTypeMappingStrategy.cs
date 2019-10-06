@@ -10,15 +10,6 @@ using UnityAddon.Bean;
 
 namespace UnityAddon.BeanBuildStrategies
 {
-    /// <summary>
-    /// For mapping generic type.
-    /// Redirecting the mapping type cannot invoke any invoked factory method, i.e.
-    /// context.RegistrationType = context.Type = beanDef.GetBeanType();
-    /// Thus, this approach does not work for the singleton bean.
-    /// 
-    /// The solution is to resolve the generic type again, i.e.
-    /// context.Resolve(concreteType, context.Name)
-    /// </summary>
     [Component]
     public class BeanGenericTypeMappingStrategy : BuilderStrategy
     {
