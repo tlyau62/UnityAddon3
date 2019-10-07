@@ -14,53 +14,60 @@ namespace UnityAddon
     [Component]
     public class ApplicationContext
     {
-        private IUnityContainer _container;
-        private ComponentScanner _componentScanner;
-        private string[] _baseNamespaces;
-        private ConfigurationParser _configurationParser;
-        private Assembly _entryAssembly;
+        [Dependency]
+        public IUnityContainer Container { get; set; }
 
-        [InjectionConstructor]
-        public ApplicationContext(IUnityContainer container, ComponentScanner componentScanner, ConfigurationParser configurationParser, [Dependency("baseNamespaces")]params string[] baseNamespaces)
-        {
-            _container = container;
-            _baseNamespaces = baseNamespaces;
-            _componentScanner = componentScanner;
-            _configurationParser = configurationParser;
+        [Dependency]
+        public ComponentScanner ComponentScanner { get; set; }
 
-            Init();
-        }
+        [Dependency("baseNamespaces")]
+        public string[] BaseNamespaces { get; set; }
+
+        [Dependency]
+        public ConfigurationParser ConfigurationParser { get; set; }
+
+        [Dependency("entryAssembly")]
+        public Assembly EntryAssembly { get; set; }
 
         public ApplicationContext(IUnityContainer container, params string[] baseNamespaces)
         {
-            _container = container;
-            _baseNamespaces = baseNamespaces;
-            _entryAssembly = Assembly.GetCallingAssembly();
+            Container = container;
+            BaseNamespaces = baseNamespaces;
+            EntryAssembly = Assembly.GetCallingAssembly();
             Config();
+            Init();
         }
 
         protected void Config()
         {
-            // singleton dependencies need by both before and after component scan
-            _container.RegisterInstance("baseNamespaces", _baseNamespaces, new SingletonLifetimeManager());
-            _container.RegisterInstance("entryAssembly", _entryAssembly, new SingletonLifetimeManager());
-            _container.RegisterType<IAsyncLocalFactory<Stack<IInvocation>>, AsyncLocalFactory<Stack<IInvocation>>>(new SingletonLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())));
-            _container.RegisterType<IAsyncLocalFactory<Stack<ResolveStackEntry>>, AsyncLocalFactory<Stack<ResolveStackEntry>>>(new SingletonLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())));
+            // basic
+            Container.RegisterInstance("baseNamespaces", BaseNamespaces, new ContainerControlledLifetimeManager());
+            Container.RegisterInstance("entryAssembly", EntryAssembly, new ContainerControlledLifetimeManager());
+            Container.RegisterType<ApplicationContext>(new ContainerControlledLifetimeManager());
 
-            _componentScanner = new ComponentScanner(_container);
+            // for component scan
+            Container.RegisterType<ComponentScanner>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<ProxyGenerator>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<BeanFactory>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
+
+            // singleton dependencies needed not included in component scan
+            Container.RegisterType<IAsyncLocalFactory<Stack<IInvocation>>, AsyncLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())));
+            Container.RegisterType<IAsyncLocalFactory<Stack<ResolveStackEntry>>, AsyncLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())));
 
             // config internal
-            _componentScanner.ScanComponents(GetType().Namespace);
+            ComponentScanner = Container.Resolve<ComponentScanner>();
+            ComponentScanner.ScanComponents(GetType().Namespace);
 
-            _container.AddNewExtension<BeanBuildStrategyExtension>();
+            Container.AddNewExtension<BeanBuildStrategyExtension>();
 
-            _container.BuildUp(this);
+            Container.BuildUp(this);
         }
 
         protected void Init()
         {
-            _componentScanner.ScanComponents(_baseNamespaces);
-            _configurationParser.ParseScannedConfigurations();
+            ComponentScanner.ScanComponents(BaseNamespaces);
+            ConfigurationParser.ParseScannedConfigurations();
         }
     }
 }

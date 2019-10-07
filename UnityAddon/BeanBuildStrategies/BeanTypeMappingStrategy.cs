@@ -25,18 +25,16 @@ namespace UnityAddon.BeanBuildStrategies
         {
             if (BeanDefinitionContainer.HasBeanDefinition(context.Type))
             {
-                var beanDef = BeanDefinitionContainer.GetBeanDefinition(context.Type, context.Name);
-
-                if (context.Name != null && !context.Name.StartsWith("#"))
+                if (context.Name == null || !context.Name.StartsWith("#"))
                 {
-                    context.Name = null;
-                }
+                    var beanDef = BeanDefinitionContainer.GetBeanDefinition(context.Type, context.Name);
 
-                if (context.Type != beanDef.GetBeanType())
-                {
-                    context.Existing = context.Resolve(beanDef.GetBeanType(), context.Name);
-                    context.BuildComplete = true;
-                    return;
+                    if (context.Type != beanDef.GetBeanType() || context.Name != beanDef.GetBeanName())
+                    {
+                        context.Existing = context.Resolve(beanDef.GetBeanType(), beanDef.GetBeanName());
+                        context.BuildComplete = true;
+                        return;
+                    }
                 }
             }
 

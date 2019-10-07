@@ -18,14 +18,14 @@ namespace UnityAddon.Bean
         public IUnityContainer Container { get; set; } // should read only
 
         [Dependency]
-        private IAsyncLocalFactory<Stack<IInvocation>> InvocationStackFactory { get; set; }
+        public IAsyncLocalFactory<Stack<IInvocation>> InvocationStackFactory { get; set; }
 
         public void Intercept(IInvocation invocation)
         {
             var method = invocation.Method;
             var tempBeanDef = new MethodBeanDefinition(method);
-            var resolveName = tempBeanDef.GetBeanQualifiers().Length > 0 ?
-                tempBeanDef.GetBeanQualifiers()[0] : tempBeanDef.GetBeanName();
+            var beanName = tempBeanDef.GetBeanName();
+            var factoryName = tempBeanDef.GetFactoryName();
 
             if (!method.HasAttribute<BeanAttribute>())
             {
@@ -33,13 +33,13 @@ namespace UnityAddon.Bean
             }
             else
             {
-                var beanDef = DefContainer.GetBeanDefinition(tempBeanDef.GetBeanType(), resolveName); // valid bean def
+                var beanDef = DefContainer.GetBeanDefinition(tempBeanDef.GetBeanType(), beanName); // valid bean def
                 var hasStack = InvocationStackFactory.Exist();
                 var stack = hasStack ? InvocationStackFactory.Get() : InvocationStackFactory.Set();
 
                 stack.Push(invocation);
 
-                invocation.ReturnValue = Container.Resolve(beanDef.GetBeanType(), "#factory");
+                invocation.ReturnValue = Container.Resolve(beanDef.GetBeanType(), factoryName);
 
                 stack.Pop();
 

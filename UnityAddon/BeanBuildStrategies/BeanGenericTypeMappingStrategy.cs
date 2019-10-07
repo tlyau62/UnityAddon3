@@ -18,6 +18,8 @@ namespace UnityAddon.BeanBuildStrategies
 
         public override void PreBuildUp(ref BuilderContext context)
         {
+            base.PreBuildUp(ref context);
+            return;
             if (!context.Type.IsGenericType)
             {
                 base.PreBuildUp(ref context);

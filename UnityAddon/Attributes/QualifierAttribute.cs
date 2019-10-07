@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UnityAddon.Attributes
 {
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class QualifierAttribute : Attribute
     {
         public string[] Values { get; set; } = new string[0];

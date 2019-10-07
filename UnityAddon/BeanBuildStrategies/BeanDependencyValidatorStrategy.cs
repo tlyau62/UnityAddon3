@@ -45,22 +45,23 @@ namespace UnityAddon.BeanBuildStrategies
             var stackExist = StackFactory.Exist();
             Stack<ResolveStackEntry> stack = stackExist ? StackFactory.Get() : StackFactory.Set();
             var name = context.Name;
-            var type = context.RegistrationType.IsGenericType ?
-                    context.RegistrationType.GetGenericTypeDefinition() :
-                    context.RegistrationType;
+            //var type = context.RegistrationType.IsGenericType ?
+            //        context.RegistrationType.GetGenericTypeDefinition() :
+            //        context.RegistrationType;
+            var type = context.Type;
 
-            // check null dep
-            if (!context.Container.IsRegistered(type, name))
-            {
-                if (stack.Count == 0)
-                {
-                    throw new InvalidOperationException($"{type} with name {name} is not found.");
-                }
-                else
-                {
-                    throw new InvalidOperationException($"{type} with name {name} is not found in {stack.Peek()}.");
-                }
-            }
+            //// check null dep
+            //if (!context.Container.IsRegistered(type, name))
+            //{
+            //    if (stack.Count == 0)
+            //    {
+            //        throw new InvalidOperationException($"{type} with name {name} is not found.");
+            //    }
+            //    else
+            //    {
+            //        throw new InvalidOperationException($"{type} with name {name} is not found in {stack.Peek()}.");
+            //    }
+            //}
 
             // check cirular dep
             if (stack.Any(ent => ent.ResolveType == type && ent.ResolveName == name))

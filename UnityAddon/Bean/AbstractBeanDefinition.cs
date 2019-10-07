@@ -29,10 +29,7 @@ namespace UnityAddon.Bean
             return scopeAttr != null ? scopeAttr.Value : typeof(ContainerControlledLifetimeManager);
         }
 
-        public virtual string GetBeanName()
-        {
-            return GetBeanType().Name;
-        }
+        public abstract string GetBeanName();
 
         public virtual string[] GetBeanQualifiers()
         {
@@ -88,6 +85,11 @@ namespace UnityAddon.Bean
         {
             return _type.HasAttribute<ConfigurationAttribute>();
         }
+
+        public override string GetBeanName()
+        {
+            return GetBeanType().Name;
+        }
     }
 
     public class MethodBeanDefinition : AbstractBeanDefinition
@@ -117,6 +119,16 @@ namespace UnityAddon.Bean
         public override MethodBase GetConstructor()
         {
             return _method;
+        }
+
+        public override string GetBeanName()
+        {
+            return _method.Name;
+        }
+
+        public string GetFactoryName()
+        {
+            return $"#{GetBeanName()}";
         }
     }
 }

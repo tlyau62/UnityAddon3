@@ -30,22 +30,6 @@ namespace UnityAddon
         [Dependency("entryAssembly")]
         public Assembly EntryAssembly { get; set; }
 
-        [InjectionConstructor]
-        public ComponentScanner()
-        {
-        }
-
-        public ComponentScanner(IUnityContainer container)
-        {
-            container.RegisterType<ComponentScanner>();
-            container.RegisterType<ProxyGenerator>();
-            container.RegisterType<ApplicationContext>();
-            container.RegisterType<BeanFactory>();
-            container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>();
-
-            container.BuildUp(this);
-        }
-
         public void ScanComponents(string[] namesps)
         {
             foreach (var namesp in namesps)

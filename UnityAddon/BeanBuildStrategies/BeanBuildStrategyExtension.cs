@@ -29,7 +29,7 @@ namespace UnityAddon.BeanBuildStrategies
         protected override void Initialize()
         {
             Context.Strategies.Add(BeanTypeMappingStrategy, UnityBuildStage.TypeMapping);
-            Context.Strategies.Add(BeanGenericTypeMappingStrategy, UnityBuildStage.TypeMapping);
+            //Context.Strategies.Add(BeanGenericTypeMappingStrategy, UnityBuildStage.TypeMapping);
             Context.Strategies.Add(BeanDependencyValidatorStrategy, UnityBuildStage.PreCreation);
             Context.Strategies.Add(BeanPostConstructStrategy, UnityBuildStage.PostInitialization);
         }

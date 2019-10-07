@@ -24,7 +24,7 @@ namespace UnityAddon.Bean
         [Dependency]
         public IAsyncLocalFactory<Stack<IInvocation>> InvocationStackFactory { get; set; }
 
-        [Dependency]
+        [Dependency("BeanMethodInterceptor")]
         public BeanMethodInterceptor BeanMethodInterceptor { get; set; }
 
         public void CreateFactory(TypeBeanDefinition typeBeanDefinition)
@@ -32,10 +32,11 @@ namespace UnityAddon.Bean
             var type = typeBeanDefinition.GetBeanType();
             var scope = BuildScope<IFactoryLifetimeManager>(typeBeanDefinition.GetBeanScope());
             var ctor = typeBeanDefinition.GetConstructor();
+            var beanName = typeBeanDefinition.GetBeanName();
 
             if (type.HasAttribute<ComponentAttribute>())
             {
-                Container.RegisterFactory(type, (c, t, n) =>
+                Container.RegisterFactory(type, beanName, (c, t, n) =>
                 {
                     var ctorInfo = ((ConstructorInfo)ctor);
                     var obj = Activator.CreateInstance(t, ParameterFill.FillAllParamaters(ctor, c));
@@ -45,12 +46,12 @@ namespace UnityAddon.Bean
             }
             else if (type.HasAttribute<ConfigurationAttribute>())
             {
-                Container.RegisterFactory(type, (c, t, n) =>
-                {
-                    var obj = ProxyGenerator.CreateClassProxy(type, ParameterFill.FillAllParamaters(ctor, c), BeanMethodInterceptor);
+                Container.RegisterFactory(type, beanName, (c, t, n) =>
+                 {
+                     var obj = ProxyGenerator.CreateClassProxy(type, ParameterFill.FillAllParamaters(ctor, c), BeanMethodInterceptor);
 
-                    return PropertyFill.FillAllProperties(obj, c);
-                }, scope);
+                     return PropertyFill.FillAllProperties(obj, c);
+                 }, scope);
             }
             else
             {
@@ -63,16 +64,18 @@ namespace UnityAddon.Bean
             var type = methodBeanDefinition.GetBeanType();
             var configType = methodBeanDefinition.GetConfigType();
             var ctor = methodBeanDefinition.GetConstructor();
+            var beanName = methodBeanDefinition.GetBeanName();
+            var factoryName = methodBeanDefinition.GetFactoryName();
 
-            Container.RegisterFactory(type, (c, t, n) =>
-            {
-                // enter into the interceptor, constructor the bean inside the interceptor
-                var config = c.Resolve(configType);
+            Container.RegisterFactory(type, beanName, (c, t, n) =>
+             {
+                 // enter into the interceptor, constructor the bean inside the interceptor
+                 var config = c.Resolve(configType);
 
-                return ctor.Invoke(config, ParameterFill.FillAllParamaters(ctor, c));
-            }, BuildScope<IFactoryLifetimeManager>(methodBeanDefinition.GetBeanScope()));
+                 return ctor.Invoke(config, ParameterFill.FillAllParamaters(ctor, c));
+             }, BuildScope<IFactoryLifetimeManager>(methodBeanDefinition.GetBeanScope()));
 
-            Container.RegisterFactory(type, "#factory", (c, t, n) =>
+            Container.RegisterFactory(type, factoryName, (c, t, n) =>
             {
                 var invocation = InvocationStackFactory.Get().Peek();
 
