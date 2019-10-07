@@ -1,6 +1,5 @@
 ﻿using System;
 using Unity;
-using TestObjectsBeanMethod;
 using UnityAddon.Attributes;
 using Generic;
 
