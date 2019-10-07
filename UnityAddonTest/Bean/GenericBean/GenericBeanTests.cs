@@ -51,7 +51,7 @@ namespace UnityAddonTest.Dependency.Bean.GenericBean
     public interface IContextFactory<T> where T : Context { }
 
     [Component]
-    public class DbFactory<T> : IContextFactory<T> where T : Context { }
+    public class ContextFactory<T> : IContextFactory<T> where T : Context { }
 
     [Trait("Bean", "GenericBean")]
     public class GenericBeanTests

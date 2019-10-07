@@ -18,8 +18,6 @@ namespace UnityAddon.BeanBuildStrategies
 
         public override void PreBuildUp(ref BuilderContext context)
         {
-            base.PreBuildUp(ref context);
-            return;
             if (!context.Type.IsGenericType)
             {
                 base.PreBuildUp(ref context);
@@ -30,20 +28,18 @@ namespace UnityAddon.BeanBuildStrategies
 
             if (BeanDefinitionContainer.HasBeanDefinition(genericTypeDef))
             {
-                var beanDef = BeanDefinitionContainer.GetBeanDefinition(genericTypeDef, context.Name);
-                var concreteType = beanDef.GetBeanType().MakeGenericType(context.Type.GetGenericArguments());
-
-                if (context.Name != null && !context.Name.StartsWith("#"))
+                if (context.Name == null || !context.Name.StartsWith("#"))
                 {
-                    context.Name = null;
-                }
+                    var beanDef = BeanDefinitionContainer.GetBeanDefinition(genericTypeDef, context.Name);
+                    var concreteType = beanDef.GetBeanType().MakeGenericType(context.Type.GetGenericArguments());
 
-                if (beanDef.GetBeanType() != genericTypeDef)
-                {
-                    // use resolve type params to make the generic type from bean def
-                    context.Existing = context.Resolve(concreteType, context.Name);
-                    context.BuildComplete = true;
-                    return;
+                    if (genericTypeDef != beanDef.GetBeanType() || context.Name != beanDef.GetBeanName())
+                    {
+                        // use resolve type params to make the generic type from bean def
+                        context.Existing = context.Resolve(concreteType, beanDef.GetBeanName());
+                        context.BuildComplete = true;
+                        return;
+                    }
                 }
             }
 
