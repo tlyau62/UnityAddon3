@@ -12,7 +12,7 @@ namespace UnityAddon.BeanBuildStrategies
     /// <summary>
     /// Check
     /// 1. circular dep
-    /// 2. null dep
+    /// 2. null dep (removed)
     /// </summary>
     [Component]
     public class BeanDependencyValidatorStrategy : BuilderStrategy
@@ -49,19 +49,6 @@ namespace UnityAddon.BeanBuildStrategies
             //        context.RegistrationType.GetGenericTypeDefinition() :
             //        context.RegistrationType;
             var type = context.Type;
-
-            //// check null dep
-            //if (!context.Container.IsRegistered(type, name))
-            //{
-            //    if (stack.Count == 0)
-            //    {
-            //        throw new InvalidOperationException($"{type} with name {name} is not found.");
-            //    }
-            //    else
-            //    {
-            //        throw new InvalidOperationException($"{type} with name {name} is not found in {stack.Peek()}.");
-            //    }
-            //}
 
             // check cirular dep
             if (stack.Any(ent => ent.ResolveType == type && ent.ResolveName == name))
