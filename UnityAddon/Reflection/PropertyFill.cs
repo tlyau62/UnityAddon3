@@ -10,17 +10,34 @@ namespace UnityAddon.Reflection
 {
     public class PropertyFill
     {
-        public static object FillAllProperties(object obj, IUnityContainer container)
+        public static object FillAllProperties(object obj, IContainerRegistry containerRegistry)
         {
             var type = obj.GetType();
             var props = SelectAllProperties(type)
-                .Where(m => m.HasAttribute<DependencyAttribute>() && m.SetMethod != null);
+                .Where(m => m.HasAttribute<DependencyResolutionAttribute>(true) && m.SetMethod != null);
 
             foreach (var prop in props)
             {
-                prop.SetMethod.Invoke(obj, new object[] {
-                    container.Resolve(prop.PropertyType, prop.GetAttribute<DependencyAttribute>().Name)
-                });
+                if (prop.HasAttribute<DependencyAttribute>())
+                {
+                    var depAttr = prop.GetAttribute<DependencyAttribute>();
+
+                    prop.SetMethod.Invoke(obj, new object[] {
+                        containerRegistry.Resolve(prop.PropertyType, depAttr.Name)
+                    });
+                }
+                else if (prop.HasAttribute<OptionalDependencyAttribute>())
+                {
+                    var optDepAttr = prop.GetAttribute<OptionalDependencyAttribute>();
+
+                    prop.SetMethod.Invoke(obj, new object[] {
+                        containerRegistry.IsRegistered(prop.PropertyType, optDepAttr.Name) ?
+                            containerRegistry.Resolve(prop.PropertyType, optDepAttr.Name) : null});
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
             }
 
             return obj;

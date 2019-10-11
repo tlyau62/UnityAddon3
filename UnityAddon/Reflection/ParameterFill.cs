@@ -10,19 +10,25 @@ namespace UnityAddon.Reflection
 {
     public static class ParameterFill
     {
-        public static object[] FillAllParamaters(MethodBase method, IUnityContainer container)
+        public static object[] FillAllParamaters(MethodBase method, IContainerRegistry containerRegistry)
         {
             return method.GetParameters().Select(param =>
             {
                 var depAttr = param.GetAttribute<DependencyAttribute>();
+                var optDepAttr = param.GetAttribute<OptionalDependencyAttribute>();
                 var paramType = param.ParameterType;
 
                 if (depAttr != null)
                 {
-                    return container.Resolve(param.ParameterType, depAttr.Name);
+                    return containerRegistry.Resolve(param.ParameterType, depAttr.Name);
+                }
+                else if (optDepAttr != null)
+                {
+                    return containerRegistry.IsRegistered(param.ParameterType, optDepAttr.Name) ?
+                        containerRegistry.Resolve(param.ParameterType, optDepAttr.Name) : null;
                 }
 
-                return container.Resolve(param.ParameterType, null);
+                return containerRegistry.Resolve(param.ParameterType, null);
             })
             .ToArray();
         }
