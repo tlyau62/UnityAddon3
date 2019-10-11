@@ -56,5 +56,10 @@ namespace UnityAddon.Bean
         {
             return Find(name).Single();
         }
+
+        public IEnumerable<AbstractBeanDefinition> GetAll()
+        {
+            return _beanDefinitions;
+        }
     }
 }

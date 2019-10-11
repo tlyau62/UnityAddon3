@@ -12,6 +12,7 @@ namespace UnityAddon.Bean
     {
         bool HasBeanDefinition(Type type, string name = null);
         AbstractBeanDefinition GetBeanDefinition(Type type, string name = null);
+        IEnumerable<AbstractBeanDefinition> GetAllBeanDefinitions(Type type);
         void RegisterBeanDefinition(AbstractBeanDefinition beanDefinition);
         IEnumerable<AbstractBeanDefinition> FindBeanDefinitionByAttribute<TAttribute>() where TAttribute : Attribute;
     }
@@ -40,6 +41,11 @@ namespace UnityAddon.Bean
             if (!_container.ContainsKey(type))
             {
                 return false;
+            }
+
+            if (name != null && name.StartsWith("#"))
+            {
+                name = name.Substring(1);
             }
 
             return _container[type].Exist(name);
@@ -92,5 +98,16 @@ namespace UnityAddon.Bean
                 .Select(t => Type.GetType($"{t.Namespace}.{t.Name}, {t.Assembly.FullName}")) // reload type
                 .Select(t => t.IsGenericType ? t.GetGenericTypeDefinition() : t); // ensure all generic type are generic def
         }
+
+        public IEnumerable<AbstractBeanDefinition> GetAllBeanDefinitions(Type type)
+        {
+            if (!_container.ContainsKey(type))
+            {
+                throw new InvalidOperationException();
+            }
+
+            return _container[type].GetAll();
+        }
+
     }
 }
