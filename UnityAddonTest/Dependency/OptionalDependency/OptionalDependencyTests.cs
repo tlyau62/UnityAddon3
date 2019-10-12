@@ -6,7 +6,7 @@ using UnityAddon;
 using UnityAddon.Attributes;
 using Xunit;
 
-namespace UnityAddonTest.OptionalDep
+namespace UnityAddonTest.Dependency.OptionalDependency
 {
     [Component]
     public class Helper
@@ -28,7 +28,7 @@ namespace UnityAddonTest.OptionalDep
     }
 
     [Trait("Dependency", "OptionalDependency")]
-    public class OptionalDepTests
+    public class OptionalDependencyTests
     {
         [Fact]
         public void PropertyFill_ResolveRegisteredOptionalDependency_BeanResolved()
