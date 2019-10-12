@@ -2,6 +2,7 @@
 using Unity;
 using UnityAddon.Attributes;
 using Generic;
+using UnityAddon.Value;
 
 namespace Generic
 {
@@ -21,9 +22,7 @@ namespace UnityAddon
             IUnityContainer container = new UnityContainer();
             var appContext = new ApplicationContext(container, "Generic");
 
-            var a = container.Resolve<Test<string>>();
-            var b = container.Resolve<ITest<string>>();
-            var c = a == b;
+            //var config = appContext.Resolve<ValueProvider>().Parse(typeof(string), "section0.key0");
         }
     }
 }
