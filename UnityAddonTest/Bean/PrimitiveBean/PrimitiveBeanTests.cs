@@ -43,8 +43,8 @@ namespace UnityAddonTest.Bean.PrimitiveBean
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            var config = container.Resolve<Config>();
-            var service = container.Resolve<Service>();
+            var config = appContext.Resolve<Config>();
+            var service = appContext.Resolve<Service>();
 
             Assert.Equal(service.IntBean, config.CreateIntBean());
             Assert.Same(service.StringBean, config.CreateStringBean());

@@ -45,9 +45,9 @@ namespace UnityAddonTest.Bean.QualifiedBean
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            var a = container.Resolve<ICommon>("CommonA");
-            var b = container.Resolve<ICommon>("CommonB");
-            var service = container.Resolve<Service>();
+            var a = appContext.Resolve<ICommon>("CommonA");
+            var b = appContext.Resolve<ICommon>("CommonB");
+            var service = appContext.Resolve<Service>();
 
             Assert.Same(service.BCommon, b);
             Assert.Same(service.BRare, b);

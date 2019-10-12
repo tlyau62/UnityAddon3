@@ -44,9 +44,9 @@ namespace UnityAddonTest.Configuration.Caching
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            var config = container.Resolve<Config>();
-            var strA = container.Resolve<string>("a");
-            var strC = container.Resolve<string>("c");
+            var config = appContext.Resolve<Config>();
+            var strA = appContext.Resolve<string>("a");
+            var strC = appContext.Resolve<string>("c");
 
             Assert.Equal("strAstrBstrC", strA);
             Assert.Equal("strC", strC);

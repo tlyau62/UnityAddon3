@@ -29,7 +29,7 @@ namespace UnityAddonTest.Dependency.Dependency
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            Assert.Throws<NoSuchBeanDefinitionException>(() => container.Resolve<Service>());
+            Assert.Throws<NoSuchBeanDefinitionException>(() => appContext.Resolve<Service>());
         }
     }
 }

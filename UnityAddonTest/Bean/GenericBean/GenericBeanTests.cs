@@ -62,10 +62,10 @@ namespace UnityAddonTest.Dependency.Bean.GenericBean
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            var service = container.Resolve<IService>();
-            var repo = container.Resolve<IRepo>();
-            var repo2 = container.Resolve<IRepo2>();
-            var factory = container.Resolve<IContextFactory<Context>>();
+            var service = appContext.Resolve<IService>();
+            var repo = appContext.Resolve<IRepo>();
+            var repo2 = appContext.Resolve<IRepo2>();
+            var factory = appContext.Resolve<IContextFactory<Context>>();
 
             Assert.Same(service.Repo, repo);
             Assert.Same(service.Repo2, repo2);

@@ -18,7 +18,7 @@ namespace UnityAddon
         void RegisterType(Type regType, Type mapType, string name, ITypeLifetimeManager lifetimeManager);
 
         T Resolve<T>(string name = null);
-        object Resolve(Type type, string name);
+        object Resolve(Type type, string name = null);
 
         T[] ResolveAll<T>();
         object[] ResolveAll(Type type);
@@ -63,6 +63,7 @@ namespace UnityAddon
 
         public bool IsRegistered(Type type, string name)
         {
+            type = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
             var isRegistered = Container.IsRegistered(type) || Container.IsRegistered(type, name);
 
             foreach (var reg in Container.Registrations)
@@ -81,7 +82,7 @@ namespace UnityAddon
             return (T)Container.Resolve(typeof(T), name);
         }
 
-        public object Resolve(Type type, string name)
+        public object Resolve(Type type, string name = null)
         {
             if (!IsRegistered(type, name))
             {

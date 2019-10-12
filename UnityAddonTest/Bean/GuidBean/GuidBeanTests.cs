@@ -42,9 +42,9 @@ namespace UnityAddonTest.Bean.GuidBean
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            var generalService = container.Resolve<GeneralService>();
-            var printService = container.Resolve<IService>("b1368cba-7614-4923-9426-8cd4456da29e");
-            var writeService = container.Resolve<IService>("4e55e61a-c57f-4b55-84dd-044d539dfbc7");
+            var generalService = appContext.Resolve<GeneralService>();
+            var printService = appContext.Resolve<IService>("b1368cba-7614-4923-9426-8cd4456da29e");
+            var writeService = appContext.Resolve<IService>("4e55e61a-c57f-4b55-84dd-044d539dfbc7");
 
             Assert.Same(generalService.PrintService, printService);
             Assert.Same(generalService.WriteService, writeService);

@@ -51,9 +51,9 @@ namespace UnityAddonTest.Configuration.BeanMethod
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            var serviceA = container.Resolve<IService>();
-            var serviceB = container.Resolve<ICommonService>("B");
-            var serviceC = container.Resolve<ICommonService>("C");
+            var serviceA = appContext.Resolve<IService>();
+            var serviceB = appContext.Resolve<ICommonService>("B");
+            var serviceC = appContext.Resolve<ICommonService>("C");
 
             Assert.IsType<ServiceA>(serviceA);
             Assert.IsType<ServiceB>(serviceB);

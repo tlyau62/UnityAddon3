@@ -76,7 +76,7 @@ namespace UnityAddonTest.BeanPostConstruct
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            var stringStore = container.Resolve<StringStore>();
+            var stringStore = appContext.Resolve<StringStore>();
             var resolveOrder = new Type[3];
 
             resolveOrder[orderA] = typeof(ServiceA);
@@ -85,7 +85,7 @@ namespace UnityAddonTest.BeanPostConstruct
 
             foreach (var t in resolveOrder)
             {
-                container.Resolve(t);
+                appContext.Resolve(t);
             }
 
             Assert.Equal("ABC", stringStore.TestString);

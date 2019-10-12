@@ -36,7 +36,7 @@ namespace UnityAddonTest.Dependency.OptionalDependency
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            Assert.NotNull(container.Resolve<Service>().Helper);
+            Assert.NotNull(appContext.Resolve<Service>().Helper);
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace UnityAddonTest.Dependency.OptionalDependency
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            Assert.Null(container.Resolve<Service>().CustHelper);
+            Assert.Null(appContext.Resolve<Service>().CustHelper);
         }
     }
 }

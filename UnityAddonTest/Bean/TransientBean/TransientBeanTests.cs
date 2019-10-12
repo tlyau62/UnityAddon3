@@ -33,7 +33,7 @@ namespace UnityAddonTest.Bean.TransientBean
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            var service = container.Resolve<Service>();
+            var service = appContext.Resolve<Service>();
 
             Assert.NotSame(service.Helper, service.Helper2);
         }

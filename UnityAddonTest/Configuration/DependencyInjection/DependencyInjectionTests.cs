@@ -46,9 +46,9 @@ namespace UnityAddonTest.Configuration.DependencyInjection
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            var service = container.Resolve<Service>();
-            var ctorHelper = container.Resolve<CtorHelper>();
-            var propertyHelper = container.Resolve<PropertyHelper>();
+            var service = appContext.Resolve<Service>();
+            var ctorHelper = appContext.Resolve<CtorHelper>();
+            var propertyHelper = appContext.Resolve<PropertyHelper>();
 
             Assert.Same(ctorHelper, service.CtorHelper);
             Assert.Same(propertyHelper, service.PropertyHelper);

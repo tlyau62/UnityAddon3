@@ -43,9 +43,9 @@ namespace UnityAddonTest.Dependency.Bean.NonGenericBean
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            var a = container.Resolve<AbstractA>();
-            var b = container.Resolve<IB>();
-            var c = container.Resolve<IC>();
+            var a = appContext.Resolve<AbstractA>();
+            var b = appContext.Resolve<IB>();
+            var c = appContext.Resolve<IC>();
 
             Assert.Same(a.b, b);
             Assert.Same(b.c, c);
