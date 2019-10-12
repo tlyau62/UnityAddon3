@@ -44,13 +44,14 @@ namespace UnityAddon
             Container.RegisterType<ApplicationContext>(new ContainerControlledLifetimeManager());
 
             // for component scan
+            Container.RegisterType<ParameterFill>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IContainerRegistry, ContainerRegistry>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ComponentScanner>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ProxyGenerator>(new ContainerControlledLifetimeManager());
             Container.RegisterType<BeanFactory>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
 
-            // singleton dependencies needed not included in component scan
+            // singleton dependencies needed, not included in component scan
             Container.RegisterType<IAsyncLocalFactory<Stack<IInvocation>>, AsyncLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())));
             Container.RegisterType<IAsyncLocalFactory<Stack<ResolveStackEntry>>, AsyncLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())));
 

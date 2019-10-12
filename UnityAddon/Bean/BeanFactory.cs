@@ -30,6 +30,9 @@ namespace UnityAddon.Bean
         [Dependency]
         public BeanMethodInterceptor BeanMethodInterceptor { get; set; }
 
+        [Dependency]
+        public ParameterFill ParameterFill { get; set; }
+
         public void CreateFactory(TypeBeanDefinition typeBeanDefinition)
         {
             var type = typeBeanDefinition.GetBeanType();
@@ -42,7 +45,7 @@ namespace UnityAddon.Bean
                 Container.RegisterFactory(type, beanName, (c, t, n) =>
                 {
                     var ctorInfo = ((ConstructorInfo)ctor);
-                    var obj = Activator.CreateInstance(t, ParameterFill.FillAllParamaters(ctor, ContainerRegistry));
+                    var obj = Activator.CreateInstance(t, ParameterFill.FillAllParamaters(ctor));
 
                     return PropertyFill.FillAllProperties(obj, ContainerRegistry);
                 }, scope);
@@ -51,7 +54,7 @@ namespace UnityAddon.Bean
             {
                 Container.RegisterFactory(type, beanName, (c, t, n) =>
                  {
-                     var obj = ProxyGenerator.CreateClassProxy(type, ParameterFill.FillAllParamaters(ctor, ContainerRegistry), BeanMethodInterceptor);
+                     var obj = ProxyGenerator.CreateClassProxy(type, ParameterFill.FillAllParamaters(ctor), BeanMethodInterceptor);
 
                      return PropertyFill.FillAllProperties(obj, ContainerRegistry);
                  }, scope);
@@ -75,7 +78,7 @@ namespace UnityAddon.Bean
                  // enter into the interceptor, constructor the bean inside the interceptor
                  var config = c.Resolve(configType);
 
-                 return ctor.Invoke(config, ParameterFill.FillAllParamaters(ctor, ContainerRegistry));
+                 return ctor.Invoke(config, ParameterFill.FillAllParamaters(ctor));
              }, BuildScope<IFactoryLifetimeManager>(methodBeanDefinition.GetBeanScope()));
 
             Container.RegisterFactory(type, factoryName, (c, t, n) =>
