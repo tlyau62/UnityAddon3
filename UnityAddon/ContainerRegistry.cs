@@ -6,6 +6,7 @@ using Unity;
 using Unity.Lifetime;
 using UnityAddon.Attributes;
 using UnityAddon.Bean;
+using UnityAddon.Exceptions;
 
 namespace UnityAddon
 {
@@ -82,6 +83,11 @@ namespace UnityAddon
 
         public object Resolve(Type type, string name)
         {
+            if (!IsRegistered(type, name))
+            {
+                throw new NoSuchBeanDefinitionException($"Type {type} with name '{name}' is not registered.");
+            }
+
             return Container.Resolve(type, name);
         }
 
