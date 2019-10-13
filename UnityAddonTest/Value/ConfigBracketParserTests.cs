@@ -41,5 +41,15 @@ namespace UnityAddonTest.Value
 
             Assert.Equal(expected, parser.Parse(input));
         }
+
+        [Theory]
+        [InlineData("test{undefined:qqq}test", "testqqqtest")]
+        [InlineData("test{undefined:}test", "testtest")]
+        public void ConfigBracketParser_DefaultValueExpression_Parsed(string input, string expected)
+        {
+            var parser = new ConfigBracketParser(_config);
+
+            Assert.Equal(expected, parser.Parse(input));
+        }
     }
 }
