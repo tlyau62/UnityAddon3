@@ -5,6 +5,7 @@ using System.Text;
 using Unity;
 using UnityAddon;
 using UnityAddon.Attributes;
+using UnityAddon.Value;
 using Xunit;
 
 namespace UnityAddonTest.Dependency.Value
@@ -28,13 +29,14 @@ namespace UnityAddonTest.Dependency.Value
         public void PropertyFill_ResolveValue_ValueInjected()
         {
             var container = new UnityContainer();
-            container.RegisterInstance<IConfiguration>(new ConfigurationBuilder()
+            var appContext = new ApplicationContext(container, GetType().Namespace);
+
+            appContext.RegisterInstance<IConfiguration>(new ConfigurationBuilder()
                 .AddInMemoryCollection(new Dictionary<string, string>
                 {
                     {"serviceType", "Write"},
                 })
                 .Build());
-            var appContext = new ApplicationContext(container, GetType().Namespace);
 
             Assert.Equal(ServiceType.Write, appContext.Resolve<Service>().Type);
         }

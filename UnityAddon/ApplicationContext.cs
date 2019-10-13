@@ -10,6 +10,7 @@ using UnityAddon.BeanBuildStrategies;
 using System.Reflection;
 using System.Linq;
 using UnityAddon.Reflection;
+using UnityAddon.Value;
 
 namespace UnityAddon
 {
@@ -44,6 +45,7 @@ namespace UnityAddon
             Container.RegisterType<ApplicationContext>(new ContainerControlledLifetimeManager());
 
             // for component scan
+            Container.RegisterType<PropertyFill>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ParameterFill>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IContainerRegistry, ContainerRegistry>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ComponentScanner>(new ContainerControlledLifetimeManager());

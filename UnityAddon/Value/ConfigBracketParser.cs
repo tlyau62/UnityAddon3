@@ -10,23 +10,21 @@ namespace UnityAddon.Value
     [Component]
     public class ConfigBracketParser : AbstrackBracketParser
     {
-        public IConfiguration _configuration;
+        [OptionalDependency]
+        public IContainerRegistry ContainerRegistry { get; set; } // optionalDep for testing
 
-        public ConfigBracketParser([OptionalDependency] IConfiguration configuration)
-        {
-            _configuration = configuration ?? GetDefaultConfiguration();
-        }
+        private IConfiguration _defaultConfig;
 
-        protected virtual IConfiguration GetDefaultConfiguration()
+        public ConfigBracketParser([OptionalDependency]IConfiguration defaultConfig)
         {
-            return new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .Build();
+            _defaultConfig = defaultConfig;
         }
 
         protected override string Process(string intermediateResult)
         {
-            return _configuration[intermediateResult.Replace('.', ':')];
+            var config = ContainerRegistry?.Resolve<IConfiguration>() ?? _defaultConfig;
+
+            return config[intermediateResult.Replace('.', ':')];
         }
     }
 }

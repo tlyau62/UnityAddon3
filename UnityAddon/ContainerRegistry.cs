@@ -17,6 +17,8 @@ namespace UnityAddon
         void RegisterType<TRegType, TMapType>(string name, ITypeLifetimeManager lifetimeManager);
         void RegisterType(Type regType, Type mapType, string name, ITypeLifetimeManager lifetimeManager);
 
+        void RegisterInstance<TInstanceType>(TInstanceType instance);
+
         T Resolve<T>(string name = null);
         object Resolve(Type type, string name = null);
 
@@ -126,6 +128,9 @@ namespace UnityAddon
             return beans.ToArray();
         }
 
-
+        public void RegisterInstance<TInstanceType>(TInstanceType instance)
+        {
+            Container.RegisterInstance(instance);
+        }
     }
 }
