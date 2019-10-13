@@ -5,39 +5,82 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Unity;
+using UnityAddon.Attributes;
+using UnityAddon.Exceptions;
+using UnityAddon.Value;
 
 namespace UnityAddon.Reflection
 {
+    [Component]
     public class PropertyFill
     {
-        public static object FillAllProperties(object obj, IContainerRegistry containerRegistry)
+        [Dependency]
+        public IContainerRegistry ContainerRegistry { get; set; }
+
+        [Dependency]
+        public ValueProvider ValueProvider { get; set; }
+
+        private IDictionary<Type, object> _resolveStrategies = new Dictionary<Type, object>();
+
+        public PropertyFill()
         {
+            AddDefaultResolveStrategies();
+        }
+
+        public void AddDefaultResolveStrategies()
+        {
+            AddResolveStrategy<DependencyAttribute>((prop, attr, containerReg) =>
+            {
+                return containerReg.Resolve(prop.PropertyType, attr.Name);
+            });
+
+            AddResolveStrategy<OptionalDependencyAttribute>((prop, attr, containerReg) =>
+            {
+                return containerReg.IsRegistered(prop.PropertyType, attr.Name) ?
+                    containerReg.Resolve(prop.PropertyType, attr.Name) : null;
+            });
+        }
+
+        public void AddResolveStrategy<TAttribute>(Func<PropertyInfo, TAttribute, IContainerRegistry, object> strategy) where TAttribute : Attribute
+        {
+            _resolveStrategies[typeof(TAttribute)] = strategy;
+        }
+
+        private object InvokeStrategy<TAttribute>(Func<PropertyInfo, TAttribute, IContainerRegistry, object> strategy, PropertyInfo prop, TAttribute attr, IContainerRegistry containerReg)
+        {
+            return strategy(prop, attr, containerReg);
+        }
+
+        public object FillAllProperties(object obj)
+        {
+            var invokeStrategy = GetType().GetMethod("InvokeStrategy", BindingFlags.NonPublic | BindingFlags.Instance);
             var type = obj.GetType();
             var props = SelectAllProperties(type)
                 .Where(m => m.HasAttribute<DependencyResolutionAttribute>(true) && m.SetMethod != null);
 
-            foreach (var prop in props)
+            try
             {
-                if (prop.HasAttribute<DependencyAttribute>())
+                foreach (var prop in props)
                 {
-                    var depAttr = prop.GetAttribute<DependencyAttribute>();
-
-                    prop.SetMethod.Invoke(obj, new object[] {
-                        containerRegistry.Resolve(prop.PropertyType, depAttr.Name)
-                    });
+                    foreach (var strategy in _resolveStrategies)
+                    {
+                        if (prop.HasAttribute(strategy.Key))
+                        {
+                            prop.SetMethod.Invoke(obj, new object[] {
+                                invokeStrategy.MakeGenericMethod(strategy.Key).Invoke(this, new object[] { strategy.Value, prop, prop.GetAttribute(strategy.Key), ContainerRegistry })
+                            });
+                            break;
+                        }
+                    }
                 }
-                else if (prop.HasAttribute<OptionalDependencyAttribute>())
+            }
+            catch (TargetInvocationException ex)
+            {
+                if (ex.InnerException is NoSuchBeanDefinitionException)
                 {
-                    var optDepAttr = prop.GetAttribute<OptionalDependencyAttribute>();
-
-                    prop.SetMethod.Invoke(obj, new object[] {
-                        containerRegistry.IsRegistered(prop.PropertyType, optDepAttr.Name) ?
-                            containerRegistry.Resolve(prop.PropertyType, optDepAttr.Name) : null});
+                    throw ex.InnerException;
                 }
-                else
-                {
-                    throw new NotImplementedException();
-                }
+                throw ex;
             }
 
             return obj;

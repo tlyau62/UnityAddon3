@@ -61,7 +61,7 @@ namespace UnityAddon.Reflection
                     if (param.HasAttribute(strategy.Key))
                     {
                         // create a func type useing GenericMethod
-                        return invokeStrategy.MakeGenericMethod(strategy.Key).Invoke(this, new object[] { strategy, param, param.GetAttribute(strategy.Key), ContainerRegistry });
+                        return invokeStrategy.MakeGenericMethod(strategy.Key).Invoke(this, new object[] { strategy.Value, param, param.GetAttribute(strategy.Key), ContainerRegistry });
                     }
                 }
 

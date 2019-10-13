@@ -33,6 +33,9 @@ namespace UnityAddon.Bean
         [Dependency]
         public ParameterFill ParameterFill { get; set; }
 
+        [Dependency]
+        public PropertyFill PropertyFill { get; set; }
+
         public void CreateFactory(TypeBeanDefinition typeBeanDefinition)
         {
             var type = typeBeanDefinition.GetBeanType();
@@ -47,7 +50,7 @@ namespace UnityAddon.Bean
                     var ctorInfo = ((ConstructorInfo)ctor);
                     var obj = Activator.CreateInstance(t, ParameterFill.FillAllParamaters(ctor));
 
-                    return PropertyFill.FillAllProperties(obj, ContainerRegistry);
+                    return PropertyFill.FillAllProperties(obj);
                 }, scope);
             }
             else if (type.HasAttribute<ConfigurationAttribute>())
@@ -56,7 +59,7 @@ namespace UnityAddon.Bean
                  {
                      var obj = ProxyGenerator.CreateClassProxy(type, ParameterFill.FillAllParamaters(ctor), BeanMethodInterceptor);
 
-                     return PropertyFill.FillAllProperties(obj, ContainerRegistry);
+                     return PropertyFill.FillAllProperties(obj);
                  }, scope);
             }
             else
@@ -75,7 +78,7 @@ namespace UnityAddon.Bean
 
             Container.RegisterFactory(type, beanName, (c, t, n) =>
              {
-                 // enter into the interceptor, constructor the bean inside the interceptor
+                 // enter into the interceptor, construct the bean inside the interceptor
                  var config = c.Resolve(configType);
 
                  return ctor.Invoke(config, ParameterFill.FillAllParamaters(ctor));
@@ -87,7 +90,7 @@ namespace UnityAddon.Bean
 
                 invocation.Proceed();
 
-                return PropertyFill.FillAllProperties(invocation.ReturnValue, ContainerRegistry); // resolve type is interface, so need to build up
+                return PropertyFill.FillAllProperties(invocation.ReturnValue);
             }, BuildScope<IFactoryLifetimeManager>(methodBeanDefinition.GetBeanScope()));
         }
 

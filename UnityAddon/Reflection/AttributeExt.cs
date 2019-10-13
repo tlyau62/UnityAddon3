@@ -9,28 +9,43 @@ namespace UnityAddon.Reflection
 {
     public static class AttributeExt
     {
-        public static bool HasAttribute<TAttribute>(this MemberInfo memberInfo, bool isInherited = false) where TAttribute : Attribute
+        public static bool HasAttribute(this MemberInfo memberInfo, Type attribute, bool isInherited = false)
         {
-            return memberInfo.GetAllAttributes<TAttribute>(isInherited).Count() > 0;
+            return memberInfo.GetAllAttributes(attribute, isInherited).Count() > 0;
         }
 
-        public static TAttribute GetAttribute<TAttribute>(this MemberInfo memberInfo, bool isInherited = false) where TAttribute : Attribute
+        public static bool HasAttribute<TAttribute>(this MemberInfo memberInfo, bool isInherited = false) where TAttribute : Attribute
         {
-            var attrs = memberInfo.GetAllAttributes<TAttribute>(isInherited);
+            return HasAttribute(memberInfo, typeof(TAttribute), isInherited);
+        }
+
+        public static Attribute GetAttribute(this MemberInfo memberInfo, Type attribute, bool isInherited = false)
+        {
+            var attrs = memberInfo.GetAllAttributes(attribute, isInherited);
 
             if (attrs.Count() > 1)
             {
-                throw new InvalidOperationException($"No single attribute {typeof(TAttribute).Name} is found.");
+                throw new InvalidOperationException($"No single attribute {attribute} is found.");
             }
 
             return attrs.SingleOrDefault();
         }
 
+        public static TAttribute GetAttribute<TAttribute>(this MemberInfo memberInfo, bool isInherited = false) where TAttribute : Attribute
+        {
+            return (TAttribute)GetAttribute(memberInfo, typeof(TAttribute), isInherited);
+        }
+
+        public static IEnumerable<Attribute> GetAllAttributes(this MemberInfo memberInfo, Type attribute, bool isInherited = false)
+        {
+            var attrs = memberInfo.GetCustomAttributes(attribute, false).Cast<Attribute>();
+
+            return isInherited ? attrs : attrs.Where(attr => attr.GetType() == attribute);
+        }
+
         public static IEnumerable<TAttribute> GetAllAttributes<TAttribute>(this MemberInfo memberInfo, bool isInherited = false) where TAttribute : Attribute
         {
-            var attrs = memberInfo.GetCustomAttributes<TAttribute>(false);
-
-            return isInherited ? attrs : attrs.Where(attr => attr.GetType() == typeof(TAttribute));
+            return GetAllAttributes(memberInfo, typeof(TAttribute), isInherited).Cast<TAttribute>();
         }
 
 
