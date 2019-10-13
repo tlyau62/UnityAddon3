@@ -16,7 +16,7 @@ namespace UnityAddon.Value
 
         private IConfiguration _defaultConfig;
 
-        private static readonly Regex DefaultValue = new Regex("^([^:\n]*)(:([^:\n]*))?$");
+        private static readonly Regex DefaultValue = new Regex("^([^:\n]*)(:([^:\n]*))?$", RegexOptions.Compiled);
 
         public ConfigBracketParser([OptionalDependency]IConfiguration defaultConfig)
         {
