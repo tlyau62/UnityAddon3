@@ -39,6 +39,11 @@ namespace UnityAddon.Reflection
                 return containerReg.IsRegistered(prop.PropertyType, attr.Name) ?
                     containerReg.Resolve(prop.PropertyType, attr.Name) : null;
             });
+
+            AddResolveStrategy<ValueAttribute>((prop, attr, containerReg) =>
+            {
+                return ValueProvider.GetValue(prop.PropertyType, attr.Value);
+            });
         }
 
         public void AddResolveStrategy<TAttribute>(Func<PropertyInfo, TAttribute, IContainerRegistry, object> strategy) where TAttribute : Attribute
@@ -55,13 +60,16 @@ namespace UnityAddon.Reflection
         {
             var invokeStrategy = GetType().GetMethod("InvokeStrategy", BindingFlags.NonPublic | BindingFlags.Instance);
             var type = obj.GetType();
-            var props = SelectAllProperties(type)
-                .Where(m => m.HasAttribute<DependencyResolutionAttribute>(true) && m.SetMethod != null);
 
             try
             {
-                foreach (var prop in props)
+                foreach (var prop in SelectAllProperties(type))
                 {
+                    if (prop.SetMethod == null)
+                    {
+                        continue;
+                    }
+
                     foreach (var strategy in _resolveStrategies)
                     {
                         if (prop.HasAttribute(strategy.Key))

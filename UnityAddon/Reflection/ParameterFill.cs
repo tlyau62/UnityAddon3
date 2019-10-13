@@ -38,6 +38,11 @@ namespace UnityAddon.Reflection
                 return containerReg.IsRegistered(param.ParameterType, attr.Name) ?
                     containerReg.Resolve(param.ParameterType, attr.Name) : null;
             });
+
+            AddResolveStrategy<ValueAttribute>((param, attr, containerReg) =>
+            {
+                return ValueProvider.GetValue(param.ParameterType, attr.Value);
+            });
         }
 
         public void AddResolveStrategy<TAttribute>(Func<ParameterInfo, TAttribute, IContainerRegistry, object> strategy) where TAttribute : Attribute
