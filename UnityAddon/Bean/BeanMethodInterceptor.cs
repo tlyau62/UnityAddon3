@@ -8,7 +8,6 @@ using UnityAddon.Reflection;
 
 namespace UnityAddon.Bean
 {
-    [Component]
     public class BeanMethodInterceptor : IInterceptor
     {
         [Dependency]

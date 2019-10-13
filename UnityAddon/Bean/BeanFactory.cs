@@ -16,9 +16,6 @@ namespace UnityAddon.Bean
     public class BeanFactory
     {
         [Dependency]
-        public ProxyGenerator ProxyGenerator { get; set; }
-
-        [Dependency]
         public IUnityContainer Container { get; set; }
 
         [Dependency]
@@ -28,26 +25,25 @@ namespace UnityAddon.Bean
         public IContainerRegistry ContainerRegistry { get; set; }
 
         [Dependency]
-        public BeanMethodInterceptor BeanMethodInterceptor { get; set; }
-
-        [Dependency]
         public ParameterFill ParameterFill { get; set; }
 
         [Dependency]
         public PropertyFill PropertyFill { get; set; }
 
+        [Dependency]
+        public ConfigurationFactory ConfigurationFactory { get; set; }
+
         public void CreateFactory(TypeBeanDefinition typeBeanDefinition)
         {
             var type = typeBeanDefinition.GetBeanType();
             var scope = BuildScope<IFactoryLifetimeManager>(typeBeanDefinition.GetBeanScope());
-            var ctor = typeBeanDefinition.GetConstructor();
+            var ctor = (ConstructorInfo)typeBeanDefinition.GetConstructor();
             var beanName = typeBeanDefinition.GetBeanName();
 
             if (type.HasAttribute<ComponentAttribute>())
             {
                 Container.RegisterFactory(type, beanName, (c, t, n) =>
                 {
-                    var ctorInfo = ((ConstructorInfo)ctor);
                     var obj = Activator.CreateInstance(t, ParameterFill.FillAllParamaters(ctor));
 
                     return PropertyFill.FillAllProperties(obj);
@@ -57,7 +53,7 @@ namespace UnityAddon.Bean
             {
                 Container.RegisterFactory(type, beanName, (c, t, n) =>
                  {
-                     var obj = ProxyGenerator.CreateClassProxy(type, ParameterFill.FillAllParamaters(ctor), BeanMethodInterceptor);
+                     var obj = ConfigurationFactory.CreateConfiguration(type, ctor);
 
                      return PropertyFill.FillAllProperties(obj);
                  }, scope);

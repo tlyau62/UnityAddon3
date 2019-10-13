@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Unity;
 using Unity.Lifetime;
@@ -27,6 +28,9 @@ namespace UnityAddon
 
         bool IsRegistered<T>(string name = null);
         bool IsRegistered(Type type, string name);
+
+        T BuildUp<T>(T existing, string name = null);
+        object BuildUp(Type type, object existing, string name = null);
     }
 
     [Component]
@@ -131,6 +135,20 @@ namespace UnityAddon
         public void RegisterInstance<TInstanceType>(TInstanceType instance)
         {
             Container.RegisterInstance(instance);
+        }
+
+        public T BuildUp<T>(T existing, string name = null)
+        {
+            return Container.BuildUp(existing, name);
+        }
+
+        public object BuildUp(Type type, object existing, string name = null)
+        {
+            var buildUpMethod = GetType().GetMethods().Where(m => m.Name == nameof(BuildUp) && m.IsGenericMethod).Single();
+
+            return buildUpMethod
+                .MakeGenericMethod(new[] { type })
+                .Invoke(this, new[] { (dynamic)existing, name });
         }
     }
 }
