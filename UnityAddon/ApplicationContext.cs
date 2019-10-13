@@ -39,25 +39,24 @@ namespace UnityAddon
 
         protected void Config()
         {
-            // basic
+            // app config
             Container.RegisterInstance("baseNamespaces", BaseNamespaces, new ContainerControlledLifetimeManager());
             Container.RegisterInstance("entryAssembly", EntryAssembly, new ContainerControlledLifetimeManager());
+
+            // must singleton, else init twice
             Container.RegisterType<ApplicationContext>(new ContainerControlledLifetimeManager());
 
-            // for component scan
+            // must singleton, have internal state
             Container.RegisterType<PropertyFill>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ParameterFill>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IContainerRegistry, ContainerRegistry>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<ComponentScanner>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<ProxyGenerator>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<BeanFactory>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
-
-            // singleton dependencies needed, not included in component scan
             Container.RegisterType<IAsyncLocalFactory<Stack<IInvocation>>, AsyncLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())));
             Container.RegisterType<IAsyncLocalFactory<Stack<ResolveStackEntry>>, AsyncLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())));
 
-            // config internal
+            // init for component scan, interface mapping
+            Container.RegisterType<IContainerRegistry, ContainerRegistry>();
+
+            // start component scan on internal
             ComponentScanner = Container.Resolve<ComponentScanner>();
             ComponentScanner.ScanComponents(GetType().Namespace);
 
