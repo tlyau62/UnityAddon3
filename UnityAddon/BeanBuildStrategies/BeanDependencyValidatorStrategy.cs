@@ -6,6 +6,7 @@ using Unity;
 using Unity.Builder;
 using Unity.Strategies;
 using UnityAddon.Attributes;
+using UnityAddon.Exceptions;
 
 namespace UnityAddon.BeanBuildStrategies
 {
@@ -54,7 +55,7 @@ namespace UnityAddon.BeanBuildStrategies
             if (stack.Any(ent => ent.ResolveType == type && ent.ResolveName == name))
             {
                 stack.Push(new ResolveStackEntry(type, name));
-                var ex = new InvalidOperationException("circular dep: " + string.Join("->", stack.Select(t => $"type {t.ResolveType}, name: {t.ResolveName}").ToArray()));
+                var ex = new CircularDependencyException(string.Join("\r\n->", stack.Select(t => $"type {t.ResolveType} (name: {t.ResolveName})").ToArray()));
 
                 StackFactory.Delete();
 
