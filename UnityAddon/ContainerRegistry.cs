@@ -146,6 +146,9 @@ namespace UnityAddon
             }
         }
 
+        /// <summary>
+        /// Use PropertyFill for internal use
+        /// </summary>
         public T BuildUp<T>(T existing, string name = null)
         {
             lock (Container)
@@ -154,6 +157,9 @@ namespace UnityAddon
             }
         }
 
+        /// <summary>
+        /// Use PropertyFill for internal use
+        /// </summary>
         public object BuildUp(Type type, object existing, string name = null)
         {
             var buildUpMethod = GetType().GetMethods().Where(m => m.Name == nameof(BuildUp) && m.IsGenericMethod).Single();
