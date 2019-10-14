@@ -29,7 +29,7 @@ namespace UnityAddon.Bean
         // bad memory and performance
         public void RegisterBeanDefinition(AbstractBeanDefinition beanDefinition)
         {
-            foreach (var assignableType in GetAllAssignableTypes(beanDefinition.GetBeanType()))
+            foreach (var assignableType in GetAssignableTypeDefinitions(beanDefinition.GetBeanType()))
             {
                 if (!_container.ContainsKey(assignableType))
                 {
@@ -86,23 +86,6 @@ namespace UnityAddon.Bean
                 .Select(ent => ent.Value.Get()); // implementation type must have only 1 bean definition
         }
 
-        private IEnumerable<Type> GetAllAssignableTypes(Type type)
-        {
-            var types = new List<Type> { type };
-
-            types.AddRange(type.GetInterfaces());
-
-            while (type.BaseType != null && type.BaseType != typeof(object))
-            {
-                types.Add(type.BaseType);
-                type = type.BaseType;
-            }
-
-            return types
-                .Select(t => Type.GetType($"{t.Namespace}.{t.Name}, {t.Assembly.FullName}")) // reload type
-                .Select(t => t.IsGenericType ? t.GetGenericTypeDefinition() : t); // ensure all generic type are generic def
-        }
-
         public IEnumerable<AbstractBeanDefinition> GetAllBeanDefinitions(Type type)
         {
             if (!_container.ContainsKey(type))
@@ -113,5 +96,10 @@ namespace UnityAddon.Bean
             return _container[type].GetAll();
         }
 
+        private IEnumerable<Type> GetAssignableTypeDefinitions(Type type)
+        {
+            return TypeHierarchyScanner.GetAssignableTypes(type)
+                .Select(t => t.IsGenericType ? t.GetGenericTypeDefinition() : t); // ensure all generic type are generic def
+        }
     }
 }

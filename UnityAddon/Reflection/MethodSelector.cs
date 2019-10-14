@@ -9,9 +9,9 @@ namespace UnityAddon.Reflection
 {
     public static class MethodSelector
     {
-        public static IEnumerable<MethodInfo> GetAllMethodsByAttribute<TAttribute>(Type type) where TAttribute : Attribute
+        public static IEnumerable<MethodInfo> GetAllMethodsByAttribute<TAttribute>(Type type, bool isInherited = false) where TAttribute : Attribute
         {
-            return GetAllMethods(type).Where(m => m.HasAttribute<TAttribute>());
+            return GetAllMethods(type).Where(m => m.HasAttribute<TAttribute>(isInherited));
         }
 
         public static IEnumerable<MethodInfo> GetAllMethods(Type type)
