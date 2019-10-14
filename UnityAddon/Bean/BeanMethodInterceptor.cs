@@ -8,13 +8,14 @@ using UnityAddon.Reflection;
 
 namespace UnityAddon.Bean
 {
+    [Component]
     public class BeanMethodInterceptor : IInterceptor
     {
         [Dependency]
-        public IBeanDefinitionContainer DefContainer { get; set; } // should read only
+        public IBeanDefinitionContainer DefContainer { get; set; }
 
         [Dependency]
-        public IUnityContainer Container { get; set; } // should read only
+        public IContainerRegistry ContainerRegistry { get; set; }
 
         [Dependency]
         public IAsyncLocalFactory<Stack<IInvocation>> InvocationStackFactory { get; set; }
@@ -38,7 +39,7 @@ namespace UnityAddon.Bean
 
                 stack.Push(invocation);
 
-                invocation.ReturnValue = Container.Resolve(beanDef.GetBeanType(), factoryName);
+                invocation.ReturnValue = ContainerRegistry.Resolve(beanDef.GetBeanType(), factoryName);
 
                 stack.Pop();
 

@@ -22,17 +22,15 @@ namespace UnityAddon
         [Dependency]
         public IContainerRegistry ContainerRegistry { get; set; }
 
+        [Dependency]
+        public BeanMethodInterceptor BeanMethodInterceptor { get; set; }
+
         public object CreateConfiguration(Type type, ConstructorInfo constructor)
         {
             return ProxyGenerator.CreateClassProxy(
                 type,
                 ParameterFill.FillAllParamaters(constructor),
-                CreateBeanMethodInterceptor());
-        }
-
-        public BeanMethodInterceptor CreateBeanMethodInterceptor()
-        {
-            return ContainerRegistry.BuildUp(new BeanMethodInterceptor());
+                BeanMethodInterceptor);
         }
     }
 }
