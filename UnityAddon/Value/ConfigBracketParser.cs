@@ -18,7 +18,15 @@ namespace UnityAddon.Value
 
         private static readonly Regex DefaultValue = new Regex("^([^:\n]*)(:([^:\n]*))?$", RegexOptions.Compiled);
 
-        public ConfigBracketParser([OptionalDependency]IConfiguration defaultConfig)
+        [InjectionConstructor]
+        public ConfigBracketParser()
+        {
+            _defaultConfig = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", true, true)
+                .Build();
+        }
+
+        public ConfigBracketParser(IConfiguration defaultConfig)
         {
             _defaultConfig = defaultConfig;
         }
