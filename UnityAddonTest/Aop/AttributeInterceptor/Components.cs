@@ -8,12 +8,6 @@ using UnityAddon.Attributes;
 
 namespace UnityAddonTest.Aop.AttributeInterceptor
 {
-    [Component]
-    public class Counter
-    {
-        public int Count { get; set; } = 0;
-    }
-
     public interface IService
     {
         void ChainInterceptedServe();
@@ -23,12 +17,21 @@ namespace UnityAddonTest.Aop.AttributeInterceptor
 
     public interface ISetDep
     {
-        Counter CounterAccess();
     }
 
     public interface ISetDep2
     {
-        Counter CounterAccess2();
+    }
+
+    public interface IExtraService
+    {
+        void ServeExtra();
+    }
+
+    [Component]
+    public class Counter
+    {
+        public int Count { get; set; } = 0;
     }
 
     [Component]
@@ -61,21 +64,6 @@ namespace UnityAddonTest.Aop.AttributeInterceptor
             Counter.Count++;
             ExtraService.ServeExtra();
         }
-
-        public Counter CounterAccess()
-        {
-            return Counter;
-        }
-
-        public Counter CounterAccess2()
-        {
-            return Counter;
-        }
-    }
-
-    public interface IExtraService
-    {
-        void ServeExtra();
     }
 
     [Component]
@@ -89,15 +77,6 @@ namespace UnityAddonTest.Aop.AttributeInterceptor
         public void ServeExtra()
         {
             Counter.Count++;
-        }
-    }
-
-    [Component]
-    public class VirtualService
-    {
-        [Inc]
-        public void Serve()
-        {
         }
     }
 }

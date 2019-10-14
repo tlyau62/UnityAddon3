@@ -13,15 +13,13 @@ namespace UnityAddonTest.Aop.AttributeInterceptor
     [Trait("Aop", "AttributeInterceptor")]
     public class AttributeInterceptorTests
     {
-        private IUnityContainer _container;
         private IService _service;
+        private ApplicationContext _appContext;
 
         public AttributeInterceptorTests()
         {
-            _container = new UnityContainer();
-            var appContext = new ApplicationContext(_container, GetType().Namespace);
-
-            _service = _container.Resolve<IService>();
+            _appContext = new ApplicationContext(new UnityContainer(), GetType().Namespace);
+            _service = _appContext.Resolve<IService>();
         }
 
         [Fact]
@@ -29,7 +27,7 @@ namespace UnityAddonTest.Aop.AttributeInterceptor
         {
             _service.ChainInterceptedServe();
 
-            Assert.Equal(3, _container.Resolve<Counter>().Count);
+            Assert.Equal(3, _appContext.Resolve<Counter>().Count);
         }
 
         [Fact]
@@ -37,7 +35,7 @@ namespace UnityAddonTest.Aop.AttributeInterceptor
         {
             _service.CallMethodsInsideSameService();
 
-            Assert.Equal(3, _container.Resolve<Counter>().Count);
+            Assert.Equal(3, _appContext.Resolve<Counter>().Count);
         }
 
         [Fact]
@@ -45,22 +43,22 @@ namespace UnityAddonTest.Aop.AttributeInterceptor
         {
             _service.CallMethodsOutsideService();
 
-            Assert.Equal(8, _container.Resolve<Counter>().Count);
+            Assert.Equal(8, _appContext.Resolve<Counter>().Count);
         }
 
         [Fact]
         public void BeanInterceptionStrategy_SingletonProxy_ReturnCachedProxy()
         {
-            Assert.Same(_service, _container.Resolve<IService>());
+            Assert.Same(_service, _appContext.Resolve<IService>());
         }
 
         [Fact]
         public void BeanInterceptionStrategy_ProxyOfDifferentInterfaces_ProxyStateIsConsistent()
         {
-            var s1 = _container.Resolve<ISetDep>();
-            var s2 = _container.Resolve<ISetDep2>();
+            var s1 = _appContext.Resolve<ISetDep>();
+            var s2 = _appContext.Resolve<ISetDep2>();
 
-            Assert.Same(s1.CounterAccess(), s2.CounterAccess2());
+            Assert.Same(s1, s2);
         }
     }
 }

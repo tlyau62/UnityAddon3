@@ -15,23 +15,7 @@ namespace UnityAddonTest.Aop.AttributeInterceptor
     {
         public override IInterceptor CreateInterceptor(IContainerRegistry containerRegistry)
         {
-            return new IncInterceptor(containerRegistry.Resolve<Counter>());
-        }
-
-        private class IncInterceptor : IInterceptor
-        {
-            private Counter _counter;
-
-            public IncInterceptor(Counter counter)
-            {
-                _counter = counter;
-            }
-
-            public void Intercept(IInvocation invocation)
-            {
-                _counter.Count++;
-                invocation.Proceed();
-            }
+            return containerRegistry.Resolve<IncInterceptor>();
         }
     }
 
@@ -40,23 +24,7 @@ namespace UnityAddonTest.Aop.AttributeInterceptor
     {
         public override IInterceptor CreateInterceptor(IContainerRegistry containerRegistry)
         {
-            return new Mul2Interceptor(containerRegistry.Resolve<Counter>());
-        }
-
-        private class Mul2Interceptor : IInterceptor
-        {
-            private Counter _counter;
-
-            public Mul2Interceptor(Counter counter)
-            {
-                _counter = counter;
-            }
-
-            public void Intercept(IInvocation invocation)
-            {
-                _counter.Count *= 2;
-                invocation.Proceed();
-            }
+            return containerRegistry.Resolve<Mul2Interceptor>();
         }
     }
 }
