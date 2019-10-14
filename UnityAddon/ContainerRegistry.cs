@@ -33,6 +33,9 @@ namespace UnityAddon
         object BuildUp(Type type, object existing, string name = null);
     }
 
+    /// <summary>
+    /// Thread-safe
+    /// </summary>
     [Component]
     public class ContainerRegistry : IContainerRegistry
     {

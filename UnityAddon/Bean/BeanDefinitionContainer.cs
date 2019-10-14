@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityAddon.Reflection;
+using System.Collections.Concurrent;
 
 namespace UnityAddon.Bean
 {
@@ -17,10 +18,13 @@ namespace UnityAddon.Bean
         IEnumerable<AbstractBeanDefinition> FindBeanDefinitionByAttribute<TAttribute>() where TAttribute : Attribute;
     }
 
+    /// <summary>
+    /// Thread-safe
+    /// </summary>
     [Component]
     public class BeanDefinitionContainer : IBeanDefinitionContainer
     {
-        private IDictionary<Type, BeanDefinitionHolder> _container = new Dictionary<Type, BeanDefinitionHolder>();
+        private IDictionary<Type, BeanDefinitionHolder> _container = new ConcurrentDictionary<Type, BeanDefinitionHolder>();
 
         // bad memory and performance
         public void RegisterBeanDefinition(AbstractBeanDefinition beanDefinition)
