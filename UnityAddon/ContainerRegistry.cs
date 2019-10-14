@@ -59,7 +59,10 @@ namespace UnityAddon
 
         public void RegisterType(Type regType, Type mapType, string name, ITypeLifetimeManager lifetimeManager)
         {
-            Container.RegisterType(regType, mapType, name, lifetimeManager);
+            lock (Container)
+            {
+                Container.RegisterType(regType, mapType, name, lifetimeManager);
+            }
         }
 
         public bool IsRegistered<T>(string name = null)
@@ -134,12 +137,18 @@ namespace UnityAddon
 
         public void RegisterInstance<TInstanceType>(TInstanceType instance)
         {
-            Container.RegisterInstance(instance);
+            lock (Container)
+            {
+                Container.RegisterInstance(instance);
+            }
         }
 
         public T BuildUp<T>(T existing, string name = null)
         {
-            return Container.BuildUp(existing, name);
+            lock (Container)
+            {
+                return Container.BuildUp(existing, name);
+            }
         }
 
         public object BuildUp(Type type, object existing, string name = null)
