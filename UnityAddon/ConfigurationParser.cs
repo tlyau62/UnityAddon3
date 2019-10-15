@@ -25,7 +25,7 @@ namespace UnityAddon
 
         public void ParseScannedConfigurations()
         {
-            var configs = BeanDefinitionContainer.FindBeanDefinitionByAttribute<ConfigurationAttribute>().ToList();
+            var configs = BeanDefinitionContainer.FindBeanDefinitionsByAttribute<ConfigurationAttribute>().ToList();
 
             foreach (var config in configs)
             {
