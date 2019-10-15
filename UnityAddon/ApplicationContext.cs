@@ -39,6 +39,7 @@ namespace UnityAddon
             Init();
         }
 
+        // TODO: replace Container to ContainerRegistry
         protected void ConfigureGlobal()
         {
             Container.RegisterType<ApplicationContext>(new ContainerControlledLifetimeManager());
