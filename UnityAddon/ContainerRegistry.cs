@@ -36,7 +36,6 @@ namespace UnityAddon
     /// <summary>
     /// Thread-safe
     /// </summary>
-    [Component]
     public class ContainerRegistry : IContainerRegistry
     {
         [Dependency]
@@ -75,9 +74,6 @@ namespace UnityAddon
 
         public bool IsRegistered(Type type, string name)
         {
-            type = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
-            var isRegistered = Container.IsRegistered(type) || Container.IsRegistered(type, name);
-
             foreach (var reg in Container.Registrations)
             {
                 if (reg.RegisteredType == type && (name == null || reg.Name == name))
@@ -85,6 +81,8 @@ namespace UnityAddon
                     return true;
                 }
             }
+
+            type = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
 
             return BeanDefinitionContainer.HasBeanDefinition(type, name);
         }

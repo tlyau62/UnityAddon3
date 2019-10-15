@@ -35,13 +35,14 @@ namespace UnityAddon
             EntryAssembly = Assembly.GetCallingAssembly();
 
             ConfigureGlobal();
-            ConfigureBeanFactory();
             Refresh();
             Init();
         }
 
         protected void ConfigureGlobal()
         {
+            Container.RegisterType<ApplicationContext>(new ContainerControlledLifetimeManager());
+
             // app config
             Container.RegisterInstance("baseNamespaces", BaseNamespaces, new ContainerControlledLifetimeManager());
             Container.RegisterInstance("entryAssembly", EntryAssembly, new ContainerControlledLifetimeManager());
@@ -50,31 +51,23 @@ namespace UnityAddon
             Container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IAsyncLocalFactory<Stack<IInvocation>>, AsyncLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())));
             Container.RegisterType<IAsyncLocalFactory<Stack<ResolveStackEntry>>, AsyncLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())));
-        }
 
-        protected void ConfigureBeanFactory()
-        {
             // used by component scan
             Container.RegisterType<IContainerRegistry, ContainerRegistry>();
-
-            // config bean factory (BeanBuildStrategyExtension)
-            ComponentScanner = Container.Resolve<ComponentScanner>();
-            ComponentScanner.ScanComponents(GetType().Namespace);
+            Container.RegisterType<ProxyGenerator>();
 
             Container.AddNewExtension<BeanBuildStrategyExtension>();
-
-            Container.Resolve<IBeanDefinitionContainer>().Clear();
         }
 
         protected void Refresh()
         {
             ComponentScanner = Container.Resolve<ComponentScanner>(); // new scanner initialized by bean factory
             ComponentScanner.ScanComponents(GetType().Namespace); // override all previous registration on unity container, also cause them to be reconstructed even if singleton
+            Container.BuildUp(this);
         }
 
         protected void Init()
         {
-            Container.BuildUp(this, nameof(ApplicationContext));
             ComponentScanner.ScanComponents(BaseNamespaces);
             ConfigurationParser.ParseScannedConfigurations();
         }

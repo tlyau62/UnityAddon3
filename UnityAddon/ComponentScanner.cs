@@ -16,7 +16,6 @@ using Unity.Injection;
 namespace UnityAddon
 {
     [Component]
-    [Scope(ScopeType.Transient)]
     public class ComponentScanner
     {
         [Dependency]

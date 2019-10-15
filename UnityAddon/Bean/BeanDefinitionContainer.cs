@@ -20,9 +20,9 @@ namespace UnityAddon.Bean
     }
 
     /// <summary>
-    /// Thread-safe
+    /// Thread-safe.
+    /// Manually registered.
     /// </summary>
-    [Component]
     public class BeanDefinitionContainer : IBeanDefinitionContainer
     {
         private IDictionary<Type, BeanDefinitionHolder> _container = new ConcurrentDictionary<Type, BeanDefinitionHolder>();
