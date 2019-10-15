@@ -15,7 +15,7 @@ namespace UnityAddon.Bean
         AbstractBeanDefinition GetBeanDefinition(Type type, string name = null);
         IEnumerable<AbstractBeanDefinition> GetAllBeanDefinitions(Type type);
         void RegisterBeanDefinition(AbstractBeanDefinition beanDefinition);
-        IEnumerable<AbstractBeanDefinition> FindBeanDefinitionByAttribute<TAttribute>() where TAttribute : Attribute;
+        IEnumerable<AbstractBeanDefinition> FindBeanDefinitionsByAttribute<TAttribute>() where TAttribute : Attribute;
         void Clear();
     }
 
@@ -58,8 +58,6 @@ namespace UnityAddon.Bean
 
         /// <summary>
         /// Name starting with # is special name used in resolution.
-        /// It refers to the same bean definition that can be resolved with "name = null".
-        /// The only difference between starting with a '#' and without is the bean factory method.
         /// </summary>
         public AbstractBeanDefinition GetBeanDefinition(Type type, string name)
         {
@@ -70,7 +68,7 @@ namespace UnityAddon.Bean
 
             if (name != null && name.StartsWith("#"))
             {
-                name = null;
+                name = name.Substring(1);
             }
 
             return _container[type].Get(name);
@@ -80,7 +78,7 @@ namespace UnityAddon.Bean
         /// Find all implementation types by attribute
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<AbstractBeanDefinition> FindBeanDefinitionByAttribute<TAttribute>() where TAttribute : Attribute
+        public IEnumerable<AbstractBeanDefinition> FindBeanDefinitionsByAttribute<TAttribute>() where TAttribute : Attribute
         {
             return _container
                 .Where(ent => ent.Key.HasAttribute<TAttribute>()) // find all implementation types
