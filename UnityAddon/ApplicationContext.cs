@@ -57,18 +57,25 @@ namespace UnityAddon
             Container.RegisterType<IContainerRegistry, ContainerRegistry>();
             Container.RegisterType<ProxyGenerator>();
 
-            Container.AddNewExtension<BeanBuildStrategyExtension>();
+            Container.AddNewExtension<BeanBuildStrategyExtension>(); // fill up dep using unity container
         }
 
+        /// <summary>
+        /// Override all previous registration on unity container,
+        /// also cause them to be reconstructed even if singleton.
+        /// </summary>
         protected void Refresh()
         {
-            ComponentScanner = Container.Resolve<ComponentScanner>(); // new scanner initialized by bean factory
-            ComponentScanner.ScanComponents(GetType().Namespace); // override all previous registration on unity container, also cause them to be reconstructed even if singleton
-            Container.BuildUp(this);
+            ComponentScanner = Container.Resolve<ComponentScanner>();
+            ComponentScanner.ScanComponents(GetType().Namespace);
         }
 
+        /// <summary>
+        /// All internal beans are registered
+        /// </summary>
         protected void Init()
         {
+            Container.BuildUp(this);
             ComponentScanner.ScanComponents(BaseNamespaces);
             ConfigurationParser.ParseScannedConfigurations();
         }

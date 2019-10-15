@@ -19,7 +19,7 @@ namespace UnityAddon
         public IBeanDefinitionContainer BeanDefinitionContainer { get; set; }
 
         [Dependency]
-        public BeanFactory BeanFactory { get; set; }
+        public BeanDefinitionRegistry BeanDefinitionRegistry { get; set; }
 
         private ISet<Type> _scannedConfigs = new HashSet<Type>();
 
@@ -42,10 +42,7 @@ namespace UnityAddon
 
             foreach (var beanMethod in MethodSelector.GetAllMethodsByAttribute<BeanAttribute>(type))
             {
-                var methodBeanDef = new MethodBeanDefinition(beanMethod);
-
-                BeanDefinitionContainer.RegisterBeanDefinition(methodBeanDef);
-                BeanFactory.CreateFactory(methodBeanDef);
+                BeanDefinitionRegistry.Register(new MethodBeanDefinition(beanMethod));
             }
 
             _scannedConfigs.Add(type);

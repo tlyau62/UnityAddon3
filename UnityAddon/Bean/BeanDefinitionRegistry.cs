@@ -8,7 +8,6 @@ using UnityAddon.Attributes;
 namespace UnityAddon.Bean
 {
     [Component]
-    [Scope(ScopeType.Transient)]
     public class BeanDefinitionRegistry
     {
         [Dependency]

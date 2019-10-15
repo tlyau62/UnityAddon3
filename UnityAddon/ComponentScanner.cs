@@ -19,13 +19,7 @@ namespace UnityAddon
     public class ComponentScanner
     {
         [Dependency]
-        public IUnityContainer Container { get; set; }
-
-        [Dependency]
-        public IBeanDefinitionContainer BeanDefinitionContainer { get; set; }
-
-        [Dependency]
-        public BeanFactory BeanFactory { get; set; }
+        public BeanDefinitionRegistry BeanDefinitionRegistry { get; set; }
 
         [Dependency("entryAssembly")]
         public Assembly EntryAssembly { get; set; }
@@ -50,10 +44,7 @@ namespace UnityAddon
 
             foreach (var component in components)
             {
-                var beanDef = new TypeBeanDefinition(component);
-
-                BeanDefinitionContainer.RegisterBeanDefinition(beanDef);
-                BeanFactory.CreateFactory(beanDef);
+                BeanDefinitionRegistry.Register(new TypeBeanDefinition(component));
             }
         }
     }
