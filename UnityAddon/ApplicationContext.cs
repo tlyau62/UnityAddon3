@@ -46,12 +46,7 @@ namespace UnityAddon
             Container.RegisterInstance("baseNamespaces", BaseNamespaces, new ContainerControlledLifetimeManager());
             Container.RegisterInstance("entryAssembly", EntryAssembly, new ContainerControlledLifetimeManager());
 
-            // must singleton, else init twice
-            Container.RegisterType<ApplicationContext>(new ContainerControlledLifetimeManager());
-
             // must singleton, have internal state
-            Container.RegisterType<PropertyFill>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<ParameterFill>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IAsyncLocalFactory<Stack<IInvocation>>, AsyncLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())));
             Container.RegisterType<IAsyncLocalFactory<Stack<ResolveStackEntry>>, AsyncLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())));
@@ -68,7 +63,7 @@ namespace UnityAddon
 
             Container.AddNewExtension<BeanBuildStrategyExtension>();
 
-            //Container.Resolve<IBeanDefinitionContainer>().Clear();
+            Container.Resolve<IBeanDefinitionContainer>().Clear();
         }
 
         protected void Refresh()
@@ -79,7 +74,7 @@ namespace UnityAddon
 
         protected void Init()
         {
-            Container.BuildUp(this);
+            Container.BuildUp(this, nameof(ApplicationContext));
             ComponentScanner.ScanComponents(BaseNamespaces);
             ConfigurationParser.ParseScannedConfigurations();
         }
