@@ -107,6 +107,9 @@ namespace UnityAddon
             return ResolveAll(typeof(T)).Cast<T>().ToArray();
         }
 
+        /// <summary>
+        /// By unity default, bean without name is not included in ResolveAll.
+        /// </summary>
         public object[] ResolveAll(Type type)
         {
             List<object> beans = new List<object>();

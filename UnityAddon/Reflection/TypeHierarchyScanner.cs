@@ -34,7 +34,22 @@ namespace UnityAddon.Reflection
         /// </summary>
         public static IEnumerable<Type> LoadAllTypes(IEnumerable<Type> types)
         {
-            return types.Select(t => Type.GetType($"{t.Namespace}.{t.Name}, {t.Assembly.FullName}"));
+            return types.Select(t =>
+            {
+                var loadedType = LoadType(t);
+
+                if (t.IsGenericType)
+                {
+                    loadedType = loadedType.MakeGenericType(t.GenericTypeArguments.Select(ta => LoadType(ta)).ToArray());
+                }
+
+                return loadedType;
+            });
+        }
+
+        public static Type LoadType(Type type)
+        {
+            return Type.GetType($"{type.Namespace}.{type.Name}, {type.Assembly.FullName}");
         }
     }
 }
