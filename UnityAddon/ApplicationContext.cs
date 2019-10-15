@@ -28,6 +28,9 @@ namespace UnityAddon
         [Dependency("entryAssembly")]
         public Assembly EntryAssembly { get; set; }
 
+        [Dependency]
+        public InterceptorContainer InterceptorContainer { get; set; }
+
         public ApplicationContext(IUnityContainer container, params string[] baseNamespaces)
         {
             Container = container;
@@ -57,6 +60,8 @@ namespace UnityAddon
             Container.RegisterType<IContainerRegistry, ContainerRegistry>();
             Container.RegisterType<ProxyGenerator>();
 
+            Container.RegisterType<InterceptorContainer>(new ContainerControlledLifetimeManager());
+
             Container.AddNewExtension<BeanBuildStrategyExtension>(); // fill up dep using unity container
         }
 
@@ -78,6 +83,7 @@ namespace UnityAddon
             Container.BuildUp(this);
             ComponentScanner.ScanComponents(BaseNamespaces);
             ConfigurationParser.ParseScannedConfigurations();
+            InterceptorContainer.Build();
         }
 
     }

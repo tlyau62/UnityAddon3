@@ -11,20 +11,12 @@ using UnityAddon.Attributes;
 namespace UnityAddonTest.Aop.AttributeInterceptor
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class IncAttribute : AopInterceptorAttribute
+    public class IncAttribute : Attribute
     {
-        public override IInterceptor CreateInterceptor(IContainerRegistry containerRegistry)
-        {
-            return containerRegistry.Resolve<IncInterceptor>();
-        }
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class Mul2Attribute : AopInterceptorAttribute
+    public class Mul2Attribute : Attribute
     {
-        public override IInterceptor CreateInterceptor(IContainerRegistry containerRegistry)
-        {
-            return containerRegistry.Resolve<Mul2Interceptor>();
-        }
     }
 }

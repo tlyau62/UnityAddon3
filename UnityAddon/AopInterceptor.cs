@@ -20,6 +20,9 @@ namespace UnityAddon
         [Dependency]
         public InterfaceProxyFactory InterfaceProxyFactory { get; set; }
 
+        [Dependency]
+        public InterceptorContainer InterceptorContainer { get; set; }
+
         public void Intercept(IInvocation invocation)
         {
             object newProxy;
@@ -49,8 +52,18 @@ namespace UnityAddon
 
         private IEnumerable<IInterceptor> GetMethodInterceptors(MethodInfo method)
         {
-            return AttributeExt.GetAllAttributes<AopInterceptorAttribute>(method, true)
-                .Select(attr => attr.CreateInterceptor(ContainerRegistry));
+            var interceptors = new List<IInterceptor>();
+            var methodInterceptorMap = InterceptorContainer.GetMethodInterceptorsDictionary();
+
+            foreach (var attr in method.GetCustomAttributes())
+            {
+                if (methodInterceptorMap.ContainsKey(attr.GetType()))
+                {
+                    interceptors.AddRange(methodInterceptorMap[attr.GetType()]);
+                }
+            }
+
+            return interceptors;
         }
 
         /// <summary>
