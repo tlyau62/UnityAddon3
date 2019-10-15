@@ -16,6 +16,7 @@ namespace UnityAddon.Bean
         IEnumerable<AbstractBeanDefinition> GetAllBeanDefinitions(Type type);
         void RegisterBeanDefinition(AbstractBeanDefinition beanDefinition);
         IEnumerable<AbstractBeanDefinition> FindBeanDefinitionByAttribute<TAttribute>() where TAttribute : Attribute;
+        void Clear();
     }
 
     /// <summary>
@@ -100,6 +101,11 @@ namespace UnityAddon.Bean
         {
             return TypeHierarchyScanner.GetAssignableTypes(type)
                 .Select(t => t.IsGenericType ? t.GetGenericTypeDefinition() : t); // ensure all generic type are generic def
+        }
+
+        public void Clear()
+        {
+            _container = new ConcurrentDictionary<Type, BeanDefinitionHolder>();
         }
     }
 }

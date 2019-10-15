@@ -18,6 +18,10 @@ namespace UnityAddon.Value
 
         private static readonly Regex DefaultValue = new Regex("^([^:\n]*)(:([^:\n]*))?$", RegexOptions.Compiled);
 
+        private IConfiguration _config =>
+            ContainerRegistry != null && ContainerRegistry.IsRegistered<IConfiguration>() ?
+            ContainerRegistry.Resolve<IConfiguration>() : _defaultConfig;
+
         [InjectionConstructor]
         public ConfigBracketParser()
         {
@@ -38,12 +42,11 @@ namespace UnityAddon.Value
                 throw new FormatException();
             }
 
-            var config = ContainerRegistry?.Resolve<IConfiguration>() ?? _defaultConfig;
             var match = DefaultValue.Matches(intermediateResult);
             var propVal = match[0].Groups[1].Value;
             var hasDefaultValue = match[0].Groups[2].Value != "";
             var defaultVal = match[0].Groups[3].Value;
-            var configVal = config[propVal.Replace('.', ':')];
+            var configVal = _config[propVal.Replace('.', ':')];
 
             if (configVal == null && !hasDefaultValue)
             {
