@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Unity;
 using UnityAddon;
+using UnityAddon.Aop;
 using UnityAddon.Attributes;
 
 namespace UnityAddonTest.Aop.AttributeInterceptor

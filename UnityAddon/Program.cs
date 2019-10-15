@@ -10,6 +10,7 @@ using System.Linq;
 using UnityAddon.Reflection;
 using System.Reflection;
 using UnityAddon;
+using UnityAddon.Aop;
 
 namespace Generic
 {
@@ -67,7 +68,6 @@ namespace UnityAddon
 
                 }
             }
-            var p = 1;
 
 
             //var config = appContext.Resolve<ValueProvider>().Parse(typeof(string), "section0.key0");

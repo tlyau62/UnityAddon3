@@ -9,7 +9,7 @@ using UnityAddon.Attributes;
 using UnityAddon.BeanBuildStrategies;
 using UnityAddon.Reflection;
 
-namespace UnityAddon
+namespace UnityAddon.Aop
 {
     [Component]
     public class AopInterceptor : IInterceptor

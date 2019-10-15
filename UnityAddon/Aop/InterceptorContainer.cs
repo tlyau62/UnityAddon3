@@ -9,7 +9,7 @@ using UnityAddon.Attributes;
 using UnityAddon.Bean;
 using UnityAddon.Reflection;
 
-namespace UnityAddon
+namespace UnityAddon.Aop
 {
     public class InterceptorContainer
     {

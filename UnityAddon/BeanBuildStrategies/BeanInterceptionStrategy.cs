@@ -7,6 +7,7 @@ using System.Text;
 using Unity;
 using Unity.Builder;
 using Unity.Strategies;
+using UnityAddon.Aop;
 using UnityAddon.Attributes;
 using UnityAddon.Bean;
 using UnityAddon.Exceptions;
