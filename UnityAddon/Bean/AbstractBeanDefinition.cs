@@ -22,7 +22,7 @@ namespace UnityAddon.Bean
 
         public abstract Type GetBeanType();
 
-        public virtual Type GetBeanScope()
+        public Type GetBeanScope()
         {
             var scopeAttr = _member.GetAttribute<ScopeAttribute>();
 
@@ -31,7 +31,7 @@ namespace UnityAddon.Bean
 
         public abstract string GetBeanName();
 
-        public virtual string[] GetBeanQualifiers()
+        public string[] GetBeanQualifiers()
         {
             var qAttr = _member.GetAttribute<QualifierAttribute>();
             var gAttr = _member.GetAttribute<GuidAttribute>();
@@ -41,6 +41,7 @@ namespace UnityAddon.Bean
             {
                 qualifiers.AddRange(qAttr.Values);
             }
+
             if (gAttr != null)
             {
                 qualifiers.Add(gAttr.Value);
@@ -50,6 +51,11 @@ namespace UnityAddon.Bean
         }
 
         public abstract MethodBase GetConstructor();
+
+        public string[] GetBeanProfiles()
+        {
+            return _member.GetAttribute<ProfileAttribute>()?.Values ?? new string[0];
+        }
     }
 
     public class TypeBeanDefinition : AbstractBeanDefinition
