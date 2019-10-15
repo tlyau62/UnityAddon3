@@ -28,20 +28,22 @@ namespace UnityAddonTest.Dependency.Bean.ProfileBean
     [Trait("Bean", "ProfileBean")]
     public class ProfileBeanTests
     {
-        [Fact]
-        public void BuildStrategy_DependencyOnProfileBean_BeanInjected()
+        [Theory]
+        [InlineData("prod", typeof(ProdService))]
+        [InlineData("dev", typeof(DevService))]
+        public void BuildStrategy_DependencyOnProfileBean_BeanInjected(string activeProfile, Type resolveType)
         {
             var container = new UnityContainer();
             container.RegisterInstance<IConfiguration>(new ConfigurationBuilder()
                 .AddInMemoryCollection(new Dictionary<string, string>
                 {
-                    {"profiles:active", "prod"},
+                    {"profiles:active", activeProfile},
                 })
                 .Build());
 
             var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            Assert.IsType<ProdService>(appContext.Resolve<IService>());
+            Assert.IsType(resolveType, appContext.Resolve<IService>());
         }
     }
 }
