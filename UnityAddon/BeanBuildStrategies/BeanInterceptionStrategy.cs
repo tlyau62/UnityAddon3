@@ -19,7 +19,7 @@ namespace UnityAddon.BeanBuildStrategies
     public class BeanInterceptionStrategy : BuilderStrategy
     {
         [Dependency]
-        public AopInterceptor AopInterceptor { get; set; }
+        public AopMethodBootstrapInterceptor AopInterceptor { get; set; }
 
         [Dependency]
         public InterfaceProxyFactory InterfaceProxyFactory { get; set; }

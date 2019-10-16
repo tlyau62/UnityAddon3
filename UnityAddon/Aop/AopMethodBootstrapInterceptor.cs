@@ -12,7 +12,7 @@ using UnityAddon.Reflection;
 namespace UnityAddon.Aop
 {
     [Component]
-    public class AopInterceptor : IInterceptor
+    public class AopMethodBootstrapInterceptor : IInterceptor
     {
         [Dependency]
         public IContainerRegistry ContainerRegistry { get; set; }
@@ -82,7 +82,7 @@ namespace UnityAddon.Aop
                 {
                     extracts.Add(interceptor);
                 }
-                else if (interceptor.GetType() == typeof(AopInterceptor))
+                else if (interceptor.GetType() == typeof(AopMethodBootstrapInterceptor))
                 {
                     found = true;
                 }
