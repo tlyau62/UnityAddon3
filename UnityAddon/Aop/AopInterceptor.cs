@@ -53,7 +53,7 @@ namespace UnityAddon.Aop
         private IEnumerable<IInterceptor> GetMethodInterceptors(MethodInfo method)
         {
             var interceptors = new List<IInterceptor>();
-            var methodInterceptorMap = InterceptorContainer.GetMethodInterceptorsDictionary();
+            var methodInterceptorMap = InterceptorContainer.FindInterceptors(AttributeTargets.Method);
 
             foreach (var attr in method.GetCustomAttributes())
             {

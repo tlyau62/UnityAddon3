@@ -37,7 +37,7 @@ namespace UnityAddon.BeanBuildStrategies
         {
             var interceptors = new List<IInterceptor>();
 
-            var methodInterceptorsMap = InterceptorContainer.GetMethodInterceptorsDictionary();
+            var methodInterceptorsMap = InterceptorContainer.FindInterceptors(AttributeTargets.Method);
             var a = MethodSelector.GetAllMethods(context.Type)
                 .SelectMany(m => m.GetCustomAttributes());
             var isMethodAopNeeded = MethodSelector.GetAllMethods(context.Type)
@@ -52,7 +52,7 @@ namespace UnityAddon.BeanBuildStrategies
             }
 
             // class interceptor
-            var classInterceptorsMap = InterceptorContainer.GetClassInterceptorsDictionary();
+            var classInterceptorsMap = InterceptorContainer.FindInterceptors(AttributeTargets.Class);
 
             foreach (var attribute in context.Type.GetCustomAttributes())
             {

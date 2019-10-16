@@ -19,13 +19,16 @@ namespace UnityAddon.Aop
         [Dependency]
         public ContainerRegistry ContainerRegistry { get; set; }
 
-        public IDictionary<Type, IList<IInterceptor>> InterceptorMap { get; set; } = new Dictionary<Type, IList<IInterceptor>>();
+        private IDictionary<Type, IList<IInterceptor>> _interceptorMap = new Dictionary<Type, IList<IInterceptor>>();
 
-        private MethodInfo _interceptorFactoryMethod;
+        private bool _isInitialized = false;
 
+        /// <summary>
+        /// Allow to build once only
+        /// </summary>
         public void Build()
         {
-            if (!BeanDefinitionContainer.HasBeanDefinition(typeof(IAttributeInterceptor<>)))
+            if (!BeanDefinitionContainer.HasBeanDefinition(typeof(IAttributeInterceptor<>)) || _isInitialized)
             {
                 return;
             }
@@ -35,37 +38,31 @@ namespace UnityAddon.Aop
                 var interceptorAttribute = GetAttributeType(beanDef.GetBeanType());
                 IInterceptor interceptor = (IInterceptor)ContainerRegistry.Resolve(beanDef.GetBeanType(), beanDef.GetBeanName());
 
-                if (InterceptorMap.ContainsKey(interceptorAttribute))
+                if (_interceptorMap.ContainsKey(interceptorAttribute))
                 {
-                    InterceptorMap[interceptorAttribute].Add(interceptor);
+                    _interceptorMap[interceptorAttribute].Add(interceptor);
                 }
                 else
                 {
-                    InterceptorMap[interceptorAttribute] = new List<IInterceptor>() { interceptor };
+                    _interceptorMap[interceptorAttribute] = new List<IInterceptor>() { interceptor };
                 }
             }
+
+            _isInitialized = true;
         }
 
-        public IDictionary<Type, IList<IInterceptor>> GetClassInterceptorsDictionary()
+        /// <summary>
+        /// Use AttributeTargets.All to get all interceptors
+        /// </summary>
+        public IDictionary<Type, IList<IInterceptor>> FindInterceptors(AttributeTargets interceptorType)
         {
-            return InterceptorMap.Where(entry => IsClassInterceptor(entry.Key.GetAttribute<AttributeUsageAttribute>().ValidOn))
+            return _interceptorMap.Where(entry => IsAttributeTargetMatch(interceptorType, entry.Key.GetAttribute<AttributeUsageAttribute>().ValidOn))
                 .ToDictionary(dict => dict.Key, dict => dict.Value);
         }
 
-        public IDictionary<Type, IList<IInterceptor>> GetMethodInterceptorsDictionary()
+        private bool IsAttributeTargetMatch(AttributeTargets requiredInterceptorType, AttributeTargets actualInterceptorType)
         {
-            return InterceptorMap.Where(entry => IsMethodInterceptor(entry.Key.GetAttribute<AttributeUsageAttribute>().ValidOn))
-                .ToDictionary(dict => dict.Key, dict => dict.Value);
-        }
-
-        private bool IsMethodInterceptor(AttributeTargets attributeTargets)
-        {
-            return (attributeTargets & AttributeTargets.Method) == AttributeTargets.Method;
-        }
-
-        private bool IsClassInterceptor(AttributeTargets attributeTargets)
-        {
-            return (attributeTargets & AttributeTargets.Method) == AttributeTargets.Class;
+            return (actualInterceptorType & requiredInterceptorType) == requiredInterceptorType;
         }
 
         private Type GetAttributeType(Type factoryImpl)
