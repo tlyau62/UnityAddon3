@@ -31,30 +31,28 @@ namespace UnityAddon.BeanBuildStrategies
         public ContainerRegistry ContainerRegistry { get; set; }
 
         [Dependency]
-        public InterceptorContainer InterceptorContainer { get; set; }
+        public AopInterceptorContainer AopInterceptorContainer { get; set; }
 
         public override void PostBuildUp(ref BuilderContext context)
         {
+            if (!AopInterceptorContainer.IsInitialized)
+            {
+                base.PostBuildUp(ref context);
+                return;
+            }
+
             var interceptors = new List<IInterceptor>();
 
-            var methodInterceptorsMap = InterceptorContainer.FindInterceptors(AttributeTargets.Method);
-            var a = MethodSelector.GetAllMethods(context.Type)
-                .SelectMany(m => m.GetCustomAttributes());
-            var isMethodAopNeeded = MethodSelector.GetAllMethods(context.Type)
-                .SelectMany(m => m.GetCustomAttributes())
-                .Select(attr => attr.GetType())
-                .Any(attrType => methodInterceptorsMap.ContainsKey(attrType));
-
             // method interceptor
-            if (isMethodAopNeeded)
+            if (IsMethodBootstrapInterceptorNeeded(context.Type))
             {
                 interceptors.Add(AopInterceptor);
             }
 
             // class interceptor
-            var classInterceptorsMap = InterceptorContainer.FindInterceptors(AttributeTargets.Class);
+            var classInterceptorsMap = AopInterceptorContainer.FindInterceptors(AttributeTargets.Class);
 
-            foreach (var attribute in context.Type.GetCustomAttributes())
+            foreach (var attribute in context.Type.GetCustomAttributes(false))
             {
                 if (classInterceptorsMap.ContainsKey(attribute.GetType()))
                 {
@@ -70,5 +68,14 @@ namespace UnityAddon.BeanBuildStrategies
             base.PostBuildUp(ref context);
         }
 
+        private bool IsMethodBootstrapInterceptorNeeded(Type type)
+        {
+            var methodInterceptorsMap = AopInterceptorContainer.FindInterceptors(AttributeTargets.Method);
+
+            return MethodSelector.GetAllMethods(type)
+                .SelectMany(m => m.GetCustomAttributes())
+                .Select(attr => attr.GetType())
+                .Any(attrType => methodInterceptorsMap.ContainsKey(attrType));
+        }
     }
 }

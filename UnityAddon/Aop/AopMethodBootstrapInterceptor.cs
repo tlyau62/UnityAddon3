@@ -21,7 +21,7 @@ namespace UnityAddon.Aop
         public InterfaceProxyFactory InterfaceProxyFactory { get; set; }
 
         [Dependency]
-        public InterceptorContainer InterceptorContainer { get; set; }
+        public AopInterceptorContainer InterceptorContainer { get; set; }
 
         public void Intercept(IInvocation invocation)
         {

@@ -11,7 +11,7 @@ using UnityAddon.Reflection;
 
 namespace UnityAddon.Aop
 {
-    public class InterceptorContainer
+    public class AopInterceptorContainer
     {
         [Dependency]
         public IBeanDefinitionContainer BeanDefinitionContainer { get; set; }
@@ -21,10 +21,11 @@ namespace UnityAddon.Aop
 
         private IDictionary<Type, IList<IInterceptor>> _interceptorMap = new Dictionary<Type, IList<IInterceptor>>();
 
-        private bool _isInitialized = false;
+        public bool IsInitialized { get; set; } = false;
 
         /// <summary>
-        /// Allow to build once only
+        /// Setup Aop for the application.
+        /// Allow to build once only.
         /// </summary>
         public void Build()
         {
@@ -33,9 +34,9 @@ namespace UnityAddon.Aop
                 return;
             }
 
-            if (_isInitialized)
+            if (IsInitialized)
             {
-                throw new InvalidOperationException("Already initialized");
+                throw new InvalidOperationException("Already initialized.");
             }
 
             foreach (var beanDef in BeanDefinitionContainer.GetAllBeanDefinitions(typeof(IAttributeInterceptor<>)))
@@ -53,7 +54,7 @@ namespace UnityAddon.Aop
                 }
             }
 
-            _isInitialized = true;
+            IsInitialized = true;
         }
 
         /// <summary>

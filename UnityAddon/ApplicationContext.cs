@@ -30,7 +30,7 @@ namespace UnityAddon
         public Assembly EntryAssembly { get; set; }
 
         [Dependency]
-        public InterceptorContainer InterceptorContainer { get; set; }
+        public AopInterceptorContainer InterceptorContainer { get; set; }
 
         public ApplicationContext(IUnityContainer container, params string[] baseNamespaces)
         {
@@ -61,7 +61,7 @@ namespace UnityAddon
             Container.RegisterType<IContainerRegistry, ContainerRegistry>();
             Container.RegisterType<ProxyGenerator>();
 
-            Container.RegisterType<InterceptorContainer>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<AopInterceptorContainer>(new ContainerControlledLifetimeManager());
 
             Container.AddNewExtension<BeanBuildStrategyExtension>(); // fill up dep using unity container
         }
