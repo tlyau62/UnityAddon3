@@ -16,6 +16,7 @@
     <Compile Include="Transaction\RequireDbContextAttribute.cs" />
     <Compile Include="Transaction\RequireDbContextHandler.cs" />
     <Compile Include="Transaction\RequireDbContextInterceptor.cs" />
+    <Compile Include="Transaction\RepositoryInterceptor.cs" />
   </ItemGroup>
 
   <ItemGroup>

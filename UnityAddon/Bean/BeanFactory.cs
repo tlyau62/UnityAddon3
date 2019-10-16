@@ -41,7 +41,16 @@ namespace UnityAddon.Bean
             var ctor = (ConstructorInfo)typeBeanDefinition.GetConstructor();
             var beanName = typeBeanDefinition.GetBeanName();
 
-            if (type.HasAttribute<ComponentAttribute>())
+            if (type.HasAttribute<ConfigurationAttribute>())
+            {
+                Container.RegisterFactory(type, beanName, (c, t, n) =>
+                {
+                    var obj = ConfigurationFactory.CreateConfiguration(type, ctor);
+
+                    return PropertyFill.FillAllProperties(obj);
+                }, scope);
+            }
+            else if (type.HasAttribute<ComponentAttribute>(true))
             {
                 Container.RegisterFactory(type, beanName, (c, t, n) =>
                 {
@@ -49,15 +58,6 @@ namespace UnityAddon.Bean
 
                     return PropertyFill.FillAllProperties(obj);
                 }, scope);
-            }
-            else if (type.HasAttribute<ConfigurationAttribute>())
-            {
-                Container.RegisterFactory(type, beanName, (c, t, n) =>
-                 {
-                     var obj = ConfigurationFactory.CreateConfiguration(type, ctor);
-
-                     return PropertyFill.FillAllProperties(obj);
-                 }, scope);
             }
             else
             {
