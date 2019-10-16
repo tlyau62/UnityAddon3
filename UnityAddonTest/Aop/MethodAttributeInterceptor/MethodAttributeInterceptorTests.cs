@@ -8,15 +8,15 @@ using UnityAddon;
 using Xunit;
 using Assert = Xunit.Assert;
 
-namespace UnityAddonTest.Aop.AttributeInterceptor
+namespace UnityAddonTest.Aop.MethodAttributeInterceptor
 {
-    [Trait("Aop", "AttributeInterceptor")]
-    public class AttributeInterceptorTests
+    [Trait("Aop", "MethodAttributeInterceptor")]
+    public class MethodAttributeInterceptorTests
     {
         private IService _service;
         private ApplicationContext _appContext;
 
-        public AttributeInterceptorTests()
+        public MethodAttributeInterceptorTests()
         {
             _appContext = new ApplicationContext(new UnityContainer(), GetType().Namespace);
             _service = _appContext.Resolve<IService>();

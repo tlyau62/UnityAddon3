@@ -9,16 +9,19 @@ using UnityAddon.Attributes;
 using UnityAddon.BeanBuildStrategies;
 using UnityAddon.Reflection;
 
-namespace UnityAddon
+namespace UnityAddon.Aop
 {
     [Component]
-    public class AopInterceptor : IInterceptor
+    public class AopMethodBootstrapInterceptor : IInterceptor
     {
         [Dependency]
         public IContainerRegistry ContainerRegistry { get; set; }
 
         [Dependency]
         public InterfaceProxyFactory InterfaceProxyFactory { get; set; }
+
+        [Dependency]
+        public AopInterceptorContainer InterceptorContainer { get; set; }
 
         public void Intercept(IInvocation invocation)
         {
@@ -49,8 +52,18 @@ namespace UnityAddon
 
         private IEnumerable<IInterceptor> GetMethodInterceptors(MethodInfo method)
         {
-            return AttributeExt.GetAllAttributes<AopInterceptorAttribute>(method, true)
-                .Select(attr => attr.CreateInterceptor(ContainerRegistry));
+            var interceptors = new List<IInterceptor>();
+            var methodInterceptorMap = InterceptorContainer.FindInterceptors(AttributeTargets.Method);
+
+            foreach (var attr in method.GetCustomAttributes())
+            {
+                if (methodInterceptorMap.ContainsKey(attr.GetType()))
+                {
+                    interceptors.AddRange(methodInterceptorMap[attr.GetType()]);
+                }
+            }
+
+            return interceptors;
         }
 
         /// <summary>
@@ -69,7 +82,7 @@ namespace UnityAddon
                 {
                     extracts.Add(interceptor);
                 }
-                else if (interceptor.GetType() == typeof(AopInterceptor))
+                else if (interceptor.GetType() == typeof(AopMethodBootstrapInterceptor))
                 {
                     found = true;
                 }

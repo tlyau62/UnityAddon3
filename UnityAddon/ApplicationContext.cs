@@ -11,6 +11,8 @@ using System.Reflection;
 using System.Linq;
 using UnityAddon.Reflection;
 using UnityAddon.Value;
+using UnityAddon.Aop;
+using UnityAddon.Thread;
 
 namespace UnityAddon
 {
@@ -27,6 +29,9 @@ namespace UnityAddon
 
         [Dependency("entryAssembly")]
         public Assembly EntryAssembly { get; set; }
+
+        [Dependency]
+        public AopInterceptorContainer InterceptorContainer { get; set; }
 
         public ApplicationContext(IUnityContainer container, params string[] baseNamespaces)
         {
@@ -57,6 +62,8 @@ namespace UnityAddon
             Container.RegisterType<IContainerRegistry, ContainerRegistry>();
             Container.RegisterType<ProxyGenerator>();
 
+            Container.RegisterType<AopInterceptorContainer>(new ContainerControlledLifetimeManager());
+
             Container.AddNewExtension<BeanBuildStrategyExtension>(); // fill up dep using unity container
         }
 
@@ -78,6 +85,7 @@ namespace UnityAddon
             Container.BuildUp(this);
             ComponentScanner.ScanComponents(BaseNamespaces);
             ConfigurationParser.ParseScannedConfigurations();
+            InterceptorContainer.Build();
         }
 
     }

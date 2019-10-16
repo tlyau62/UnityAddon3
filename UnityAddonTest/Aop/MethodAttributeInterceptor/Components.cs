@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Unity;
 using UnityAddon.Attributes;
 
-namespace UnityAddonTest.Aop.AttributeInterceptor
+namespace UnityAddonTest.Aop.MethodAttributeInterceptor
 {
     public interface IService
     {
@@ -43,22 +43,22 @@ namespace UnityAddonTest.Aop.AttributeInterceptor
         [Dependency]
         public IExtraService ExtraService { get; set; }
 
-        [Inc]
-        [Mul2]
+        [Inc(1)]
+        [Mul(2)]
         public void ChainInterceptedServe()
         {
             Counter.Count++;
         }
 
-        [Inc]
+        [Inc(1)]
         public void CallMethodsInsideSameService()
         {
             Counter.Count++;
             ChainInterceptedServe();
         }
 
-        [Inc]
-        [Mul2]
+        [Inc(1)]
+        [Mul(2)]
         public void CallMethodsOutsideService()
         {
             Counter.Count++;
@@ -72,8 +72,8 @@ namespace UnityAddonTest.Aop.AttributeInterceptor
         [Dependency]
         public Counter Counter { get; set; }
 
-        [Mul2]
-        [Inc]
+        [Mul(2)]
+        [Inc(1)]
         public void ServeExtra()
         {
             Counter.Count++;

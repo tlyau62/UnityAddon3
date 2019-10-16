@@ -38,7 +38,7 @@ namespace UnityAddon.Reflection
             {
                 var loadedType = LoadType(t);
 
-                if (t.IsGenericType)
+                if (t.IsGenericType && !t.ContainsGenericParameters)
                 {
                     loadedType = loadedType.MakeGenericType(t.GenericTypeArguments.Select(ta => LoadType(ta)).ToArray());
                 }
