@@ -7,7 +7,7 @@ using UnityAddon;
 using UnityAddon.Aop;
 using UnityAddon.Attributes;
 
-namespace UnityAddonTest.Aop.AttributeInterceptor
+namespace UnityAddonTest.Aop.MethodAttributeInterceptor
 {
     [Component]
     public class IncInterceptor : IAttributeInterceptor<IncAttribute>

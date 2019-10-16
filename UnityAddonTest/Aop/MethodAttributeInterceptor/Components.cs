@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Unity;
 using UnityAddon.Attributes;
 
-namespace UnityAddonTest.Aop.AttributeInterceptor
+namespace UnityAddonTest.Aop.MethodAttributeInterceptor
 {
     public interface IService
     {

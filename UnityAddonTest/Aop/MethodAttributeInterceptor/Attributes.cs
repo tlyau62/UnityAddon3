@@ -8,7 +8,7 @@ using Unity;
 using UnityAddon;
 using UnityAddon.Attributes;
 
-namespace UnityAddonTest.Aop.AttributeInterceptor
+namespace UnityAddonTest.Aop.MethodAttributeInterceptor
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class IncAttribute : Attribute

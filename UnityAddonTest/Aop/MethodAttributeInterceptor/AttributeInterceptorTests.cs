@@ -8,7 +8,7 @@ using UnityAddon;
 using Xunit;
 using Assert = Xunit.Assert;
 
-namespace UnityAddonTest.Aop.AttributeInterceptor
+namespace UnityAddonTest.Aop.MethodAttributeInterceptor
 {
     [Trait("Aop", "AttributeInterceptor")]
     public class AttributeInterceptorTests
