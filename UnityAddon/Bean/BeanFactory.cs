@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Unity;
 using Unity.Lifetime;
 using System.Reflection;
+using UnityAddon.Thread;
 
 namespace UnityAddon.Bean
 {

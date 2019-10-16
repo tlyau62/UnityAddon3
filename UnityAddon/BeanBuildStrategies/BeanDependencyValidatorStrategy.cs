@@ -7,6 +7,7 @@ using Unity.Builder;
 using Unity.Strategies;
 using UnityAddon.Attributes;
 using UnityAddon.Exceptions;
+using UnityAddon.Thread;
 
 namespace UnityAddon.BeanBuildStrategies
 {

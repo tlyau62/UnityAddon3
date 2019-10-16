@@ -5,6 +5,7 @@ using System.Text;
 using Unity;
 using UnityAddon.Attributes;
 using UnityAddon.Reflection;
+using UnityAddon.Thread;
 
 namespace UnityAddon.Bean
 {
