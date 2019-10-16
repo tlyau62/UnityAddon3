@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using UnityAddon.Attributes;
 
-namespace UnityAddon.EfTest.Transaction.RequireDbContext
+namespace UnityAddon.EfTest
 {
     [Component]
     [Scope(ScopeType.Transient)]
