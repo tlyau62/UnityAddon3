@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Unity;
-using UnityAddon.Attributes;
-using UnityAddon.EF.Transaction;
+using UnityAddon.Core.Attributes;
+using UnityAddon.Core.EF.Transaction;
 
-namespace UnityAddon.EfTest.Transaction.RequireDbContext
+namespace UnityAddon.Core.EfTest.Transaction.RequireDbContext
 {
     public interface IRepoA
     {

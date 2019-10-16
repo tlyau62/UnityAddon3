@@ -6,10 +6,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Unity;
-using UnityAddon.Aop;
-using UnityAddon.Attributes;
+using UnityAddon.Core.Aop;
+using UnityAddon.Core.Attributes;
 
-namespace UnityAddon.EF.Transaction
+namespace UnityAddon.Core.EF.Transaction
 {
     [Component]
     public class RepositoryInterceptor : IAttributeInterceptor<RepositoryAttribute>

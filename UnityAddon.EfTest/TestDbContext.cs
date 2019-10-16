@@ -4,19 +4,33 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
-using UnityAddon.Attributes;
+using Unity;
+using UnityAddon.Core.Attributes;
 
-namespace UnityAddon.EfTest
+namespace UnityAddon.Core.EfTest
 {
+    [Configuration]
+    public class DbConfig
+    {
+        [Bean]
+        public virtual string ConnectionString()
+        {
+            return $"Data source={Guid.NewGuid()}.db";
+        }
+    }
+
     [Component]
     [Scope(ScopeType.Transient)]
     public class TestDbContext : DbContext
     {
         public DbSet<Item> Items { get; set; }
 
+        [Dependency("ConnectionString")]
+        public string ConnectionString { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data source=test.db");
+            optionsBuilder.UseSqlite(ConnectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

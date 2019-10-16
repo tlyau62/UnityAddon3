@@ -5,10 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using Unity;
-using UnityAddon.Attributes;
-using UnityAddon.Ef;
+using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Ef;
 
-namespace UnityAddon.EF.Transaction
+namespace UnityAddon.Core.EF.Transaction
 {
     public interface IDbContextTemplate<T> where T : DbContext
     {

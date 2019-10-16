@@ -1,3 +1,3 @@
-﻿using UnityAddon.Attributes;
+﻿using UnityAddon.Core.Attributes;
 
 [assembly: ComponentScan()]

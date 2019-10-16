@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UnityAddon\UnityAddon.csproj" />
+    <ProjectReference Include="..\UnityAddon.Core\UnityAddon.Core.csproj" />
   </ItemGroup>
 
 </Project>

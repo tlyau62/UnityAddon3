@@ -4,10 +4,10 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Unity;
-using UnityAddon.Attributes;
-using UnityAddon.EF.Transaction;
+using UnityAddon.Core.Attributes;
+using UnityAddon.Core.EF.Transaction;
 
-namespace UnityAddon.Ef
+namespace UnityAddon.Core.Ef
 {
     //[Component]
     //[Scope(ScopeType.Transient)]

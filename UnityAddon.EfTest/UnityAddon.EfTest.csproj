@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\UnityAddon.Core\UnityAddon.Core.csproj" />
     <ProjectReference Include="..\UnityAddon.Ef\UnityAddon.Ef.csproj" />
-    <ProjectReference Include="..\UnityAddon\UnityAddon.csproj" />
   </ItemGroup>
 
 </Project>

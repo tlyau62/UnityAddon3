@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Unity;
-using UnityAddon.Aop;
-using UnityAddon.Attributes;
-using UnityAddon.Reflection;
+using UnityAddon.Core.Aop;
+using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Reflection;
 
-namespace UnityAddon.EF.Transaction
+namespace UnityAddon.Core.EF.Transaction
 {
     [Component]
     public class RequireDbContextInterceptor : IAttributeInterceptor<RequireDbContextAttribute>

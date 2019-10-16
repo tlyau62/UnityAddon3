@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Unity;
-using UnityAddon.Ef;
+using UnityAddon.Core.Ef;
 using Xunit;
 
-namespace UnityAddon.EfTest.Transaction.Repository
+namespace UnityAddon.Core.EfTest.Transaction.Repository
 {
     [Trait("Transaction", "Repository")]
     public class RepositoryTests : IDisposable

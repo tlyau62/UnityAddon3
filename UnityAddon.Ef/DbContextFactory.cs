@@ -6,11 +6,11 @@ using System.Reflection;
 using System.Threading;
 using System.Web;
 using Unity;
-using UnityAddon.Attributes;
-using UnityAddon.Bean;
-using UnityAddon.Thread;
+using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Bean;
+using UnityAddon.Core.Thread;
 
-namespace UnityAddon.Ef
+namespace UnityAddon.Core.Ef
 {
     public interface IDbContextFactory
     {
