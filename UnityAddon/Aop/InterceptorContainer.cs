@@ -23,24 +23,17 @@ namespace UnityAddon.Aop
 
         private MethodInfo _interceptorFactoryMethod;
 
-        public InterceptorContainer()
-        {
-            _interceptorFactoryMethod = GetType()
-                .GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
-                .Where(m => m.Name == nameof(CreateInterceptor) && m.IsGenericMethod).Single();
-        }
-
         public void Build()
         {
-            if (!BeanDefinitionContainer.HasBeanDefinition(typeof(IInterceptorFactory<>)))
+            if (!BeanDefinitionContainer.HasBeanDefinition(typeof(IAttributeInterceptor<>)))
             {
                 return;
             }
 
-            foreach (var beanDef in BeanDefinitionContainer.GetAllBeanDefinitions(typeof(IInterceptorFactory<>)))
+            foreach (var beanDef in BeanDefinitionContainer.GetAllBeanDefinitions(typeof(IAttributeInterceptor<>)))
             {
                 var interceptorAttribute = GetAttributeType(beanDef.GetBeanType());
-                IInterceptor interceptor = CreateInterceptor(beanDef, interceptorAttribute);
+                IInterceptor interceptor = (IInterceptor)ContainerRegistry.Resolve(beanDef.GetBeanType(), beanDef.GetBeanName());
 
                 if (InterceptorMap.ContainsKey(interceptorAttribute))
                 {
@@ -75,22 +68,10 @@ namespace UnityAddon.Aop
             return (attributeTargets & AttributeTargets.Method) == AttributeTargets.Class;
         }
 
-        private IInterceptor CreateInterceptor<TAttribute>(IInterceptorFactory<TAttribute> factory) where TAttribute : Attribute
-        {
-            return factory.CreateInterceptor();
-        }
-
-        private IInterceptor CreateInterceptor(AbstractBeanDefinition beanDefinition, Type interceptorAttribute)
-        {
-            return (IInterceptor)_interceptorFactoryMethod
-                .MakeGenericMethod(interceptorAttribute)
-                .Invoke(this, new[] { ContainerRegistry.Resolve(beanDefinition.GetBeanType(), beanDefinition.GetBeanName()) });
-        }
-
         private Type GetAttributeType(Type factoryImpl)
         {
             var factory = TypeHierarchyScanner.GetInterfaces(factoryImpl)
-                .Single(itf => itf.IsGenericType && itf.GetGenericTypeDefinition() == typeof(IInterceptorFactory<>));
+                .Single(itf => itf.IsGenericType && itf.GetGenericTypeDefinition() == typeof(IAttributeInterceptor<>));
 
             return factory.GetGenericArguments().Single();
         }

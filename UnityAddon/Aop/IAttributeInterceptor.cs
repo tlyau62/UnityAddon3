@@ -5,8 +5,7 @@ using System.Text;
 
 namespace UnityAddon.Aop
 {
-    public interface IInterceptorFactory<TAttribute> where TAttribute : Attribute
+    public interface IAttributeInterceptor<TAttribute> : IInterceptor where TAttribute : Attribute
     {
-        IInterceptor CreateInterceptor();
     }
 }

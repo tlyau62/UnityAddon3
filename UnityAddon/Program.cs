@@ -20,7 +20,7 @@ namespace Generic
     }
 
     [Component]
-    public class RepoInterceptor : IInterceptorFactory<RepoAttribute>, IInterceptor
+    public class RepoInterceptor : IAttributeInterceptor<RepoAttribute>
     {
         [Dependency]
         public ProxyGenerator ProxyGenerator { get; set; }
@@ -52,9 +52,9 @@ namespace UnityAddon
             var interceptorFactoryMap = new Dictionary<Type, IList<IInterceptor>>();
             var createInteceptor = typeof(Program).GetMethod("CreateInterceptor", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            foreach (var beanDef in defContainer.GetAllBeanDefinitions(typeof(IInterceptorFactory<>)))
+            foreach (var beanDef in defContainer.GetAllBeanDefinitions(typeof(IAttributeInterceptor<>)))
             {
-                var factory = TypeHierarchyScanner.GetInterfaces(beanDef.GetBeanType()).Single(itf => itf.IsGenericType && itf.GetGenericTypeDefinition() == typeof(IInterceptorFactory<>));
+                var factory = TypeHierarchyScanner.GetInterfaces(beanDef.GetBeanType()).Single(itf => itf.IsGenericType && itf.GetGenericTypeDefinition() == typeof(IAttributeInterceptor<>));
                 var attribute = factory.GetGenericArguments().Single();
                 IInterceptor interceptor = (IInterceptor)createInteceptor.MakeGenericMethod(attribute).Invoke(prog, new[] { container.Resolve(beanDef.GetBeanType()) });
 

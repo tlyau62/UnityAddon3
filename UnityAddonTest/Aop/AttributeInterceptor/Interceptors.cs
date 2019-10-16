@@ -10,15 +10,10 @@ using UnityAddon.Attributes;
 namespace UnityAddonTest.Aop.AttributeInterceptor
 {
     [Component]
-    public class IncInterceptor : IInterceptorFactory<IncAttribute>, IInterceptor
+    public class IncInterceptor : IAttributeInterceptor<IncAttribute>
     {
         [Dependency]
         public Counter Counter { get; set; }
-
-        public IInterceptor CreateInterceptor()
-        {
-            return this;
-        }
 
         public void Intercept(IInvocation invocation)
         {
@@ -28,15 +23,10 @@ namespace UnityAddonTest.Aop.AttributeInterceptor
     }
 
     [Component]
-    public class Mul2Interceptor : IInterceptorFactory<Mul2Attribute>, IInterceptor
+    public class Mul2Interceptor : IAttributeInterceptor<Mul2Attribute>
     {
         [Dependency]
         public Counter Counter { get; set; }
-
-        public IInterceptor CreateInterceptor()
-        {
-            return this;
-        }
 
         public void Intercept(IInvocation invocation)
         {
