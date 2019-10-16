@@ -63,7 +63,7 @@ namespace UnityAddon.Core.Bean
         {
             if (!_container.ContainsKey(type))
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException($"No such bean definition of type {type}.");
             }
 
             if (name != null && name.StartsWith("#"))
@@ -89,7 +89,7 @@ namespace UnityAddon.Core.Bean
         {
             if (!_container.ContainsKey(type))
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException($"No such bean definition of type {type}.");
             }
 
             return _container[type].GetAll();

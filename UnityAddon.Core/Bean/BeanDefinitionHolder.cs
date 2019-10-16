@@ -14,7 +14,7 @@ namespace UnityAddon.Core.Bean
         {
             if (beanDefinitions.Length == 0)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Bean definition holder must be added with at least one bean definition.");
             }
 
             _beanDefinitions.AddRange(beanDefinitions);

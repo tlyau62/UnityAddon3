@@ -66,12 +66,12 @@ namespace UnityAddon.Core.Bean
         {
             if (!type.HasAttribute<ComponentAttribute>(true))
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException($"Missing component attribute on type {type}.");
             }
 
             if (type.HasAttribute<ConfigurationAttribute>() && !type.IsPublic)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException($"Configuration {type} must be public.");
             }
 
             _type = type;
@@ -106,7 +106,7 @@ namespace UnityAddon.Core.Bean
         {
             if (method.HasAttribute<BeanAttribute>() && !method.IsVirtual)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException($"Bean method {method} in class {method.DeclaringType} must be virtual.");
             }
 
             _method = method;
