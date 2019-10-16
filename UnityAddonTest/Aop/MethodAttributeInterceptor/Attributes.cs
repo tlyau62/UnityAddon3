@@ -13,10 +13,22 @@ namespace UnityAddonTest.Aop.MethodAttributeInterceptor
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class IncAttribute : Attribute
     {
+        public int Value { get; set; }
+
+        public IncAttribute(int value)
+        {
+            Value = value;
+        }
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class Mul2Attribute : Attribute
+    public class MulAttribute : Attribute
     {
+        public int Value { get; set; }
+
+        public MulAttribute(int value)
+        {
+            Value = value;
+        }
     }
 }

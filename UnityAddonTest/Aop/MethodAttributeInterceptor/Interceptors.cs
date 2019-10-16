@@ -6,6 +6,7 @@ using Unity;
 using UnityAddon;
 using UnityAddon.Aop;
 using UnityAddon.Attributes;
+using UnityAddon.Reflection;
 
 namespace UnityAddonTest.Aop.MethodAttributeInterceptor
 {
@@ -17,20 +18,24 @@ namespace UnityAddonTest.Aop.MethodAttributeInterceptor
 
         public void Intercept(IInvocation invocation)
         {
-            Counter.Count++;
+            var attr = invocation.MethodInvocationTarget.GetAttribute<IncAttribute>();
+
+            Counter.Count += attr.Value;
             invocation.Proceed();
         }
     }
 
     [Component]
-    public class Mul2Interceptor : IAttributeInterceptor<Mul2Attribute>
+    public class Mul2Interceptor : IAttributeInterceptor<MulAttribute>
     {
         [Dependency]
         public Counter Counter { get; set; }
 
         public void Intercept(IInvocation invocation)
         {
-            Counter.Count *= 2;
+            var attr = invocation.MethodInvocationTarget.GetAttribute<MulAttribute>();
+
+            Counter.Count *= attr.Value;
             invocation.Proceed();
         }
     }

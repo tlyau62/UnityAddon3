@@ -43,22 +43,22 @@ namespace UnityAddonTest.Aop.MethodAttributeInterceptor
         [Dependency]
         public IExtraService ExtraService { get; set; }
 
-        [Inc]
-        [Mul2]
+        [Inc(1)]
+        [Mul(2)]
         public void ChainInterceptedServe()
         {
             Counter.Count++;
         }
 
-        [Inc]
+        [Inc(1)]
         public void CallMethodsInsideSameService()
         {
             Counter.Count++;
             ChainInterceptedServe();
         }
 
-        [Inc]
-        [Mul2]
+        [Inc(1)]
+        [Mul(2)]
         public void CallMethodsOutsideService()
         {
             Counter.Count++;
@@ -72,8 +72,8 @@ namespace UnityAddonTest.Aop.MethodAttributeInterceptor
         [Dependency]
         public Counter Counter { get; set; }
 
-        [Mul2]
-        [Inc]
+        [Mul(2)]
+        [Inc(1)]
         public void ServeExtra()
         {
             Counter.Count++;
