@@ -28,9 +28,14 @@ namespace UnityAddon.Aop
         /// </summary>
         public void Build()
         {
-            if (!BeanDefinitionContainer.HasBeanDefinition(typeof(IAttributeInterceptor<>)) || _isInitialized)
+            if (!BeanDefinitionContainer.HasBeanDefinition(typeof(IAttributeInterceptor<>)))
             {
                 return;
+            }
+
+            if (_isInitialized)
+            {
+                throw new InvalidOperationException("Already initialized");
             }
 
             foreach (var beanDef in BeanDefinitionContainer.GetAllBeanDefinitions(typeof(IAttributeInterceptor<>)))
