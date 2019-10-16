@@ -47,7 +47,7 @@ namespace UnityAddon.EF.Transaction
 
                 if (!isOpenDbCtx)
                 {
-                    DbContextFactory.Delete();
+                    DbContextFactory.Close();
                 }
             }
         }

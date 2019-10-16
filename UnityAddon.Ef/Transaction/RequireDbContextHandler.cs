@@ -39,7 +39,7 @@ namespace UnityAddon.EF.Transaction
             {
                 if (!isOpen)
                 {
-                    _dbContextFactory.Delete();
+                    _dbContextFactory.Close();
                 }
             }
         }

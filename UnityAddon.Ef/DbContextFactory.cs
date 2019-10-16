@@ -33,7 +33,7 @@ namespace UnityAddon.Ef
         /// <summary>
         /// Dispose the db context
         /// </summary>
-        void Delete();
+        void Close();
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ namespace UnityAddon.Ef
             return _threadLocalFactory.Set();
         }
 
-        public void Delete()
+        public void Close()
         {
             if (!IsOpen())
             {
