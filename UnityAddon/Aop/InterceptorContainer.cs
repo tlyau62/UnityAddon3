@@ -40,7 +40,7 @@ namespace UnityAddon.Aop
             foreach (var beanDef in BeanDefinitionContainer.GetAllBeanDefinitions(typeof(IInterceptorFactory<>)))
             {
                 var interceptorAttribute = GetAttributeType(beanDef.GetBeanType());
-                IInterceptor interceptor = CreateInterceptor(beanDef.GetBeanType(), interceptorAttribute);
+                IInterceptor interceptor = CreateInterceptor(beanDef, interceptorAttribute);
 
                 if (InterceptorMap.ContainsKey(interceptorAttribute))
                 {
@@ -80,11 +80,11 @@ namespace UnityAddon.Aop
             return factory.CreateInterceptor();
         }
 
-        private IInterceptor CreateInterceptor(Type factoryImpl, Type interceptorAttribute)
+        private IInterceptor CreateInterceptor(AbstractBeanDefinition beanDefinition, Type interceptorAttribute)
         {
             return (IInterceptor)_interceptorFactoryMethod
                 .MakeGenericMethod(interceptorAttribute)
-                .Invoke(this, new[] { ContainerRegistry.Resolve(factoryImpl) });
+                .Invoke(this, new[] { ContainerRegistry.Resolve(beanDefinition.GetBeanType(), beanDefinition.GetBeanName()) });
         }
 
         private Type GetAttributeType(Type factoryImpl)
