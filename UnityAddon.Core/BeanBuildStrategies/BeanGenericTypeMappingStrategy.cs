@@ -10,6 +10,9 @@ using UnityAddon.Core.Bean;
 
 namespace UnityAddon.Core.BeanBuildStrategies
 {
+    /// <summary>
+    /// Handle generic type resolving logic.
+    /// </summary>
     [Component]
     public class BeanGenericTypeMappingStrategy : BuilderStrategy
     {

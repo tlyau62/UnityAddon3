@@ -6,6 +6,9 @@ using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.Core.Reflection
 {
+    /// <summary>
+    /// Scan for type hierarchy.
+    /// </summary>
     public static class TypeHierarchyScanner
     {
         public static IEnumerable<Type> GetAssignableTypes(Type type)

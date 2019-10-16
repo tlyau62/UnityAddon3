@@ -12,9 +12,7 @@ using UnityAddon.Core.Thread;
 namespace UnityAddon.Core.BeanBuildStrategies
 {
     /// <summary>
-    /// Check
-    /// 1. circular dep
-    /// 2. null dep (removed)
+    /// Check for circular dep.
     /// </summary>
     [Component]
     public class BeanDependencyValidatorStrategy : BuilderStrategy

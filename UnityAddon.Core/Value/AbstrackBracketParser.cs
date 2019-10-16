@@ -4,6 +4,10 @@ using System.Text;
 
 namespace UnityAddon.Core.Value
 {
+    /// <summary>
+    /// Parse an expression containing any number bracket.
+    /// Any intermediate result will be submitted to method "Process".
+    /// </summary>
     public abstract class AbstrackBracketParser
     {
         private BracketAccumulator _accumulator = new BracketAccumulator();

@@ -17,6 +17,10 @@ namespace UnityAddon.Core.EF.Transaction
         DbSet<TEntity> GetEntity<TEntity>() where TEntity : class;
     }
 
+    /// <summary>
+    /// Used by client to query db.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     [Component]
     public class DbContextTemplate<T> : IDbContextTemplate<T> where T : DbContext
     {

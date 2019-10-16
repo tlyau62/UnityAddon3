@@ -9,6 +9,9 @@ using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.Core
 {
+    /// <summary>
+    /// Create a interface proxy.
+    /// </summary>
     [Component]
     public class InterfaceProxyFactory
     {

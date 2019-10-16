@@ -8,6 +8,10 @@ using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.Core.Value
 {
+    /// <summary>
+    /// Convert a value expression to the given value type.
+    /// The main for value injection.
+    /// </summary>
     [Component]
     public class ValueProvider
     {

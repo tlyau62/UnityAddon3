@@ -8,12 +8,12 @@ using Unity;
 
 namespace UnityAddon.Core.Reflection
 {
+    /// <summary>
+    /// Choose the 1st constructor with InjectionConstructorAttribute, or
+    /// the constructor with the max number of parameters
+    /// </summary>
     public static class DefaultConstructor
     {
-        /// <summary>
-        /// Choose the 1st constructor with InjectionConstructorAttribute, or
-        /// the constructor with the max number of parameters
-        /// </summary>
         public static ConstructorInfo Select(Type type)
         {
             var ctors = type.GetConstructors();

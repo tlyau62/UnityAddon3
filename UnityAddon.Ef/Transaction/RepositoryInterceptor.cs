@@ -11,6 +11,9 @@ using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.Core.EF.Transaction
 {
+    /// <summary>
+    /// Auto open a db connection for any bean marked with Repository attribute
+    /// </summary>
     [Component]
     public class RepositoryInterceptor : IAttributeInterceptor<RepositoryAttribute>
     {

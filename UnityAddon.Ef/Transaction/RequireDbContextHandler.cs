@@ -16,6 +16,9 @@ namespace UnityAddon.Core.EF.Transaction
         void DoInDbContext(IInvocation invocation, bool transactional);
     }
 
+    /// <summary>
+    /// Handle transaction logic.
+    /// </summary>
     [Component]
     public class RequireDbContextHandler : IRequireDbContextHandler
     {

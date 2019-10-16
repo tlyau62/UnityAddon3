@@ -11,6 +11,9 @@ using System.Runtime.InteropServices;
 
 namespace UnityAddon.Core.Bean
 {
+    /// <summary>
+    /// A receipt for bean construction.
+    /// </summary>
     public abstract class AbstractBeanDefinition
     {
         private MemberInfo _member;

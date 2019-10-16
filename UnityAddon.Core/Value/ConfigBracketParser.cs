@@ -8,6 +8,10 @@ using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.Core.Value
 {
+    /// <summary>
+    /// Parse any intermediate result from AbstrackBracketParser
+    /// into a valud defined in "IConfiguration".
+    /// </summary>
     [Component]
     public class ConfigBracketParser : AbstrackBracketParser
     {

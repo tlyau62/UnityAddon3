@@ -10,6 +10,9 @@ using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.Core
 {
+    /// <summary>
+    /// Create a configuration bean.
+    /// </summary>
     [Component]
     public class ConfigurationFactory
     {

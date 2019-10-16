@@ -11,6 +11,9 @@ using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.Core.Aop
 {
+    /// <summary>
+    /// The first interceptor when a bean contains a aop method interceptor.
+    /// </summary>
     [Component]
     public class AopMethodBootstrapInterceptor : IInterceptor
     {

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace UnityAddon.Core.Bean
 {
+    /// <summary>
+    /// Hold all the bean definition of the same type.
+    /// </summary>
     public class BeanDefinitionHolder
     {
         private List<AbstractBeanDefinition> _beanDefinitions = new List<AbstractBeanDefinition>();

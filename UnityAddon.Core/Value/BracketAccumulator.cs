@@ -4,6 +4,9 @@ using System.Text;
 
 namespace UnityAddon.Core.Value
 {
+    /// <summary>
+    /// Used by AbstrackBracketParser in parsing brackets.
+    /// </summary>
     public class BracketAccumulator
     {
         private Stack<char> _stack = new Stack<char>();

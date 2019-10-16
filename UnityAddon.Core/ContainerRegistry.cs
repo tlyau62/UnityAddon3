@@ -11,6 +11,9 @@ using UnityAddon.Core.Exceptions;
 
 namespace UnityAddon.Core
 {
+    /// <summary>
+    /// A replace of unity container, but with thread-safe and easy mocking.
+    /// </summary>
     public interface IContainerRegistry
     {
         void RegisterType<TRegType, TMapType>(string name);

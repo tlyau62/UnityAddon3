@@ -15,6 +15,16 @@ using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.Core.BeanBuildStrategies
 {
+    /// <summary>
+    /// Handle the aop proxy on a bean.
+    /// There are 2 kinds aop proxy: method and class proxy.
+    /// 
+    /// if a bean contains any method marked with method interceptor attribute,
+    /// the bean will be proxied with a interceptor "AopMethodBootstrapInterceptor".
+    /// 
+    /// if a bean type is marked with a class interceptor attribute,
+    /// the bean will be proxied with that class attribute interceptor.
+    /// </summary>
     [Component]
     public class BeanAopStrategy : BuilderStrategy
     {

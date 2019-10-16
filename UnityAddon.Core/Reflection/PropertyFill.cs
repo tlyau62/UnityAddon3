@@ -11,6 +11,9 @@ using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core.Reflection
 {
+    /// <summary>
+    /// Resolve all the dependencies found in all type properties.
+    /// </summary>
     [Component]
     public class PropertyFill
     {

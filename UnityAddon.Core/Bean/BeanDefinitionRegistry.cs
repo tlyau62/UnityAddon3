@@ -7,6 +7,10 @@ using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.Core.Bean
 {
+    /// <summary>
+    /// Decide which bean definition candidate is finally
+    /// registered into the bean container and bean factory.
+    /// </summary>
     [Component]
     public class BeanDefinitionRegistry
     {

@@ -10,6 +10,9 @@ using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core.Reflection
 {
+    /// <summary>
+    /// Resolve all the dependencies found in a method parameters.
+    /// </summary>
     [Component]
     public class ParameterFill
     {

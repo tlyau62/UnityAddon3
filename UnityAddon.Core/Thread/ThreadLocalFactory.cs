@@ -15,6 +15,9 @@ namespace UnityAddon.Core.Thread
         void Delete();
     }
 
+    /// <summary>
+    /// A factory to manage thread local.
+    /// </summary>
     public class ThreadLocalFactory<T> : IThreadLocalFactory<T>
     {
         private readonly Func<T> createFunc;

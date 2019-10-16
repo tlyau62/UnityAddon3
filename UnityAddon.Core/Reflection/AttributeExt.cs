@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace UnityAddon.Core.Reflection
 {
+    /// <summary>
+    /// Extension method for querying attribute.
+    /// </summary>
     public static class AttributeExt
     {
         public static bool HasAttribute(this MemberInfo memberInfo, Type attribute, bool isInherited = false)

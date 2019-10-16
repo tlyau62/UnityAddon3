@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace UnityAddon.Core.Reflection
 {
+    /// <summary>
+    /// For querying any methods in a type
+    /// </summary>
     public static class MethodSelector
     {
         public static IEnumerable<MethodInfo> GetAllMethodsByAttribute<TAttribute>(Type type, bool isInherited = false) where TAttribute : Attribute

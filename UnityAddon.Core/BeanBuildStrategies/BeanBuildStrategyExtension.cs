@@ -8,6 +8,9 @@ using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.Core.BeanBuildStrategies
 {
+    /// <summary>
+    /// Handle bean resolving logic.
+    /// </summary>
     [Component]
     public class BeanBuildStrategyExtension : UnityContainerExtension
     {

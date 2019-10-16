@@ -13,6 +13,10 @@ using UnityAddon.Core.Thread;
 
 namespace UnityAddon.Core.Bean
 {
+    /// <summary>
+    /// Register the constructor of any bean definition
+    /// into the unity container.
+    /// </summary>
     [Component]
     public class BeanFactory
     {

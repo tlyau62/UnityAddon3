@@ -9,6 +9,9 @@ using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.Core.BeanBuildStrategies
 {
+    /// <summary>
+    /// Mainly used to check circular dependency.
+    /// </summary>
     public class ResolveStackEntry
     {
         public Type ResolveType { get; set; }

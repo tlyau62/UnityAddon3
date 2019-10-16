@@ -15,6 +15,10 @@ using Unity.Injection;
 
 namespace UnityAddon.Core
 {
+    /// <summary>
+    /// Take all assemblies with "ComponentScan" attribute into account, then
+    /// scan all the given types as component candidate.
+    /// </summary>
     [Component]
     public class ComponentScanner
     {

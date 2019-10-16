@@ -16,6 +16,9 @@ using UnityAddon.Core.Thread;
 
 namespace UnityAddon.Core
 {
+    /// <summary>
+    /// Where all the magic happens.
+    /// </summary>
     public class ApplicationContext : ContainerRegistry
     {
         [Dependency]

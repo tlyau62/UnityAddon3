@@ -11,6 +11,9 @@ using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.Core.Aop
 {
+    /// <summary>
+    /// Hold all the aop interceptors scanned after component scanning.
+    /// </summary>
     public class AopInterceptorContainer
     {
         [Dependency]

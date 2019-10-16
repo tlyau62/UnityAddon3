@@ -9,6 +9,10 @@ using UnityAddon.Core.Thread;
 
 namespace UnityAddon.Core.Bean
 {
+    /// <summary>
+    /// Used in construct bean defined by bean method.
+    /// It delegates the bean construction to bean factory via a Stack<IInvocation>.
+    /// </summary>
     [Component]
     public class BeanMethodInterceptor : IInterceptor
     {

@@ -11,6 +11,9 @@ using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.Core.EF.Transaction
 {
+    /// <summary>
+    /// Handle transactional logic.
+    /// </summary>
     [Component]
     public class RequireDbContextInterceptor : IAttributeInterceptor<RequireDbContextAttribute>
     {

@@ -20,8 +20,9 @@ namespace UnityAddon.Core.Bean
     }
 
     /// <summary>
+    /// Hold all the bean definition scanned after component scanning.
     /// Thread-safe.
-    /// Manually registered.
+    /// This class is not component scanned and thus required manually registered.
     /// </summary>
     public class BeanDefinitionContainer : IBeanDefinitionContainer
     {
