@@ -24,7 +24,7 @@ namespace UnityAddon.BeanBuildStrategies
         public BeanGenericTypeMappingStrategy BeanGenericTypeMappingStrategy { get; set; }
 
         [Dependency]
-        public BeanInterceptionStrategy BeanInterceptionStrategy { get; set; }
+        public BeanAopStrategy BeanAopStrategy { get; set; }
 
         /// <summary>
         /// In order
@@ -35,7 +35,7 @@ namespace UnityAddon.BeanBuildStrategies
             Context.Strategies.Add(BeanGenericTypeMappingStrategy, UnityBuildStage.TypeMapping);
             Context.Strategies.Add(BeanDependencyValidatorStrategy, UnityBuildStage.PreCreation);
             Context.Strategies.Add(BeanPostConstructStrategy, UnityBuildStage.Initialization);
-            Context.Strategies.Add(BeanInterceptionStrategy, UnityBuildStage.PostInitialization);
+            Context.Strategies.Add(BeanAopStrategy, UnityBuildStage.PostInitialization);
         }
     }
 }

@@ -16,7 +16,7 @@ using UnityAddon.Reflection;
 namespace UnityAddon.BeanBuildStrategies
 {
     [Component]
-    public class BeanInterceptionStrategy : BuilderStrategy
+    public class BeanAopStrategy : BuilderStrategy
     {
         [Dependency]
         public AopMethodBootstrapInterceptor AopInterceptor { get; set; }
