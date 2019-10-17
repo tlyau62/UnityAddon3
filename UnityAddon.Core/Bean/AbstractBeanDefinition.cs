@@ -59,6 +59,8 @@ namespace UnityAddon.Core.Bean
         {
             return _member.GetAttribute<ProfileAttribute>()?.Values ?? new string[0];
         }
+
+        public abstract bool IsPrimary();
     }
 
     public class TypeBeanDefinition : AbstractBeanDefinition
@@ -99,6 +101,11 @@ namespace UnityAddon.Core.Bean
         {
             return GetBeanType().Name;
         }
+
+        public override bool IsPrimary()
+        {
+            return _type.HasAttribute<PrimaryAttribute>();
+        }
     }
 
     public class MethodBeanDefinition : AbstractBeanDefinition
@@ -138,6 +145,11 @@ namespace UnityAddon.Core.Bean
         public string GetFactoryName()
         {
             return $"#{GetBeanName()}";
+        }
+
+        public override bool IsPrimary()
+        {
+            return _method.HasAttribute<PrimaryAttribute>();
         }
     }
 }

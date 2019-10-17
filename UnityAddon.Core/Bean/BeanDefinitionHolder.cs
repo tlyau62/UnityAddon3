@@ -28,14 +28,14 @@ namespace UnityAddon.Core.Bean
         /// </summary>
         public bool Exist(string name)
         {
-            return Find(name).Length > 0;
+            return Find(name).Count() > 0;
         }
 
         /// <summary>
         /// Find a bean definition by qualifers.
         /// If not found, find by bean name as fallback.
         /// </summary>
-        public AbstractBeanDefinition[] Find(string name = null)
+        public IEnumerable<AbstractBeanDefinition> Find(string name = null)
         {
             if (name == null)
             {
@@ -49,7 +49,7 @@ namespace UnityAddon.Core.Bean
                 defs = _beanDefinitions.Where(d => d.GetBeanName() == name);
             }
 
-            return defs.ToArray();
+            return defs;
         }
 
         /// <summary>
@@ -57,7 +57,19 @@ namespace UnityAddon.Core.Bean
         /// </summary>
         public AbstractBeanDefinition Get(string name = null)
         {
-            return Find(name).Single();
+            var results = Find(name);
+
+            if (name == null)
+            {
+                var primaryDefs = results.Where(def => def.IsPrimary());
+
+                if (primaryDefs.Count() > 0)
+                {
+                    results = primaryDefs;
+                }
+            }
+
+            return results.Single();
         }
 
         public IEnumerable<AbstractBeanDefinition> GetAll()
