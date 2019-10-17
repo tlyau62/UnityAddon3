@@ -41,16 +41,6 @@ namespace UnityAddon.EfTest.Transaction.Repository
         }
 
         [Fact]
-        public void RequireDbContextHandler_InsertItemWithException_DbRollback()
-        {
-            Assert.Throws<Exception>(() => _repo.InsertItemWithException(new Item("test")));
-
-            Assert.Equal(0, _repo.CountItem());
-
-            Assert.False(_dbContextFactory.IsOpen());
-        }
-
-        [Fact]
         public void RequireDbContextHandler_ModifyDbWithoutTransaction_ExceptionThrown()
         {
             var ex = Assert.Throws<InvalidOperationException>(() => _repo.InsertItem(new Item("testitem")));

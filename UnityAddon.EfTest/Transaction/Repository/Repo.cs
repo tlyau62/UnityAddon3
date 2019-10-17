@@ -14,7 +14,6 @@ namespace UnityAddon.EfTest.Transaction.Repository
     {
         int CountItem();
         void InsertItem(Item item);
-        void InsertItemWithException(Item item);
     }
 
     [Repository]
@@ -33,13 +32,6 @@ namespace UnityAddon.EfTest.Transaction.Repository
         public int CountItem()
         {
             return _items.Count();
-        }
-
-        public void InsertItemWithException(Item item)
-        {
-            InsertItem(item);
-
-            throw new Exception();
         }
 
     }
