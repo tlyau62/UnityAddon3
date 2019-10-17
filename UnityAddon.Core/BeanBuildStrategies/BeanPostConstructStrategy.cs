@@ -18,7 +18,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
     {
         public override void PostBuildUp(ref BuilderContext context)
         {
-            var postConstructors = MethodSelector.GetAllMethodsByAttribute<PostConstructAttribute>(context.Type);
+            var postConstructors = MethodSelector.GetAllMethodsByAttribute<PostConstructAttribute>(context.Type); // context.Existing.GetType()
 
             foreach (var pc in postConstructors)
             {

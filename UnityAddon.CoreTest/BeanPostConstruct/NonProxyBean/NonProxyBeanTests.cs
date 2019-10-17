@@ -7,7 +7,7 @@ using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using Xunit;
 
-namespace UnityAddon.CoreTest.BeanPostConstruct
+namespace UnityAddon.CoreTest.BeanPostConstruct.NonProxy
 {
     [Component]
     public class StringStore
@@ -62,8 +62,8 @@ namespace UnityAddon.CoreTest.BeanPostConstruct
         }
     }
 
-    [Trait("BeanPostConstruct", "BeanPostConstruct")]
-    public class BeanPostConstructTests
+    [Trait("BeanPostConstruct", "NonProxyBean")]
+    public class NonProxyBeanTests
     {
         [Theory]
         [InlineData(0, 1, 2)]
@@ -72,7 +72,7 @@ namespace UnityAddon.CoreTest.BeanPostConstruct
         [InlineData(1, 2, 0)]
         [InlineData(2, 1, 0)]
         [InlineData(2, 0, 1)]
-        public void BuildStrategy_PostConstructBeanStartFromNoDependency_BeanPostConstructed(int orderA, int orderB, int orderC)
+        public void BuildStrategy_PostConstructNonProxyBean_BeanPostConstructed(int orderA, int orderB, int orderC)
         {
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, GetType().Namespace);

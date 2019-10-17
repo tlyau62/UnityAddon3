@@ -30,15 +30,17 @@ namespace UnityAddon.Core.BeanBuildStrategies
         public BeanAopStrategy BeanAopStrategy { get; set; }
 
         /// <summary>
-        /// In order
+        /// In order.
+        /// For prebuild methods, they are executed according to the add order.
+        /// For postbuild methods, they are executed according to the reverse of add order.
         /// </summary>
         protected override void Initialize()
         {
-            Context.Strategies.Add(BeanTypeMappingStrategy, UnityBuildStage.TypeMapping);
-            Context.Strategies.Add(BeanGenericTypeMappingStrategy, UnityBuildStage.TypeMapping);
-            Context.Strategies.Add(BeanDependencyValidatorStrategy, UnityBuildStage.PreCreation);
-            Context.Strategies.Add(BeanPostConstructStrategy, UnityBuildStage.Initialization);
-            Context.Strategies.Add(BeanAopStrategy, UnityBuildStage.PostInitialization);
+            Context.Strategies.Add(BeanTypeMappingStrategy, UnityBuildStage.TypeMapping); // 1
+            Context.Strategies.Add(BeanGenericTypeMappingStrategy, UnityBuildStage.TypeMapping); // 2
+            Context.Strategies.Add(BeanDependencyValidatorStrategy, UnityBuildStage.PreCreation); // 3
+            Context.Strategies.Add(BeanAopStrategy, UnityBuildStage.PostInitialization); // 5
+            Context.Strategies.Add(BeanPostConstructStrategy, UnityBuildStage.PostInitialization); // 4
         }
     }
 }
