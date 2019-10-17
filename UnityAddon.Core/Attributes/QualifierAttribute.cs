@@ -11,9 +11,9 @@ namespace UnityAddon.Core.Attributes
     {
         public string[] Values { get; set; } = new string[0];
 
-        public QualifierAttribute(params string[] values)
+        public QualifierAttribute(params object[] values)
         {
-            Values = values;
+            Values = values.Select(v => v.ToString()).ToArray();
         }
     }
 }

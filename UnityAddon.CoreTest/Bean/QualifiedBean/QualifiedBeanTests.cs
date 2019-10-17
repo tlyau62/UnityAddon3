@@ -12,6 +12,11 @@ namespace UnityAddon.CoreTest.Bean.QualifiedBean
     public interface ICommon { }
     public interface IRare { }
 
+    public enum ServiceType
+    {
+        Popular
+    }
+
     [Component]
     public class Service
     {
@@ -23,6 +28,9 @@ namespace UnityAddon.CoreTest.Bean.QualifiedBean
 
         [Dependency("A")]
         public ICommon A { get; set; }
+
+        [Dependency("Popular")]
+        public ICommon C { get; set; }
     }
 
     [Component]
@@ -37,6 +45,12 @@ namespace UnityAddon.CoreTest.Bean.QualifiedBean
     {
     }
 
+    [Component]
+    [Qualifier(ServiceType.Popular)]
+    public class C : ICommon
+    {
+    }
+
     [Trait("Bean", "QualifiedBean")]
     public class QualifiedBeanTests
     {
@@ -48,11 +62,13 @@ namespace UnityAddon.CoreTest.Bean.QualifiedBean
 
             var a = appContext.Resolve<ICommon>("CommonA");
             var b = appContext.Resolve<ICommon>("CommonB");
+            var c = appContext.Resolve<ICommon>(ServiceType.Popular.ToString());
             var service = appContext.Resolve<Service>();
 
             Assert.Same(service.BCommon, b);
             Assert.Same(service.BRare, b);
             Assert.Same(service.A, a);
+            Assert.Same(service.C, c);
         }
     }
 }
