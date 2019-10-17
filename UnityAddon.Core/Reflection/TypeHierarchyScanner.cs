@@ -15,12 +15,15 @@ namespace UnityAddon.Core.Reflection
         {
             var types = new List<Type> { type };
 
-            types.AddRange(type.GetInterfaces());
-
-            while (type.BaseType != null && type.BaseType != typeof(object))
+            if (!type.IsPrimitive && !type.IsEnum && type != typeof(string))
             {
-                types.Add(type.BaseType);
-                type = type.BaseType;
+                types.AddRange(type.GetInterfaces());
+
+                while (type.BaseType != null && type.BaseType != typeof(object))
+                {
+                    types.Add(type.BaseType);
+                    type = type.BaseType;
+                }
             }
 
             return LoadAllTypes(types);
