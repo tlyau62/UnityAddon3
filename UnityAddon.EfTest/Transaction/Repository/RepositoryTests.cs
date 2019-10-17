@@ -3,10 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Unity;
-using UnityAddon.Core.Ef;
+using UnityAddon.Core;
+using UnityAddon.Ef;
+using UnityAddon.EfTest.Common;
 using Xunit;
 
-namespace UnityAddon.Core.EfTest.Transaction.Repository
+namespace UnityAddon.EfTest.Transaction.Repository
 {
     [Trait("Transaction", "Repository")]
     public class RepositoryTests : IDisposable
@@ -18,7 +20,7 @@ namespace UnityAddon.Core.EfTest.Transaction.Repository
 
         public RepositoryTests()
         {
-            _appContext = new ApplicationContext(new UnityContainer());
+            _appContext = new ApplicationContext(new UnityContainer(), GetType().Namespace, typeof(TestDbContext).Namespace);
             _dbContextFactory = _appContext.Resolve<IDbContextFactory>();
             _repo = _appContext.Resolve<IRepo>();
 

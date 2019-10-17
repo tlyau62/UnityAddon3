@@ -5,9 +5,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Unity;
 using UnityAddon.Core.Attributes;
-using UnityAddon.Core.EF.Transaction;
 
-namespace UnityAddon.Core.Ef
+namespace UnityAddon.Test
 {
     //[Component]
     //[Scope(ScopeType.Transient)]

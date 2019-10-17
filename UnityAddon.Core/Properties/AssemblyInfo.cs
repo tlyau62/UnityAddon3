@@ -1,3 +1,3 @@
 ﻿using UnityAddon.Core.Attributes;
 
-[assembly: ComponentScan(BaseNamespaces = new[] { "UnityAddon" })]
+[assembly: ComponentScan(BaseNamespaces = new[] { "UnityAddon.Core" })]

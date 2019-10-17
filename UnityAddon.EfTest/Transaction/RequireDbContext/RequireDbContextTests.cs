@@ -2,12 +2,13 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using Unity;
+using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
-using UnityAddon.Core.Ef;
-using UnityAddon.Core.EF.Transaction;
+using UnityAddon.Ef;
+using UnityAddon.EfTest.Common;
 using Xunit;
 
-namespace UnityAddon.Core.EfTest.Transaction.RequireDbContext
+namespace UnityAddon.EfTest.Transaction.RequireDbContext
 {
     [Trait("Transaction", "RequireDbContext")]
     public class RequireDbContextTests : IDisposable
@@ -20,7 +21,7 @@ namespace UnityAddon.Core.EfTest.Transaction.RequireDbContext
 
         public RequireDbContextTests()
         {
-            _appContext = new ApplicationContext(new UnityContainer());
+            _appContext = new ApplicationContext(new UnityContainer(), GetType().Namespace, typeof(TestDbContext).Namespace);
             _dbContextFactory = _appContext.Resolve<IDbContextFactory>();
             _repoA = _appContext.Resolve<IRepoA>();
             _repoB = _appContext.Resolve<IRepoB>();

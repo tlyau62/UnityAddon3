@@ -7,9 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Unity;
 using UnityAddon.Core.Attributes;
-using UnityAddon.Core.Ef;
 
-namespace UnityAddon.Core.EF.Transaction
+namespace UnityAddon.Ef.Transaction
 {
     public interface IRequireDbContextHandler
     {

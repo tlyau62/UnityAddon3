@@ -77,7 +77,7 @@ namespace UnityAddon.Core
         protected void Refresh()
         {
             ComponentScanner = Container.Resolve<ComponentScanner>();
-            ComponentScanner.ScanComponents(GetType().Namespace);
+            ComponentScanner.ScanComponentsFromAppDomain();
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace UnityAddon.Core
         protected void Init()
         {
             Container.BuildUp(this);
-            ComponentScanner.ScanComponents(BaseNamespaces);
+            ComponentScanner.ScanComponentsFromAppEntry(EntryAssembly, BaseNamespaces);
             ConfigurationParser.ParseScannedConfigurations();
             InterceptorContainer.Build();
         }

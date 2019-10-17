@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 using System.Web;
 using Unity;
 using UnityAddon.Core.Attributes;
-using UnityAddon.Core.Ef;
 
-namespace UnityAddon.Core.EF.Transaction
+namespace UnityAddon.Ef.Transaction
 {
     public interface IDbContextTemplate<T> where T : DbContext
     {

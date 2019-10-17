@@ -5,9 +5,10 @@ using System.Linq;
 using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
-using UnityAddon.Core.EF.Transaction;
+using UnityAddon.Ef.Transaction;
+using UnityAddon.EfTest.Common;
 
-namespace UnityAddon.Core.EfTest.Transaction.RequireDbContext
+namespace UnityAddon.EfTest.Transaction.RequireDbContext
 {
     public interface IRepoA
     {

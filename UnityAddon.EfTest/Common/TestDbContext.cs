@@ -7,7 +7,7 @@ using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
 
-namespace UnityAddon.Core.EfTest
+namespace UnityAddon.EfTest.Common
 {
     [Configuration]
     public class DbConfig

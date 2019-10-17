@@ -37,7 +37,7 @@ namespace Generic
     }
 }
 
-namespace UnityAddon.Core
+namespace Generic
 {
     // bean registry
     class Program

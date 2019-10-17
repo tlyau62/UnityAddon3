@@ -9,7 +9,7 @@ using Unity;
 using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
 
-namespace UnityAddon.Core.EF.Transaction
+namespace UnityAddon.Ef.Transaction
 {
     /// <summary>
     /// Auto open a db connection for any bean marked with Repository attribute

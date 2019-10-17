@@ -9,7 +9,7 @@ using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Reflection;
 
-namespace UnityAddon.Core.EF.Transaction
+namespace UnityAddon.Ef.Transaction
 {
     /// <summary>
     /// Handle transactional logic.

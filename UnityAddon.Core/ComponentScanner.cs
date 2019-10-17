@@ -28,28 +28,49 @@ namespace UnityAddon.Core
         [Dependency("entryAssembly")]
         public Assembly EntryAssembly { get; set; }
 
-        public void ScanComponents(string[] namesps)
+        [Dependency("baseNamespaces")]
+        public string[] BaseNamespaces { get; set; }
+
+        private ISet<Assembly> _assemblies = new HashSet<Assembly>();
+
+        public void ScanComponentsFromAppEntry(Assembly assembly, string[] namesps)
         {
-            foreach (var namesp in namesps)
+            if (!_assemblies.Contains(assembly))
             {
-                ScanComponents(namesp);
+                ScanComponent(assembly, namesps);
+                _assemblies.Add(EntryAssembly);
             }
         }
 
-        public void ScanComponents(string namesp)
+        public void ScanComponentsFromAppDomain()
         {
-            var components = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(asm => asm.HasAttribute<ComponentScanAttribute>() || asm == EntryAssembly)
-                //.Select(asm => Assembly.Load(asm.FullName))
-                .SelectMany(asm => asm.GetTypes())
-                .Where(t => t.Namespace != null)
-                .Where(t => new Regex($"^{namesp.Replace(".", "\\.")}(\\..*)?$").IsMatch(t.Namespace))
+            var domainAsms = AppDomain.CurrentDomain
+                .GetAssemblies()
+                .Where(asm => !_assemblies.Contains(asm) && asm.HasAttribute<ComponentScanAttribute>());
+
+            foreach (var asm in domainAsms)
+            {
+                ScanComponent(asm, asm.GetAttribute<ComponentScanAttribute>().BaseNamespaces);
+                _assemblies.Add(asm);
+            }
+        }
+
+        public void ScanComponent(Assembly asm, string[] baseNamespaces)
+        {
+            var regexes = BuildBaseNamespacesRegexes(baseNamespaces);
+            var components = asm.GetTypes()
+                .Where(t => t.Namespace != null && regexes.Any(regex => regex.IsMatch(t.Namespace)))
                 .Where(t => t.HasAttribute<ComponentAttribute>(true));
 
             foreach (var component in components)
             {
                 BeanDefinitionRegistry.Register(new TypeBeanDefinition(component));
             }
+        }
+
+        private IEnumerable<Regex> BuildBaseNamespacesRegexes(string[] baseNamespaces)
+        {
+            return baseNamespaces.Select(ns => new Regex($"^{ns.Replace(".", "\\.")}(\\..*)?$", RegexOptions.Compiled));
         }
     }
 }
