@@ -12,8 +12,20 @@ using UnityAddon.Core.Reflection;
 namespace UnityAddon.Core.Aop
 {
     /// <summary>
-    /// The first interceptor when a bean contains a aop method interceptor.
+    /// The first interceptor triggered when a method of an aop proxied bean is invoked.
+    /// This interceptor will try to trigger all the aop interceptors marked on a method.
+    /// This is done by wrapping all the aop interceptors on that method into a new InterfaceProxy and
+    /// invoke that intercepted method in this new proxy.
     /// </summary>
+    /// <example>
+    /// [Component]
+    /// class AopProxiedService {
+    ///     [InterceptorAttribute1] // InterceptorAttribute1 is invoked within AopMethodBootstrapInterceptor
+    ///     [InterceptorAttribute2] // InterceptorAttribute1 is invoked within AopMethodBootstrapInterceptor
+    ///     public void InterceptedMethod() { // when invoked, it executes AopMethodBootstrapInterceptor
+    ///     }
+    /// }
+    /// </example>
     [Component]
     public class AopMethodBootstrapInterceptor : IInterceptor
     {
