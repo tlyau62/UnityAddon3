@@ -40,7 +40,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
             Context.Strategies.Add(BeanGenericTypeMappingStrategy, UnityBuildStage.TypeMapping); // 2
             Context.Strategies.Add(BeanDependencyValidatorStrategy, UnityBuildStage.PreCreation); // 3
             Context.Strategies.Add(BeanAopStrategy, UnityBuildStage.PostInitialization); // 5
-            Context.Strategies.Add(BeanPostConstructStrategy, UnityBuildStage.PostInitialization); // 4
+            Context.Strategies.Add(BeanPostConstructStrategy, UnityBuildStage.PostInitialization); // 4 (before BeanAopStrategy, so interceptor will not trigget at postconstruct)
         }
     }
 }
