@@ -30,7 +30,7 @@ namespace UnityAddon.Core
         object[] ResolveAll(Type type);
 
         bool IsRegistered<T>(string name = null);
-        bool IsRegistered(Type type, string name);
+        bool IsRegistered(Type type, string name = null);
 
         T BuildUp<T>(T existing, string name = null);
         object BuildUp(Type type, object existing, string name = null);
@@ -75,7 +75,7 @@ namespace UnityAddon.Core
             return IsRegistered(typeof(T), name);
         }
 
-        public bool IsRegistered(Type type, string name)
+        public bool IsRegistered(Type type, string name = null)
         {
             foreach (var reg in Container.Registrations)
             {
