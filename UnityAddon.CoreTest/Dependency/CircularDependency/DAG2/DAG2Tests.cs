@@ -31,7 +31,7 @@ namespace UnityAddon.CoreTest.Dependency.CircularDependency.DAG2
     public class DAG2Tests
     {
         [Fact]
-        public void BeanDependencyValidatorStrategy_ResolveDAG2Dependency_ExceptionThrown()
+        public void BeanDependencyValidatorStrategy_ResolveDAG2Dependency_NoExceptionThrown()
         {
             var container = new UnityContainer();
             new ApplicationContext(container, GetType().Namespace);

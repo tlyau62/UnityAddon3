@@ -56,7 +56,7 @@ namespace UnityAddon.CoreTest.Dependency.CircularDependency.ComplexDAG
     public class ComplexDAGTests
     {
         [Fact]
-        public void BeanDependencyValidatorStrategy_ResolveComplexDAGDependency_ExceptionThrown()
+        public void BeanDependencyValidatorStrategy_ResolveComplexDAGDependency_NoExceptionThrown()
         {
             var container = new UnityContainer();
             
