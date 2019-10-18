@@ -33,11 +33,11 @@ namespace UnityAddon.Core
 
         private ISet<Assembly> _assemblies = new HashSet<Assembly>();
 
-        public void ScanComponentsFromAppEntry(Assembly assembly, string[] namesps)
+        public void ScanComponentsFromAppEntry()
         {
-            if (!_assemblies.Contains(assembly))
+            if (!_assemblies.Contains(EntryAssembly))
             {
-                ScanComponent(assembly, namesps);
+                ScanComponent(EntryAssembly, BaseNamespaces);
                 _assemblies.Add(EntryAssembly);
             }
         }

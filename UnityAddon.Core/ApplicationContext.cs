@@ -13,7 +13,6 @@ using UnityAddon.Core.Reflection;
 using UnityAddon.Core.Value;
 using UnityAddon.Core.Aop;
 using UnityAddon.Core.Thread;
-using Unity.Lifetime;
 
 namespace UnityAddon.Core
 {
@@ -117,7 +116,7 @@ namespace UnityAddon.Core
         /// </summary>
         protected void Init()
         {
-            ComponentScanner.ScanComponentsFromAppEntry(EntryAssembly, BaseNamespaces);
+            ComponentScanner.ScanComponentsFromAppEntry();
             ConfigurationParser.ParseScannedConfigurations();
             InterceptorContainer.Build();
             PreInstantiateSingleton();
