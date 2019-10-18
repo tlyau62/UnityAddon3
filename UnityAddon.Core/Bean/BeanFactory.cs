@@ -33,9 +33,6 @@ namespace UnityAddon.Core.Bean
         public ParameterFill ParameterFill { get; set; }
 
         [Dependency]
-        public PropertyFill PropertyFill { get; set; }
-
-        [Dependency]
         public ConfigurationFactory ConfigurationFactory { get; set; }
 
         public void CreateFactory(TypeBeanDefinition typeBeanDefinition)
@@ -49,18 +46,14 @@ namespace UnityAddon.Core.Bean
             {
                 Container.RegisterFactory(type, beanName, (c, t, n) =>
                 {
-                    var obj = ConfigurationFactory.CreateConfiguration(type, ctor);
-
-                    return PropertyFill.FillAllProperties(obj);
+                    return ConfigurationFactory.CreateConfiguration(type, ctor);
                 }, scope);
             }
             else if (type.HasAttribute<ComponentAttribute>(true))
             {
                 Container.RegisterFactory(type, beanName, (c, t, n) =>
                 {
-                    var obj = Activator.CreateInstance(t, ParameterFill.FillAllParamaters(ctor));
-
-                    return PropertyFill.FillAllProperties(obj);
+                    return Activator.CreateInstance(t, ParameterFill.FillAllParamaters(ctor));
                 }, scope);
             }
             else
@@ -91,7 +84,7 @@ namespace UnityAddon.Core.Bean
 
                 invocation.Proceed();
 
-                return PropertyFill.FillAllProperties(invocation.ReturnValue);
+                return invocation.ReturnValue;
             }, BuildScope<IFactoryLifetimeManager>(methodBeanDefinition.GetBeanScope()));
         }
 

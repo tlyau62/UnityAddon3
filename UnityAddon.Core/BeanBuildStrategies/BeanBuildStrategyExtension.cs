@@ -29,6 +29,9 @@ namespace UnityAddon.Core.BeanBuildStrategies
         [Dependency]
         public BeanAopStrategy BeanAopStrategy { get; set; }
 
+        [Dependency]
+        public BeanAutowireStrategy BeanAutowireStrategy { get; set; }
+
         /// <summary>
         /// In order.
         /// For prebuild methods, they are executed according to the add order.
@@ -41,6 +44,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
             Context.Strategies.Add(BeanDependencyValidatorStrategy, UnityBuildStage.PreCreation); // 3
             Context.Strategies.Add(BeanAopStrategy, UnityBuildStage.PostInitialization); // 5
             Context.Strategies.Add(BeanPostConstructStrategy, UnityBuildStage.PostInitialization); // 4 (before BeanAopStrategy, so interceptor will not trigget at postconstruct)
+            Context.Strategies.Add(BeanAutowireStrategy, UnityBuildStage.PostInitialization);
         }
     }
 }

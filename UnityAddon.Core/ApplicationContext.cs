@@ -65,6 +65,12 @@ namespace UnityAddon.Core
             // used by component scan
             Container.RegisterType<IContainerRegistry, ContainerRegistry>();
             Container.RegisterType<ProxyGenerator>();
+            Container.RegisterType<ValueProvider>();
+            Container.RegisterType<ParameterFill>();
+            Container.RegisterType<BeanMethodInterceptor>();
+            Container.RegisterType<ConfigurationFactory>();
+            Container.RegisterType<BeanFactory>();
+            Container.RegisterType<BeanDefinitionRegistry>();
 
             Container.RegisterType<AopInterceptorContainer>(new ContainerControlledLifetimeManager());
 
