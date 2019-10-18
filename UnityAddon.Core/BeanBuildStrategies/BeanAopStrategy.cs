@@ -38,9 +38,6 @@ namespace UnityAddon.Core.BeanBuildStrategies
         public IBeanDefinitionContainer BeanDefinitionContainer { get; set; }
 
         [Dependency]
-        public ContainerRegistry ContainerRegistry { get; set; }
-
-        [Dependency]
         public AopInterceptorContainer AopInterceptorContainer { get; set; }
 
         public override void PostBuildUp(ref BuilderContext context)
