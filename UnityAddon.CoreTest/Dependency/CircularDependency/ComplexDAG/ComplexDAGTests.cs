@@ -59,9 +59,8 @@ namespace UnityAddon.CoreTest.Dependency.CircularDependency.ComplexDAG
         public void BeanDependencyValidatorStrategy_ResolveComplexDAGDependency_ExceptionThrown()
         {
             var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
-
-            container.Resolve<N1>();
+            
+            new ApplicationContext(container, GetType().Namespace);
         }
     }
 }

@@ -28,9 +28,8 @@ namespace UnityAddon.CoreTest.Dependency.Dependency
         public void PropertyFill_ResolveUnregisteredDependency_NoSuchBeanDefinitionExceptionThrown()
         {
             var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            Assert.Throws<NoSuchBeanDefinitionException>(() => appContext.Resolve<Service>());
+            Assert.Throws<NoSuchBeanDefinitionException>(() => new ApplicationContext(container, GetType().Namespace));
         }
     }
 }

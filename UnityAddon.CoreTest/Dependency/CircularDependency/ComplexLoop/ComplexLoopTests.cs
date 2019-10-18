@@ -59,9 +59,8 @@ namespace UnityAddon.CoreTest.Dependency.CircularDependency.ComplexLoop
         public void BeanDependencyValidatorStrategy_ResolveComplexLoopDependency_ExceptionThrown()
         {
             var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            Assert.Throws<CircularDependencyException>(() => container.Resolve<M1>());
+            Assert.Throws<CircularDependencyException>(() => new ApplicationContext(container, GetType().Namespace));
         }
     }
 }

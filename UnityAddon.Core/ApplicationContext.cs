@@ -13,6 +13,7 @@ using UnityAddon.Core.Reflection;
 using UnityAddon.Core.Value;
 using UnityAddon.Core.Aop;
 using UnityAddon.Core.Thread;
+using Unity.Lifetime;
 
 namespace UnityAddon.Core
 {
@@ -89,6 +90,19 @@ namespace UnityAddon.Core
             ComponentScanner.ScanComponentsFromAppEntry(EntryAssembly, BaseNamespaces);
             ConfigurationParser.ParseScannedConfigurations();
             InterceptorContainer.Build();
+
+            foreach (var reg in Container.Registrations)
+            {
+                if (!(reg.LifetimeManager is ContainerControlledLifetimeManager))
+                {
+                    continue;
+                }
+
+                if (!reg.RegisteredType.IsGenericType || !reg.RegisteredType.ContainsGenericParameters)
+                {
+                    Container.Resolve(reg.RegisteredType, reg.Name);
+                }
+            }
         }
 
     }

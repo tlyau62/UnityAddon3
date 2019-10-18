@@ -23,9 +23,8 @@ namespace UnityAddon.CoreTest.Dependency.CircularDependency.SelfLoop
         public void BeanDependencyValidatorStrategy_ResolveSelfLoopDependency_ExceptionThrown()
         {
             var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            Assert.Throws<CircularDependencyException>(() => container.Resolve<A>());
+            Assert.Throws<CircularDependencyException>(() => new ApplicationContext(container, GetType().Namespace));
         }
     }
 }
