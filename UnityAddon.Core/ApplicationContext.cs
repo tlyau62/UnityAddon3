@@ -113,8 +113,7 @@ namespace UnityAddon.Core
 
         /// <summary>
         /// Execute after refresh at "buildUp(this)".
-        /// All internal beans are registered are well registered before executing this constructor.
-        /// Should not call this constructor directly in outer namespaces.
+        /// All internal beans are well registered before executing this method.
         /// </summary>
         protected void Init()
         {
