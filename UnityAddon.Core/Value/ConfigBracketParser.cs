@@ -18,24 +18,16 @@ namespace UnityAddon.Core.Value
         [OptionalDependency]
         public IContainerRegistry ContainerRegistry { get; set; } // optionalDep for testing
 
-        // [OptionalDependency]
-        public IConfiguration Config { get; set; }
+        private IConfiguration _config;
 
         private static readonly Regex DefaultValue = new Regex("^([^:\n]*)(:([^:\n]*))?$", RegexOptions.Compiled);
 
-        // [InjectionConstructor]
         public ConfigBracketParser([OptionalDependency]IConfiguration config)
         {
-            Config = config ?? new ConfigurationBuilder()
+            _config = config ?? new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", true, true)
                 .Build();
         }
-
-        //public ConfigBracketParser(IConfiguration defaultConfig)
-        //{
-        //    Config = defaultConfig;
-        //}
-
 
         protected override string Process(string intermediateResult)
         {
@@ -48,7 +40,7 @@ namespace UnityAddon.Core.Value
             var propVal = match[0].Groups[1].Value;
             var hasDefaultValue = match[0].Groups[2].Value != "";
             var defaultVal = match[0].Groups[3].Value;
-            var configVal = Config[propVal.Replace('.', ':')];
+            var configVal = _config[propVal.Replace('.', ':')];
 
             if (configVal == null && !hasDefaultValue)
             {
