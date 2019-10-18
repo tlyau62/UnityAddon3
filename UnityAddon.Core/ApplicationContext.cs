@@ -63,8 +63,10 @@ namespace UnityAddon.Core
         }
 
         /// <summary>
-        /// All type/bean registered here are plain object.
-        /// In other words, they will not be affected by BeanBuildStrategyExtension.
+        /// Dependencies needed by BeanBuildStrategyExtension.
+        /// Some of them who are singleton may be needed by other classes.
+        /// All type/bean registered here are plain object, in other words,
+        /// they will not be affected by BeanBuildStrategyExtension.
         /// </summary>
         protected void ConfigBeanBuildingStrategy()
         {
@@ -77,6 +79,7 @@ namespace UnityAddon.Core
         }
 
         /// <summary>
+        /// Dependencies needed by ComponentScanner.
         /// Must be after BeanBuildStrategyExtension is registered.
         /// Else, the types/objects registered here will not be affected by BeanBuildStrategyExtension.
         /// </summary>
@@ -90,12 +93,10 @@ namespace UnityAddon.Core
             Container.RegisterType<BeanFactory>();
             Container.RegisterType<BeanDefinitionRegistry>();
             Container.RegisterType<ConfigBracketParser>();
-
-            Container.Resolve<BeanDefinitionRegistry>();
         }
 
         /// <summary>
-        /// Override all previous registration on unity container,
+        /// Override all previous registration if they are components on unity container,
         /// also cause them to be reconstructed even if singleton.
         /// </summary>
         protected void Refresh()
