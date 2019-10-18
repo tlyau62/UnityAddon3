@@ -44,6 +44,8 @@ namespace UnityAddon.Core
             EntryAssembly = Assembly.GetCallingAssembly();
 
             ConfigureGlobal();
+            ConfigBeanBuildingStrategy();
+            ConfigComponentScanner();
             Refresh();
             Init();
         }
@@ -51,19 +53,35 @@ namespace UnityAddon.Core
         // TODO: replace Container to ContainerRegistry
         protected void ConfigureGlobal()
         {
-            Container.RegisterType<ApplicationContext>(new ContainerControlledLifetimeManager());
-
             // app config
             Container.RegisterInstance("baseNamespaces", BaseNamespaces, new ContainerControlledLifetimeManager());
             Container.RegisterInstance("entryAssembly", EntryAssembly, new ContainerControlledLifetimeManager());
 
-            // must singleton, have internal state
-            Container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
+            // global singleton
+            Container.RegisterType<ApplicationContext>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IAsyncLocalFactory<Stack<IInvocation>>, AsyncLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())));
-            Container.RegisterType<IAsyncLocalFactory<Stack<ResolveStackEntry>>, AsyncLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())));
+        }
 
-            // used by component scan
+        /// <summary>
+        /// All type/bean registered here are plain object.
+        /// In other words, they will not be affected by BeanBuildStrategyExtension.
+        /// </summary>
+        protected void ConfigBeanBuildingStrategy()
+        {
+            Container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IAsyncLocalFactory<Stack<ResolveStackEntry>>, AsyncLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())));
+            Container.RegisterType<AopInterceptorContainer>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IContainerRegistry, ContainerRegistry>();
+
+            Container.AddNewExtension<BeanBuildStrategyExtension>(); // fill up dep using unity container
+        }
+
+        /// <summary>
+        /// Must be after BeanBuildStrategyExtension is registered.
+        /// Else, the types/objects registered here will not be affected by BeanBuildStrategyExtension.
+        /// </summary>
+        protected void ConfigComponentScanner()
+        {
             Container.RegisterType<ProxyGenerator>();
             Container.RegisterType<ValueProvider>();
             Container.RegisterType<ParameterFill>();
@@ -71,10 +89,9 @@ namespace UnityAddon.Core
             Container.RegisterType<ConfigurationFactory>();
             Container.RegisterType<BeanFactory>();
             Container.RegisterType<BeanDefinitionRegistry>();
+            Container.RegisterType<ConfigBracketParser>();
 
-            Container.RegisterType<AopInterceptorContainer>(new ContainerControlledLifetimeManager());
-
-            Container.AddNewExtension<BeanBuildStrategyExtension>(); // fill up dep using unity container
+            Container.Resolve<BeanDefinitionRegistry>();
         }
 
         /// <summary>
