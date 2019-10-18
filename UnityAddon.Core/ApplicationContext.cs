@@ -120,7 +120,11 @@ namespace UnityAddon.Core
             ComponentScanner.ScanComponentsFromAppEntry(EntryAssembly, BaseNamespaces);
             ConfigurationParser.ParseScannedConfigurations();
             InterceptorContainer.Build();
+            PreInstantiateSingleton();
+        }
 
+        public void PreInstantiateSingleton()
+        {
             foreach (var reg in Container.Registrations)
             {
                 if (!(reg.LifetimeManager is ContainerControlledLifetimeManager))
