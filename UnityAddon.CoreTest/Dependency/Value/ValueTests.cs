@@ -27,17 +27,18 @@ namespace UnityAddon.CoreTest.Dependency.Value
     public class ValueTests
     {
         [Fact]
-        public void PropertyFill_ResolveValue_ValueInjected()
+        public void ValueProvider_ResolveValue_ValueInjected()
         {
             var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            appContext.RegisterInstance<IConfiguration>(new ConfigurationBuilder()
+            container.RegisterInstance<IConfiguration>(new ConfigurationBuilder()
                 .AddInMemoryCollection(new Dictionary<string, string>
                 {
                     {"serviceType", "Write"},
                 })
                 .Build());
+
+            var appContext = new ApplicationContext(container, GetType().Namespace);
 
             Assert.Equal(ServiceType.Write, appContext.Resolve<Service>().Type);
         }
