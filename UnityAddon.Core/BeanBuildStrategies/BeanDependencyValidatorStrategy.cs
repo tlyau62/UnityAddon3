@@ -26,9 +26,15 @@ namespace UnityAddon.Core.BeanBuildStrategies
         public override void PostBuildUp(ref BuilderContext context)
         {
             var stack = StackFactory.Get();
-            var entry = stack.Pop();
+            ResolveStackEntry entry;
 
-            if (entry.IsBaseResolve)
+            while (stack.Peek().ResolveType != context.Type || stack.Peek().ResolveName != context.Name)
+            {
+                stack.Pop();
+            }
+            entry = stack.Pop();
+
+            if (entry != null && entry.IsBaseResolve)
             {
                 StackFactory.Delete();
             }
@@ -60,6 +66,8 @@ namespace UnityAddon.Core.BeanBuildStrategies
 
                 throw ex;
             }
+
+            // optional dep ?
 
             stack.Push(new ResolveStackEntry(type, name, !stackExist));
 
