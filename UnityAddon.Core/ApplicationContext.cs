@@ -53,20 +53,25 @@ namespace UnityAddon.Core
         // TODO: replace Container to ContainerRegistry
         protected void ConfigureGlobal()
         {
+            // app
+            Container.RegisterType<ApplicationContext>(new ContainerControlledLifetimeManager());
+
             // app config
             Container.RegisterInstance("baseNamespaces", BaseNamespaces, new ContainerControlledLifetimeManager());
             Container.RegisterInstance("entryAssembly", EntryAssembly, new ContainerControlledLifetimeManager());
 
             // global singleton
-            Container.RegisterType<ApplicationContext>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IAsyncLocalFactory<Stack<IInvocation>>, AsyncLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())));
         }
 
         /// <summary>
         /// Dependencies needed by BeanBuildStrategyExtension.
         /// Some of them who are singleton may be needed by other classes.
-        /// All type/bean registered here are plain object, in other words,
+        /// 
+        /// All type/bean registered here are plain objects, in other words,
         /// they will not be affected by BeanBuildStrategyExtension.
+        /// All type/bean registered after BeanBuildStrategyExtension will
+        /// be affected.
         /// </summary>
         protected void ConfigBeanBuildingStrategy()
         {
@@ -81,7 +86,6 @@ namespace UnityAddon.Core
         /// <summary>
         /// Dependencies needed by ComponentScanner.
         /// Must be after BeanBuildStrategyExtension is registered.
-        /// Else, the types/objects registered here will not be affected by BeanBuildStrategyExtension.
         /// </summary>
         protected void ConfigComponentScanner()
         {
@@ -103,14 +107,17 @@ namespace UnityAddon.Core
         {
             ComponentScanner = Container.Resolve<ComponentScanner>();
             ComponentScanner.ScanComponentsFromAppDomain();
+
+            Container.BuildUp(this);
         }
 
         /// <summary>
-        /// All internal beans are registered
+        /// Execute after refresh at "buildUp(this)".
+        /// All internal beans are registered are well registered before executing this constructor.
+        /// Should not call this constructor directly in outer namespaces.
         /// </summary>
         protected void Init()
         {
-            Container.BuildUp(this);
             ComponentScanner.ScanComponentsFromAppEntry(EntryAssembly, BaseNamespaces);
             ConfigurationParser.ParseScannedConfigurations();
             InterceptorContainer.Build();
@@ -128,6 +135,5 @@ namespace UnityAddon.Core
                 }
             }
         }
-
     }
 }
