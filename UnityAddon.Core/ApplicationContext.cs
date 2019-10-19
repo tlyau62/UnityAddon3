@@ -1,4 +1,4 @@
-﻿using Castle.DynamicProxy;
+using Castle.DynamicProxy;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
 using Unity;
@@ -36,11 +36,22 @@ namespace UnityAddon.Core
         [Dependency]
         public AopInterceptorContainer InterceptorContainer { get; set; }
 
-        public ApplicationContext(IUnityContainer container, params string[] baseNamespaces)
+        private bool _preInstantiateSingleton;
+
+        public ApplicationContext(IUnityContainer container, params string[] baseNamespaces) : this(container, true, Assembly.GetCallingAssembly(), baseNamespaces)
+        {
+        }
+
+        public ApplicationContext(IUnityContainer container, bool preInstantiateSingleton, params string[] baseNamespaces) : this(container, preInstantiateSingleton, Assembly.GetCallingAssembly(), baseNamespaces)
+        {
+        }
+
+        public ApplicationContext(IUnityContainer container, bool preInstantiateSingleton, Assembly entryAssembly, params string[] baseNamespaces)
         {
             Container = container;
             BaseNamespaces = baseNamespaces;
-            EntryAssembly = Assembly.GetCallingAssembly();
+            EntryAssembly = entryAssembly ?? Assembly.GetCallingAssembly();
+            _preInstantiateSingleton = preInstantiateSingleton;
 
             ConfigureGlobal();
             ConfigBeanBuildingStrategy();
@@ -119,7 +130,11 @@ namespace UnityAddon.Core
             ComponentScanner.ScanComponentsFromAppEntry();
             ConfigurationParser.ParseScannedConfigurations();
             InterceptorContainer.Build();
+
+            if (_preInstantiateSingleton)
+            {
             PreInstantiateSingleton();
+        }
         }
 
         public void PreInstantiateSingleton()
