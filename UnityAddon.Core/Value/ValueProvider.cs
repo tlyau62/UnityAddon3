@@ -11,6 +11,9 @@ namespace UnityAddon.Core.Value
     /// <summary>
     /// Convert a value expression to the given value type.
     /// The main for value injection.
+    /// 
+    /// see also:
+    /// https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible?view=netcore-3.0
     /// </summary>
     [Component]
     public class ValueProvider
