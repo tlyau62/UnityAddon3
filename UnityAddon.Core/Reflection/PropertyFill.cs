@@ -110,7 +110,8 @@ namespace UnityAddon.Core.Reflection
 
         private void ExceptionHandler(PropertyInfo prop, NoSuchBeanDefinitionException ex)
         {
-            throw ex;
+            throw new NoUniqueBeanDefinitionException(
+                $"Property {prop.Name} in {prop.DeclaringType.FullName} required a bean of type '{prop.PropertyType.FullName}' that could not be found.");
         }
 
         public static IEnumerable<PropertyInfo> SelectAllProperties(Type type)
