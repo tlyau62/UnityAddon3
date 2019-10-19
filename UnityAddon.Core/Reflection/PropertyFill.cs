@@ -64,15 +64,15 @@ namespace UnityAddon.Core.Reflection
             var invokeStrategy = GetType().GetMethod("InvokeStrategy", BindingFlags.NonPublic | BindingFlags.Instance);
             var type = obj.GetType();
 
-            try
+            foreach (var prop in SelectAllProperties(type))
             {
-                foreach (var prop in SelectAllProperties(type))
+                if (prop.SetMethod == null)
                 {
-                    if (prop.SetMethod == null)
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
+                try
+                {
                     foreach (var strategy in _resolveStrategies)
                     {
                         if (prop.HasAttribute(strategy.Key))
@@ -84,14 +84,24 @@ namespace UnityAddon.Core.Reflection
                         }
                     }
                 }
-            }
-            catch (TargetInvocationException ex)
-            {
-                if (ex.InnerException is NoSuchBeanDefinitionException)
+                catch (TargetInvocationException ex)
                 {
-                    throw ex.InnerException;
+                    if (ex.InnerException is NoUniqueBeanDefinitionException noUniqueBeanDefEx)
+                    {
+                        var beanDefHolder = noUniqueBeanDefEx.BeanDefinitionHolder;
+                        var beanDefsFound = beanDefHolder.GetAll();
+
+                        throw new NoUniqueBeanDefinitionException(
+                            $"Property {prop.Name} in {prop.DeclaringType.FullName} required a single bean, " +
+                            $"but {beanDefsFound.Count()} were found:\r\n{beanDefHolder}");
+                    }
+
+                    if (ex.InnerException is NoSuchBeanDefinitionException)
+                    {
+                        throw ex.InnerException;
+                    }
+                    throw ex;
                 }
-                throw ex;
             }
 
             return obj;

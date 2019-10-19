@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityAddon.Core.Exceptions;
 
 namespace UnityAddon.Core.Bean
 {
@@ -69,12 +70,26 @@ namespace UnityAddon.Core.Bean
                 }
             }
 
+            if (results.Count() == 0)
+            {
+                throw new NoSuchBeanDefinitionException();
+            }
+            else if (results.Count() > 1)
+            {
+                throw new NoUniqueBeanDefinitionException(this);
+            }
+
             return results.Single();
         }
 
         public IEnumerable<AbstractBeanDefinition> GetAll()
         {
             return _beanDefinitions;
+        }
+
+        public override string ToString()
+        {
+            return string.Join("\r\n", _beanDefinitions.Select(def => $"- {def}").ToArray());
         }
     }
 }

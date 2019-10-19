@@ -61,6 +61,14 @@ namespace UnityAddon.Core.Bean
         }
 
         public abstract bool IsPrimary();
+
+        public override string ToString()
+        {
+            var type = GetBeanType().Name;
+            var namepsace = GetBeanType().Namespace;
+
+            return $"{type}: defined in namespace [{namepsace}]";
+        }
     }
 
     public class TypeBeanDefinition : AbstractBeanDefinition
