@@ -24,7 +24,7 @@ namespace UnityAddon.Core.Reflection
         public ValueProvider ValueProvider { get; set; }
 
         [Dependency]
-        public DependencyExceptionHandler DependencyExceptionHandler { get; set; }
+        public DependencyExceptionFactory DependencyExceptionHandler { get; set; }
 
         private IDictionary<Type, object> _resolveStrategies = new Dictionary<Type, object>();
 
