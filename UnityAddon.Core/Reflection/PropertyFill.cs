@@ -23,6 +23,9 @@ namespace UnityAddon.Core.Reflection
         [Dependency]
         public ValueProvider ValueProvider { get; set; }
 
+        [Dependency]
+        public DependencyExceptionHandler DependencyExceptionHandler { get; set; }
+
         private IDictionary<Type, object> _resolveStrategies = new Dictionary<Type, object>();
 
         private static MethodInfo InvokeStrategyMethod = typeof(PropertyFill)
@@ -33,7 +36,7 @@ namespace UnityAddon.Core.Reflection
             AddDefaultResolveStrategies();
         }
 
-        public void AddDefaultResolveStrategies()
+        protected virtual void AddDefaultResolveStrategies()
         {
             AddResolveStrategy<DependencyAttribute>((prop, attr, containerReg) =>
             {
@@ -94,24 +97,8 @@ namespace UnityAddon.Core.Reflection
             }
             catch (TargetInvocationException ex) when (ex.InnerException is NoSuchBeanDefinitionException)
             {
-                ExceptionHandler(prop, (dynamic)ex.InnerException);
+                throw DependencyExceptionHandler.CreateException(prop, (dynamic)ex.InnerException);
             }
-        }
-
-        private void ExceptionHandler(PropertyInfo prop, NoUniqueBeanDefinitionException ex)
-        {
-            var beanDefHolder = ex.BeanDefinitionHolder;
-            var beanDefsFound = beanDefHolder.GetAll();
-
-            throw new NoUniqueBeanDefinitionException(
-                $"Property {prop.Name} in {prop.DeclaringType.FullName} required a single bean, " +
-                $"but {beanDefsFound.Count()} were found:\r\n{beanDefHolder}");
-        }
-
-        private void ExceptionHandler(PropertyInfo prop, NoSuchBeanDefinitionException ex)
-        {
-            throw new NoUniqueBeanDefinitionException(
-                $"Property {prop.Name} in {prop.DeclaringType.FullName} required a bean of type '{prop.PropertyType.FullName}' that could not be found.");
         }
 
         public static IEnumerable<PropertyInfo> SelectAllProperties(Type type)
