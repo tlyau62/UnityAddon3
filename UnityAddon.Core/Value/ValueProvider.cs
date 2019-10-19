@@ -22,11 +22,11 @@ namespace UnityAddon.Core.Value
         {
             var parsed = ConfigBracketParser.Parse(valExpr);
 
-            if (typeof(Enum).IsAssignableFrom(valType))
+            if (valType.IsEnum)
             {
                 return Enum.Parse(valType, parsed);
             }
-            else if (valType.IsPrimitive || valType == typeof(string))
+            else if (typeof(IConvertible).IsAssignableFrom(valType))
             {
                 return Convert.ChangeType(parsed, valType);
             }
