@@ -11,6 +11,9 @@ namespace UnityAddon.Core.Value
     /// <summary>
     /// Convert a value expression to the given value type.
     /// The main for value injection.
+    /// 
+    /// see also:
+    /// https://docs.microsoft.com/en-us/dotnet/api/system.iconvertible?view=netcore-3.0
     /// </summary>
     [Component]
     public class ValueProvider
@@ -22,11 +25,11 @@ namespace UnityAddon.Core.Value
         {
             var parsed = ConfigBracketParser.Parse(valExpr);
 
-            if (typeof(Enum).IsAssignableFrom(valType))
+            if (valType.IsEnum)
             {
                 return Enum.Parse(valType, parsed);
             }
-            else if (valType.IsPrimitive || valType == typeof(string))
+            else if (typeof(IConvertible).IsAssignableFrom(valType))
             {
                 return Convert.ChangeType(parsed, valType);
             }
