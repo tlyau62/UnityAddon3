@@ -25,6 +25,9 @@ namespace UnityAddon.Core.Reflection
 
         private IDictionary<Type, object> _resolveStrategies = new Dictionary<Type, object>();
 
+        private static MethodInfo InvokeStrategyMethod = typeof(PropertyFill)
+            .GetMethod(nameof(InvokeStrategy), BindingFlags.NonPublic | BindingFlags.Instance);
+
         public PropertyFill()
         {
             AddDefaultResolveStrategies();
@@ -61,50 +64,53 @@ namespace UnityAddon.Core.Reflection
 
         public object FillAllProperties(object obj)
         {
-            var invokeStrategy = GetType().GetMethod("InvokeStrategy", BindingFlags.NonPublic | BindingFlags.Instance);
-            var type = obj.GetType();
-
-            foreach (var prop in SelectAllProperties(type))
+            foreach (var prop in SelectAllProperties(obj.GetType()))
             {
-                if (prop.SetMethod == null)
-                {
-                    continue;
-                }
-
-                try
-                {
-                    foreach (var strategy in _resolveStrategies)
-                    {
-                        if (prop.HasAttribute(strategy.Key))
-                        {
-                            prop.SetMethod.Invoke(obj, new object[] {
-                                invokeStrategy.MakeGenericMethod(strategy.Key).Invoke(this, new object[] { strategy.Value, prop, prop.GetAttribute(strategy.Key), ContainerRegistry })
-                            });
-                            break;
-                        }
-                    }
-                }
-                catch (TargetInvocationException ex)
-                {
-                    if (ex.InnerException is NoUniqueBeanDefinitionException noUniqueBeanDefEx)
-                    {
-                        var beanDefHolder = noUniqueBeanDefEx.BeanDefinitionHolder;
-                        var beanDefsFound = beanDefHolder.GetAll();
-
-                        throw new NoUniqueBeanDefinitionException(
-                            $"Property {prop.Name} in {prop.DeclaringType.FullName} required a single bean, " +
-                            $"but {beanDefsFound.Count()} were found:\r\n{beanDefHolder}");
-                    }
-
-                    if (ex.InnerException is NoSuchBeanDefinitionException)
-                    {
-                        throw ex.InnerException;
-                    }
-                    throw ex;
-                }
+                InjectDependency(prop, obj);
             }
 
             return obj;
+        }
+
+        public void InjectDependency(PropertyInfo prop, object obj)
+        {
+            if (prop.SetMethod == null)
+            {
+                return;
+            }
+
+            try
+            {
+                foreach (var propAttr in prop.GetCustomAttributes(false))
+                {
+                    var attrType = propAttr.GetType();
+
+                    if (_resolveStrategies.ContainsKey(attrType))
+                    {
+                        prop.SetMethod.Invoke(obj, new object[] { InvokeStrategyMethod.MakeGenericMethod(attrType).Invoke(this, new object[] { _resolveStrategies[attrType], prop, prop.GetAttribute(attrType), ContainerRegistry }) });
+                        break;
+                    }
+                }
+            }
+            catch (TargetInvocationException ex) when (ex.InnerException is NoSuchBeanDefinitionException)
+            {
+                ExceptionHandler(prop, (dynamic)ex.InnerException);
+            }
+        }
+
+        private void ExceptionHandler(PropertyInfo prop, NoUniqueBeanDefinitionException ex)
+        {
+            var beanDefHolder = ex.BeanDefinitionHolder;
+            var beanDefsFound = beanDefHolder.GetAll();
+
+            throw new NoUniqueBeanDefinitionException(
+                $"Property {prop.Name} in {prop.DeclaringType.FullName} required a single bean, " +
+                $"but {beanDefsFound.Count()} were found:\r\n{beanDefHolder}");
+        }
+
+        private void ExceptionHandler(PropertyInfo prop, NoSuchBeanDefinitionException ex)
+        {
+            throw ex;
         }
 
         public static IEnumerable<PropertyInfo> SelectAllProperties(Type type)

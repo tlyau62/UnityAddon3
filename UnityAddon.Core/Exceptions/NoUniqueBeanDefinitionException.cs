@@ -14,10 +14,6 @@ namespace UnityAddon.Core.Exceptions
     {
         public BeanDefinitionHolder BeanDefinitionHolder { get; set; }
 
-        public NoUniqueBeanDefinitionException()
-        {
-        }
-
         public NoUniqueBeanDefinitionException(BeanDefinitionHolder beanDefinitionHolder)
         {
             BeanDefinitionHolder = beanDefinitionHolder;
