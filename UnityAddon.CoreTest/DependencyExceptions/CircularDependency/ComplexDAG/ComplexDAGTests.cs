@@ -8,7 +8,7 @@ using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
 using Xunit;
 
-namespace UnityAddon.CoreTest.Dependency.CircularDependency.ComplexDAG
+namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.ComplexDAG
 {
     [Component]
     class N1
@@ -52,7 +52,7 @@ namespace UnityAddon.CoreTest.Dependency.CircularDependency.ComplexDAG
         public N7(N4 n4) { }
     }
 
-    [Trait("Dependency", "CircularDependency/ComplexDAG")]
+    [Trait("DependencyExceptions", "CircularDependency/ComplexDAG")]
     public class ComplexDAGTests
     {
         [Fact]

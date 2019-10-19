@@ -8,7 +8,7 @@ using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
 using Xunit;
 
-namespace UnityAddon.CoreTest.Dependency.CircularDependency.ComplexLoop
+namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.ComplexLoop
 {
     [Component]
     class M1
@@ -52,7 +52,7 @@ namespace UnityAddon.CoreTest.Dependency.CircularDependency.ComplexLoop
         public M7(M4 m4) { }
     }
 
-    [Trait("Dependency", "CircularDependency/ComplexLoop")]
+    [Trait("DependencyExceptions", "CircularDependency/ComplexLoop")]
     public class ComplexLoopTests
     {
         [Fact]

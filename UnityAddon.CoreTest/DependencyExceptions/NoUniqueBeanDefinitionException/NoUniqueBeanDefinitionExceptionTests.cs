@@ -10,7 +10,7 @@ using UnityAddon.Core.Exceptions;
 using Xunit;
 using Assert = Xunit.Assert;
 
-namespace UnityAddon.CoreTest.Exceptions.NoUniqueBeanDefinition.NoUniqueBeanDefinitionExceptionTests
+namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoUniqueBeanDefinitionExceptionTests
 {
     public interface IB { }
 
@@ -27,7 +27,7 @@ namespace UnityAddon.CoreTest.Exceptions.NoUniqueBeanDefinition.NoUniqueBeanDefi
         public IB B { get; set; }
     }
 
-    [Trait("Exceptions", "NoUniqueBeanDefinitionException")]
+    [Trait("DependencyExceptions", "NoUniqueBeanDefinition")]
     public class NoUniqueBeanDefinitionExceptionTests
     {
         [Fact]

@@ -10,7 +10,7 @@ using UnityAddon.Core.Exceptions;
 using Xunit;
 using Assert = Xunit.Assert;
 
-namespace UnityAddon.CoreTest.Exceptions.NoUniqueBeanDefinition.NoSuchBeanDefinitionExceptionTests
+namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoSuchBeanDefinitionExceptionTests
 {
     public interface IB { }
 
@@ -21,14 +21,14 @@ namespace UnityAddon.CoreTest.Exceptions.NoUniqueBeanDefinition.NoSuchBeanDefini
         public IB B { get; set; }
     }
 
-    [Trait("Exceptions", "NoSuchBeanDefinitionException")]
+    [Trait("DependencyExceptions", "NoSuchBeanDefinition")]
     public class NoSuchBeanDefinitionExceptionTests
     {
         [Fact]
         public void PropertyFill_NoSuchBeanDefinition_ExceptionThrown()
         {
             var container = new UnityContainer();
-            var ex = Assert.Throws<NoUniqueBeanDefinitionException>(() => new ApplicationContext(container, GetType().Namespace));
+            var ex = Assert.Throws<NoSuchBeanDefinitionException>(() => new ApplicationContext(container, GetType().Namespace));
 
             Assert.Equal($"Property B in {typeof(Service).FullName} required a bean of type '{typeof(IB).FullName}' that could not be found.", ex.Message);
         }

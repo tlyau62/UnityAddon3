@@ -6,7 +6,7 @@ using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using Xunit;
 
-namespace UnityAddon.CoreTest.Dependency.CircularDependency.OptionalDependency
+namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.OptionalDependency
 {
     [Component]
     class D
@@ -36,7 +36,7 @@ namespace UnityAddon.CoreTest.Dependency.CircularDependency.OptionalDependency
     {
     }
 
-    [Trait("Dependency", "CircularDependency/OptionalDependency")]
+    [Trait("DependencyExceptions", "CircularDependency/OptionalDependency")]
     public class OptionalDependencyTests
     {
         [Fact]

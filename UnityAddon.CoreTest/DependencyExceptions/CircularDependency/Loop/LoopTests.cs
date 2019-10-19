@@ -8,7 +8,7 @@ using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
 using Xunit;
 
-namespace UnityAddon.CoreTest.Dependency.CircularDependency.Loop
+namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.Loop
 {
     public interface IA { }
     public interface IB { }
@@ -25,7 +25,7 @@ namespace UnityAddon.CoreTest.Dependency.CircularDependency.Loop
         public B(IA a) { }
     }
 
-    [Trait("Dependency", "CircularDependency/Loop")]
+    [Trait("DependencyExceptions", "CircularDependency/Loop")]
     public class SelfLoopTests
     {
         [Fact]
