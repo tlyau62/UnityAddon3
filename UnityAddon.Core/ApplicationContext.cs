@@ -1,4 +1,4 @@
-using Castle.DynamicProxy;
+﻿using Castle.DynamicProxy;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
 using Unity;
@@ -107,6 +107,7 @@ namespace UnityAddon.Core
             Container.RegisterType<BeanFactory>();
             Container.RegisterType<BeanDefinitionRegistry>();
             Container.RegisterType<ConfigBracketParser>();
+            Container.RegisterType<DependencyExceptionFactory>();
         }
 
         /// <summary>
@@ -133,8 +134,8 @@ namespace UnityAddon.Core
 
             if (_preInstantiateSingleton)
             {
-            PreInstantiateSingleton();
-        }
+                PreInstantiateSingleton();
+            }
         }
 
         public void PreInstantiateSingleton()

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Unity;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Exceptions;
 using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core.Reflection
@@ -22,7 +23,13 @@ namespace UnityAddon.Core.Reflection
         [Dependency]
         public ValueProvider ValueProvider { get; set; }
 
+        [Dependency]
+        public DependencyExceptionFactory DependencyExceptionHandler { get; set; }
+
         private IDictionary<Type, object> _resolveStrategies = new Dictionary<Type, object>();
+
+        private static MethodInfo InvokeStrategyMethod = typeof(ParameterFill)
+            .GetMethod(nameof(InvokeStrategy), BindingFlags.NonPublic | BindingFlags.Instance);
 
         public ParameterFill()
         {
@@ -62,20 +69,33 @@ namespace UnityAddon.Core.Reflection
         {
             var invokeStrategy = GetType().GetMethod("InvokeStrategy", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            return method.GetParameters().Select(param =>
+            return method.GetParameters().Select(param => GetDependency(param)).ToArray();
+        }
+
+        public object GetDependency(ParameterInfo param)
+        {
+            try
             {
-                foreach (var strategy in _resolveStrategies)
+                foreach (var paramAttr in param.GetCustomAttributes(false))
                 {
-                    if (param.HasAttribute(strategy.Key))
+                    var attrType = paramAttr.GetType();
+
+                    if (_resolveStrategies.ContainsKey(attrType))
                     {
-                        // create a func type useing GenericMethod
-                        return invokeStrategy.MakeGenericMethod(strategy.Key).Invoke(this, new object[] { strategy.Value, param, param.GetAttribute(strategy.Key), ContainerRegistry });
+                        return InvokeStrategyMethod.MakeGenericMethod(attrType).Invoke(this, new object[] { _resolveStrategies[attrType], param, param.GetAttribute(attrType), ContainerRegistry });
                     }
                 }
 
                 return ContainerRegistry.Resolve(param.ParameterType, null);
-            })
-            .ToArray();
+            }
+            catch (TargetInvocationException ex) when (ex.InnerException is NoSuchBeanDefinitionException)
+            {
+                throw DependencyExceptionHandler.CreateException(param, (dynamic)ex.InnerException);
+            }
+            catch (NoSuchBeanDefinitionException ex)
+            {
+                throw DependencyExceptionHandler.CreateException(param, (dynamic)ex);
+            }
         }
     }
 }

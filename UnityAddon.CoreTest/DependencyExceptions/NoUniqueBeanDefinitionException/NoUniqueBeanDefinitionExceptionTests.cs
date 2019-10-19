@@ -21,10 +21,18 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoUniq
     public class B2 : IB { }
 
     [Component]
-    public class Service
+    public class PropService
     {
         [Dependency]
         public IB B { get; set; }
+    }
+
+    [Component]
+    public class CtorService
+    {
+        public CtorService(IB B)
+        {
+        }
     }
 
     [Trait("DependencyExceptions", "NoUniqueBeanDefinition")]
@@ -34,9 +42,24 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoUniq
         public void PropertyFill_NoUniqueBeanDefinition_ExceptionThrown()
         {
             var container = new UnityContainer();
-            var ex = Assert.Throws<NoUniqueBeanDefinitionException>(() => new ApplicationContext(container, GetType().Namespace));
+            var appContext = new ApplicationContext(container, false, GetType().Namespace);
 
-            Assert.Equal($"Property B in {typeof(Service).FullName} required a single bean, but 2 were found:\r\n" +
+            var ex = Assert.Throws<NoUniqueBeanDefinitionException>(() => appContext.Resolve<PropService>());
+
+            Assert.Equal($"Property B in {typeof(PropService).FullName} required a single bean, but 2 were found:\r\n" +
+                $"- {typeof(B1).Name}: defined in namespace [{typeof(B1).Namespace}]\r\n" +
+                $"- {typeof(B2).Name}: defined in namespace [{typeof(B2).Namespace}]", ex.Message);
+        }
+
+        [Fact]
+        public void ParameterFill_NoUniqueBeanDefinition_ExceptionThrown()
+        {
+            var container = new UnityContainer();
+            var appContext = new ApplicationContext(container, false, GetType().Namespace);
+
+            var ex = Assert.Throws<NoUniqueBeanDefinitionException>(() => appContext.Resolve<CtorService>());
+
+            Assert.Equal($"Parameter 0 of Constructor in {typeof(CtorService).FullName} required a single bean, but 2 were found:\r\n" +
                 $"- {typeof(B1).Name}: defined in namespace [{typeof(B1).Namespace}]\r\n" +
                 $"- {typeof(B2).Name}: defined in namespace [{typeof(B2).Namespace}]", ex.Message);
         }

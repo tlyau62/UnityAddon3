@@ -15,10 +15,18 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoSuch
     public interface IB { }
 
     [Component]
-    public class Service
+    public class PropService
     {
         [Dependency]
         public IB B { get; set; }
+    }
+
+    [Component]
+    public class CtorService
+    {
+        public CtorService(IB B)
+        {
+        }
     }
 
     [Trait("DependencyExceptions", "NoSuchBeanDefinition")]
@@ -28,9 +36,22 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoSuch
         public void PropertyFill_NoSuchBeanDefinition_ExceptionThrown()
         {
             var container = new UnityContainer();
-            var ex = Assert.Throws<NoSuchBeanDefinitionException>(() => new ApplicationContext(container, GetType().Namespace));
+            var appContext = new ApplicationContext(container, false, GetType().Namespace);
 
-            Assert.Equal($"Property B in {typeof(Service).FullName} required a bean of type '{typeof(IB).FullName}' that could not be found.", ex.Message);
+            var ex = Assert.Throws<NoSuchBeanDefinitionException>(() => appContext.Resolve<PropService>());
+
+            Assert.Equal($"Property B in {typeof(PropService).FullName} required a bean of type '{typeof(IB).FullName}' that could not be found.", ex.Message);
+        }
+
+        [Fact]
+        public void ParamterFill_NoSuchBeanDefinition_ExceptionThrown()
+        {
+            var container = new UnityContainer();
+            var appContext = new ApplicationContext(container, false, GetType().Namespace);
+
+            var ex = Assert.Throws<NoSuchBeanDefinitionException>(() => appContext.Resolve<CtorService>());
+
+            Assert.Equal($"Parameter 0 of Constructor in {typeof(CtorService).FullName} required a bean of type '{typeof(IB).FullName}' that could not be found.", ex.Message);
         }
     }
 
