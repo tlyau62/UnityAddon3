@@ -10,13 +10,9 @@ namespace UnityAddon.Core.Exceptions
     /// </summary>
     public class NoSuchBeanDefinitionException : Exception
     {
-        
-
         public NoSuchBeanDefinitionException()
         {
         }
-
-        
 
         public NoSuchBeanDefinitionException(string message) : base(message)
         {
