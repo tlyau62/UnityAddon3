@@ -12,6 +12,7 @@ namespace UnityAddon.Core.Exceptions
     /// </summary>
     public class NoUniqueBeanDefinitionException : NoSuchBeanDefinitionException
     {
+        // TODO: Should not put here
         public BeanDefinitionHolder BeanDefinitionHolder { get; set; }
 
         public NoUniqueBeanDefinitionException(BeanDefinitionHolder beanDefinitionHolder)
