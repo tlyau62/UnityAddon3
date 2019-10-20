@@ -39,10 +39,6 @@ namespace UnityAddon.Core.Reflection
 
                 return dep ?? (param.HasAttribute<OptionalDependencyAttribute>() ? null : ContainerRegistry.Resolve(param.ParameterType, null));
             }
-            catch (TargetInvocationException ex) when (ex.InnerException is NoSuchBeanDefinitionException)
-            {
-                throw DependencyExceptionHandler.CreateException(param, (dynamic)ex.InnerException);
-            }
             catch (NoSuchBeanDefinitionException ex)
             {
                 throw DependencyExceptionHandler.CreateException(param, (dynamic)ex);

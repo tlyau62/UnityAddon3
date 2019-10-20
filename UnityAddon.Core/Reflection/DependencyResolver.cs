@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Exceptions;
 using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core.Reflection
@@ -48,17 +49,24 @@ namespace UnityAddon.Core.Reflection
 
         public object Resolve(Type resolveType, IEnumerable<Attribute> attributes)
         {
-            foreach (var attribute in attributes)
+            try
             {
-                var attrType = attribute.GetType();
-
-                if (_resolveStrategies.ContainsKey(attrType))
+                foreach (var attribute in attributes)
                 {
-                    return InvokeStrategyMethod.MakeGenericMethod(attrType).Invoke(this, new object[] { _resolveStrategies[attrType], resolveType, attribute, ContainerRegistry });
-                }
-            }
+                    var attrType = attribute.GetType();
 
-            return null;
+                    if (_resolveStrategies.ContainsKey(attrType))
+                    {
+                        return InvokeStrategyMethod.MakeGenericMethod(attrType).Invoke(this, new object[] { _resolveStrategies[attrType], resolveType, attribute, ContainerRegistry });
+                    }
+                }
+
+                return null;
+            }
+            catch (TargetInvocationException ex) when (ex.InnerException is NoSuchBeanDefinitionException)
+            {
+                throw ex.InnerException;
+            }
         }
 
         public void AddResolveStrategy<TAttribute>(Func<Type, TAttribute, IContainerRegistry, object> strategy) where TAttribute : Attribute

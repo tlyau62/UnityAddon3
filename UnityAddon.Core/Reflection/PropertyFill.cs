@@ -50,9 +50,9 @@ namespace UnityAddon.Core.Reflection
                     prop.SetMethod.Invoke(obj, new[] { dep });
                 }
             }
-            catch (TargetInvocationException ex) when (ex.InnerException is NoSuchBeanDefinitionException)
+            catch (NoSuchBeanDefinitionException ex)
             {
-                throw DependencyExceptionHandler.CreateException(prop, (dynamic)ex.InnerException);
+                throw DependencyExceptionHandler.CreateException(prop, (dynamic)ex);
             }
         }
 
