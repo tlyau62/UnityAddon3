@@ -72,11 +72,11 @@ namespace UnityAddon.Core
 
             // global singleton
             Container.RegisterType<IAsyncLocalFactory<Stack<IInvocation>>, AsyncLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())));
+            Container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
         }
 
         /// <summary>
         /// Dependencies needed by BeanBuildStrategyExtension.
-        /// Some of them who are singleton may be needed by other classes.
         /// 
         /// All type/bean registered here are plain objects, in other words,
         /// they will not be affected by BeanBuildStrategyExtension.
@@ -85,7 +85,6 @@ namespace UnityAddon.Core
         /// </summary>
         protected void ConfigBeanBuildingStrategy()
         {
-            Container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IAsyncLocalFactory<Stack<ResolveStackEntry>>, AsyncLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())));
             Container.RegisterType<AopInterceptorContainer>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IContainerRegistry, ContainerRegistry>();
@@ -139,7 +138,7 @@ namespace UnityAddon.Core
             }
         }
 
-        public void PreInstantiateSingleton()
+        protected void PreInstantiateSingleton()
         {
             foreach (var reg in Container.Registrations)
             {
