@@ -21,54 +21,13 @@ namespace UnityAddon.Core.Reflection
         public IContainerRegistry ContainerRegistry { get; set; }
 
         [Dependency]
-        public ValueProvider ValueProvider { get; set; }
-
-        [Dependency]
         public DependencyExceptionFactory DependencyExceptionHandler { get; set; }
 
-        private IDictionary<Type, object> _resolveStrategies = new Dictionary<Type, object>();
-
-        private static MethodInfo InvokeStrategyMethod = typeof(ParameterFill)
-            .GetMethod(nameof(InvokeStrategy), BindingFlags.NonPublic | BindingFlags.Instance);
-
-        public ParameterFill()
-        {
-            AddDefaultResolveStrategies();
-        }
-
-        public void AddDefaultResolveStrategies()
-        {
-            AddResolveStrategy<DependencyAttribute>((param, attr, containerReg) =>
-            {
-                return containerReg.Resolve(param.ParameterType, attr.Name);
-            });
-
-            AddResolveStrategy<OptionalDependencyAttribute>((param, attr, containerReg) =>
-            {
-                return containerReg.IsRegistered(param.ParameterType, attr.Name) ?
-                    containerReg.Resolve(param.ParameterType, attr.Name) : null;
-            });
-
-            AddResolveStrategy<ValueAttribute>((param, attr, containerReg) =>
-            {
-                return ValueProvider.GetValue(param.ParameterType, attr.Value);
-            });
-        }
-
-        public void AddResolveStrategy<TAttribute>(Func<ParameterInfo, TAttribute, IContainerRegistry, object> strategy) where TAttribute : Attribute
-        {
-            _resolveStrategies[typeof(TAttribute)] = strategy;
-        }
-
-        private object InvokeStrategy<TAttribute>(Func<ParameterInfo, TAttribute, IContainerRegistry, object> strategy, ParameterInfo param, TAttribute attr, IContainerRegistry containerReg)
-        {
-            return strategy(param, attr, containerReg);
-        }
+        [Dependency]
+        public DependencyResolver DependencyResolver { get; set; }
 
         public object[] FillAllParamaters(MethodBase method)
         {
-            var invokeStrategy = GetType().GetMethod("InvokeStrategy", BindingFlags.NonPublic | BindingFlags.Instance);
-
             return method.GetParameters().Select(param => GetDependency(param)).ToArray();
         }
 
@@ -76,17 +35,9 @@ namespace UnityAddon.Core.Reflection
         {
             try
             {
-                foreach (var paramAttr in param.GetCustomAttributes(false))
-                {
-                    var attrType = paramAttr.GetType();
+                var dep = DependencyResolver.Resolve(param.ParameterType, param.GetCustomAttributes(false).Cast<Attribute>());
 
-                    if (_resolveStrategies.ContainsKey(attrType))
-                    {
-                        return InvokeStrategyMethod.MakeGenericMethod(attrType).Invoke(this, new object[] { _resolveStrategies[attrType], param, param.GetAttribute(attrType), ContainerRegistry });
-                    }
-                }
-
-                return ContainerRegistry.Resolve(param.ParameterType, null);
+                return dep ?? (param.HasAttribute<OptionalDependencyAttribute>() ? null : ContainerRegistry.Resolve(param.ParameterType, null));
             }
             catch (TargetInvocationException ex) when (ex.InnerException is NoSuchBeanDefinitionException)
             {

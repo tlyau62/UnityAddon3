@@ -108,6 +108,7 @@ namespace UnityAddon.Core
             Container.RegisterType<BeanDefinitionRegistry>();
             Container.RegisterType<ConfigBracketParser>();
             Container.RegisterType<DependencyExceptionFactory>();
+            Container.RegisterType<DependencyResolver>();
         }
 
         /// <summary>

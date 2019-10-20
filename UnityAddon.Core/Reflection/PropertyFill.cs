@@ -18,52 +18,10 @@ namespace UnityAddon.Core.Reflection
     public class PropertyFill
     {
         [Dependency]
-        public IContainerRegistry ContainerRegistry { get; set; }
-
-        [Dependency]
-        public ValueProvider ValueProvider { get; set; }
-
-        [Dependency]
         public DependencyExceptionFactory DependencyExceptionHandler { get; set; }
 
-        private IDictionary<Type, object> _resolveStrategies = new Dictionary<Type, object>();
-
-        private static MethodInfo InvokeStrategyMethod = typeof(PropertyFill)
-            .GetMethod(nameof(InvokeStrategy), BindingFlags.NonPublic | BindingFlags.Instance);
-
-        public PropertyFill()
-        {
-            AddDefaultResolveStrategies();
-        }
-
-        protected virtual void AddDefaultResolveStrategies()
-        {
-            AddResolveStrategy<DependencyAttribute>((prop, attr, containerReg) =>
-            {
-                return containerReg.Resolve(prop.PropertyType, attr.Name);
-            });
-
-            AddResolveStrategy<OptionalDependencyAttribute>((prop, attr, containerReg) =>
-            {
-                return containerReg.IsRegistered(prop.PropertyType, attr.Name) ?
-                    containerReg.Resolve(prop.PropertyType, attr.Name) : null;
-            });
-
-            AddResolveStrategy<ValueAttribute>((prop, attr, containerReg) =>
-            {
-                return ValueProvider.GetValue(prop.PropertyType, attr.Value);
-            });
-        }
-
-        public void AddResolveStrategy<TAttribute>(Func<PropertyInfo, TAttribute, IContainerRegistry, object> strategy) where TAttribute : Attribute
-        {
-            _resolveStrategies[typeof(TAttribute)] = strategy;
-        }
-
-        private object InvokeStrategy<TAttribute>(Func<PropertyInfo, TAttribute, IContainerRegistry, object> strategy, PropertyInfo prop, TAttribute attr, IContainerRegistry containerReg)
-        {
-            return strategy(prop, attr, containerReg);
-        }
+        [Dependency]
+        public DependencyResolver DependencyResolver { get; set; }
 
         public object FillAllProperties(object obj)
         {
@@ -84,15 +42,12 @@ namespace UnityAddon.Core.Reflection
 
             try
             {
-                foreach (var propAttr in prop.GetCustomAttributes(false))
-                {
-                    var attrType = propAttr.GetType();
+                var dep = DependencyResolver.Resolve(prop.PropertyType, prop.GetCustomAttributes(false).Cast<Attribute>());
 
-                    if (_resolveStrategies.ContainsKey(attrType))
-                    {
-                        prop.SetMethod.Invoke(obj, new object[] { InvokeStrategyMethod.MakeGenericMethod(attrType).Invoke(this, new object[] { _resolveStrategies[attrType], prop, prop.GetAttribute(attrType), ContainerRegistry }) });
-                        break;
-                    }
+                // must add null check, else something will be wrong.
+                if (dep != null)
+                {
+                    prop.SetMethod.Invoke(obj, new[] { dep });
                 }
             }
             catch (TargetInvocationException ex) when (ex.InnerException is NoSuchBeanDefinitionException)
