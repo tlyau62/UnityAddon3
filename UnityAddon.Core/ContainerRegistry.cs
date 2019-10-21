@@ -22,6 +22,7 @@ namespace UnityAddon.Core
         void RegisterType(Type regType, Type mapType, string name, ITypeLifetimeManager lifetimeManager);
 
         void RegisterInstance<TInstanceType>(TInstanceType instance);
+        void RegisterInstance<TInstanceType>(TInstanceType instance, string name);
 
         T Resolve<T>(string name = null);
         object Resolve(Type type, string name = null);
@@ -146,7 +147,15 @@ namespace UnityAddon.Core
         {
             lock (Container)
             {
-                Container.RegisterInstance(instance);
+                Container.RegisterInstance(instance, new ContainerControlledLifetimeManager());
+            }
+        }
+
+        public void RegisterInstance<TInstanceType>(TInstanceType instance, string name)
+        {
+            lock (Container)
+            {
+                Container.RegisterInstance(typeof(TInstanceType), name, instance, new ContainerControlledLifetimeManager());
             }
         }
 
