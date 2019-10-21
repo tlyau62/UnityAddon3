@@ -38,7 +38,7 @@ namespace UnityAddon.Core.Bean
         {
             var profiles = beanDefinition.GetBeanProfiles();
 
-            if (!string.IsNullOrEmpty(ActiveProfiles) && profiles.Length > 0)
+            if (ActiveProfiles != null && profiles.Length > 0)
             {
                 var activeProfiles = ActiveProfiles.Split(',');
 
