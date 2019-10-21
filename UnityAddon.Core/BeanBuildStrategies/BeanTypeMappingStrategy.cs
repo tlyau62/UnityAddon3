@@ -7,6 +7,8 @@ using Unity.Builder;
 using Unity.Strategies;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
+using UnityAddon.Core.Reflection;
+using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core.BeanBuildStrategies
 {
@@ -20,6 +22,9 @@ namespace UnityAddon.Core.BeanBuildStrategies
     {
         [Dependency]
         public IBeanDefinitionContainer BeanDefinitionContainer { get; set; }
+
+        [Dependency]
+        public ValueProvider ValueProvider { get; set; }
 
         public override void PreBuildUp(ref BuilderContext context)
         {
@@ -44,7 +49,35 @@ namespace UnityAddon.Core.BeanBuildStrategies
                 }
             }
 
+            // TODO: temp solution
+            if (context.Type.HasAttribute<ComponentAttribute>(true) && context.Type.HasAttribute<ProfileAttribute>())
+            {
+                string activeProfiles = (string)ValueProvider.GetValue(typeof(string), "{profiles.active:}");
+
+                if (IsFilteredByProfile(activeProfiles, context.Type.GetAttribute<ProfileAttribute>().Values))
+                {
+                    context.Existing = null;
+                    context.BuildComplete = true;
+                    return;
+                }
+            }
+
             base.PreBuildUp(ref context);
+        }
+
+        public bool IsFilteredByProfile(string activeProfiles, string[] profiles)
+        {
+            if (activeProfiles != null && profiles.Length > 0)
+            {
+                var splits = activeProfiles.Split(',');
+
+                if (splits.All(ap => !profiles.Contains(ap)))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
