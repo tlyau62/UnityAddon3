@@ -62,8 +62,6 @@ namespace UnityAddon.Core.Bean
 
         public abstract bool IsPrimary();
 
-        public bool IsDisabled { get; set; } = false;
-
         public override string ToString()
         {
             var type = GetBeanType().Name;

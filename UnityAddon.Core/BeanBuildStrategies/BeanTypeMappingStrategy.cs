@@ -35,13 +35,6 @@ namespace UnityAddon.Core.BeanBuildStrategies
                 {
                     var beanDef = BeanDefinitionContainer.GetBeanDefinition(context.Type, context.Name);
 
-                    if (beanDef.IsDisabled)
-                    {
-                        context.Existing = null;
-                        context.BuildComplete = true;
-                        return;
-                    }
-
                     if (context.Type != beanDef.GetBeanType() || context.Name != beanDef.GetBeanName())
                     {
                         context.Existing = context.Resolve(beanDef.GetBeanType(), beanDef.GetBeanName());
