@@ -25,11 +25,7 @@ namespace UnityAddon.Core.Bean
 
         public void Register(AbstractBeanDefinition beanDefinition)
         {
-            if (IsFilteredByProfile(beanDefinition))
-            {
-                return;
-            }
-
+            beanDefinition.IsDisabled = IsFilteredByProfile(beanDefinition);
             BeanDefinitionContainer.RegisterBeanDefinition(beanDefinition);
             BeanFactory.CreateFactory((dynamic)beanDefinition);
         }
