@@ -38,7 +38,17 @@ namespace UnityAddon.Core.Bean
             }
             else
             {
-                var beanDef = DefContainer.GetBeanDefinition(tempBeanDef.GetBeanType(), beanName); // valid bean def
+                AbstractBeanDefinition beanDef;
+
+                if (tempBeanDef.GetBeanType().IsGenericType)
+                {
+                    beanDef = DefContainer.GetBeanDefinition(tempBeanDef.GetBeanType().GetGenericTypeDefinition(), beanName); // valid bean def
+                }
+                else
+                {
+                    beanDef = DefContainer.GetBeanDefinition(tempBeanDef.GetBeanType(), beanName); // valid bean def
+                }
+
                 var hasStack = InvocationStackFactory.Exist();
                 var stack = hasStack ? InvocationStackFactory.Get() : InvocationStackFactory.Set();
 

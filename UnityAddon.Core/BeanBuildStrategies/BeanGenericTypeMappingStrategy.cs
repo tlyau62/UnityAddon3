@@ -38,7 +38,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
 
                     var concreteType = isConcreteType ? beanDef.GetBeanType() : beanDef.GetBeanType().MakeGenericType(context.Type.GetGenericArguments());
 
-                    if (genericTypeDef != beanDef.GetBeanType() || context.Name != beanDef.GetBeanName())
+                    if (concreteType != context.Type || context.Name != beanDef.GetBeanName())
                     {
                         // use resolve type params to make the generic type from bean def
                         context.Existing = context.Resolve(concreteType, beanDef.GetBeanName());
