@@ -34,7 +34,9 @@ namespace UnityAddon.Core.BeanBuildStrategies
                 if (context.Name == null || !context.Name.StartsWith("#"))
                 {
                     var beanDef = BeanDefinitionContainer.GetBeanDefinition(genericTypeDef, context.Name);
-                    var concreteType = beanDef.GetBeanType().MakeGenericType(context.Type.GetGenericArguments());
+                    var isConcreteType = !beanDef.GetBeanType().IsGenericType || !beanDef.GetBeanType().ContainsGenericParameters;
+
+                    var concreteType = isConcreteType ? beanDef.GetBeanType() : beanDef.GetBeanType().MakeGenericType(context.Type.GetGenericArguments());
 
                     if (genericTypeDef != beanDef.GetBeanType() || context.Name != beanDef.GetBeanName())
                     {
