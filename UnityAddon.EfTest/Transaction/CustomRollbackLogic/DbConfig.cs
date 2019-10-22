@@ -15,28 +15,18 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
             var rollbackOptions = new RollbackOptions();
 
             // rollback depends on GenericResult<T> any type T
-            rollbackOptions.AddRollbackLogic(typeof(GenericResult<>), returnValue => GetGenericResultValue((dynamic)returnValue));
+            rollbackOptions.RegisterRollbackLogic(typeof(GenericResult<>), returnValue => GetGenericResultValue((dynamic)returnValue));
 
             // rollback depends on Result
-            rollbackOptions.AddRollbackLogic(typeof(Result), returnValue => GetResultValue((dynamic)returnValue));
+            rollbackOptions.RegisterRollbackLogic<Result>(returnValue => !((TestResult)returnValue).IsSuccess);
 
             // rollback depends on ConcreteGenericResult<string> only
-            rollbackOptions.AddRollbackLogic(typeof(ConcreteGenericResult<string>), returnValue => GetConcreteGenericResultValue((dynamic)returnValue));
+            rollbackOptions.RegisterRollbackLogic<ConcreteGenericResult<string>>(returnValue => !returnValue.IsSuccess);
 
             return rollbackOptions;
         }
 
         private bool GetGenericResultValue<T>(GenericResult<T> result)
-        {
-            return !result.IsSuccess;
-        }
-
-        private bool GetResultValue(TestResult result)
-        {
-            return !result.IsSuccess;
-        }
-
-        private bool GetConcreteGenericResultValue(ConcreteGenericResult<string> result)
         {
             return !result.IsSuccess;
         }

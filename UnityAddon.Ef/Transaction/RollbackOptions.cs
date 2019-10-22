@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using UnityAddon.Core.Reflection;
 
@@ -8,13 +9,25 @@ namespace UnityAddon.Ef.Transaction
 {
     public class RollbackOptions
     {
-        private IDictionary<Type, List<Func<object, bool>>> _rollbackLogics = new Dictionary<Type, List<Func<object, bool>>>();
+        private IDictionary<Type, List<object>> _rollbackLogics = new Dictionary<Type, List<object>>();
 
-        public void AddRollbackLogic(Type returnType, Func<object, bool> rollbackLogic)
+        private static MethodInfo LogicInvokerMethod = typeof(RollbackOptions).GetMethod(nameof(LogicInvoker), BindingFlags.NonPublic | BindingFlags.Instance);
+
+        public void RegisterRollbackLogic<TReturn>(Func<TReturn, bool> rollbackLogic)
         {
-            if (!_rollbackLogics.ContainsKey(returnType.GetType()))
+            AddRollbackLogic(typeof(TReturn), rollbackLogic);
+        }
+
+        public void RegisterRollbackLogic(Type returnType, Func<object, bool> rollbackLogic)
+        {
+            AddRollbackLogic(returnType, rollbackLogic);
+        }
+
+        private void AddRollbackLogic(Type returnType, object rollbackLogic)
+        {
+            if (!_rollbackLogics.ContainsKey(returnType))
             {
-                _rollbackLogics[returnType] = new List<Func<object, bool>>();
+                _rollbackLogics[returnType] = new List<object>();
             }
 
             _rollbackLogics[returnType].Add(rollbackLogic);
@@ -35,7 +48,12 @@ namespace UnityAddon.Ef.Transaction
                 return false;
             }
 
-            return _rollbackLogics[regType].Any(logic => logic(returnValue));
+            return _rollbackLogics[regType].Any(logic => (bool)LogicInvokerMethod.MakeGenericMethod(logic.GetType().GetGenericArguments()[0]).Invoke(this, new[] { logic, returnValue }));
+        }
+
+        private bool LogicInvoker<T>(Func<T, bool> logic, object returnValue)
+        {
+            return logic((T)returnValue);
         }
 
         private Type GetRegisteredType(Type targetType)
