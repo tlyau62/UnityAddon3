@@ -97,10 +97,10 @@ namespace UnityAddon.Ef.Transaction
                     tx.Commit();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 tx.Rollback();
-                throw ex;
+                throw;
             }
             finally
             {

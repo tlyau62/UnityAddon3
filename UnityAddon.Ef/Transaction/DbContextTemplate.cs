@@ -39,10 +39,10 @@ namespace UnityAddon.Ef.Transaction
                 ctx.SaveChanges();
                 tx.Commit();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 tx.Rollback();
-                throw ex;
+                throw;
             }
             finally
             {
