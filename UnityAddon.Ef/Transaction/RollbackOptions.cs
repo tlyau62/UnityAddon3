@@ -21,14 +21,18 @@ namespace UnityAddon.Ef.Transaction
 
         public bool TestRollback(object returnValue)
         {
-            var type = returnValue.GetType().IsGenericType ? returnValue.GetType().GetGenericTypeDefinition() : returnValue.GetType();
+            var type = returnValue.GetType();
+            var isGenericType = type.IsGenericType;
 
-            if (!_rollbackLogics.ContainsKey(type))
+            if (!_rollbackLogics.ContainsKey(type) &&
+                isGenericType && !_rollbackLogics.ContainsKey(type.GetGenericTypeDefinition()))
             {
                 return false;
             }
 
-            return _rollbackLogics[type].Any(logic => logic(returnValue));
+            var rollbackLogic = _rollbackLogics.ContainsKey(type) ? _rollbackLogics[type] : _rollbackLogics[type.GetGenericTypeDefinition()];
+
+            return rollbackLogic.Any(logic => logic(returnValue));
         }
     }
 }
