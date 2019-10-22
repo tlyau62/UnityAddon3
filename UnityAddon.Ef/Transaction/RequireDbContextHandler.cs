@@ -24,6 +24,9 @@ namespace UnityAddon.Ef.Transaction
         [Dependency]
         public IDbContextFactory _dbContextFactory { get; set; }
 
+        [OptionalDependency]
+        public RollbackOptions RollbackOptions { get; set; }
+
         public void DoInDbContext(IInvocation invocation, bool transactional)
         {
             var isOpen = _dbContextFactory.IsOpen();
@@ -84,8 +87,15 @@ namespace UnityAddon.Ef.Transaction
             {
                 invocation.Proceed();
 
-                context.SaveChanges();
-                tx.Commit();
+                if (RollbackOptions != null && RollbackOptions.TestRollback(invocation.ReturnValue))
+                {
+                    tx.Rollback();
+                }
+                else
+                {
+                    context.SaveChanges();
+                    tx.Commit();
+                }
             }
             catch (Exception ex)
             {
