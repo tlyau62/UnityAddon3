@@ -31,7 +31,7 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
             return !result.IsSuccess;
         }
 
-        private bool GetResultValue(Result result)
+        private bool GetResultValue(TestResult result)
         {
             return !result.IsSuccess;
         }

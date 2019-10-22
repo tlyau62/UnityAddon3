@@ -9,7 +9,11 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
         public bool IsSuccess { get; set; }
     }
 
-    public class Result
+    public abstract class Result
+    {
+    }
+
+    public class TestResult : Result
     {
         public bool IsSuccess { get; set; }
     }

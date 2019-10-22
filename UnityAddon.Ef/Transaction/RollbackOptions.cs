@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.Ef.Transaction
 {
@@ -21,18 +22,35 @@ namespace UnityAddon.Ef.Transaction
 
         public bool TestRollback(object returnValue)
         {
-            var type = returnValue.GetType();
-            var isGenericType = type.IsGenericType;
-
-            if (!_rollbackLogics.ContainsKey(type) &&
-                isGenericType && !_rollbackLogics.ContainsKey(type.GetGenericTypeDefinition()))
+            if (returnValue == null)
             {
                 return false;
             }
 
-            var rollbackLogic = _rollbackLogics.ContainsKey(type) ? _rollbackLogics[type] : _rollbackLogics[type.GetGenericTypeDefinition()];
+            var type = returnValue.GetType();
+            var regType = GetRegisteredType(type) ?? (type.IsGenericType ? GetRegisteredType(type.GetGenericTypeDefinition()) : null);
 
-            return rollbackLogic.Any(logic => logic(returnValue));
+            if (regType == null)
+            {
+                return false;
+            }
+
+            return _rollbackLogics[regType].Any(logic => logic(returnValue));
+        }
+
+        private Type GetRegisteredType(Type targetType)
+        {
+            var types = TypeHierarchyScanner.GetAssignableTypes(targetType);
+
+            foreach (var type in types)
+            {
+                if (_rollbackLogics.ContainsKey(type))
+                {
+                    return type;
+                }
+            }
+
+            return null;
         }
     }
 }

@@ -41,7 +41,7 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
         {
             _items.Add(new Item("testitem"));
 
-            return new Result()
+            return new TestResult()
             {
                 IsSuccess = isSuccess
             };
