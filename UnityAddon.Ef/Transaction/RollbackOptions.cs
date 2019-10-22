@@ -7,6 +7,13 @@ using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.Ef.Transaction
 {
+    /// <summary>
+    /// Provide options for custom db rollback logics.
+    /// Apart from db rollback due to exception occurs,
+    /// ef user can register a bean for custom rollback logics.
+    /// 
+    /// <seealso cref="RequireDbContextHandler"/>
+    /// </summary>
     public class RollbackOptions
     {
         private IDictionary<Type, List<object>> _rollbackLogics = new Dictionary<Type, List<object>>();
