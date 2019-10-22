@@ -84,6 +84,10 @@ namespace UnityAddon.Core
                 {
                     return true;
                 }
+                else if (type.IsGenericType && reg.RegisteredType == type.GetGenericTypeDefinition() && (name == null || reg.Name == name))
+                {
+                    return true;
+                }
             }
 
             type = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
