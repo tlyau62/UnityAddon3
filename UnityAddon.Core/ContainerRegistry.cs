@@ -80,11 +80,11 @@ namespace UnityAddon.Core
         {
             foreach (var reg in Container.Registrations)
             {
-                if (reg.RegisteredType == type && (name == null || reg.Name == name))
+                if ((reg.RegisteredType == type) && (name == null || reg.Name == name))
                 {
                     return true;
                 }
-                else if (type.IsGenericType && reg.RegisteredType == type.GetGenericTypeDefinition() && (name == null || reg.Name == name))
+                else if (type.IsGenericType && reg.RegisteredType == type.GetGenericTypeDefinition() && (name == null || reg.Name == name)) // fallback on generic type definition
                 {
                     return true;
                 }
