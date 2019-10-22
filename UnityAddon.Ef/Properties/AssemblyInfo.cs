@@ -1,3 +1,5 @@
-﻿using UnityAddon.Core.Attributes;
+﻿using System.Reflection;
+using UnityAddon.Core.Attributes;
 
+[assembly: AssemblyVersion("0.0.0.4")]
 [assembly: ComponentScan(BaseNamespaces = new[] { "UnityAddon.Ef" })]

@@ -31,4 +31,10 @@
     <ProjectReference Include="..\UnityAddon.Core\UnityAddon.Core.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AssemblyName>UnityAddon.Ef</AssemblyName>
+    <RootNamespace>UnityAddon.Ef</RootNamespace>
+  </PropertyGroup>
+
 </Project>
