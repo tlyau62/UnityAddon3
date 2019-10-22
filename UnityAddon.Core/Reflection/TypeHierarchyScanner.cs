@@ -55,7 +55,9 @@ namespace UnityAddon.Core.Reflection
 
         public static Type LoadType(Type type)
         {
-            return Type.GetType($"{type.Namespace}.{type.Name}, {type.Assembly.FullName}");
+            var loadedType = Type.GetType($"{type.Namespace}.{type.Name}, {type.Assembly.FullName}");
+
+            return loadedType ?? type; // proxy type will return null
         }
     }
 }
