@@ -73,6 +73,11 @@ namespace UnityAddon.Ef.Transaction
                 {
                     return type;
                 }
+
+                if (type.IsGenericType && _rollbackLogics.ContainsKey(type.GetGenericTypeDefinition()))
+                {
+                    return type.GetGenericTypeDefinition();
+                }
             }
 
             return null;
