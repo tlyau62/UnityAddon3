@@ -49,35 +49,8 @@ namespace UnityAddon.Core.BeanBuildStrategies
                 }
             }
 
-            // TODO: temp solution
-            if (context.Type.HasAttribute<ComponentAttribute>(true) && context.Type.HasAttribute<ProfileAttribute>())
-            {
-                string activeProfiles = (string)ValueProvider.GetValue(typeof(string), "{profiles.active:}");
-
-                if (IsFilteredByProfile(activeProfiles, context.Type.GetAttribute<ProfileAttribute>().Values))
-                {
-                    context.Existing = null;
-                    context.BuildComplete = true;
-                    return;
-                }
-            }
-
             base.PreBuildUp(ref context);
         }
 
-        public bool IsFilteredByProfile(string activeProfiles, string[] profiles)
-        {
-            if (activeProfiles != null && profiles.Length > 0)
-            {
-                var splits = activeProfiles.Split(',');
-
-                if (splits.All(ap => !profiles.Contains(ap)))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
     }
 }
