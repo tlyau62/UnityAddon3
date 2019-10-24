@@ -138,7 +138,7 @@ namespace UnityAddon.Core
             }
         }
 
-        protected void PreInstantiateSingleton()
+        public void PreInstantiateSingleton()
         {
             foreach (var reg in Container.Registrations)
             {
