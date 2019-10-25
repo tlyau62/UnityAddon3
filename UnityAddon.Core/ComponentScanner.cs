@@ -55,7 +55,7 @@ namespace UnityAddon.Core
             }
         }
 
-        public void ScanComponent(Assembly asm, string[] baseNamespaces)
+        public IEnumerable<Type> ScanComponent(Assembly asm, string[] baseNamespaces)
         {
             var regexes = BuildBaseNamespacesRegexes(baseNamespaces);
             var components = asm.GetTypes()
@@ -66,6 +66,8 @@ namespace UnityAddon.Core
             {
                 BeanDefinitionRegistry.Register(new TypeBeanDefinition(component));
             }
+
+            return components;
         }
 
         private IEnumerable<Regex> BuildBaseNamespacesRegexes(string[] baseNamespaces)
