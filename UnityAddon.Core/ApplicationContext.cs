@@ -138,8 +138,18 @@ namespace UnityAddon.Core
             }
         }
 
+        /// <summary>
+        /// Recursive instantiate singleton bean.
+        /// Some bean may do bean registration at postconstruct,
+        /// so recursive needed.
+        /// 
+        /// The final number of un-registrations will be converge to 0,
+        /// since each bean is postconstructed once only.
+        /// </summary>
         public void PreInstantiateSingleton()
         {
+            var currentRegs = Container.Registrations.Count();
+
             foreach (var reg in Container.Registrations)
             {
                 if (!(reg.LifetimeManager is ContainerControlledLifetimeManager))
@@ -151,6 +161,11 @@ namespace UnityAddon.Core
                 {
                     Container.Resolve(reg.RegisteredType, reg.Name);
                 }
+            }
+
+            if (Container.Registrations.Count() != currentRegs)
+            {
+                PreInstantiateSingleton();
             }
         }
     }
