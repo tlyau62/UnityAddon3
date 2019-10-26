@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -97,7 +97,7 @@ namespace UnityAddon.Core
 
         public T Resolve<T>(string name = null)
         {
-            return (T)Container.Resolve(typeof(T), name);
+            return (T)Resolve(typeof(T), name);
         }
 
         public object Resolve(Type type, string name = null)
