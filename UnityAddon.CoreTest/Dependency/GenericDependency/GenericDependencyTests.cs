@@ -9,40 +9,56 @@ using Xunit;
 
 namespace UnityAddon.CoreTest.Dependency.GenericDependency
 {
-    public abstract class Context { }
-
-    public class AppContext : Context { }
-
-    public interface IContextHelper<T> where T : Context { }
+    public interface IService<T> { }
 
     [Component]
-    public class ContextHelper<T> : IContextHelper<T> where T : Context { }
-
-    public interface IContextFactory<T> where T : Context
-    {
-        IContextHelper<T> ContextHelper { get; set; }
-    }
+    public class Service<T> : IService<T> { }
 
     [Component]
-    public class ContextFactory<T> : IContextFactory<T> where T : Context
+    public class IntService : IService<int> { }
+
+    [Component]
+    public class MainService
     {
         [Dependency]
-        public IContextHelper<T> ContextHelper { get; set; }
+        public IService<int> IntService { get; set; }
+
+        [Dependency]
+        public IService<string> StringService { get; set; }
     }
 
     [Trait("Dependency", "GenericDependency")]
-    public class GenericBeanTests
+    public class GenericDependencyTests
     {
         [Fact]
-        public void BuildStrategy_ResolveGenericDependency_BeanResolved()
+        public void BuildStrategy_DependencyOnGenericTypeBean_BeanInjected()
         {
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            var contextHelper = appContext.Resolve<IContextHelper<AppContext>>();
-            var contextFactory = appContext.Resolve<IContextFactory<AppContext>>();
+            var intService = appContext.Resolve<IService<int>>();
+            var stringService = appContext.Resolve<IService<string>>();
+            var mainService = appContext.Resolve<MainService>();
 
-            Assert.Same(contextHelper, contextFactory.ContextHelper);
+            Assert.Same(intService, mainService.IntService);
+            Assert.Same(stringService, mainService.StringService);
+
+            Assert.IsType<IntService>(intService);
+            Assert.IsType<Service<string>>(stringService);
+        }
+
+        [Fact]
+        public void BuildStrategy_CheckOnGenericTypeBeanIsRegistered_TrueReturned()
+        {
+            var container = new UnityContainer();
+            var appContext = new ApplicationContext(container, false, GetType().Namespace);
+
+            Assert.True(appContext.IsRegistered<IntService>());
+            Assert.True(appContext.IsRegistered<IService<int>>());
+            Assert.True(appContext.IsRegistered<IService<string>>());
+            Assert.True(appContext.IsRegistered<IService<double>>());
+            Assert.True(appContext.IsRegistered(typeof(IService<>)));
         }
     }
+
 }
