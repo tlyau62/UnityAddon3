@@ -1,4 +1,4 @@
-﻿using Castle.DynamicProxy;
+using Castle.DynamicProxy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,11 +32,6 @@ namespace UnityAddon.Core.Aop
         /// </summary>
         public void Build()
         {
-            if (!BeanDefinitionContainer.HasBeanDefinition(typeof(IAttributeInterceptor<>)))
-            {
-                return;
-            }
-
             if (IsInitialized)
             {
                 throw new InvalidOperationException("Already initialized.");
