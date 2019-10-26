@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -90,9 +90,7 @@ namespace UnityAddon.Core
                 }
             }
 
-            type = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
-
-            return BeanDefinitionContainer.HasBeanDefinition(type, name);
+            return BeanDefinitionContainer.HasBeanDefinition(type, name) || (type.IsGenericType && BeanDefinitionContainer.HasBeanDefinition(type.GetGenericTypeDefinition(), name));
         }
 
         public T Resolve<T>(string name = null)
