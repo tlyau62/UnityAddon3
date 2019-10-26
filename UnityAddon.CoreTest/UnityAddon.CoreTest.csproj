@@ -21,4 +21,8 @@
     <ProjectReference Include="..\UnityAddon.Core\UnityAddon.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Bean\GenericBean\ConcreteGenericBean\" />
+  </ItemGroup>
+
 </Project>
