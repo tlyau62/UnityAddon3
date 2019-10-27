@@ -53,28 +53,33 @@ namespace UnityAddon.Core.Reflection
 
         public static Type LoadType(Type type)
         {
-            var loadedType = Type.GetType(TypeToString(type));
+            if (string.IsNullOrEmpty(type.FullName))
+            {
+                throw new InvalidOperationException("Type full name should not be null.");
+            }
+
+            var loadedType = Type.GetType(type.FullName);
 
             return loadedType ?? type; // proxy type will return null
         }
 
-        private static string TypeToString(Type t)
-        {
-            var str = $"{t.Namespace}.{t.Name}{TypeArgs(t)}, {t.Assembly.FullName}";
+        //private static string TypeToString(Type t)
+        //{
+        //    var str = $"{t.Namespace}.{t.Name}{TypeArgs(t)}, {t.Assembly.FullName}";
 
-            return str;
-        }
+        //    return str;
+        //}
 
-        private static string TypeArgs(Type t)
-        {
-            if (t.GetGenericArguments().Length == 0)
-            {
-                return "";
-            }
+        //private static string TypeArgs(Type t)
+        //{
+        //    if (t.GetGenericArguments().Length == 0)
+        //    {
+        //        return "";
+        //    }
 
-            var str = "[[" + string.Join(',', t.GetGenericArguments().Select(arg => TypeToString(arg))) + "]]";
+        //    var str = "[[" + string.Join(',', t.GetGenericArguments().Select(arg => TypeToString(arg))) + "]]";
 
-            return str;
-        }
+        //    return str;
+        //}
     }
 }
