@@ -6,7 +6,7 @@ using System.Text;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
 
-namespace UnityAddon.Core.Reflection
+namespace UnityAddon.Core.DependencyInjection
 {
     [Component]
     public class DependencyExceptionFactory

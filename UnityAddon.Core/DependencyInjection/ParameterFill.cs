@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
+using UnityAddon.Core.Reflection;
 using UnityAddon.Core.Value;
 
-namespace UnityAddon.Core.Reflection
+namespace UnityAddon.Core.DependencyInjection
 {
     /// <summary>
     /// Resolve all the dependencies found in a method parameters.

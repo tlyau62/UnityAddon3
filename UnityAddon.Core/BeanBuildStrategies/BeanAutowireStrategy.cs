@@ -11,7 +11,7 @@ using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.Exceptions;
-using UnityAddon.Core.Reflection;
+using UnityAddon.Core.DependencyInjection;
 
 namespace UnityAddon.Core.BeanBuildStrategies
 {

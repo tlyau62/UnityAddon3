@@ -6,7 +6,7 @@ using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
-using UnityAddon.Core.Reflection;
+using UnityAddon.Core.DependencyInjection;
 
 namespace UnityAddon.Core
 {

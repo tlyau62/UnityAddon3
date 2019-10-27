@@ -10,6 +10,7 @@ using Unity;
 using Unity.Lifetime;
 using System.Reflection;
 using UnityAddon.Core.Thread;
+using UnityAddon.Core.DependencyInjection;
 
 namespace UnityAddon.Core.Bean
 {
