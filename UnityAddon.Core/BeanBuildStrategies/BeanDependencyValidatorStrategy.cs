@@ -51,9 +51,6 @@ namespace UnityAddon.Core.BeanBuildStrategies
             var stackExist = StackFactory.Exist();
             Stack<ResolveStackEntry> stack = stackExist ? StackFactory.Get() : StackFactory.Set();
             var name = context.Name;
-            //var type = context.RegistrationType.IsGenericType ?
-            //        context.RegistrationType.GetGenericTypeDefinition() :
-            //        context.RegistrationType;
             var type = context.Type;
 
             // check cirular dep
@@ -66,8 +63,6 @@ namespace UnityAddon.Core.BeanBuildStrategies
 
                 throw ex;
             }
-
-            // optional dep ?
 
             stack.Push(new ResolveStackEntry(type, name, !stackExist));
 

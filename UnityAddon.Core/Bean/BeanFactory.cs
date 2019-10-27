@@ -38,7 +38,7 @@ namespace UnityAddon.Core.Bean
         public void CreateFactory(TypeBeanDefinition typeBeanDefinition)
         {
             var type = typeBeanDefinition.GetBeanType();
-            var scope = BuildScope<IFactoryLifetimeManager>(typeBeanDefinition.GetBeanScope());
+            var scope = typeBeanDefinition.GetBeanScope();
             var ctor = (ConstructorInfo)typeBeanDefinition.GetConstructor();
             var beanName = typeBeanDefinition.GetBeanName();
 
@@ -47,14 +47,14 @@ namespace UnityAddon.Core.Bean
                 Container.RegisterFactory(type, beanName, (c, t, n) =>
                 {
                     return ConfigurationFactory.CreateConfiguration(type, ctor);
-                }, scope);
+                }, BuildScope<IFactoryLifetimeManager>(scope));
             }
             else if (type.HasAttribute<ComponentAttribute>(true))
             {
                 Container.RegisterFactory(type, beanName, (c, t, n) =>
                 {
                     return Activator.CreateInstance(t, ParameterFill.FillAllParamaters(ctor));
-                }, scope);
+                }, BuildScope<IFactoryLifetimeManager>(scope));
             }
             else
             {
@@ -69,6 +69,7 @@ namespace UnityAddon.Core.Bean
             var ctor = methodBeanDefinition.GetConstructor();
             var beanName = methodBeanDefinition.GetBeanName();
             var factoryName = methodBeanDefinition.GetFactoryName();
+            var scope = methodBeanDefinition.GetBeanScope();
 
             Container.RegisterFactory(type, beanName, (c, t, n) =>
              {
@@ -76,7 +77,7 @@ namespace UnityAddon.Core.Bean
                  var config = c.Resolve(configType);
 
                  return ctor.Invoke(config, ParameterFill.FillAllParamaters(ctor));
-             }, BuildScope<IFactoryLifetimeManager>(methodBeanDefinition.GetBeanScope()));
+             }, BuildScope<IFactoryLifetimeManager>(scope));
 
             Container.RegisterFactory(type, factoryName, (c, t, n) =>
             {
@@ -85,7 +86,7 @@ namespace UnityAddon.Core.Bean
                 invocation.Proceed();
 
                 return invocation.ReturnValue;
-            }, BuildScope<IFactoryLifetimeManager>(methodBeanDefinition.GetBeanScope()));
+            }, BuildScope<IFactoryLifetimeManager>(scope));
         }
 
         private TLifetimeManager BuildScope<TLifetimeManager>(Type scope)
