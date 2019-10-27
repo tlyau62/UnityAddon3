@@ -15,7 +15,6 @@ namespace UnityAddon.Core.BeanBuildStrategies
     /// <summary>
     /// Map supertype to implementation type.
     /// #: special name used in resolving a special bean factory.
-    /// Typically, all bean factory is registered without a name.
     /// </summary>
     [Component]
     public class BeanTypeMappingStrategy : BuilderStrategy
