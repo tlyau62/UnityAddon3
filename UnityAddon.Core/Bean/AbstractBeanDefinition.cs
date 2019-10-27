@@ -92,12 +92,7 @@ namespace UnityAddon.Core.Bean
 
         public override Type GetBeanType()
         {
-            if (!_type.IsGenericType || !_type.ContainsGenericParameters)
-            {
-                return _type;
-            }
-
-            return _type.GetGenericTypeDefinition();
+            return BeanTypeExtractor.ExtractBeanType(_type);
         }
 
         public override MethodBase GetConstructor()
@@ -137,14 +132,7 @@ namespace UnityAddon.Core.Bean
 
         public override Type GetBeanType()
         {
-            var type = _method.ReturnType;
-
-            if (!type.IsGenericType || !type.ContainsGenericParameters)
-            {
-                return type;
-            }
-
-            return type.GetGenericTypeDefinition();
+            return BeanTypeExtractor.ExtractBeanType(_method.ReturnType);
         }
 
         public Type GetConfigType()

@@ -34,12 +34,7 @@ namespace UnityAddon.Core.Bean
         {
             foreach (var assignableType in TypeHierarchyScanner.GetAssignableTypes(beanDefinition.GetBeanType()))
             {
-                var type = assignableType;
-
-                if (type.IsGenericType && type.ContainsGenericParameters)
-                {
-                    type = type.GetGenericTypeDefinition();
-                }
+                var type = BeanTypeExtractor.ExtractBeanType(assignableType);
 
                 if (!_container.ContainsKey(type))
                 {
