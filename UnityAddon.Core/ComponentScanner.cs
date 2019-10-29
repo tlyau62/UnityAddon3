@@ -50,12 +50,17 @@ namespace UnityAddon.Core
 
             foreach (var asm in domainAsms)
             {
-                ScanComponent(asm, asm.GetAttribute<ComponentScanAttribute>().BaseNamespaces);
+                ScanComponent(asm);
                 _assemblies.Add(asm);
             }
         }
 
-        public IEnumerable<Type> ScanComponent(Assembly asm, string[] baseNamespaces)
+        public IEnumerable<Type> ScanComponent(Assembly asm)
+        {
+            return ScanComponent(asm, asm.GetAttribute<ComponentScanAttribute>().BaseNamespaces);
+        }
+
+        public IEnumerable<Type> ScanComponent(Assembly asm, params string[] baseNamespaces)
         {
             var regexes = BuildBaseNamespacesRegexes(baseNamespaces);
             var components = asm.GetTypes()
