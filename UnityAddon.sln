@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityAddon.Core", "UnityAdd
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityAddon.CoreTest", "UnityAddon.CoreTest\UnityAddon.CoreTest.csproj", "{17CDFA9A-C940-4668-B37A-73E9595E0892}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{ECEFA393-E0DA-4C84-A261-E72D85C82D46}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication1", "WebApplication1\WebApplication1.csproj", "{ECEFA393-E0DA-4C84-A261-E72D85C82D46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityAddon.Utilities", "UnityAddon.Utilities\UnityAddon.Utilities.csproj", "{2CE333B4-8003-47B2-80B5-0D92795DAED1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{ECEFA393-E0DA-4C84-A261-E72D85C82D46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECEFA393-E0DA-4C84-A261-E72D85C82D46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECEFA393-E0DA-4C84-A261-E72D85C82D46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CE333B4-8003-47B2-80B5-0D92795DAED1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CE333B4-8003-47B2-80B5-0D92795DAED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CE333B4-8003-47B2-80B5-0D92795DAED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CE333B4-8003-47B2-80B5-0D92795DAED1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
