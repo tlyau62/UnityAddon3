@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Transaction\DataSourceAttribute.cs" />
     <Compile Include="Transaction\DbContextTemplate.cs" />
     <Compile Include="Transaction\RequireDbContextAttribute.cs" />
     <Compile Include="Transaction\RequireDbContextHandler.cs" />
