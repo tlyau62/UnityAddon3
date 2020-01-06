@@ -25,14 +25,14 @@ namespace UnityAddon.EfTest.MultipleContext
             _dbContextFactory2 = _appContext.Resolve<IDbContextFactory<TestDbContext2>>();
             _repo = _appContext.Resolve<IRepo>();
 
-            CreateDb(_dbContextFactory);
-            CreateDb(_dbContextFactory2);
+            DbSetupUtility.CreateDb(_dbContextFactory);
+            DbSetupUtility.CreateDb(_dbContextFactory2);
         }
 
         public void Dispose()
         {
-            DropDb(_dbContextFactory);
-            DropDb(_dbContextFactory2);
+            DbSetupUtility.DropDb(_dbContextFactory);
+            DbSetupUtility.DropDb(_dbContextFactory2);
         }
 
         [Fact]
@@ -49,28 +49,6 @@ namespace UnityAddon.EfTest.MultipleContext
 
             Assert.False(_dbContextFactory.IsOpen());
             Assert.False(_dbContextFactory2.IsOpen());
-        }
-
-        private void CreateDb<T>(IDbContextFactory<T> dbContextFactory) where T : DbContext
-        {
-            if (!dbContextFactory.IsOpen())
-            {
-                dbContextFactory.Open();
-            }
-
-            dbContextFactory.Get().Database.EnsureCreated();
-            dbContextFactory.Close();
-        }
-
-        private void DropDb<T>(IDbContextFactory<T> dbContextFactory) where T : DbContext
-        {
-            if (!dbContextFactory.IsOpen())
-            {
-                dbContextFactory.Open();
-            }
-
-            dbContextFactory.Get().Database.EnsureDeleted();
-            dbContextFactory.Close();
         }
 
     }

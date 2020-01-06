@@ -27,12 +27,12 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
             _dbContextFactory = _appContext.Resolve<IDbContextFactory<TestDbContext>>();
             _repo = _appContext.Resolve<IRepo>();
 
-            CreateDb();
+            DbSetupUtility.CreateDb(_dbContextFactory);
         }
 
         public void Dispose()
         {
-            DropDb();
+            DbSetupUtility.DropDb(_dbContextFactory);
         }
 
         [Theory]
@@ -81,28 +81,6 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
             Assert.False(_dbContextFactory.IsOpen());
 
             Assert.Equal(1, _items.Count());
-        }
-
-        private void CreateDb()
-        {
-            if (!_dbContextFactory.IsOpen())
-            {
-                _dbContextFactory.Open();
-            }
-
-            _dbContextFactory.Get().Database.EnsureCreated();
-            _dbContextFactory.Close();
-        }
-
-        private void DropDb()
-        {
-            if (!_dbContextFactory.IsOpen())
-            {
-                _dbContextFactory.Open();
-            }
-
-            _dbContextFactory.Get().Database.EnsureDeleted();
-            _dbContextFactory.Close();
         }
     }
 }

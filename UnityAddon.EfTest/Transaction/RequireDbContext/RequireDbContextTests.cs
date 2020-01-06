@@ -26,12 +26,12 @@ namespace UnityAddon.EfTest.Transaction.RequireDbContext
             _repoA = _appContext.Resolve<IRepoA>();
             _repoB = _appContext.Resolve<IRepoB>();
 
-            CreateDb();
+            DbSetupUtility.CreateDb(_dbContextFactory);
         }
 
         public void Dispose()
         {
-            DropDb();
+            DbSetupUtility.DropDb(_dbContextFactory);
         }
 
         [Fact]
@@ -88,26 +88,5 @@ namespace UnityAddon.EfTest.Transaction.RequireDbContext
             Assert.Equal($"Detected dbcontext is changed by method AddItemWithNoTransaction at class {typeof(RepoB).FullName}, but transaction is not opened.", ex.Message);
         }
 
-        private void CreateDb()
-        {
-            if (!_dbContextFactory.IsOpen())
-            {
-                _dbContextFactory.Open();
-            }
-
-            _dbContextFactory.Get().Database.EnsureCreated();
-            _dbContextFactory.Close();
-        }
-
-        private void DropDb()
-        {
-            if (!_dbContextFactory.IsOpen())
-            {
-                _dbContextFactory.Open();
-            }
-
-            _dbContextFactory.Get().Database.EnsureDeleted();
-            _dbContextFactory.Close();
-        }
     }
 }
