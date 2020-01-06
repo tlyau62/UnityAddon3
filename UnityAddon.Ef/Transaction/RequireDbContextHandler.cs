@@ -10,7 +10,7 @@ using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.Ef.Transaction
 {
-    public interface IRequireDbContextHandler
+    public interface IRequireDbContextHandler<T>
     {
         void DoInDbContext(IInvocation invocation, bool transactional);
     }
@@ -19,10 +19,10 @@ namespace UnityAddon.Ef.Transaction
     /// Handle transaction logic.
     /// </summary>
     [Component]
-    public class RequireDbContextHandler : IRequireDbContextHandler
+    public class RequireDbContextHandler<T> : IRequireDbContextHandler<T> where T: DbContext
     {
         [Dependency]
-        public IDbContextFactory _dbContextFactory { get; set; }
+        public IDbContextFactory<T> _dbContextFactory { get; set; }
 
         [OptionalDependency]
         public RollbackOptions RollbackOptions { get; set; }
@@ -72,7 +72,7 @@ namespace UnityAddon.Ef.Transaction
             }
         }
 
-        private void DoInDbContextTx(DbContext context, IInvocation invocation)
+        private void DoInDbContextTx(T context, IInvocation invocation)
         {
             if (context.Database.CurrentTransaction != null)
             {
