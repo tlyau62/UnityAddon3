@@ -15,7 +15,6 @@ namespace UnityAddon.Core.BeanBuildStrategies
     /// <summary>
     /// Map supertype to implementation type.
     /// #: special name used in resolving a special bean factory.
-    /// Typically, all bean factory is registered without a name.
     /// </summary>
     [Component]
     public class BeanTypeMappingStrategy : BuilderStrategy
@@ -26,15 +25,17 @@ namespace UnityAddon.Core.BeanBuildStrategies
         [Dependency]
         public ValueProvider ValueProvider { get; set; }
 
+        [Dependency]
+        public IContainerRegistry ContainerRegistry { get; set; }
+
+        /// <summary>
+        /// TODO: This function has too many logics.
+        /// </summary>
         public override void PreBuildUp(ref BuilderContext context)
         {
-            if (context.Type.IsGenericType)
-            {
-                base.PreBuildUp(ref context);
-                return;
-            }
+            object resolved = null;
 
-            if (BeanDefinitionContainer.HasBeanDefinition(context.Type))
+            if (BeanDefinitionContainer.HasBeanDefinition(context.Type, context.Name))
             {
                 if (context.Name == null || !context.Name.StartsWith("#"))
                 {
@@ -42,14 +43,34 @@ namespace UnityAddon.Core.BeanBuildStrategies
 
                     if (context.Type != beanDef.GetBeanType() || context.Name != beanDef.GetBeanName())
                     {
-                        context.Existing = context.Resolve(beanDef.GetBeanType(), beanDef.GetBeanName());
-                        context.BuildComplete = true;
-                        return;
+                        resolved = ContainerRegistry.Resolve(beanDef.GetBeanType(), beanDef.GetBeanName());
+                    }
+                }
+            }
+            else if (context.Type.IsGenericType && BeanDefinitionContainer.HasBeanDefinition(context.Type.GetGenericTypeDefinition(), context.Name))
+            {
+                if (context.Name == null || !context.Name.StartsWith("#"))
+                {
+                    var genericTypeDef = context.Type.GetGenericTypeDefinition();
+                    var beanDef = BeanDefinitionContainer.GetBeanDefinition(genericTypeDef, context.Name);
+                    var makeGenericType = beanDef.GetBeanType().MakeGenericType(context.Type.GetGenericArguments()); // // use resolve type params to make the generic type from bean def
+
+                    if (makeGenericType != context.Type || context.Name != beanDef.GetBeanName())
+                    {
+                        resolved = ContainerRegistry.Resolve(makeGenericType, beanDef.GetBeanName());
                     }
                 }
             }
 
-            base.PreBuildUp(ref context);
+            if (resolved != null)
+            {
+                context.Existing = resolved;
+                context.BuildComplete = true;
+            }
+            else
+            {
+                base.PreBuildUp(ref context);
+            }
         }
 
     }

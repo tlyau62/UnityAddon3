@@ -42,22 +42,44 @@ namespace UnityAddon.Core.Reflection
         {
             return types.Select(t =>
             {
-                var loadedType = LoadType(t);
-
-                if (t.IsGenericType && !t.ContainsGenericParameters)
+                if (!t.IsGenericType || !t.ContainsGenericParameters)
                 {
-                    loadedType = loadedType.MakeGenericType(t.GenericTypeArguments.Select(ta => LoadType(ta)).ToArray());
+                    return LoadType(t);
                 }
 
-                return loadedType;
+                return t;
             });
         }
 
         public static Type LoadType(Type type)
         {
-            var loadedType = Type.GetType($"{type.Namespace}.{type.Name}, {type.Assembly.FullName}");
+            if (string.IsNullOrEmpty(type.FullName))
+            {
+                throw new InvalidOperationException("Type full name should not be null.");
+            }
+
+            var loadedType = Type.GetType(type.FullName);
 
             return loadedType ?? type; // proxy type will return null
         }
+
+        //private static string TypeToString(Type t)
+        //{
+        //    var str = $"{t.Namespace}.{t.Name}{TypeArgs(t)}, {t.Assembly.FullName}";
+
+        //    return str;
+        //}
+
+        //private static string TypeArgs(Type t)
+        //{
+        //    if (t.GetGenericArguments().Length == 0)
+        //    {
+        //        return "";
+        //    }
+
+        //    var str = "[[" + string.Join(',', t.GetGenericArguments().Select(arg => TypeToString(arg))) + "]]";
+
+        //    return str;
+        //}
     }
 }

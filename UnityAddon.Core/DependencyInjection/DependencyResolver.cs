@@ -7,7 +7,7 @@ using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
 using UnityAddon.Core.Value;
 
-namespace UnityAddon.Core.Reflection
+namespace UnityAddon.Core.DependencyInjection
 {
     [Component]
     public class DependencyResolver

@@ -92,7 +92,7 @@ namespace UnityAddon.Core.Bean
 
         public override Type GetBeanType()
         {
-            return _type;
+            return BeanTypeExtractor.ExtractBeanType(_type);
         }
 
         public override MethodBase GetConstructor()
@@ -132,7 +132,7 @@ namespace UnityAddon.Core.Bean
 
         public override Type GetBeanType()
         {
-            return _method.ReturnType;
+            return BeanTypeExtractor.ExtractBeanType(_method.ReturnType);
         }
 
         public Type GetConfigType()

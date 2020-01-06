@@ -90,14 +90,12 @@ namespace UnityAddon.Core
                 }
             }
 
-            type = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
-
-            return BeanDefinitionContainer.HasBeanDefinition(type, name);
+            return BeanDefinitionContainer.HasBeanDefinition(type, name) || (type.IsGenericType && BeanDefinitionContainer.HasBeanDefinition(type.GetGenericTypeDefinition(), name));
         }
 
         public T Resolve<T>(string name = null)
         {
-            return (T)Container.Resolve(typeof(T), name);
+            return (T)Resolve(typeof(T), name);
         }
 
         public object Resolve(Type type, string name = null)
