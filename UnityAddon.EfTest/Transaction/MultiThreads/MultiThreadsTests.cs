@@ -16,15 +16,14 @@ namespace UnityAddon.EfTest.Transaction.MultiThreads
     public class MultiThreadsTests : IDisposable
     {
         private ApplicationContext _appContext;
-        private IDbContextFactory _dbContextFactory;
+        private IDbContextFactory<TestDbContext> _dbContextFactory;
         private IRepo _repo;
-        private DbSet<Item> _items => ((TestDbContext)(_dbContextFactory.IsOpen() ? _dbContextFactory.Get() : _dbContextFactory.Open())).Items;
         private Random _random = new Random();
 
         public MultiThreadsTests()
         {
             _appContext = new ApplicationContext(new UnityContainer(), GetType().Namespace, typeof(TestDbContext).Namespace);
-            _dbContextFactory = _appContext.Resolve<IDbContextFactory>();
+            _dbContextFactory = _appContext.Resolve<IDbContextFactory<TestDbContext>>();
             _repo = _appContext.Resolve<IRepo>();
 
             CreateDb();

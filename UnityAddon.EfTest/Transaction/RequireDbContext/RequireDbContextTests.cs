@@ -14,15 +14,15 @@ namespace UnityAddon.EfTest.Transaction.RequireDbContext
     public class RequireDbContextTests : IDisposable
     {
         private ApplicationContext _appContext;
-        private IDbContextFactory _dbContextFactory;
+        private IDbContextFactory<TestDbContext> _dbContextFactory;
         private IRepoA _repoA;
         private IRepoB _repoB;
-        private DbSet<Item> _items => ((TestDbContext)(_dbContextFactory.IsOpen() ? _dbContextFactory.Get() : _dbContextFactory.Open())).Items;
+        private DbSet<Item> _items => (_dbContextFactory.IsOpen() ? _dbContextFactory.Get() : _dbContextFactory.Open()).Items;
 
         public RequireDbContextTests()
         {
             _appContext = new ApplicationContext(new UnityContainer(), GetType().Namespace, typeof(TestDbContext).Namespace);
-            _dbContextFactory = _appContext.Resolve<IDbContextFactory>();
+            _dbContextFactory = _appContext.Resolve<IDbContextFactory<TestDbContext>>();
             _repoA = _appContext.Resolve<IRepoA>();
             _repoB = _appContext.Resolve<IRepoB>();
 
