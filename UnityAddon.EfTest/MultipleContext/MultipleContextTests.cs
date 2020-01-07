@@ -39,13 +39,15 @@ namespace UnityAddon.EfTest.MultipleContext
         public void RepositoryInterceptor_InsertItemsOnMultipleDbContext_ItemsInserted()
         {
             var item = new Item("testitem");
-            var item2 = new Item2("testitem2");
+            var item2a = new Item2("testitem2a");
+            var item2b = new Item2("testitem2b");
 
             _repo.InsertItem(item);
-            _repo.InsertItem2(item2);
+            _repo.InsertItem2(item2a);
+            _repo.InsertItem2(item2b);
 
             Assert.Equal(1, _repo.CountItem());
-            Assert.Equal(1, _repo.CountItem2());
+            Assert.Equal(2, _repo.CountItem2());
 
             Assert.False(_dbContextFactory.IsOpen());
             Assert.False(_dbContextFactory2.IsOpen());
