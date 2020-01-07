@@ -29,7 +29,7 @@ namespace UnityAddon.Core.Bean
     {
         private IDictionary<Type, BeanDefinitionHolder> _container = new ConcurrentDictionary<Type, BeanDefinitionHolder>();
 
-        // bad memory and performance
+        // bad time and space
         public void RegisterBeanDefinition(AbstractBeanDefinition beanDefinition)
         {
             foreach (var assignableType in TypeHierarchyScanner.GetAssignableTypes(beanDefinition.GetBeanType()))

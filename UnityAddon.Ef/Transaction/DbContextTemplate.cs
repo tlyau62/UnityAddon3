@@ -24,7 +24,7 @@ namespace UnityAddon.Ef.Transaction
     public class DbContextTemplate<T> : IDbContextTemplate<T> where T : DbContext
     {
         [Dependency]
-        public IDbContextFactory DbContextFactory { get; set; }
+        public IDbContextFactory<T> DbContextFactory { get; set; }
 
         public void ExecuteTransaction(Action<T> transaction)
         {

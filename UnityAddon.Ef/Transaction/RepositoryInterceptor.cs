@@ -2,12 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Unity;
+using UnityAddon.Core;
 using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.Ef.Transaction
 {
@@ -18,11 +22,17 @@ namespace UnityAddon.Ef.Transaction
     public class RepositoryInterceptor : IAttributeInterceptor<RepositoryAttribute>
     {
         [Dependency]
-        public IRequireDbContextHandler RequireDbContextHandler { get; set; }
+        public DataSourceExtractor DataSourceExtractor { get; set; }
+
+        [Dependency]
+        public RequireDbContextHandler RequireDbContextHandler { get; set; }
 
         public void Intercept(IInvocation invocation)
         {
-            RequireDbContextHandler.DoInDbContext(invocation, false);
+            var dataSource = DataSourceExtractor.ExtractDataSource(invocation.TargetType);
+
+            RequireDbContextHandler.InvokeContextHandler(dataSource, invocation, false);
         }
+
     }
 }
