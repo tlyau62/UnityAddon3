@@ -40,13 +40,14 @@ namespace UnityAddon.Core.Bean
         {
             var type = typeBeanDefinition.GetBeanType();
             var scope = typeBeanDefinition.GetBeanScope();
-            var ctor = (ConstructorInfo)typeBeanDefinition.GetConstructor();
             var beanName = typeBeanDefinition.GetBeanName();
 
             if (type.HasAttribute<ConfigurationAttribute>())
             {
                 Container.RegisterFactory(type, beanName, (c, t, n) =>
                 {
+                    var ctor = DefaultConstructor.Select(t); // TODO: usage of typeBeanDefinition.GetConstructor()
+
                     return ConfigurationFactory.CreateConfiguration(type, ctor);
                 }, BuildScope<IFactoryLifetimeManager>(scope));
             }
@@ -54,7 +55,9 @@ namespace UnityAddon.Core.Bean
             {
                 Container.RegisterFactory(type, beanName, (c, t, n) =>
                 {
-                    return Activator.CreateInstance(t, ParameterFill.FillAllParamaters(ctor));
+                    var ctor = DefaultConstructor.Select(t); // TODO: usage of typeBeanDefinition.GetConstructor()?
+
+                    return ctor.Invoke(ParameterFill.FillAllParamaters(ctor)); 
                 }, BuildScope<IFactoryLifetimeManager>(scope));
             }
             else
