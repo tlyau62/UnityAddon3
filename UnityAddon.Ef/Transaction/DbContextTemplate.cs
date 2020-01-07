@@ -1,9 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
 using Unity;
 using UnityAddon.Core.Attributes;
 
@@ -18,6 +14,7 @@ namespace UnityAddon.Ef.Transaction
 
     /// <summary>
     /// Used by client to query db.
+    /// TODO: logic duplication with TransactionManager
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [Component]
@@ -29,7 +26,7 @@ namespace UnityAddon.Ef.Transaction
         public void ExecuteTransaction(Action<T> transaction)
         {
             var isOpenDbCtx = DbContextFactory.IsOpen();
-            T ctx = (T)(isOpenDbCtx ? DbContextFactory.Get() : DbContextFactory.Open());
+            T ctx = isOpenDbCtx ? DbContextFactory.Get() : DbContextFactory.Open();
             var tx = ctx.Database.BeginTransaction();
 
             try
@@ -57,7 +54,7 @@ namespace UnityAddon.Ef.Transaction
 
         public T GetDbContext()
         {
-            return (T)DbContextFactory.Get();
+            return DbContextFactory.Get();
         }
 
         public DbSet<TEntity> GetEntity<TEntity>() where TEntity : class
