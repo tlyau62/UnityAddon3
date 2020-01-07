@@ -21,35 +21,18 @@ namespace UnityAddon.Ef.Transaction
     [Component]
     public class RepositoryInterceptor : IAttributeInterceptor<RepositoryAttribute>
     {
-        private static readonly MethodInfo DoInDbContextInvokerMethod = typeof(RepositoryInterceptor).GetMethod(nameof(DoInDbContextInvoker), BindingFlags.NonPublic | BindingFlags.Instance);
-
-        [Dependency]
-        public IContainerRegistry ContainerRegistry { get; set; }
-
         [Dependency]
         public DataSourceExtractor DataSourceExtractor { get; set; }
+
+        [Dependency]
+        public RequireDbContextHandler RequireDbContextHandler { get; set; }
 
         public void Intercept(IInvocation invocation)
         {
             var dataSource = DataSourceExtractor.ExtractDataSource(invocation.TargetType);
 
-            try
-            {
-                DoInDbContextInvokerMethod
-                    .MakeGenericMethod(dataSource)
-                    .Invoke(this, new object[] { invocation });
-            }
-            catch (TargetInvocationException ex)
-            {
-                ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
-            }
+            RequireDbContextHandler.InvokeContextHandler(dataSource, invocation, false);
         }
 
-        private void DoInDbContextInvoker<T>(IInvocation invocation)
-        {
-            var requireDbContextHandler = ContainerRegistry.Resolve<IRequireDbContextHandler<T>>();
-
-            requireDbContextHandler.DoInDbContext(invocation, false);
-        }
     }
 }

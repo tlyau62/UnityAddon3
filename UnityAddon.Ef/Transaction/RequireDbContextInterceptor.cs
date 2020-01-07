@@ -20,35 +20,19 @@ namespace UnityAddon.Ef.Transaction
     [Component]
     public class RequireDbContextInterceptor : IAttributeInterceptor<RequireDbContextAttribute>
     {
-        private static readonly MethodInfo DoInDbContextInvokerMethod = typeof(RequireDbContextInterceptor).GetMethod(nameof(DoInDbContextInvoker), BindingFlags.NonPublic | BindingFlags.Instance);
-
-        [Dependency]
-        public IContainerRegistry ContainerRegistry { get; set; }
-
         [Dependency]
         public DataSourceExtractor DataSourceExtractor { get; set; }
+
+        [Dependency]
+        public RequireDbContextHandler RequireDbContextHandler { get; set; }
 
         public void Intercept(IInvocation invocation)
         {
             var dataSource = DataSourceExtractor.ExtractDataSource(invocation.MethodInvocationTarget);
+            var tx = invocation.MethodInvocationTarget.GetAttribute<RequireDbContextAttribute>().Transactional;
 
-            try
-            {
-                DoInDbContextInvokerMethod
-                    .MakeGenericMethod(dataSource)
-                    .Invoke(this, new object[] { invocation, invocation.MethodInvocationTarget.GetAttribute<RequireDbContextAttribute>().Transactional });
-            }
-            catch (Exception ex)
-            {
-                ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
-            }
+            RequireDbContextHandler.InvokeContextHandler(dataSource, invocation, tx);
         }
 
-        private void DoInDbContextInvoker<T>(IInvocation invocation, bool transactional)
-        {
-            var requireDbContextHandler = ContainerRegistry.Resolve<IRequireDbContextHandler<T>>();
-
-            requireDbContextHandler.DoInDbContext(invocation, transactional);
-        }
     }
 }
