@@ -47,12 +47,12 @@ namespace UnityAddon.Ef
         [Dependency]
         public IContainerRegistry ContainerRegistry { get; set; }
 
-        private ThreadLocalFactory<T> _threadLocalFactory;
+        private AsyncLocalFactory<T> _threadLocalFactory;
 
         [PostConstruct]
         public void Init()
         {
-            _threadLocalFactory = new ThreadLocalFactory<T>(() => ContainerRegistry.Resolve<T>());
+            _threadLocalFactory = new AsyncLocalFactory<T>(() => ContainerRegistry.Resolve<T>());
         }
 
         public T Get()
