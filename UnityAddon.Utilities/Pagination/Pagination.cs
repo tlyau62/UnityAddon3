@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace UnityAddon.Ef.Pagination
+namespace UnityAddon.Utilities.Pagination
 {
     public static class Pagination
     {
@@ -13,33 +13,33 @@ namespace UnityAddon.Ef.Pagination
             var page = new Page<T>();
             var type = typeof(T);
 
-
             page.Content = queryable;
 
-            foreach (var order in pageable.Sort.Orders)
+            if (pageable.Sort != null)
             {
-                if (order.Direction == Sort.Direction.ASC)
+                foreach (var order in pageable.Sort.Orders)
                 {
-                    page.Content = page.Content is IOrderedEnumerable<T> ordered ?
-                        ordered.ThenBy(t => GetPropertyValue(order.Property, t)) :
-                        page.Content.OrderBy(t => GetPropertyValue(order.Property, t));
-                }
-                else if (order.Direction == Sort.Direction.DESC)
-                {
-                    page.Content = page.Content is IOrderedEnumerable<T> ordered ?
-                        ordered.ThenByDescending(t => GetPropertyValue(order.Property, t)) :
-                        page.Content.OrderByDescending(t => GetPropertyValue(order.Property, t));
-                }
-                else
-                {
-                    throw new InvalidOperationException();
+                    if (order.Direction == Sort.Direction.ASC)
+                    {
+                        page.Content = page.Content is IOrderedEnumerable<T> ordered ?
+                            ordered.ThenBy(t => GetPropertyValue(order.Property, t)) :
+                            page.Content.OrderBy(t => GetPropertyValue(order.Property, t));
+                    }
+                    else if (order.Direction == Sort.Direction.DESC)
+                    {
+                        page.Content = page.Content is IOrderedEnumerable<T> ordered ?
+                            ordered.ThenByDescending(t => GetPropertyValue(order.Property, t)) :
+                            page.Content.OrderByDescending(t => GetPropertyValue(order.Property, t));
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException();
+                    }
                 }
             }
 
             page.Content = page.Content.Skip(pageable.Page * pageable.Size).Take(pageable.Size).ToList();
             page.Pagination = pageable;
-
-            pageable.TotalPage = (int)Math.Ceiling((double)queryable.Count() / pageable.Size);
 
             return page;
         }

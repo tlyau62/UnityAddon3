@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace UnityAddon.Ef.Pagination
+namespace UnityAddon.Utilities.Pagination
 {
     public class Sort
     {

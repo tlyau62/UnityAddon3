@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace UnityAddon.Ef.Pagination
+namespace UnityAddon.Utilities.Pagination
 {
     public class Pageable
     {
@@ -11,7 +11,6 @@ namespace UnityAddon.Ef.Pagination
             Page = page;
             Size = size;
             Sort = sort;
-            TotalPage = 0;
         }
 
         public int Page { get; set; }
@@ -19,7 +18,5 @@ namespace UnityAddon.Ef.Pagination
         public int Size { get; set; }
 
         public Sort Sort { get; set; }
-
-        public int TotalPage { get; set; }
     }
 }
