@@ -41,7 +41,7 @@ namespace UnityAddon.EfTest.Pagination
         [Fact]
         public void Pagination_PaginationSortingOnItems_ItemsOrdered()
         {
-            var pageable = PageRequest.Of(0, _queryResult.Count(), Sort.Desc("Id").ThenAsc("Name"));
+            var pageable = new Pageable(0, _queryResult.Count(), "Id desc, Name asc");
             var page = _queryResult.ToPage(pageable);
 
             Assert.Equal(page.Content.Select(i => i.Id), new string[] { "e", "d", "b", "b", "a" });
@@ -56,7 +56,7 @@ namespace UnityAddon.EfTest.Pagination
         [InlineData(2, 4)]
         public void Pagination_PaginationSlicingOnItems_ItemsSliced(int pageNo, int size)
         {
-            var pageable = PageRequest.Of(pageNo, size);
+            var pageable = new Pageable(pageNo, size);
             var page = _queryResult.ToPage(pageable);
             var expected = _queryResult.Skip(pageNo * size).Take(size);
 

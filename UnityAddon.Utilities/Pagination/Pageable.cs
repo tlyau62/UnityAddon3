@@ -6,7 +6,7 @@ namespace UnityAddon.Utilities.Pagination
 {
     public class Pageable
     {
-        public Pageable(int page, int size, Sort sort)
+        public Pageable(int page, int size, string sort = "")
         {
             Page = page;
             Size = size;
@@ -17,6 +17,6 @@ namespace UnityAddon.Utilities.Pagination
 
         public int Size { get; set; }
 
-        public Sort Sort { get; set; }
+        public string Sort { get; set; }
     }
 }
