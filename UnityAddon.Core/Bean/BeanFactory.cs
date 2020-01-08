@@ -46,7 +46,7 @@ namespace UnityAddon.Core.Bean
             {
                 Container.RegisterFactory(type, beanName, (c, t, n) =>
                 {
-                    var ctor = DefaultConstructor.Select(t); // TODO: usage of typeBeanDefinition.GetConstructor()
+                    var ctor = DefaultConstructor.Select(t); // TODO: cannot reuse typeBeanDefinition.GetConstructor()
 
                     return ConfigurationFactory.CreateConfiguration(type, ctor);
                 }, BuildScope<IFactoryLifetimeManager>(scope));
@@ -55,9 +55,9 @@ namespace UnityAddon.Core.Bean
             {
                 Container.RegisterFactory(type, beanName, (c, t, n) =>
                 {
-                    var ctor = DefaultConstructor.Select(t); // TODO: usage of typeBeanDefinition.GetConstructor()?
+                    var ctor = DefaultConstructor.Select(t); // TODO: cannot reuse typeBeanDefinition.GetConstructor()
 
-                    return ctor.Invoke(ParameterFill.FillAllParamaters(ctor)); 
+                    return ctor.Invoke(ParameterFill.FillAllParamaters(ctor));
                 }, BuildScope<IFactoryLifetimeManager>(scope));
             }
             else
