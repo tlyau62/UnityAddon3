@@ -9,7 +9,7 @@ using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
 using UnityAddon.Core.Value;
 
-namespace UnityAddon.Core.Reflection
+namespace UnityAddon.Core.DependencyInjection
 {
     /// <summary>
     /// Resolve all the dependencies found in all type properties.

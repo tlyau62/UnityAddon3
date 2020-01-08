@@ -13,18 +13,18 @@ using UnityAddon.Core.Thread;
 
 namespace UnityAddon.Ef
 {
-    public interface IDbContextFactory
+    public interface IDbContextFactory<T>
     {
         /// <summary>
         /// Get the context of current thread 
         /// </summary>
-        DbContext Get();
+        T Get();
 
         /// <summary>
         /// Open a new context and bind it to current thread 
         /// </summary>
         /// <returns></returns>
-        DbContext Open();
+        T Open();
 
         /// <summary>
         /// true if a opened db connection is binded in current thread
@@ -42,20 +42,20 @@ namespace UnityAddon.Ef
     /// The registered DbContext must be scope transient.
     /// </summary>
     [Component]
-    public class DbContextFactory : IDbContextFactory
+    public class DbContextFactory<T> : IDbContextFactory<T> where T : DbContext
     {
         [Dependency]
         public IContainerRegistry ContainerRegistry { get; set; }
 
-        private ThreadLocalFactory<DbContext> _threadLocalFactory;
+        private AsyncLocalFactory<T> _threadLocalFactory;
 
         [PostConstruct]
         public void Init()
         {
-            _threadLocalFactory = new ThreadLocalFactory<DbContext>(() => ContainerRegistry.Resolve<DbContext>());
+            _threadLocalFactory = new AsyncLocalFactory<T>(() => ContainerRegistry.Resolve<T>());
         }
 
-        public DbContext Get()
+        public T Get()
         {
             if (!IsOpen())
             {
@@ -65,7 +65,7 @@ namespace UnityAddon.Ef
             return _threadLocalFactory.Get();
         }
 
-        public DbContext Open()
+        public T Open()
         {
             if (IsOpen())
             {
@@ -100,7 +100,7 @@ namespace UnityAddon.Ef
             return true;
         }
 
-        public bool IsDisposed(DbContext context)
+        public bool IsDisposed(T context)
         {
             var ctxType = typeof(DbContext).GetField("_disposed", BindingFlags.NonPublic | BindingFlags.Instance);
             var isDisposed = ctxType.GetValue(context);

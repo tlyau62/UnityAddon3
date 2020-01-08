@@ -9,7 +9,7 @@ using System;
 using UnityAddon.Core.BeanBuildStrategies;
 using System.Reflection;
 using System.Linq;
-using UnityAddon.Core.Reflection;
+using UnityAddon.Core.DependencyInjection;
 using UnityAddon.Core.Value;
 using UnityAddon.Core.Aop;
 using UnityAddon.Core.Thread;

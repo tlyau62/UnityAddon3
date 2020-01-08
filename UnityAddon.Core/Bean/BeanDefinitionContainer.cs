@@ -14,6 +14,7 @@ namespace UnityAddon.Core.Bean
         bool HasBeanDefinition(Type type, string name = null);
         AbstractBeanDefinition GetBeanDefinition(Type type, string name = null);
         IEnumerable<AbstractBeanDefinition> GetAllBeanDefinitions(Type type);
+        IEnumerable<AbstractBeanDefinition> GetAllGenericBeanDefinitionsByTypeDefinition(Type type);
         void RegisterBeanDefinition(AbstractBeanDefinition beanDefinition);
         IEnumerable<AbstractBeanDefinition> FindBeanDefinitionsByAttribute<TAttribute>() where TAttribute : Attribute;
         void Clear();
@@ -28,17 +29,19 @@ namespace UnityAddon.Core.Bean
     {
         private IDictionary<Type, BeanDefinitionHolder> _container = new ConcurrentDictionary<Type, BeanDefinitionHolder>();
 
-        // bad memory and performance
+        // bad time and space
         public void RegisterBeanDefinition(AbstractBeanDefinition beanDefinition)
         {
-            foreach (var assignableType in GetAssignableTypeDefinitions(beanDefinition.GetBeanType()))
+            foreach (var assignableType in TypeHierarchyScanner.GetAssignableTypes(beanDefinition.GetBeanType()))
             {
-                if (!_container.ContainsKey(assignableType))
+                var type = BeanTypeExtractor.ExtractBeanType(assignableType);
+
+                if (!_container.ContainsKey(type))
                 {
-                    _container[assignableType] = new BeanDefinitionHolder();
+                    _container[type] = new BeanDefinitionHolder();
                 }
 
-                _container[assignableType].Add(beanDefinition);
+                _container[type].Add(beanDefinition);
             }
         }
 
@@ -86,6 +89,19 @@ namespace UnityAddon.Core.Bean
                 .Select(ent => ent.Value.Get()); // implementation type must have only 1 bean definition
         }
 
+        public IEnumerable<AbstractBeanDefinition> GetAllGenericBeanDefinitionsByTypeDefinition(Type type)
+        {
+            if (!type.IsGenericType || !type.IsTypeDefinition)
+            {
+                throw new InvalidOperationException("Not generic type definition.");
+            }
+
+            return _container
+                .Where(ent => ent.Key == type || (ent.Key.IsGenericType && ent.Key.GetGenericTypeDefinition() == type))
+                .SelectMany(ent => ent.Value.GetAll())
+                .Distinct();
+        }
+
         public IEnumerable<AbstractBeanDefinition> GetAllBeanDefinitions(Type type)
         {
             if (!_container.ContainsKey(type))
@@ -94,12 +110,6 @@ namespace UnityAddon.Core.Bean
             }
 
             return _container[type].GetAll();
-        }
-
-        private IEnumerable<Type> GetAssignableTypeDefinitions(Type type)
-        {
-            return TypeHierarchyScanner.GetAssignableTypes(type)
-                .Select(t => t.IsGenericType ? t.GetGenericTypeDefinition() : t); // ensure all generic type are generic def
         }
 
         public void Clear()

@@ -16,7 +16,7 @@ namespace UnityAddon.Core.Reflection
     {
         public static ConstructorInfo Select(Type type)
         {
-            var ctors = type.GetConstructors();
+            var ctors = type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             var defaultCtor = ctors[0];
 
             for (var i = 1; i < ctors.Length && !defaultCtor.HasAttribute<InjectionConstructorAttribute>(); i++)

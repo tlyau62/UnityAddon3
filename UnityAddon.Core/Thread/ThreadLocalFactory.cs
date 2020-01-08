@@ -32,7 +32,7 @@ namespace UnityAddon.Core.Thread
         {
             if (!Exist())
             {
-                throw new InvalidOperationException($"Instance for {typeof(T).GetType()} is not set.");
+                throw new InvalidOperationException($"Instance for {typeof(T).FullName} is not set.");
             }
 
             return currentContext.Value;
@@ -42,7 +42,7 @@ namespace UnityAddon.Core.Thread
         {
             if (Exist())
             {
-                throw new InvalidOperationException($"Instance for {typeof(T).GetType()} has been created.");
+                throw new InvalidOperationException($"Instance for {typeof(T).FullName} has been created.");
             }
 
             return currentContext.Value = createFunc();
@@ -57,7 +57,7 @@ namespace UnityAddon.Core.Thread
         {
             if (!Exist())
             {
-                throw new InvalidOperationException($"Instance for {typeof(T).GetType()} is not set.");
+                throw new InvalidOperationException($"Instance for {typeof(T).FullName} is not set.");
             }
 
             if (typeof(T) is IDisposable)

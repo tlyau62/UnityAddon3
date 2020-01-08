@@ -28,21 +28,17 @@ namespace UnityAddon.Core.Aop
 
         /// <summary>
         /// Setup Aop for the application.
+        /// Build a map of <attribute, interceptors...>.
         /// Allow to build once only.
         /// </summary>
         public void Build()
         {
-            if (!BeanDefinitionContainer.HasBeanDefinition(typeof(IAttributeInterceptor<>)))
-            {
-                return;
-            }
-
             if (IsInitialized)
             {
                 throw new InvalidOperationException("Already initialized.");
             }
 
-            foreach (var beanDef in BeanDefinitionContainer.GetAllBeanDefinitions(typeof(IAttributeInterceptor<>)))
+            foreach (var beanDef in BeanDefinitionContainer.GetAllGenericBeanDefinitionsByTypeDefinition(typeof(IAttributeInterceptor<>)))
             {
                 var interceptorAttribute = GetAttributeType(beanDef.GetBeanType());
                 IInterceptor interceptor = (IInterceptor)ContainerRegistry.Resolve(beanDef.GetBeanType(), beanDef.GetBeanName());

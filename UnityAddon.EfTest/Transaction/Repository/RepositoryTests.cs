@@ -14,22 +14,21 @@ namespace UnityAddon.EfTest.Transaction.Repository
     public class RepositoryTests : IDisposable
     {
         private ApplicationContext _appContext;
-        private IDbContextFactory _dbContextFactory;
+        private IDbContextFactory<TestDbContext> _dbContextFactory;
         private IRepo _repo;
-        private DbSet<Item> _items => ((TestDbContext)(_dbContextFactory.IsOpen() ? _dbContextFactory.Get() : _dbContextFactory.Open())).Items;
 
         public RepositoryTests()
         {
             _appContext = new ApplicationContext(new UnityContainer(), GetType().Namespace, typeof(TestDbContext).Namespace);
-            _dbContextFactory = _appContext.Resolve<IDbContextFactory>();
+            _dbContextFactory = _appContext.Resolve<IDbContextFactory<TestDbContext>>();
             _repo = _appContext.Resolve<IRepo>();
 
-            CreateDb();
+            DbSetupUtility.CreateDb(_dbContextFactory);
         }
 
         public void Dispose()
         {
-            DropDb();
+            DbSetupUtility.DropDb(_dbContextFactory);
         }
 
         [Fact]
@@ -46,28 +45,6 @@ namespace UnityAddon.EfTest.Transaction.Repository
             var ex = Assert.Throws<InvalidOperationException>(() => _repo.InsertItem(new Item("testitem")));
 
             Assert.Equal($"Detected dbcontext is changed by method InsertItem at class {typeof(Repo).FullName}, but transaction is not opened.", ex.Message);
-        }
-
-        private void CreateDb()
-        {
-            if (!_dbContextFactory.IsOpen())
-            {
-                _dbContextFactory.Open();
-            }
-
-            _dbContextFactory.Get().Database.EnsureCreated();
-            _dbContextFactory.Close();
-        }
-
-        private void DropDb()
-        {
-            if (!_dbContextFactory.IsOpen())
-            {
-                _dbContextFactory.Open();
-            }
-
-            _dbContextFactory.Get().Database.EnsureDeleted();
-            _dbContextFactory.Close();
         }
 
     }

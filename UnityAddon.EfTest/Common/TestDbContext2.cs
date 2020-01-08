@@ -10,10 +10,10 @@ using UnityAddon.Core.Attributes;
 namespace UnityAddon.EfTest.Common
 {
     [Configuration]
-    public class DbConfig
+    public class DbConfig2
     {
         [Bean]
-        public virtual string ConnectionString()
+        public virtual string ConnectionString2()
         {
             return $"Data source={Guid.NewGuid()}.db";
         }
@@ -21,12 +21,11 @@ namespace UnityAddon.EfTest.Common
 
     [Component]
     [Scope(ScopeType.Transient)]
-    [Primary]
-    public class TestDbContext : DbContext
+    public class TestDbContext2 : DbContext
     {
         public DbSet<Item> Items { get; set; }
 
-        [Dependency("ConnectionString")]
+        [Dependency("ConnectionString2")]
         public string ConnectionString { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -36,17 +35,17 @@ namespace UnityAddon.EfTest.Common
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(TestDbContext).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(TestDbContext2).Assembly);
         }
     }
 
-    public class Item
+    public class Item2
     {
-        public Item()
+        public Item2()
         {
         }
 
-        public Item(string name)
+        public Item2(string name)
         {
             Name = name;
         }
@@ -57,9 +56,9 @@ namespace UnityAddon.EfTest.Common
         public string Name { get; set; }
     }
 
-    public class TestDbContextConfiguration : IEntityTypeConfiguration<Item>
+    public class TestDbContext2Configuration : IEntityTypeConfiguration<Item2>
     {
-        public void Configure(EntityTypeBuilder<Item> builder)
+        public void Configure(EntityTypeBuilder<Item2> builder)
         {
             builder.HasKey(k => k.ItemId);
             builder.Property(p => p.Name).IsRequired().HasMaxLength(128);
