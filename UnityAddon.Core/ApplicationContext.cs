@@ -13,6 +13,7 @@ using UnityAddon.Core.DependencyInjection;
 using UnityAddon.Core.Value;
 using UnityAddon.Core.Aop;
 using UnityAddon.Core.Thread;
+using UnityAddon.Core.BeanPostprocessor;
 
 namespace UnityAddon.Core
 {
@@ -167,6 +168,11 @@ namespace UnityAddon.Core
             {
                 PreInstantiateSingleton();
             }
+        }
+
+        public void RegisterBeanPostProcessors(IEnumerable<IBeanPostProcessor> beanPostprocessors)
+        {
+            Container.RegisterInstance(beanPostprocessors);
         }
     }
 }
