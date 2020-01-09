@@ -106,7 +106,7 @@ namespace UnityAddon.Core.Bean
         {
             if (!_container.ContainsKey(type))
             {
-                throw new InvalidOperationException($"No such bean definition of type {type}.");
+                return new List<AbstractBeanDefinition>();
             }
 
             return _container[type].GetAll();
