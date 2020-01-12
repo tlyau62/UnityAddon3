@@ -37,6 +37,9 @@ namespace UnityAddon.Core
         [Dependency]
         public AopInterceptorContainer InterceptorContainer { get; set; }
 
+        [Dependency]
+        public BeanPostProcessorLoader BeanPostProcessorLoader { get; set; }
+
         private bool _preInstantiateSingleton;
 
         public ApplicationContext(IUnityContainer container, params string[] baseNamespaces) : this(container, true, Assembly.GetCallingAssembly(), baseNamespaces)
@@ -74,6 +77,7 @@ namespace UnityAddon.Core
             // global singleton
             Container.RegisterType<IAsyncLocalFactory<Stack<IInvocation>>, AsyncLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())));
             Container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<BeanPostProcessorLoader, BeanPostProcessorLoader>(new ContainerControlledLifetimeManager());
         }
 
         /// <summary>
@@ -132,6 +136,7 @@ namespace UnityAddon.Core
             ComponentScanner.ScanComponentsFromAppEntry();
             ConfigurationParser.ParseScannedConfigurations();
             InterceptorContainer.Build();
+            BeanPostProcessorLoader.LoadBeanPostProcessors();
 
             if (_preInstantiateSingleton)
             {
@@ -140,7 +145,7 @@ namespace UnityAddon.Core
         }
 
         /// <summary>
-        /// Recursive instantiate singleton bean.
+        /// Instantiate singleton bean recursively.
         /// Some bean may do bean registration at postconstruct,
         /// so recursive needed.
         /// 
@@ -170,9 +175,5 @@ namespace UnityAddon.Core
             }
         }
 
-        public void RegisterBeanPostProcessors(IEnumerable<IBeanPostProcessor> beanPostprocessors)
-        {
-            Container.RegisterInstance(beanPostprocessors);
-        }
     }
 }

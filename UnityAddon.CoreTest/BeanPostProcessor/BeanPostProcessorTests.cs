@@ -15,6 +15,7 @@ namespace UnityAddon.CoreTest.BeanPostProcessor
         public List<string> Logs { get; set; } = new List<string>();
     }
 
+    [Component]
     public class LoggerPostProcessor : IBeanPostProcessor
     {
         [Dependency]
@@ -26,20 +27,21 @@ namespace UnityAddon.CoreTest.BeanPostProcessor
         }
     }
 
+    [Component]
+    public class Service
+    {
+    }
+
     [Trait("BeanPostProcessor", "BeanPostProcessor")]
     public class BeanPostProcessorTests
     {
         [Fact]
-        public void BeanPostProcessor_BeanTypeLogging_AllBeanTypeLogged()
+        public void BeanPostProcessor_ServiceBeanLogging_ServiceBeanLogged()
         {
             var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, false, GetType().Namespace);
+            var appContext = new ApplicationContext(container, GetType().Namespace);
 
-            appContext.RegisterBeanPostProcessors(new List<IBeanPostProcessor>() { appContext.BuildUp(new LoggerPostProcessor()) });
-
-            appContext.PreInstantiateSingleton();
-
-            Assert.NotEmpty(appContext.Resolve<Logger>().Logs);
+            Assert.Contains(nameof(Service), appContext.Resolve<Logger>().Logs);
         }
     }
 }
