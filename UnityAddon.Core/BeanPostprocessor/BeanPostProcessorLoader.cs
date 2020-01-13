@@ -5,6 +5,7 @@ using Unity;
 using UnityAddon.Core.Bean;
 using System.Linq;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.Core.BeanPostprocessor
 {
@@ -26,7 +27,7 @@ namespace UnityAddon.Core.BeanPostprocessor
         /// <summary>
         /// Instantiate all bean processors.
         /// ToList is required for eagerly loading.
-        /// TODO: The execution order of the bean processors will be sorted by the [Order] attribute.
+        /// The execution order of the bean processors will be sorted by the [Order] attribute.
         /// </summary>
         /// <returns>All beanPostProcessors</returns>
         public IEnumerable<IBeanPostProcessor> LoadBeanPostProcessors()
@@ -35,8 +36,11 @@ namespace UnityAddon.Core.BeanPostprocessor
                 .GetAllBeanDefinitions(typeof(IBeanPostProcessor))
                 .Where(def => !def.GetBeanType().IsGenericType || !def.GetBeanType().ContainsGenericParameters)
                 .Select(def => ContainerRegistry.Resolve(def.GetBeanType(), def.GetBeanName()))
+                .OrderBy(bean => bean.GetType().GetOrder())
                 .Cast<IBeanPostProcessor>()
                 .ToList();
         }
+
+
     }
 }

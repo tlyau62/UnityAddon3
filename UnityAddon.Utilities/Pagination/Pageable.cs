@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,6 +7,10 @@ namespace UnityAddon.Utilities.Pagination
 {
     public class Pageable
     {
+        public Pageable()
+        {
+        }
+
         public Pageable(int page, int size, string sort = "")
         {
             Page = page;
