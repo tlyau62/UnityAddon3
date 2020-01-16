@@ -34,7 +34,7 @@ namespace UnityAddon.Core
         bool IsRegistered(Type type, string name = null);
 
         T BuildUp<T>(T existing, string name = null);
-        object BuildUp(Type type, object existing, string name = null);
+        object BuildUp(Type type, object existing, string name = null); 
     }
 
     /// <summary>

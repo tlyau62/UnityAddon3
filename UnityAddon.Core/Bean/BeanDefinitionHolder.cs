@@ -91,5 +91,13 @@ namespace UnityAddon.Core.Bean
         {
             return string.Join("\r\n", _beanDefinitions.Select(def => $"- {def}").ToArray());
         }
+
+        public void Remove(params AbstractBeanDefinition[] beanDefinitions)
+        {
+            foreach (var beanDef in beanDefinitions)
+            {
+                _beanDefinitions.Remove(beanDef);
+            }
+        }
     }
 }
