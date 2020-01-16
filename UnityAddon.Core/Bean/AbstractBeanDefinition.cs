@@ -23,49 +23,52 @@ namespace UnityAddon.Core.Bean
             _member = member;
         }
 
-        public abstract Type GetBeanType();
+        public abstract Type BeanType { get; }
 
-        public Type GetBeanScope()
+        public Type BeanScope
         {
-            var scopeAttr = _member.GetAttribute<ScopeAttribute>();
-
-            return scopeAttr != null ? scopeAttr.Value : typeof(ContainerControlledLifetimeManager);
-        }
-
-        public abstract string GetBeanName();
-
-        public string[] GetBeanQualifiers()
-        {
-            var qAttr = _member.GetAttribute<QualifierAttribute>();
-            var gAttr = _member.GetAttribute<GuidAttribute>();
-            var qualifiers = new List<string>();
-
-            if (qAttr != null)
+            get
             {
-                qualifiers.AddRange(qAttr.Values);
-            }
+                var scopeAttr = _member.GetAttribute<ScopeAttribute>();
 
-            if (gAttr != null)
-            {
-                qualifiers.Add(gAttr.Value);
+                return scopeAttr != null ? scopeAttr.Value : typeof(ContainerControlledLifetimeManager);
             }
-
-            return qualifiers.ToArray();
         }
 
-        public abstract MethodBase GetConstructor();
+        public abstract string BeanName { get; }
 
-        public string[] GetBeanProfiles()
+        public string[] BeanQualifiers
         {
-            return _member.GetAttribute<ProfileAttribute>()?.Values ?? new string[0];
+            get
+            {
+                var qAttr = _member.GetAttribute<QualifierAttribute>();
+                var gAttr = _member.GetAttribute<GuidAttribute>();
+                var qualifiers = new List<string>();
+
+                if (qAttr != null)
+                {
+                    qualifiers.AddRange(qAttr.Values);
+                }
+
+                if (gAttr != null)
+                {
+                    qualifiers.Add(gAttr.Value);
+                }
+
+                return qualifiers.ToArray();
+            }
         }
 
-        public abstract bool IsPrimary();
+        public abstract MethodBase Constructor { get; }
+
+        public string[] BeanProfiles => _member.GetAttribute<ProfileAttribute>()?.Values ?? new string[0];
+
+        public abstract bool IsPrimary { get; }
 
         public override string ToString()
         {
-            var type = GetBeanType().Name;
-            var namepsace = GetBeanType().Namespace;
+            var type = BeanType.Name;
+            var namepsace = BeanType.Namespace;
 
             return $"{type}: defined in namespace [{namepsace}]";
         }
@@ -90,30 +93,15 @@ namespace UnityAddon.Core.Bean
             _type = type;
         }
 
-        public override Type GetBeanType()
-        {
-            return BeanTypeExtractor.ExtractBeanType(_type);
-        }
+        public override Type BeanType => TypeResolver.LoadType(_type);
 
-        public override MethodBase GetConstructor()
-        {
-            return DefaultConstructor.Select(_type);
-        }
+        public override MethodBase Constructor => DefaultConstructor.Select(BeanType);
 
-        public bool IsConfiguration()
-        {
-            return _type.HasAttribute<ConfigurationAttribute>();
-        }
+        public bool IsConfiguration => _type.HasAttribute<ConfigurationAttribute>();
 
-        public override string GetBeanName()
-        {
-            return GetBeanType().Name;
-        }
+        public override string BeanName => BeanType.Name;
 
-        public override bool IsPrimary()
-        {
-            return _type.HasAttribute<PrimaryAttribute>();
-        }
+        public override bool IsPrimary => BeanType.HasAttribute<PrimaryAttribute>();
     }
 
     public class MethodBeanDefinition : AbstractBeanDefinition
@@ -130,34 +118,16 @@ namespace UnityAddon.Core.Bean
             _method = method;
         }
 
-        public override Type GetBeanType()
-        {
-            return BeanTypeExtractor.ExtractBeanType(_method.ReturnType);
-        }
+        public override Type BeanType => TypeResolver.LoadType(_method.ReturnType);
 
-        public Type GetConfigType()
-        {
-            return _method.DeclaringType;
-        }
+        public Type ConfigType => TypeResolver.LoadType(_method.DeclaringType);
 
-        public override MethodBase GetConstructor()
-        {
-            return _method;
-        }
+        public override MethodBase Constructor => _method;
 
-        public override string GetBeanName()
-        {
-            return _method.Name;
-        }
+        public override string BeanName => _method.Name;
 
-        public string GetFactoryName()
-        {
-            return $"#{GetBeanName()}";
-        }
+        public string FactoryName => $"#{BeanName}";
 
-        public override bool IsPrimary()
-        {
-            return _method.HasAttribute<PrimaryAttribute>();
-        }
+        public override bool IsPrimary => _method.HasAttribute<PrimaryAttribute>();
     }
 }
