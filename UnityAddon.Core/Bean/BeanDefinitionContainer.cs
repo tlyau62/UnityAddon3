@@ -120,11 +120,9 @@ namespace UnityAddon.Core.Bean
         {
             var beanDef = GetBeanDefinition(type, name);
 
-            foreach (var assignableType in TypeHierarchyScanner.GetAssignableTypes(beanDef.GetBeanType()))
+            foreach (var atype in TypeResolver.GetAssignableTypes(beanDef.BeanType))
             {
-                var actualType = BeanTypeExtractor.ExtractBeanType(assignableType);
-
-                _container[actualType].Remove(beanDef);
+                _container[atype].Remove(beanDef);
             }
         }
     }

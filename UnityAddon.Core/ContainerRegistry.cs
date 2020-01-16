@@ -35,7 +35,10 @@ namespace UnityAddon.Core
         bool IsRegistered(Type type, string name = null);
 
         T BuildUp<T>(T existing, string name = null);
-        object BuildUp(Type type, object existing, string name = null); 
+        object BuildUp(Type type, object existing, string name = null);
+
+        void UnregisterType<T>(string name);
+        void UnregisterType(Type type, string name);
     }
 
     /// <summary>
@@ -194,6 +197,16 @@ namespace UnityAddon.Core
             return buildUpMethod
                 .MakeGenericMethod(new[] { type })
                 .Invoke(this, new[] { (dynamic)existing, name });
+        }
+
+        public void UnregisterType<T>(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UnregisterType(Type type, string name)
+        {
+            // BeanDefinitionContainer.RemoveBeanDefinition(type, name);
         }
     }
 }
