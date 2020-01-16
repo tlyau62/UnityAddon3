@@ -65,7 +65,7 @@ namespace UnityAddon.Ef.Transaction
 
         private Type GetRegisteredType(Type targetType)
         {
-            var types = TypeHierarchyScanner.GetAssignableTypes(targetType);
+            var types = TypeResolver.GetAssignableTypes(targetType);
 
             foreach (var type in types)
             {

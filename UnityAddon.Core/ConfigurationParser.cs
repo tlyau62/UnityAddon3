@@ -29,7 +29,7 @@ namespace UnityAddon.Core
 
             foreach (var config in configs)
             {
-                ParseConfiguration(config.GetBeanType());
+                ParseConfiguration(config.BeanType);
             }
         }
 

@@ -43,11 +43,11 @@ namespace UnityAddon.Core.Bean
                 return _beanDefinitions.ToArray();
             }
 
-            var defs = _beanDefinitions.Where(d => d.GetBeanQualifiers().Any(q => q == name));
+            var defs = _beanDefinitions.Where(d => d.BeanQualifiers.Any(q => q == name));
 
             if (defs.Count() == 0)
             {
-                defs = _beanDefinitions.Where(d => d.GetBeanName() == name);
+                defs = _beanDefinitions.Where(d => d.BeanName == name);
             }
 
             return defs;
@@ -62,7 +62,7 @@ namespace UnityAddon.Core.Bean
 
             if (name == null)
             {
-                var primaryDefs = results.Where(def => def.IsPrimary());
+                var primaryDefs = results.Where(def => def.IsPrimary);
 
                 if (primaryDefs.Count() > 0)
                 {

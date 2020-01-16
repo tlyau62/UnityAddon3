@@ -24,7 +24,7 @@ namespace UnityAddon.Ef
         [Dependency]
         public IBeanDefinitionContainer BeanDefinitionContainer { get; set; }
 
-        public Type GlobalDataSource { get => BeanDefinitionContainer.GetBeanDefinition(typeof(DbContext)).GetBeanType(); }
+        public Type GlobalDataSource { get => BeanDefinitionContainer.GetBeanDefinition(typeof(DbContext)).BeanType; }
 
         public Type ExtractDataSource(MethodInfo method)
         {

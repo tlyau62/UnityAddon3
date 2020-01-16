@@ -34,8 +34,8 @@ namespace UnityAddon.Core.BeanPostprocessor
         {
             return BeanPostProcessors = BeanDefinitionContainer
                 .GetAllBeanDefinitions(typeof(IBeanPostProcessor))
-                .Where(def => !def.GetBeanType().IsGenericType || !def.GetBeanType().ContainsGenericParameters)
-                .Select(def => ContainerRegistry.Resolve(def.GetBeanType(), def.GetBeanName()))
+                .Where(def => !def.BeanType.IsGenericType || !def.BeanType.ContainsGenericParameters)
+                .Select(def => ContainerRegistry.Resolve(def.BeanType, def.BeanName))
                 .OrderBy(bean => bean.GetType().GetOrder())
                 .Cast<IBeanPostProcessor>()
                 .ToList();

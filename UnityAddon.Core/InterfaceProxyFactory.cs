@@ -20,7 +20,7 @@ namespace UnityAddon.Core
 
         public object CreateInterfaceProxy(object bean, params IInterceptor[] interceptors)
         {
-            var itfs = TypeHierarchyScanner.GetInterfaces(bean.GetType());
+            var itfs = TypeResolver.GetInterfaces(bean.GetType());
 
             if (itfs.Count() == 0)
             {
