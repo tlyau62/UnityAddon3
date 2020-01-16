@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyVersion>0.0.0.16</AssemblyVersion>
@@ -24,6 +24,8 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyName>UnityAddon.Core</AssemblyName>
     <RootNamespace>UnityAddon.Core</RootNamespace>
+    <ApplicationIcon />
+    <StartupObject />
   </PropertyGroup>
 
 </Project>

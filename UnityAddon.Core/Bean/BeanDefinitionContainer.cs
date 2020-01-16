@@ -33,10 +33,8 @@ namespace UnityAddon.Core.Bean
         // bad time and space
         public void RegisterBeanDefinition(AbstractBeanDefinition beanDefinition)
         {
-            foreach (var assignableType in TypeHierarchyScanner.GetAssignableTypes(beanDefinition.GetBeanType()))
+            foreach (var type in TypeResolver.GetAssignableTypes(beanDefinition.BeanType))
             {
-                var type = BeanTypeExtractor.ExtractBeanType(assignableType);
-
                 if (!_container.ContainsKey(type))
                 {
                     _container[type] = new BeanDefinitionHolder();

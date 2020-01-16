@@ -38,9 +38,9 @@ namespace UnityAddon.Core.Bean
 
         public void CreateFactory(TypeBeanDefinition typeBeanDefinition)
         {
-            var type = typeBeanDefinition.GetBeanType();
-            var scope = typeBeanDefinition.GetBeanScope();
-            var beanName = typeBeanDefinition.GetBeanName();
+            var type = typeBeanDefinition.BeanType;
+            var scope = typeBeanDefinition.BeanScope;
+            var beanName = typeBeanDefinition.BeanName;
 
             if (type.HasAttribute<ConfigurationAttribute>())
             {
@@ -68,12 +68,12 @@ namespace UnityAddon.Core.Bean
 
         public void CreateFactory(MethodBeanDefinition methodBeanDefinition)
         {
-            var type = methodBeanDefinition.GetBeanType();
-            var configType = methodBeanDefinition.GetConfigType();
-            var ctor = methodBeanDefinition.GetConstructor();
-            var beanName = methodBeanDefinition.GetBeanName();
-            var factoryName = methodBeanDefinition.GetFactoryName();
-            var scope = methodBeanDefinition.GetBeanScope();
+            var type = methodBeanDefinition.BeanType;
+            var configType = methodBeanDefinition.ConfigType;
+            var ctor = methodBeanDefinition.Constructor;
+            var beanName = methodBeanDefinition.BeanName;
+            var factoryName = methodBeanDefinition.FactoryName;
+            var scope = methodBeanDefinition.BeanScope;
 
             Container.RegisterFactory(type, beanName, (c, t, n) =>
              {

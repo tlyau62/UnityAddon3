@@ -8,6 +8,7 @@ using Unity.Lifetime;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.Exceptions;
+using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.Core
 {
@@ -65,6 +66,9 @@ namespace UnityAddon.Core
 
         public void RegisterType(Type regType, Type mapType, string name, ITypeLifetimeManager lifetimeManager)
         {
+            regType = TypeResolver.LoadType(regType);
+            mapType = TypeResolver.LoadType(mapType);
+
             lock (Container)
             {
                 Container.RegisterType(regType, mapType, name, lifetimeManager);
@@ -78,6 +82,8 @@ namespace UnityAddon.Core
 
         public bool IsRegistered(Type type, string name = null)
         {
+            type = TypeResolver.LoadType(type);
+
             foreach (var reg in Container.Registrations)
             {
                 if ((reg.RegisteredType == type) && (name == null || reg.Name == name))
@@ -100,6 +106,8 @@ namespace UnityAddon.Core
 
         public object Resolve(Type type, string name = null)
         {
+            type = TypeResolver.LoadType(type);
+
             if (!IsRegistered(type, name))
             {
                 throw new NoSuchBeanDefinitionException($"Type {type} with name '{name}' is not registered.");
@@ -120,13 +128,15 @@ namespace UnityAddon.Core
         {
             List<object> beans = new List<object>();
 
+            type = TypeResolver.LoadType(type);
+
             if (BeanDefinitionContainer.HasBeanDefinition(type))
             {
                 foreach (var beanDef in BeanDefinitionContainer.GetAllBeanDefinitions(type))
                 {
-                    if (beanDef.GetBeanQualifiers().Length > 0)
+                    if (beanDef.BeanQualifiers.Length > 0)
                     {
-                        beans.Add(Container.Resolve(beanDef.GetBeanType(), beanDef.GetBeanName()));
+                        beans.Add(Container.Resolve(beanDef.BeanType, beanDef.BeanName));
                     }
                 }
             }
@@ -177,6 +187,8 @@ namespace UnityAddon.Core
         /// </summary>
         public object BuildUp(Type type, object existing, string name = null)
         {
+            type = TypeResolver.LoadType(type);
+
             var buildUpMethod = GetType().GetMethods().Where(m => m.Name == nameof(BuildUp) && m.IsGenericMethod).Single();
 
             return buildUpMethod

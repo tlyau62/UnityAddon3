@@ -36,7 +36,7 @@ namespace UnityAddon.Core.Bean
 
         private bool IsFilteredByProfile(AbstractBeanDefinition beanDefinition)
         {
-            var profiles = beanDefinition.GetBeanProfiles();
+            var profiles = beanDefinition.BeanProfiles;
 
             if (ActiveProfiles != null && profiles.Length > 0)
             {

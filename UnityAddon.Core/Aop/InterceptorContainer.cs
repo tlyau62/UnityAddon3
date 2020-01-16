@@ -40,8 +40,8 @@ namespace UnityAddon.Core.Aop
 
             foreach (var beanDef in BeanDefinitionContainer.GetAllGenericBeanDefinitionsByTypeDefinition(typeof(IAttributeInterceptor<>)))
             {
-                var interceptorAttribute = GetAttributeType(beanDef.GetBeanType());
-                IInterceptor interceptor = (IInterceptor)ContainerRegistry.Resolve(beanDef.GetBeanType(), beanDef.GetBeanName());
+                var interceptorAttribute = GetAttributeType(beanDef.BeanType);
+                IInterceptor interceptor = (IInterceptor)ContainerRegistry.Resolve(beanDef.BeanType, beanDef.BeanName);
 
                 if (_interceptorMap.ContainsKey(interceptorAttribute))
                 {
@@ -72,7 +72,7 @@ namespace UnityAddon.Core.Aop
 
         private Type GetAttributeType(Type factoryImpl)
         {
-            var factory = TypeHierarchyScanner.GetInterfaces(factoryImpl)
+            var factory = TypeResolver.GetInterfaces(factoryImpl)
                 .Single(itf => itf.IsGenericType && itf.GetGenericTypeDefinition() == typeof(IAttributeInterceptor<>));
 
             return factory.GetGenericArguments().Single();

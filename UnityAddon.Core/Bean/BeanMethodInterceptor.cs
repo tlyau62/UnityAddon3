@@ -29,9 +29,9 @@ namespace UnityAddon.Core.Bean
         {
             var method = invocation.Method;
             var tempBeanDef = new MethodBeanDefinition(method);
-            var beanName = tempBeanDef.GetBeanName();
-            var factoryName = tempBeanDef.GetFactoryName();
-            var beanType = tempBeanDef.GetBeanType();
+            var beanName = tempBeanDef.BeanName;
+            var factoryName = tempBeanDef.FactoryName;
+            var beanType = tempBeanDef.BeanType;
 
             if (!method.HasAttribute<BeanAttribute>())
             {
@@ -46,7 +46,7 @@ namespace UnityAddon.Core.Bean
 
                 stack.Push(invocation);
 
-                invocation.ReturnValue = ContainerRegistry.Resolve(beanDef.GetBeanType(), factoryName);
+                invocation.ReturnValue = ContainerRegistry.Resolve(beanDef.BeanType, factoryName);
 
                 stack.Pop();
 
