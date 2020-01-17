@@ -199,14 +199,34 @@ namespace UnityAddon.Core
                 .Invoke(this, new[] { (dynamic)existing, name });
         }
 
-        public void UnregisterType<T>(string name)
+        public void UnregisterType<T>(string name = null)
         {
-            throw new NotImplementedException();
+            UnregisterType(typeof(T), name);
         }
 
-        public void UnregisterType(Type type, string name)
+        public void UnregisterType(Type type, string name = null)
         {
-            // BeanDefinitionContainer.RemoveBeanDefinition(type, name);
+            type = TypeResolver.LoadType(type);
+
+            if (BeanDefinitionContainer.HasBeanDefinition(type, name))
+            {
+                var beanDef = BeanDefinitionContainer.GetBeanDefinition(type, name);
+
+                type = beanDef.BeanType;
+                name = beanDef.BeanName;
+            }
+
+            var matchedList = Container.Registrations.Where(p => p.RegisteredType == type && p.Name == name);
+
+            foreach (var registration in matchedList)
+            {
+                registration.LifetimeManager.RemoveValue();
+
+                Container.RegisterFactory(type, name, (c, t, n) =>
+                {
+                    throw new NoSuchBeanDefinitionException($"Type {type} with name '{name}' is unregistered.");
+                }, (IFactoryLifetimeManager)Activator.CreateInstance(registration.LifetimeManager.GetType()));
+            }
         }
     }
 }

@@ -18,7 +18,7 @@ namespace UnityAddon.Core.Bean
         void RegisterBeanDefinition(AbstractBeanDefinition beanDefinition);
         IEnumerable<AbstractBeanDefinition> FindBeanDefinitionsByAttribute<TAttribute>() where TAttribute : Attribute;
         void Clear();
-        void RemoveBeanDefinition(Type type, string name = null);
+        AbstractBeanDefinition RemoveBeanDefinition(Type type, string name = null);
     }
 
     /// <summary>
@@ -116,7 +116,7 @@ namespace UnityAddon.Core.Bean
             _container = new ConcurrentDictionary<Type, BeanDefinitionHolder>();
         }
 
-        public void RemoveBeanDefinition(Type type, string name = null)
+        public AbstractBeanDefinition RemoveBeanDefinition(Type type, string name = null)
         {
             var beanDef = GetBeanDefinition(type, name);
 
@@ -124,6 +124,8 @@ namespace UnityAddon.Core.Bean
             {
                 _container[atype].Remove(beanDef);
             }
+
+            return beanDef;
         }
     }
 }
