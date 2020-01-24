@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Unity;
 using Unity.Lifetime;
 using Unity.Injection;
+using System.Runtime.Loader;
 
 namespace UnityAddon.Core
 {
@@ -44,8 +45,7 @@ namespace UnityAddon.Core
 
         public void ScanComponentsFromAppDomain()
         {
-            var domainAsms = AppDomain.CurrentDomain
-                .GetAssemblies()
+            var domainAsms = AssemblyLoadContext.Default.Assemblies
                 .Where(asm => !_assemblies.Contains(asm) && asm.HasAttribute<ComponentScanAttribute>());
 
             foreach (var asm in domainAsms)

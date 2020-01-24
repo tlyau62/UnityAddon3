@@ -41,9 +41,9 @@ namespace UnityAddon.Core.BeanBuildStrategies
                 {
                     var beanDef = BeanDefinitionContainer.GetBeanDefinition(context.Type, context.Name);
 
-                    if (context.Type != beanDef.GetBeanType() || context.Name != beanDef.GetBeanName())
+                    if (context.Type != beanDef.BeanType || context.Name != beanDef.BeanName)
                     {
-                        resolved = ContainerRegistry.Resolve(beanDef.GetBeanType(), beanDef.GetBeanName());
+                        resolved = ContainerRegistry.Resolve(beanDef.BeanType, beanDef.BeanName);
                     }
                 }
             }
@@ -53,11 +53,11 @@ namespace UnityAddon.Core.BeanBuildStrategies
                 {
                     var genericTypeDef = context.Type.GetGenericTypeDefinition();
                     var beanDef = BeanDefinitionContainer.GetBeanDefinition(genericTypeDef, context.Name);
-                    var makeGenericType = beanDef.GetBeanType().MakeGenericType(context.Type.GetGenericArguments()); // // use resolve type params to make the generic type from bean def
+                    var makeGenericType = beanDef.BeanType.MakeGenericType(context.Type.GetGenericArguments()); // // use resolve type params to make the generic type from bean def
 
-                    if (makeGenericType != context.Type || context.Name != beanDef.GetBeanName())
+                    if (makeGenericType != context.Type || context.Name != beanDef.BeanName)
                     {
-                        resolved = ContainerRegistry.Resolve(makeGenericType, beanDef.GetBeanName());
+                        resolved = ContainerRegistry.Resolve(makeGenericType, beanDef.BeanName);
                     }
                 }
             }

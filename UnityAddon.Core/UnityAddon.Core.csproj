@@ -1,17 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>0.0.0.16</AssemblyVersion>
-    <FileVersion>0.0.0.16</FileVersion>
-    <Version>0.0.0.16</Version>
+    <AssemblyVersion>0.0.0.21</AssemblyVersion>
+    <FileVersion>0.0.0.21</FileVersion>
+    <Version>0.0.0.21</Version>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="BeanBuildStrategies\BeanTypeMappingStrategy - Copy.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Castle.Core" Version="4.4.0" />
@@ -24,6 +20,8 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyName>UnityAddon.Core</AssemblyName>
     <RootNamespace>UnityAddon.Core</RootNamespace>
+    <ApplicationIcon />
+    <StartupObject />
   </PropertyGroup>
 
 </Project>

@@ -48,7 +48,7 @@ namespace UnityAddon.Core.Aop
             var mergeInterceptors = aopInterceptors.Union(remainingInterceptors);
 
             newProxy = InterfaceProxyFactory.CreateInterfaceProxy(invocation.InvocationTarget, mergeInterceptors.ToArray());
-            proxyMethod = GetProxyMethod(invocation, newProxy);
+            proxyMethod = invocation.Method; // same interface method to the new proxy
 
             try
             {
@@ -109,19 +109,6 @@ namespace UnityAddon.Core.Aop
             }
 
             return extracts.ToArray();
-        }
-
-        private MethodInfo GetProxyMethod(IInvocation invocation, object newProxy)
-        {
-            Type[] parameters;
-            string[] methodFullname = invocation.ToString().Split('.');
-            string methodName = methodFullname.Last().Replace('_', '.');
-            Func<string, MethodInfo> getMethod;
-
-            parameters = invocation.MethodInvocationTarget.GetParameters().Select(p => p.ParameterType).ToArray();
-            getMethod = new Func<string, MethodInfo>(mName => newProxy.GetType().GetMethod(mName, parameters));
-
-            return getMethod(methodName.Split('.')[1]) ?? getMethod(methodName); // "Method" : "IRepo.Method"
         }
 
     }
