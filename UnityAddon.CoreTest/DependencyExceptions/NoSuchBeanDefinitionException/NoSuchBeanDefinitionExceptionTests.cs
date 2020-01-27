@@ -38,7 +38,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoSuch
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, false, GetType().Namespace);
 
-            var ex = Assert.Throws<NoSuchBeanDefinitionException>(() => appContext.Resolve<PropService>());
+            var ex = Assert.Throws<BeanCreationException>(() => appContext.Resolve<PropService>());
 
             Assert.Equal($"Property B in {typeof(PropService).FullName} required a bean of type '{typeof(IB).FullName}' that could not be found.", ex.Message);
         }
@@ -49,7 +49,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoSuch
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, false, GetType().Namespace);
 
-            var ex = Assert.Throws<NoSuchBeanDefinitionException>(() => appContext.Resolve<CtorService>());
+            var ex = Assert.Throws<BeanCreationException>(() => appContext.Resolve<CtorService>());
 
             Assert.Equal($"Parameter 0 of Constructor in {typeof(CtorService).FullName} required a bean of type '{typeof(IB).FullName}' that could not be found.", ex.Message);
         }

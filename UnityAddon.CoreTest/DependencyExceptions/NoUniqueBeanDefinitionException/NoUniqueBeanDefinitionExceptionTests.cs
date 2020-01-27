@@ -44,7 +44,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoUniq
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, false, GetType().Namespace);
 
-            var ex = Assert.Throws<NoUniqueBeanDefinitionException>(() => appContext.Resolve<PropService>());
+            var ex = Assert.Throws<BeanCreationException>(() => appContext.Resolve<PropService>());
 
             Assert.Equal($"Property B in {typeof(PropService).FullName} required a single bean, but 2 were found:\r\n" +
                 $"- {typeof(B1).Name}: defined in namespace [{typeof(B1).Namespace}]\r\n" +
@@ -57,7 +57,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoUniq
             var container = new UnityContainer();
             var appContext = new ApplicationContext(container, false, GetType().Namespace);
 
-            var ex = Assert.Throws<NoUniqueBeanDefinitionException>(() => appContext.Resolve<CtorService>());
+            var ex = Assert.Throws<BeanCreationException>(() => appContext.Resolve<CtorService>());
 
             Assert.Equal($"Parameter 0 of Constructor in {typeof(CtorService).FullName} required a single bean, but 2 were found:\r\n" +
                 $"- {typeof(B1).Name}: defined in namespace [{typeof(B1).Namespace}]\r\n" +
