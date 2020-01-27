@@ -67,6 +67,10 @@ namespace UnityAddon.Core.DependencyInjection
             {
                 throw ex.InnerException;
             }
+            catch (TargetInvocationException ex) when (ex.InnerException is BeanCreationException)
+            {
+                throw ex.InnerException;
+            }
         }
 
         public void AddResolveStrategy<TAttribute>(Func<Type, TAttribute, IContainerRegistry, object> strategy) where TAttribute : Attribute

@@ -22,9 +22,6 @@ namespace UnityAddon.Core.DependencyInjection
         public IContainerRegistry ContainerRegistry { get; set; }
 
         [Dependency]
-        public DependencyExceptionFactory DependencyExceptionHandler { get; set; }
-
-        [Dependency]
         public DependencyResolver DependencyResolver { get; set; }
 
         public object[] FillAllParamaters(MethodBase method)
@@ -42,7 +39,7 @@ namespace UnityAddon.Core.DependencyInjection
             }
             catch (NoSuchBeanDefinitionException ex)
             {
-                throw DependencyExceptionHandler.CreateException(param, (dynamic)ex);
+                throw new BeanCreationException(param, (dynamic)ex);
             }
         }
     }

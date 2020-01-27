@@ -18,9 +18,6 @@ namespace UnityAddon.Core.DependencyInjection
     public class PropertyFill
     {
         [Dependency]
-        public DependencyExceptionFactory DependencyExceptionHandler { get; set; }
-
-        [Dependency]
         public DependencyResolver DependencyResolver { get; set; }
 
         public object FillAllProperties(object obj)
@@ -52,7 +49,7 @@ namespace UnityAddon.Core.DependencyInjection
             }
             catch (NoSuchBeanDefinitionException ex)
             {
-                throw DependencyExceptionHandler.CreateException(prop, (dynamic)ex);
+                throw new BeanCreationException(prop, (dynamic)ex);
             }
         }
 
