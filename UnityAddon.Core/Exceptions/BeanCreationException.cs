@@ -6,6 +6,9 @@ using System.Text;
 
 namespace UnityAddon.Core.Exceptions
 {
+    /// <summary>
+    /// Wrap NoSuchBeanDefinitionException with additional property and paramter info.
+    /// </summary>
     public class BeanCreationException : Exception
     {
         public BeanCreationException(PropertyInfo prop, NoUniqueBeanDefinitionException ex) : base(
