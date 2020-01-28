@@ -63,7 +63,7 @@ namespace UnityAddon.Core.DependencyInjection
 
                 return null;
             }
-            catch (TargetInvocationException ex) when (ex.InnerException is NoSuchBeanDefinitionException || ex.InnerException is BeanCreationException)
+            catch (TargetInvocationException ex)
             {
                 throw ex.InnerException;
             }
