@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace UnityAddon.Core.Attributes
 {
+    /// <summary>
+    /// Specify a bean name
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class QualifierAttribute : Attribute
     {

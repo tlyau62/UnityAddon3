@@ -4,6 +4,9 @@ using System.Text;
 
 namespace UnityAddon.Core.Attributes
 {
+    /// <summary>
+    /// Profiled bean will be created only when its profile is included in the active profiles.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class ProfileAttribute : Attribute
     {

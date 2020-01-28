@@ -7,6 +7,9 @@ using Unity.Lifetime;
 
 namespace UnityAddon.Core.Attributes
 {
+    /// <summary>
+    /// Indicate the scope of a bean.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class ScopeAttribute : Attribute
     {
