@@ -72,6 +72,8 @@ namespace UnityAddon.Core.Bean
 
             return $"{type}: defined in namespace [{namepsace}]";
         }
+
+        public abstract string Namespace { get; }
     }
 
     public class TypeBeanDefinition : AbstractBeanDefinition
@@ -102,6 +104,8 @@ namespace UnityAddon.Core.Bean
         public override string BeanName => BeanType.Name;
 
         public override bool IsPrimary => BeanType.HasAttribute<PrimaryAttribute>();
+
+        public override string Namespace { get => BeanType.Namespace; }
     }
 
     public class MethodBeanDefinition : AbstractBeanDefinition
@@ -129,5 +133,7 @@ namespace UnityAddon.Core.Bean
         public string FactoryName => $"#{BeanName}";
 
         public override bool IsPrimary => _method.HasAttribute<PrimaryAttribute>();
+
+        public override string Namespace { get => ConfigType.Namespace; }
     }
 }

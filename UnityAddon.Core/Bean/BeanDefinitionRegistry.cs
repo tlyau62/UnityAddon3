@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Unity;
 using UnityAddon.Core.Attributes;
 
@@ -23,9 +24,17 @@ namespace UnityAddon.Core.Bean
         [Value("{profiles.active:}")]
         public string ActiveProfiles { get; set; }
 
+        [OptionalDependency]
+        public ComponentScanNamespaceExcludeFilter ComponentScanNamespaceExcludeFilter { get; set; }
+
         public void Register(AbstractBeanDefinition beanDefinition)
         {
             if (IsFilteredByProfile(beanDefinition))
+            {
+                return;
+            }
+
+            if (ComponentScanNamespaceExcludeFilter != null && ComponentScanNamespaceExcludeFilter.Values.Any(filter => new Regex(filter).IsMatch(beanDefinition.Namespace)))
             {
                 return;
             }
