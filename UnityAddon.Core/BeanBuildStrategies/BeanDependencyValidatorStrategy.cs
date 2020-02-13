@@ -18,7 +18,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
     public class BeanDependencyValidatorStrategy : BuilderStrategy
     {
         [Dependency]
-        public IAsyncLocalFactory<Stack<ResolveStackEntry>> StackFactory { get; set; }
+        public IThreadLocalFactory<Stack<ResolveStackEntry>> StackFactory { get; set; }
 
         /// <summary>
         /// Remove stack entry

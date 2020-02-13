@@ -90,7 +90,7 @@ namespace UnityAddon.Core
         /// </summary>
         protected void ConfigBeanBuildingStrategy()
         {
-            Container.RegisterType<IAsyncLocalFactory<Stack<ResolveStackEntry>>, AsyncLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())));
+            Container.RegisterType<IThreadLocalFactory<Stack<ResolveStackEntry>>, ThreadLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())));
             Container.RegisterType<AopInterceptorContainer>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IContainerRegistry, ContainerRegistry>();
 
