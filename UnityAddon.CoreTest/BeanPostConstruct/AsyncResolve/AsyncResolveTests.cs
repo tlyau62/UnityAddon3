@@ -28,15 +28,13 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.AsyncResolve
         [PostConstruct]
         public void Init()
         {
-            var tasks = new List<Task>();
-
-            tasks.Add(Task.Factory.StartNew(() =>
+            Task.Factory.StartNew(() =>
             {
                 for (var i = 0; i < 100; i++)
                 {
                     UnityContainer.Resolve<AsyncRepoB>();
                 }
-            }));
+            });
 
             for (var i = 0; i < 100; i++)
             {
