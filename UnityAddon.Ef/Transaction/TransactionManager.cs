@@ -27,6 +27,10 @@ namespace UnityAddon.Ef.Transaction
         [OptionalDependency]
         public RollbackOptions RollbackOptions { get; set; }
 
+        // TODO allow multi interceptors, change to List<ITransactionInterceptor>
+        [OptionalDependency]
+        public ITransactionInterceptor TransactionInterceptor { get; set; }
+
         public void DoInDbContext(IInvocation invocation, bool transactional)
         {
             var isOpen = _dbContextFactory.IsOpen();
@@ -82,6 +86,7 @@ namespace UnityAddon.Ef.Transaction
             }
 
             var tx = context.Database.BeginTransaction();
+            TransactionInterceptor?.Begin();
 
             try
             {
@@ -90,16 +95,21 @@ namespace UnityAddon.Ef.Transaction
                 if (RollbackOptions != null && RollbackOptions.TestRollback(invocation.ReturnValue))
                 {
                     tx.Rollback();
+                    TransactionInterceptor?.Rollback();
                 }
                 else
                 {
                     context.SaveChanges();
                     tx.Commit();
+                    // TODO try-catch all operations of interceptor,
+                    // exception in interceptor should not be thrown out after tx has already committed
+                    TransactionInterceptor?.Commit();
                 }
             }
             catch (Exception)
             {
                 tx.Rollback();
+                TransactionInterceptor?.Rollback();
                 throw;
             }
             finally
