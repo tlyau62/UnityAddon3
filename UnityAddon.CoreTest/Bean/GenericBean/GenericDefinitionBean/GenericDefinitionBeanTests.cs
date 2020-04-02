@@ -14,17 +14,15 @@ namespace UnityAddon.CoreTest.Bean.GenericBean.GenericDefinitionBean
     public class Service<T> : IService<T> { }
 
     [Trait("Bean", "GenericBean/GenericDefinitionBean")]
-    public class GenericDefinitionBeanTests
+    public class GenericDefinitionBeanTests : UnityAddonTest
     {
+        [Dependency]
+        public IService<int> Service { get; set; }
+
         [Fact]
         public void BuildStrategy_DependencyOnGenericDefinitionBean_BeanInjected()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, false, GetType().Namespace);
-
-            var service = appContext.Resolve<IService<int>>();
-
-            Assert.IsType<Service<int>>(service);
+            Assert.IsType<Service<int>>(Service);
         }
     }
 }
