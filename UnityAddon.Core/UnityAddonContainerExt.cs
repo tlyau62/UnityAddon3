@@ -9,6 +9,11 @@ namespace UnityAddon.Core
 {
     public static class UnityAddonContainerExt
     {
+        public static bool IsRegisteredUA<T>(this IUnityContainer container, string name = null)
+        {
+            return container.IsRegisteredUA(typeof(T), name);
+        }
+
         public static void RegisterTypeUA<T>(this IUnityContainer container, string name, ITypeLifetimeManager lifetimeManager, params InjectionMember[] injectionMembers)
         {
             container.RegisterTypeUA(typeof(T), name, lifetimeManager, injectionMembers);

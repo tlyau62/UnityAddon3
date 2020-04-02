@@ -28,11 +28,17 @@ namespace UnityAddon.Core
 {
     public static class UnityAddonConfig
     {
-        private static bool _isInited = false;
-
         public static IHostBuilder RegisterUnityAddon(this IHostBuilder hostBuilder, IUnityContainer container = null)
         {
-            container ??= new UnityContainer();
+            if (container == null)
+            {
+                container = new UnityContainer();
+                hostBuilder.Properties["_UnityAddon_IsNewContainer"] = true;
+            }
+            else
+            {
+                hostBuilder.Properties["_UnityAddon_IsNewContainer"] = false;
+            }
 
             container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
             container.RegisterType<IThreadLocalFactory<Stack<IInvocation>>, ThreadLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())));
@@ -46,7 +52,8 @@ namespace UnityAddon.Core
 
             // add non-component dep def
             container.Resolve<IBeanDefinitionContainer>()
-                .RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IThreadLocalFactory<Stack<IInvocation>>)));
+                .RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IThreadLocalFactory<Stack<IInvocation>>)))
+                .RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IUnityContainer)));
 
             return hostBuilder.UseUnityServiceProvider(container);
         }
@@ -81,13 +88,13 @@ namespace UnityAddon.Core
         {
             IList<IBeanDefinition> defs = new List<IBeanDefinition>();
 
-            if (_isInited)
+            if (hostBuilder.Properties.ContainsKey("_UnityAddon_IsInitialized") && (bool)hostBuilder.Properties["_UnityAddon_IsInitialized"])
             {
-                throw new InvalidOperationException("Already inited");
+                throw new InvalidOperationException("Already isInitialized");
             }
             else
             {
-                _isInited = true;
+                hostBuilder.Properties["_UnityAddon_IsInitialized"] = true;
             }
 
             return hostBuilder
@@ -110,6 +117,13 @@ namespace UnityAddon.Core
 
                     // parse config
                     configParser.ParseScannedConfigurations(c);
+                })
+                .ConfigureContainer<IUnityContainer>((s, c) =>
+                {
+                    if ((bool)hostBuilder.Properties["_UnityAddon_IsNewContainer"])
+                    {
+                        c.Resolve<IHostApplicationLifetime>().ApplicationStopped.Register(() => c.Dispose());
+                    }
                 });
         }
 

@@ -3,21 +3,40 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using Unity;
 
 namespace UnityAddon.Core
 {
-    public class UnityAddonTest
+    public abstract class UnityAddonTest : IDisposable
     {
-        public UnityAddonTest(string testNamespace)
-        {
-            IHost host = Host.CreateDefaultBuilder()
-                .RegisterUnityAddon()
-                .ScanComponentUnityAddon(Assembly.GetCallingAssembly(), testNamespace)
-                .InitUnityAddon()
-                .EnableTestMode(this)
-                .Build();
+        private IUnityContainer _container;
 
-            host.WaitForShutdown();
+        public UnityAddonTest(bool preInstantiateSingleton) : this(Assembly.GetCallingAssembly(), null, preInstantiateSingleton)
+        {
+        }
+
+        public UnityAddonTest(Assembly assembly = null, string testNamespace = null, bool preInstantiateSingleton = false)
+        {
+            _container = new UnityContainer();
+
+            IHostBuilder hostBuilder = Host.CreateDefaultBuilder()
+                .RegisterUnityAddon(_container)
+                .ScanComponentUnityAddon(assembly ?? Assembly.GetCallingAssembly(), testNamespace ?? GetType().Namespace)
+                .InitUnityAddon()
+                .EnableTestMode(this);
+
+            if (preInstantiateSingleton)
+            {
+                hostBuilder.PreInstantiateSingletonUnityAddon();
+            }
+
+            hostBuilder.Build()
+                .WaitForShutdown();
+        }
+
+        public void Dispose()
+        {
+            _container.Dispose();
         }
     }
 }

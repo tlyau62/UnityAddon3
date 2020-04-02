@@ -20,7 +20,7 @@ namespace UnityAddon.Core.BeanDefinition
 
         IEnumerable<IBeanDefinition> GetAllGenericBeanDefinitionsByTypeDefinition(Type type);
 
-        void RegisterBeanDefinition(IBeanDefinition beanDefinition);
+        IBeanDefinitionContainer RegisterBeanDefinition(IBeanDefinition beanDefinition);
 
         void RegisterBeanDefinitionForAllTypes(IBeanDefinition beanDefinition);
 
@@ -45,9 +45,11 @@ namespace UnityAddon.Core.BeanDefinition
             RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IBeanDefinitionContainer)));
         }
 
-        public void RegisterBeanDefinition(IBeanDefinition beanDefinition)
+        public IBeanDefinitionContainer RegisterBeanDefinition(IBeanDefinition beanDefinition)
         {
             AddBeanDefinition(beanDefinition.BeanType, beanDefinition);
+
+            return this;
         }
 
         // bad time and space
