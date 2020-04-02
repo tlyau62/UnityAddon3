@@ -25,12 +25,14 @@ namespace UnityAddon.Core
                 .InitUnityAddon()
                 .EnableTestMode(this);
 
+            var host = hostBuilder.Build();
+
             if (preInstantiateSingleton)
             {
-                hostBuilder.PreInstantiateSingletonUnityAddon();
-            }
+                var hostContainer = host.Services.GetService(typeof(IUnityContainer)) as IUnityContainer;
 
-            hostBuilder.Build();
+                hostContainer.PreInstantiateSingleton();
+            }
         }
 
         public void Dispose()

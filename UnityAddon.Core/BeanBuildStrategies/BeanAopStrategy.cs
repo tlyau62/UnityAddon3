@@ -25,7 +25,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
     /// if a bean type is marked with a class interceptor attribute,
     /// the bean will be proxied with that class attribute interceptor.
     /// </summary>
-    [Component]
+    //TODO:[Component]
     public class BeanAopStrategy : BuilderStrategy
     {
         [Dependency]

@@ -14,7 +14,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
     /// <summary>
     /// Check for circular dep.
     /// </summary>
-    [Component]
+    //TODO:[Component]
     public class BeanDependencyValidatorStrategy : BuilderStrategy
     {
         [Dependency]

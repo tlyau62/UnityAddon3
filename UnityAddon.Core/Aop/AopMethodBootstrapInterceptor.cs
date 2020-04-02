@@ -26,7 +26,7 @@ namespace UnityAddon.Core.Aop
     ///     }
     /// }
     /// </example>
-    [Component]
+    //TODO:[Component]
     public class AopMethodBootstrapInterceptor : IInterceptor
     {
         [Dependency]
