@@ -102,5 +102,44 @@ namespace UnityAddon.Core
                 });
         }
 
+        public static IHostBuilder PreInstantiateSingletonUnityAddon(this IHostBuilder hostBuilder)
+        {
+            return hostBuilder
+               .ConfigureContainer<IUnityContainer>((s, c) =>
+               {
+                   PreInstantiateSingleton(c);
+               });
+        }
+
+        /// <summary>
+        /// Instantiate singleton bean recursively.
+        /// Some bean may do bean registration at postconstruct,
+        /// so recursive needed.
+        /// 
+        /// The final number of un-registrations will be converge to 0,
+        /// since each bean is postconstructed once only.
+        /// </summary>
+        private static void PreInstantiateSingleton(IUnityContainer container)
+        {
+            var currentRegs = container.Registrations.Count();
+
+            foreach (var reg in container.Registrations)
+            {
+                if (!(reg.LifetimeManager is ContainerControlledLifetimeManager))
+                {
+                    continue;
+                }
+
+                if (!reg.RegisteredType.IsGenericType || !reg.RegisteredType.ContainsGenericParameters)
+                {
+                    container.Resolve(reg.RegisteredType, reg.Name);
+                }
+            }
+
+            if (container.Registrations.Count() != currentRegs)
+            {
+                PreInstantiateSingleton(container);
+            }
+        }
     }
 }
