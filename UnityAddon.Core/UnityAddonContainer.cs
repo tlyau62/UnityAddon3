@@ -37,7 +37,14 @@ namespace UnityAddon.Core
                 throw new NoSuchBeanDefinitionException($"Type {type} with name '{name}' is not registered.");
             }
 
-            return container.Resolve(type, name);
+            object bean = container.Resolve(type, name);
+
+            if (!type.IsAssignableFrom(bean.GetType()))
+            {
+                throw new ResolutionFailedException(type, name, $"Cannot convert type from {bean.GetType()} to {type}");
+            }
+
+            return bean;
         }
 
         /// <summary>
