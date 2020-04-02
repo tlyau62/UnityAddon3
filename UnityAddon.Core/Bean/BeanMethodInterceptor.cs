@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.Reflection;
 using UnityAddon.Core.Thread;
 
@@ -13,17 +14,20 @@ namespace UnityAddon.Core.Bean
     /// Used in construct bean defined by bean method.
     /// It delegates the bean construction to bean factory via a Stack<IInvocation>.
     /// </summary>
-    [Component]
     public class BeanMethodInterceptor : IInterceptor
     {
         [Dependency]
         public IBeanDefinitionContainer DefContainer { get; set; }
 
         [Dependency]
-        public IContainerRegistry ContainerRegistry { get; set; }
+        public IThreadLocalFactory<Stack<IInvocation>> InvocationStackFactory { get; set; }
 
-        [Dependency]
-        public IAsyncLocalFactory<Stack<IInvocation>> InvocationStackFactory { get; set; }
+        public IUnityContainer _container { get; set; }
+
+        public BeanMethodInterceptor(IUnityContainer container)
+        {
+            _container = container;
+        }
 
         public void Intercept(IInvocation invocation)
         {
@@ -46,7 +50,7 @@ namespace UnityAddon.Core.Bean
 
                 stack.Push(invocation);
 
-                invocation.ReturnValue = ContainerRegistry.Resolve(beanDef.BeanType, factoryName);
+                invocation.ReturnValue = _container.ResolveUA(beanDef.BeanType, factoryName);
 
                 stack.Pop();
 

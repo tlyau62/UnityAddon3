@@ -8,7 +8,6 @@ using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
 using UnityAddon.Core.Reflection;
-using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core.DependencyInjection
 {
@@ -19,23 +18,20 @@ namespace UnityAddon.Core.DependencyInjection
     public class ParameterFill
     {
         [Dependency]
-        public IContainerRegistry ContainerRegistry { get; set; }
-
-        [Dependency]
         public DependencyResolver DependencyResolver { get; set; }
 
-        public object[] FillAllParamaters(MethodBase method)
+        public object[] FillAllParamaters(MethodBase method, IUnityContainer container)
         {
-            return method.GetParameters().Select(param => GetDependency(param)).ToArray();
+            return method.GetParameters().Select(param => GetDependency(param, container)).ToArray();
         }
 
-        public object GetDependency(ParameterInfo param)
+        public object GetDependency(ParameterInfo param, IUnityContainer container)
         {
             try
             {
-                var dep = DependencyResolver.Resolve(param.ParameterType, param.GetCustomAttributes(false).Cast<Attribute>());
+                var dep = DependencyResolver.Resolve(param.ParameterType, param.GetCustomAttributes(false).Cast<Attribute>(), container);
 
-                return dep ?? (param.HasAttribute<OptionalDependencyAttribute>() ? null : ContainerRegistry.Resolve(param.ParameterType, null));
+                return dep ?? (param.HasAttribute<OptionalDependencyAttribute>() ? null : container.Resolve(param.ParameterType, null));
             }
             catch (NoSuchBeanDefinitionException ex)
             {

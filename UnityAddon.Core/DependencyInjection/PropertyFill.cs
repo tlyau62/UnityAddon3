@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
-using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core.DependencyInjection
 {
@@ -20,17 +19,17 @@ namespace UnityAddon.Core.DependencyInjection
         [Dependency]
         public DependencyResolver DependencyResolver { get; set; }
 
-        public object FillAllProperties(object obj)
+        public object FillAllProperties(object obj, IUnityContainer container)
         {
             foreach (var prop in SelectAllProperties(obj.GetType()))
             {
-                InjectDependency(prop, obj);
+                InjectDependency(prop, obj, container);
             }
 
             return obj;
         }
 
-        public void InjectDependency(PropertyInfo prop, object obj)
+        public void InjectDependency(PropertyInfo prop, object obj, IUnityContainer container)
         {
             if (prop.SetMethod == null)
             {
@@ -39,7 +38,7 @@ namespace UnityAddon.Core.DependencyInjection
 
             try
             {
-                var dep = DependencyResolver.Resolve(prop.PropertyType, prop.GetCustomAttributes(false).Cast<Attribute>());
+                var dep = DependencyResolver.Resolve(prop.PropertyType, prop.GetCustomAttributes(false).Cast<Attribute>(), container);
 
                 // must add null check, else something will be wrong.
                 if (dep != null)

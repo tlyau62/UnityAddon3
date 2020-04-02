@@ -13,9 +13,6 @@ namespace UnityAddon.Core.DependencyInjection
     public class DependencyResolver
     {
         [Dependency]
-        public IContainerRegistry ContainerRegistry { get; set; }
-
-        [Dependency]
         public ValueProvider ValueProvider { get; set; }
 
         private IDictionary<Type, object> _resolveStrategies = new Dictionary<Type, object>();
@@ -30,15 +27,15 @@ namespace UnityAddon.Core.DependencyInjection
 
         protected virtual void AddDefaultResolveStrategies()
         {
-            AddResolveStrategy<DependencyAttribute>((type, attr, containerReg) =>
+            AddResolveStrategy<DependencyAttribute>((type, attr, container) =>
             {
-                return containerReg.Resolve(type, attr.Name);
+                return container.ResolveUA(type, attr.Name);
             });
 
-            AddResolveStrategy<OptionalDependencyAttribute>((type, attr, containerReg) =>
+            AddResolveStrategy<OptionalDependencyAttribute>((type, attr, container) =>
             {
-                return containerReg.IsRegistered(type, attr.Name) ?
-                    containerReg.Resolve(type, attr.Name) : null;
+                return container.IsRegistered(type, attr.Name) ?
+                    container.ResolveUA(type, attr.Name) : null;
             });
 
             AddResolveStrategy<ValueAttribute>((type, attr, containerReg) =>
@@ -47,7 +44,7 @@ namespace UnityAddon.Core.DependencyInjection
             });
         }
 
-        public object Resolve(Type resolveType, IEnumerable<Attribute> attributes)
+        public object Resolve(Type resolveType, IEnumerable<Attribute> attributes, IUnityContainer container)
         {
             try
             {
@@ -57,7 +54,7 @@ namespace UnityAddon.Core.DependencyInjection
 
                     if (_resolveStrategies.ContainsKey(attrType))
                     {
-                        return InvokeStrategyMethod.MakeGenericMethod(attrType).Invoke(this, new object[] { _resolveStrategies[attrType], resolveType, attribute, ContainerRegistry });
+                        return InvokeStrategyMethod.MakeGenericMethod(attrType).Invoke(this, new object[] { _resolveStrategies[attrType], resolveType, attribute, container });
                     }
                 }
 
@@ -69,14 +66,14 @@ namespace UnityAddon.Core.DependencyInjection
             }
         }
 
-        public void AddResolveStrategy<TAttribute>(Func<Type, TAttribute, IContainerRegistry, object> strategy) where TAttribute : Attribute
+        public void AddResolveStrategy<TAttribute>(Func<Type, TAttribute, IUnityContainer, object> strategy) where TAttribute : Attribute
         {
             _resolveStrategies[typeof(TAttribute)] = strategy;
         }
 
-        private object InvokeStrategy<TAttribute>(Func<Type, TAttribute, IContainerRegistry, object> strategy, Type type, TAttribute attr, IContainerRegistry containerReg)
+        private object InvokeStrategy<TAttribute>(Func<Type, TAttribute, IUnityContainer, object> strategy, Type type, TAttribute attr, IUnityContainer container)
         {
-            return strategy(type, attr, containerReg);
+            return strategy(type, attr, container);
         }
     }
 

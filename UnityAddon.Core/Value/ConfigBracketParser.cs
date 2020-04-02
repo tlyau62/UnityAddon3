@@ -15,9 +15,6 @@ namespace UnityAddon.Core.Value
     [Component]
     public class ConfigBracketParser : AbstrackBracketParser
     {
-        [OptionalDependency]
-        public IContainerRegistry ContainerRegistry { get; set; } // optionalDep for testing
-
         private IConfiguration _config;
 
         private static readonly Regex DefaultValue = new Regex("^([^:\n]*)(:([^:\n]*))?$", RegexOptions.Compiled);
