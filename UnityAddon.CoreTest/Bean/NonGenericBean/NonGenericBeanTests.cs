@@ -36,20 +36,22 @@ namespace UnityAddon.CoreTest.Dependency.Bean.NonGenericBean
     }
 
     [Trait("Bean", "NonGenericBean")]
-    public class NonGenericBeanTests
+    public class NonGenericBeanTests : UnityAddonTest
     {
+        [Dependency]
+        public AbstractA A { get; set; }
+
+        [Dependency]
+        public IB B { get; set; }
+
+        [Dependency]
+        public IC C { get; set; }
+
         [Fact]
         public void BuildStrategy_DependencyOnNonGenericBean_BeanInjected()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
-
-            var a = appContext.Resolve<AbstractA>();
-            var b = appContext.Resolve<IB>();
-            var c = appContext.Resolve<IC>();
-
-            Assert.Same(a.B, b);
-            Assert.Same(b.C, c);
+            Assert.Same(A.B, B);
+            Assert.Same(B.C, C);
         }
     }
 }

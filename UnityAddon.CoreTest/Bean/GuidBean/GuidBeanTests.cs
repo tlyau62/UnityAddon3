@@ -50,10 +50,6 @@ namespace UnityAddon.CoreTest.Bean.GuidBean
         [Dependency("4e55e61a-c57f-4b55-84dd-044d539dfbc7")]
         public IService WriteService { get; set; }
 
-        public GuidBeanTests() : base("UnityAddon.CoreTest.Bean.GuidBean")
-        {
-        }
-
         [Fact]
         public void BuildStrategy_DependencyOnGuidBean_BeanInjected()
         {

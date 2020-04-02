@@ -52,23 +52,27 @@ namespace UnityAddon.CoreTest.Bean.QualifiedBean
     }
 
     [Trait("Bean", "QualifiedBean")]
-    public class QualifiedBeanTests
+    public class QualifiedBeanTests : UnityAddonTest
     {
+        [Dependency("CommonA")]
+        public ICommon A { get; set; }
+
+        [Dependency("CommonB")]
+        public ICommon B { get; set; }
+
+        [Dependency(nameof(ServiceType.Popular))]
+        public ICommon C { get; set; }
+
+        [Dependency]
+        public Service Service { get; set; }
+
         [Fact]
         public void BuildStrategy_DependencyOnQualifiedBean_BeanInjected()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
-
-            var a = appContext.Resolve<ICommon>("CommonA");
-            var b = appContext.Resolve<ICommon>("CommonB");
-            var c = appContext.Resolve<ICommon>(ServiceType.Popular.ToString());
-            var service = appContext.Resolve<Service>();
-
-            Assert.Same(service.BCommon, b);
-            Assert.Same(service.BRare, b);
-            Assert.Same(service.A, a);
-            Assert.Same(service.C, c);
+            Assert.Same(Service.BCommon, B);
+            Assert.Same(Service.BRare, B);
+            Assert.Same(Service.A, A);
+            Assert.Same(Service.C, C);
         }
     }
 }
