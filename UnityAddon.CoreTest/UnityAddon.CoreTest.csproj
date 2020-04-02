@@ -11,14 +11,81 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Aop\**" />
+    <Compile Remove="BeanPostConstruct\**" />
+    <Compile Remove="BeanPostProcessor\**" />
+    <Compile Remove="BeanUnregister\**" />
+    <Compile Remove="Bean\ApplicationContextBean\**" />
+    <Compile Remove="Bean\GenericBean\**" />
+    <Compile Remove="Bean\NonGenericBean\**" />
+    <Compile Remove="Bean\PrimaryBean\**" />
+    <Compile Remove="Bean\PrimitiveBean\**" />
+    <Compile Remove="Bean\ProfileBean\**" />
+    <Compile Remove="Bean\QualifiedBean\**" />
+    <Compile Remove="Bean\SingletonBean\**" />
+    <Compile Remove="Bean\TransientBean\**" />
+    <Compile Remove="ComponentScan\**" />
+    <Compile Remove="Configuration\**" />
+    <Compile Remove="DependencyExceptions\**" />
+    <Compile Remove="Dependency\**" />
+    <Compile Remove="Resolve\**" />
+    <Compile Remove="Value\**" />
+    <EmbeddedResource Remove="Aop\**" />
+    <EmbeddedResource Remove="BeanPostConstruct\**" />
+    <EmbeddedResource Remove="BeanPostProcessor\**" />
+    <EmbeddedResource Remove="BeanUnregister\**" />
+    <EmbeddedResource Remove="Bean\ApplicationContextBean\**" />
+    <EmbeddedResource Remove="Bean\GenericBean\**" />
+    <EmbeddedResource Remove="Bean\NonGenericBean\**" />
+    <EmbeddedResource Remove="Bean\PrimaryBean\**" />
+    <EmbeddedResource Remove="Bean\PrimitiveBean\**" />
+    <EmbeddedResource Remove="Bean\ProfileBean\**" />
+    <EmbeddedResource Remove="Bean\QualifiedBean\**" />
+    <EmbeddedResource Remove="Bean\SingletonBean\**" />
+    <EmbeddedResource Remove="Bean\TransientBean\**" />
+    <EmbeddedResource Remove="ComponentScan\**" />
+    <EmbeddedResource Remove="Configuration\**" />
+    <EmbeddedResource Remove="DependencyExceptions\**" />
+    <EmbeddedResource Remove="Dependency\**" />
+    <EmbeddedResource Remove="Resolve\**" />
+    <EmbeddedResource Remove="Value\**" />
+    <None Remove="Aop\**" />
+    <None Remove="BeanPostConstruct\**" />
+    <None Remove="BeanPostProcessor\**" />
+    <None Remove="BeanUnregister\**" />
+    <None Remove="Bean\ApplicationContextBean\**" />
+    <None Remove="Bean\GenericBean\**" />
+    <None Remove="Bean\NonGenericBean\**" />
+    <None Remove="Bean\PrimaryBean\**" />
+    <None Remove="Bean\PrimitiveBean\**" />
+    <None Remove="Bean\ProfileBean\**" />
+    <None Remove="Bean\QualifiedBean\**" />
+    <None Remove="Bean\SingletonBean\**" />
+    <None Remove="Bean\TransientBean\**" />
+    <None Remove="ComponentScan\**" />
+    <None Remove="Configuration\**" />
+    <None Remove="DependencyExceptions\**" />
+    <None Remove="Dependency\**" />
+    <None Remove="Resolve\**" />
+    <None Remove="Value\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.3" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
     <PackageReference Include="Moq" Version="4.13.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="Xunit.DependencyInjection" Version="6.1.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\UnityAddon.Core\UnityAddon.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Bean\" />
   </ItemGroup>
 
 </Project>

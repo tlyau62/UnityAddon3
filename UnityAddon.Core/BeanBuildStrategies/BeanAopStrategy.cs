@@ -35,9 +35,6 @@ namespace UnityAddon.Core.BeanBuildStrategies
         public InterfaceProxyFactory InterfaceProxyFactory { get; set; }
 
         [Dependency]
-        public IBeanDefinitionContainer BeanDefinitionContainer { get; set; }
-
-        [Dependency]
         public AopInterceptorContainer AopInterceptorContainer { get; set; }
 
         public override void PostBuildUp(ref BuilderContext context)

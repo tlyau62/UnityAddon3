@@ -7,6 +7,7 @@ using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
+using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.Core.Aop
@@ -19,9 +20,6 @@ namespace UnityAddon.Core.Aop
         [Dependency]
         public IBeanDefinitionContainer BeanDefinitionContainer { get; set; }
 
-        [Dependency]
-        public ContainerRegistry ContainerRegistry { get; set; }
-
         private IDictionary<Type, IList<IInterceptor>> _interceptorMap = new Dictionary<Type, IList<IInterceptor>>();
 
         public bool IsInitialized { get; set; } = false;
@@ -33,27 +31,29 @@ namespace UnityAddon.Core.Aop
         /// </summary>
         public void Build()
         {
-            if (IsInitialized)
-            {
-                throw new InvalidOperationException("Already initialized.");
-            }
+            throw new NotImplementedException();
 
-            foreach (var beanDef in BeanDefinitionContainer.GetAllGenericBeanDefinitionsByTypeDefinition(typeof(IAttributeInterceptor<>)))
-            {
-                var interceptorAttribute = GetAttributeType(beanDef.BeanType);
-                IInterceptor interceptor = (IInterceptor)ContainerRegistry.Resolve(beanDef.BeanType, beanDef.BeanName);
+            //if (IsInitialized)
+            //{
+            //    throw new InvalidOperationException("Already initialized.");
+            //}
 
-                if (_interceptorMap.ContainsKey(interceptorAttribute))
-                {
-                    _interceptorMap[interceptorAttribute].Add(interceptor);
-                }
-                else
-                {
-                    _interceptorMap[interceptorAttribute] = new List<IInterceptor>() { interceptor };
-                }
-            }
+            //foreach (var beanDef in BeanDefinitionContainer.GetAllGenericBeanDefinitionsByTypeDefinition(typeof(IAttributeInterceptor<>)))
+            //{
+            //    var interceptorAttribute = GetAttributeType(beanDef.BeanType);
+            //    IInterceptor interceptor = (IInterceptor)ContainerRegistry.Resolve(beanDef.BeanType, beanDef.BeanName);
 
-            IsInitialized = true;
+            //    if (_interceptorMap.ContainsKey(interceptorAttribute))
+            //    {
+            //        _interceptorMap[interceptorAttribute].Add(interceptor);
+            //    }
+            //    else
+            //    {
+            //        _interceptorMap[interceptorAttribute] = new List<IInterceptor>() { interceptor };
+            //    }
+            //}
+
+            //IsInitialized = true;
         }
 
         /// <summary>

@@ -30,9 +30,9 @@ namespace UnityAddon.Core
     {
         private static bool _isInited = false;
 
-        public static IHostBuilder RegisterUnityAddon(this IHostBuilder hostBuilder)
+        public static IHostBuilder RegisterUnityAddon(this IHostBuilder hostBuilder, IUnityContainer container = null)
         {
-            IUnityContainer container = new UnityContainer();
+            container ??= new UnityContainer();
 
             container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
             container.RegisterType<IThreadLocalFactory<Stack<IInvocation>>, ThreadLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())));
@@ -64,6 +64,15 @@ namespace UnityAddon.Core
         public static IHostBuilder ScanComponentUnityAddon(this IHostBuilder hostBuilder, params string[] namespaces)
         {
             return hostBuilder.ScanComponentUnityAddon(Assembly.GetCallingAssembly(), namespaces);
+        }
+
+        public static IHostBuilder LoadTest(this IHostBuilder hostBuilder, IUnityAddonTest testobject)
+        {
+            return hostBuilder
+                .ConfigureContainer<IUnityContainer>((s, c) =>
+                {
+                    c.RegisterInstance(testobject);
+                });
         }
 
         public static IHostBuilder InitUnityAddon(this IHostBuilder hostBuilder)
