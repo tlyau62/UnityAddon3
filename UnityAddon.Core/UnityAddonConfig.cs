@@ -79,8 +79,6 @@ namespace UnityAddon.Core
                 .ConfigureContainer<IUnityContainer>((s, c) =>
                 {
                     c.BuildUp(testobject.GetType(), testobject);
-
-                    c.Resolve<IHostApplicationLifetime>().StopApplication();
                 });
         }
 

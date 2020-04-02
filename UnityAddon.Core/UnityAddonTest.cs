@@ -30,8 +30,7 @@ namespace UnityAddon.Core
                 hostBuilder.PreInstantiateSingletonUnityAddon();
             }
 
-            hostBuilder.Build()
-                .WaitForShutdown();
+            hostBuilder.Build();
         }
 
         public void Dispose()
