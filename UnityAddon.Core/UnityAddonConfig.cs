@@ -66,12 +66,14 @@ namespace UnityAddon.Core
             return hostBuilder.ScanComponentUnityAddon(Assembly.GetCallingAssembly(), namespaces);
         }
 
-        public static IHostBuilder LoadTest(this IHostBuilder hostBuilder, IUnityAddonTest testobject)
+        public static IHostBuilder EnableTestMode(this IHostBuilder hostBuilder, UnityAddonTest testobject)
         {
             return hostBuilder
                 .ConfigureContainer<IUnityContainer>((s, c) =>
                 {
-                    c.RegisterInstance(testobject);
+                    c.BuildUp(testobject.GetType(), testobject);
+
+                    c.Resolve<IHostApplicationLifetime>().StopApplication();
                 });
         }
 

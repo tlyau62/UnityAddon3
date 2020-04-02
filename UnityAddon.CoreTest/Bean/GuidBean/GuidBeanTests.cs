@@ -39,7 +39,7 @@ namespace UnityAddon.CoreTest.Bean.GuidBean
     }
 
     [Trait("Bean", "GuidBean")]
-    public class GuidBeanTests : IUnityAddonTest
+    public class GuidBeanTests : UnityAddonTest
     {
         [Dependency]
         public GeneralService GeneralService { get; set; }
@@ -50,40 +50,15 @@ namespace UnityAddon.CoreTest.Bean.GuidBean
         [Dependency("4e55e61a-c57f-4b55-84dd-044d539dfbc7")]
         public IService WriteService { get; set; }
 
-        private IUnityContainer _container;
-
-        public GuidBeanTests()
+        public GuidBeanTests() : base("UnityAddon.CoreTest.Bean.GuidBean")
         {
         }
 
         [Fact]
         public void BuildStrategy_DependencyOnGuidBean_BeanInjected()
         {
-            _container = new UnityContainer();
-
-            Host.CreateDefaultBuilder()
-                .RegisterUnityAddon(_container)
-                .ScanComponentUnityAddon("UnityAddon.CoreTest.Bean.GuidBean")
-                .LoadTest(this)
-                .ConfigureServices((hostContext, services) =>
-                {
-                    services.AddHostedService<UnityAddonTestService>();
-                })
-                .LoadTest(this)
-                .InitUnityAddon().Build().Run(); // integrate with the asp core IServiceCollection
-
             Assert.Same(GeneralService.PrintService, PrintService);
             Assert.Same(GeneralService.WriteService, WriteService);
-        }
-
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
         }
     }
 }
