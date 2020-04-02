@@ -11,6 +11,8 @@ namespace UnityAddon.Core
     {
         private IUnityContainer _container;
 
+        private IHost _host;
+
         public UnityAddonTest(bool preInstantiateSingleton) : this(Assembly.GetCallingAssembly(), null, preInstantiateSingleton)
         {
         }
@@ -25,11 +27,11 @@ namespace UnityAddon.Core
                 .InitUnityAddon()
                 .EnableTestMode(this);
 
-            var host = hostBuilder.Build();
+            _host = hostBuilder.Build();
 
             if (preInstantiateSingleton)
             {
-                var hostContainer = host.Services.GetService(typeof(IUnityContainer)) as IUnityContainer;
+                var hostContainer = _host.Services.GetService(typeof(IUnityContainer)) as IUnityContainer;
 
                 hostContainer.PreInstantiateSingleton();
             }
@@ -38,6 +40,7 @@ namespace UnityAddon.Core
         public void Dispose()
         {
             _container.Dispose();
+            _host.Dispose();
         }
     }
 }
