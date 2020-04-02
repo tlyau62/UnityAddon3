@@ -21,7 +21,7 @@ namespace UnityAddon.Ef.Hangfire
     [Component]
     public class HangfireProxyInterceptor : IInterceptor
     {
-        [Dependency]
+        [OptionalDependency]
         public ITransactionCallbacks TransactionCallbacks { get; set; }
 
         private MethodInfo _enqueue;
@@ -33,6 +33,8 @@ namespace UnityAddon.Ef.Hangfire
              * BackgroundJob {
              *   static string Enqueue<T>(Expression<Action<T>>)
              * }
+             * TODO use IBackgroundJobClient for unit test
+             * https://docs.hangfire.io/en/latest/background-methods/writing-unit-tests.html
              */
             _enqueue = typeof(BackgroundJob).GetMethods()
                     .Where(m =>
@@ -66,12 +68,15 @@ namespace UnityAddon.Ef.Hangfire
             var lambda = Expression.Lambda(lambdaType, callExpr, paramExpr);
 
             var enqueue = _enqueue.MakeGenericMethod(intrfcType);
+            Action callback = () => enqueue.Invoke(null, new object[] { lambda });
 
-            // background job often depends on the data of the enclosing transation, so enqueue after commit
-            TransactionCallbacks.OnCommit(() =>
+            if (TransactionCallbacks != null)
             {
-                enqueue.Invoke(null, new object[] { lambda });
-            });
+                // background job often depends on the data of the enclosing transation, so enqueue after commit
+                TransactionCallbacks.OnCommit(callback);
+            }
+            else
+                callback();
         }
     }
 
