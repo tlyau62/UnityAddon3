@@ -14,7 +14,7 @@ namespace UnityAddon.CoreTest.Bean.GenericBean.GenericDefinitionBean
     public class Service<T> : IService<T> { }
 
     [Trait("Bean", "GenericBean/GenericDefinitionBean")]
-    public class GenericDefinitionBeanTests : UnityAddonTest
+    public class GenericDefinitionBeanTests : UnityAddonDefaultTest
     {
         [Dependency]
         public IService<int> Service { get; set; }

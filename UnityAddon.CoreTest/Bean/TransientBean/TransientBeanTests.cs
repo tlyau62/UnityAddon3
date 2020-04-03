@@ -26,7 +26,7 @@ namespace UnityAddon.CoreTest.Bean.TransientBean
     }
 
     [Trait("Bean", "TransientBean")]
-    public class TransientBeanTests : UnityAddonTest
+    public class TransientBeanTests : UnityAddonDefaultTest
     {
         [Dependency]
         public Service Service { get; set; }

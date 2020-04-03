@@ -52,7 +52,7 @@ namespace UnityAddon.CoreTest.Bean.QualifiedBean
     }
 
     [Trait("Bean", "QualifiedBean")]
-    public class QualifiedBeanTests : UnityAddonTest
+    public class QualifiedBeanTests : UnityAddonDefaultTest
     {
         [Dependency("CommonA")]
         public ICommon A { get; set; }

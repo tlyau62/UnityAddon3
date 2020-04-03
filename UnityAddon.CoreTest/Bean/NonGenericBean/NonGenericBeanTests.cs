@@ -36,7 +36,7 @@ namespace UnityAddon.CoreTest.Dependency.Bean.NonGenericBean
     }
 
     [Trait("Bean", "NonGenericBean")]
-    public class NonGenericBeanTests : UnityAddonTest
+    public class NonGenericBeanTests : UnityAddonDefaultTest
     {
         [Dependency]
         public AbstractA A { get; set; }

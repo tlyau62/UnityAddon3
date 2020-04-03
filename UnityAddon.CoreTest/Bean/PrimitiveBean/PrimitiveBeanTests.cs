@@ -36,7 +36,7 @@ namespace UnityAddon.CoreTest.Bean.PrimitiveBean
     }
 
     [Trait("Bean", "PrimitiveBean")]
-    public class PrimitiveBeanTests : UnityAddonTest
+    public class PrimitiveBeanTests : UnityAddonDefaultTest
     {
         [Dependency]
         public Config Config { get; set; }
