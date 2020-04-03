@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,41 +11,72 @@ using Xunit;
 
 namespace UnityAddon.CoreTest.Dependency.Bean.ProfileBean
 {
-    interface IService
+    public interface IService
     {
     }
 
     [Component]
     [Profile("dev")]
-    class DevService : IService
+    public class DevService : IService
     {
     }
 
     [Component]
     [Profile("prod")]
-    class ProdService : IService
+    public class ProdService : IService
     {
     }
 
     [Trait("Bean", "ProfileBean")]
-    public class ProfileBeanTests
+    public class ProfileBeanTests : UnityAddonTest
     {
+        [Dependency]
+        public IUnityContainer Container { get; set; }
+
+        public ProfileBeanTests()
+        {
+        }
+
         [Theory]
         [InlineData("prod", typeof(ProdService))]
-        [InlineData("dev", typeof(DevService))]
+        //[InlineData("dev", typeof(DevService))]
         public void BuildStrategy_DependencyOnProfileBean_BeanInjected(string activeProfile, Type resolveType)
         {
-            var container = new UnityContainer();
-            container.RegisterInstance<IConfiguration>(new ConfigurationBuilder()
-                .AddInMemoryCollection(new Dictionary<string, string>
+            Host.CreateDefaultBuilder()
+                .RegisterUA(config =>
                 {
-                    {"profiles:active", activeProfile},
+                    config.AddInMemoryCollection(new Dictionary<string, string>
+                    {
+                        {"profiles:active", activeProfile},
+                    });
                 })
-                .Build());
+                .ScanComponentUA(GetType().Namespace)
+                .InitUA()
+                .EnableTestMode(this)
+                .Build();
 
-            var appContext = new ApplicationContext(container, GetType().Namespace);
-
-            Assert.IsType(resolveType, appContext.Resolve<IService>());
+            Assert.IsType(resolveType, Container.ResolveUA<IService>());
         }
+
+        //[Theory]
+        //[InlineData("prod", typeof(DevService))]
+        //[InlineData("dev", typeof(ProdService))]
+        //public void BuildStrategy_DependencyOnNonActiveProfileBean_ExceptionThrown(string activeProfile, Type resolveType)
+        //{
+        //    IHost host = Host.CreateDefaultBuilder()
+        //        .RegisterUnityAddon()
+        //        .ScanComponentUnityAddon(GetType().Namespace)
+        //        .InitUnityAddon()
+        //        .EnableTestMode(this)
+        //        .ConfigureAppConfiguration((hostingContext, config) =>
+        //        {
+        //            config.AddInMemoryCollection(new Dictionary<string, string>
+        //            {
+        //                {"profiles:active", activeProfile},
+        //            });
+        //        }).Build();
+
+        //    Assert.Throws<Exception>(() => Container.ResolveUA(resolveType));
+        //}
     }
 }

@@ -18,8 +18,6 @@ namespace UnityAddon.Core.Bean
 {
     public interface IComponentScanner
     {
-        void AddComponent(IBeanDefinition beanDefinition, IUnityContainer container);
-
         IEnumerable<Type> ScanComponent(Assembly asm, IUnityContainer container);
 
         IEnumerable<Type> ScanComponent(Assembly asm, IUnityContainer container, params string[] baseNamespaces);
@@ -33,16 +31,7 @@ namespace UnityAddon.Core.Bean
     public class ComponentScanner : IComponentScanner
     {
         [Dependency]
-        public BeanFactory BeanFactory { get; set; }
-
-        [Dependency]
-        public IBeanDefinitionContainer BeanDefinitionContainer { get; set; }
-
-        public void AddComponent(IBeanDefinition beanDefinition, IUnityContainer container)
-        {
-            BeanDefinitionContainer.RegisterBeanDefinitionForAllTypes(beanDefinition);
-            BeanFactory.CreateFactory((dynamic)beanDefinition, container);
-        }
+        public BeanRegistry BeanDefinitionRegistry { get; set; }
 
         public IEnumerable<Type> ScanComponent(Assembly asm, IUnityContainer container)
         {
@@ -58,7 +47,7 @@ namespace UnityAddon.Core.Bean
 
             foreach (var component in components)
             {
-                AddComponent(new TypeBeanDefinition(component), container);
+                BeanDefinitionRegistry.Register(new TypeBeanDefinition(component), container);
             }
 
             return components;

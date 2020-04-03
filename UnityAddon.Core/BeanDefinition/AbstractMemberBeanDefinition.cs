@@ -24,6 +24,10 @@ namespace UnityAddon.Core.BeanDefinition
         bool IsPrimary { get; }
 
         string Namespace { get; }
+
+        bool RequireFactory { get; }
+
+        bool RequireAssignableTypes { get; }
     }
 
     public class SimpleBeanDefinition : IBeanDefinition
@@ -45,6 +49,10 @@ namespace UnityAddon.Core.BeanDefinition
         public bool IsPrimary { get; set; } = false;
 
         public string Namespace { get => BeanType.Name; }
+
+        public bool RequireFactory => false;
+
+        public bool RequireAssignableTypes => false;
     }
 
     /// <summary>
@@ -108,6 +116,10 @@ namespace UnityAddon.Core.BeanDefinition
         }
 
         public abstract string Namespace { get; }
+
+        public bool RequireFactory => true;
+
+        public abstract bool RequireAssignableTypes { get; }
     }
 
     public class TypeBeanDefinition : AbstractMemberBeanDefinition
@@ -133,6 +145,8 @@ namespace UnityAddon.Core.BeanDefinition
         public override bool IsPrimary => BeanType.HasAttribute<PrimaryAttribute>();
 
         public override string Namespace { get => BeanType.Namespace; }
+
+        public override bool RequireAssignableTypes => true;
     }
 
     public class MethodBeanDefinition : AbstractMemberBeanDefinition
@@ -160,5 +174,7 @@ namespace UnityAddon.Core.BeanDefinition
         public override bool IsPrimary => Method.HasAttribute<PrimaryAttribute>();
 
         public override string Namespace { get => ConfigType.Namespace; }
+
+        public override bool RequireAssignableTypes => false;
     }
 }

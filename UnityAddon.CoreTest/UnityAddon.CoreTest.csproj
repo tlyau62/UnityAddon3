@@ -17,7 +17,6 @@
     <Compile Remove="BeanUnregister\**" />
     <Compile Remove="Bean\ApplicationContextBean\**" />
     <Compile Remove="Bean\PrimitiveBean\**" />
-    <Compile Remove="Bean\ProfileBean\**" />
     <Compile Remove="ComponentScan\**" />
     <Compile Remove="Configuration\**" />
     <Compile Remove="DependencyExceptions\**" />
@@ -30,7 +29,6 @@
     <EmbeddedResource Remove="BeanUnregister\**" />
     <EmbeddedResource Remove="Bean\ApplicationContextBean\**" />
     <EmbeddedResource Remove="Bean\PrimitiveBean\**" />
-    <EmbeddedResource Remove="Bean\ProfileBean\**" />
     <EmbeddedResource Remove="ComponentScan\**" />
     <EmbeddedResource Remove="Configuration\**" />
     <EmbeddedResource Remove="DependencyExceptions\**" />
@@ -43,7 +41,6 @@
     <None Remove="BeanUnregister\**" />
     <None Remove="Bean\ApplicationContextBean\**" />
     <None Remove="Bean\PrimitiveBean\**" />
-    <None Remove="Bean\ProfileBean\**" />
     <None Remove="ComponentScan\**" />
     <None Remove="Configuration\**" />
     <None Remove="DependencyExceptions\**" />

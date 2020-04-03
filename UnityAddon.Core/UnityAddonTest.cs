@@ -22,18 +22,16 @@ namespace UnityAddon.Core
             _container = new UnityContainer();
 
             IHostBuilder hostBuilder = Host.CreateDefaultBuilder()
-                .RegisterUnityAddon(_container)
-                .ScanComponentUnityAddon(assembly ?? Assembly.GetCallingAssembly(), testNamespace ?? GetType().Namespace)
-                .InitUnityAddon()
+                .RegisterUA(null, _container)
+                .ScanComponentUA(assembly ?? Assembly.GetCallingAssembly(), testNamespace ?? GetType().Namespace)
+                .InitUA()
                 .EnableTestMode(this);
 
             _host = hostBuilder.Build();
 
             if (preInstantiateSingleton)
             {
-                var hostContainer = _host.Services.GetService(typeof(IUnityContainer)) as IUnityContainer;
-
-                hostContainer.PreInstantiateSingleton();
+                _host.GetUnityContainer().PreInstantiateSingleton();
             }
         }
 

@@ -20,7 +20,7 @@ namespace UnityAddon.Core
         public IBeanDefinitionContainer BeanDefinitionContainer { get; set; }
 
         [Dependency]
-        public ComponentScanner ComponentScanner { get; set; }
+        public BeanRegistry BeanRegistry { get; set; }
 
         private ISet<Type> _scannedConfigs = new HashSet<Type>();
 
@@ -43,7 +43,7 @@ namespace UnityAddon.Core
 
             foreach (var beanMethod in MethodSelector.GetAllMethodsByAttribute<BeanAttribute>(type))
             {
-                ComponentScanner.AddComponent(new MethodBeanDefinition(beanMethod), container);
+                BeanRegistry.Register(new MethodBeanDefinition(beanMethod), container);
             }
 
             _scannedConfigs.Add(type);

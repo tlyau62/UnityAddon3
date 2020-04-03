@@ -38,5 +38,15 @@ namespace UnityAddon.Core
         {
             return container.ResolveUA(type, null);
         }
+
+        public static T ResolveOptionalUA<T>(this IUnityContainer container, string name = null)
+        {
+            return (T)container.ResolveOptionalUA(typeof(T), name);
+        }
+
+        public static IUnityContainer RegisterInstanceUA<T>(this IUnityContainer container, T instance)
+        {
+            return container.RegisterInstanceUA(instance, null);
+        }
     }
 }

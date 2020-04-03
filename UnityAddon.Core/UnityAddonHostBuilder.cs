@@ -26,10 +26,12 @@ using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.Core
 {
-    public static class UnityAddonConfig
+    public static class UnityAddonHostBuilder
     {
-        public static IHostBuilder RegisterUnityAddon(this IHostBuilder hostBuilder, IUnityContainer container = null)
+        public static IHostBuilder RegisterUA(this IHostBuilder hostBuilder, Action<IConfigurationBuilder> config = null, IUnityContainer container = null)
         {
+            config ??= (conf) => { };
+
             if (container == null)
             {
                 container = new UnityContainer();
@@ -40,14 +42,17 @@ namespace UnityAddon.Core
                 hostBuilder.Properties["_UnityAddon_IsNewContainer"] = false;
             }
 
-            container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
-            container.RegisterType<IThreadLocalFactory<Stack<IInvocation>>, ThreadLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())));
+            container
+                .RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager())
+                .RegisterType<IThreadLocalFactory<Stack<IInvocation>>, ThreadLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())))
+                .RegisterInstance(BuildConfig()); // add config instance
 
             var scanner = container.Resolve<ComponentScanner>();
-
-            container.AddNewExtension<BeanBuildStrategyExtension>();
+            var ext = container.Resolve<BeanBuildStrategyExtension>();
+            container.AddExtension(ext);
 
             return hostBuilder.UseUnityServiceProvider(container)
+                .ConfigureAppConfiguration((ctx, conf) => config(conf)) // add config bean def
                 .ConfigureContainer<IUnityContainer>(c =>
                 {
                     // refresh
@@ -57,10 +62,23 @@ namespace UnityAddon.Core
                     c.Resolve<IBeanDefinitionContainer>()
                         .RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IThreadLocalFactory<Stack<IInvocation>>)))
                         .RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IUnityContainer)));
+
+                    c.Resolve<BeanBuildStrategyExtension>();
+
+                    c.BuildUp(ext);
                 });
+
+            IConfiguration BuildConfig()
+            {
+                var configBuilder = new ConfigurationBuilder();
+
+                config(configBuilder);
+
+                return configBuilder.Build();
+            }
         }
 
-        public static IHostBuilder ScanComponentUnityAddon(this IHostBuilder hostBuilder, Assembly assembly, params string[] namespaces)
+        public static IHostBuilder ScanComponentUA(this IHostBuilder hostBuilder, Assembly assembly, params string[] namespaces)
         {
             return hostBuilder.ConfigureContainer<IUnityContainer>((s, c) =>
                 {
@@ -70,9 +88,9 @@ namespace UnityAddon.Core
                 });
         }
 
-        public static IHostBuilder ScanComponentUnityAddon(this IHostBuilder hostBuilder, params string[] namespaces)
+        public static IHostBuilder ScanComponentUA(this IHostBuilder hostBuilder, params string[] namespaces)
         {
-            return hostBuilder.ScanComponentUnityAddon(Assembly.GetCallingAssembly(), namespaces);
+            return hostBuilder.ScanComponentUA(Assembly.GetCallingAssembly(), namespaces);
         }
 
         public static IHostBuilder EnableTestMode(this IHostBuilder hostBuilder, UnityAddonTest testobject)
@@ -84,7 +102,7 @@ namespace UnityAddon.Core
                 });
         }
 
-        public static IHostBuilder InitUnityAddon(this IHostBuilder hostBuilder)
+        public static IHostBuilder InitUA(this IHostBuilder hostBuilder)
         {
             IList<IBeanDefinition> defs = new List<IBeanDefinition>();
 

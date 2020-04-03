@@ -37,6 +37,16 @@ namespace UnityAddon.Core
                 throw new NoSuchBeanDefinitionException($"Type {type} with name '{name}' is not registered.");
             }
 
+            return container.ResolveOptionalUA(type, name);
+        }
+
+        public static object ResolveOptionalUA(this IUnityContainer container, Type type, string name)
+        {
+            if (!container.IsRegisteredUA(type, name))
+            {
+                return null;
+            }
+
             object bean = container.Resolve(type, name);
 
             if (!type.IsAssignableFrom(bean.GetType()))
@@ -45,6 +55,16 @@ namespace UnityAddon.Core
             }
 
             return bean;
+        }
+
+        public static IUnityContainer RegisterInstanceUA<T>(this IUnityContainer container, T instance, string name)
+        {
+            var beanRegistry = container.Resolve<BeanRegistry>();
+
+            beanRegistry.Register(new SimpleBeanDefinition(typeof(T), name), container);
+            container.RegisterInstance(name, instance);
+
+            return container;
         }
 
         /// <summary>
