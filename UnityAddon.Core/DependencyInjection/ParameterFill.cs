@@ -29,9 +29,14 @@ namespace UnityAddon.Core.DependencyInjection
         {
             try
             {
-                var dep = DependencyResolver.Resolve(param.ParameterType, param.GetCustomAttributes(false).Cast<Attribute>(), container);
+                var attrs = param.GetCustomAttributes(false).Cast<Attribute>();
 
-                return dep ?? (param.HasAttribute<OptionalDependencyAttribute>() ? null : container.Resolve(param.ParameterType, null));
+                if (attrs.Count() == 0)
+                {
+                    return container.ResolveUA(param.ParameterType, null);
+                }
+
+                return DependencyResolver.Resolve(param.ParameterType, attrs, container);
             }
             catch (NoSuchBeanDefinitionException ex)
             {

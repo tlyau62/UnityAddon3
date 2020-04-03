@@ -53,6 +53,9 @@
     <Compile Include="BeanPostConstruct\AsyncResolve\AsyncResolveTests.cs" />
     <Compile Include="BeanPostConstruct\NonProxyBean\NonProxyBeanTests.cs" />
     <Compile Include="Bean\ProfileBean\ProfileBeanTests.cs" />
+    <Compile Include="DependencyExceptions\NestedNoSuchBeanDefinitionException\NestedNoSuchBeanDefinitionExceptionTests.cs" />
+    <Compile Include="DependencyExceptions\NoSuchBeanDefinitionException\NoSuchBeanDefinitionExceptionTests.cs" />
+    <Compile Include="DependencyExceptions\NoUniqueBeanDefinitionException\NoUniqueBeanDefinitionExceptionTests.cs" />
   </ItemGroup>
 
   <ItemGroup>

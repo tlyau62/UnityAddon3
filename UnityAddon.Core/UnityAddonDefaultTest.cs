@@ -17,7 +17,7 @@ namespace UnityAddon.Core
 
         public UnityAddonDefaultTest(Assembly assembly = null, string testNamespace = null)
         {
-            _host = Host.CreateDefaultBuilder()
+            _host = new HostBuilder()
                 .RegisterUA()
                 .ScanComponentsUA(assembly ?? Assembly.GetCallingAssembly(), testNamespace ?? GetType().Namespace)
                 .BuildUA()
