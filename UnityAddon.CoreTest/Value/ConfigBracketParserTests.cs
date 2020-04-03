@@ -37,7 +37,9 @@ namespace UnityAddon.CoreTest.Value
         [InlineData("test{test.test2.test3}test", "test123test")]
         public void ConfigBracketParser_ValueExpression_Parsed(string input, string expected)
         {
-            var parser = new ConfigBracketParser(_config);
+            var parser = new ConfigBracketParser();
+
+            parser.Config = _config;
 
             Assert.Equal(expected, parser.Parse(input));
         }
@@ -47,7 +49,9 @@ namespace UnityAddon.CoreTest.Value
         [InlineData("test{undefined:}test", "testtest")]
         public void ConfigBracketParser_DefaultValueExpression_Parsed(string input, string expected)
         {
-            var parser = new ConfigBracketParser(_config);
+            var parser = new ConfigBracketParser();
+
+            parser.Config = _config;
 
             Assert.Equal(expected, parser.Parse(input));
         }

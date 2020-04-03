@@ -18,11 +18,11 @@
     <Compile Remove="Bean\ApplicationContextBean\**" />
     <Compile Remove="Bean\ProfileBean\**" />
     <Compile Remove="ComponentScan\**" />
-    <Compile Remove="Configuration\**" />
-    <Compile Remove="DependencyExceptions\**" />
-    <Compile Remove="Dependency\**" />
+    <Compile Remove="DependencyExceptions\NestedNoSuchBeanDefinitionException\**" />
+    <Compile Remove="DependencyExceptions\NoSuchBeanDefinitionException\**" />
+    <Compile Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
+    <Compile Remove="Dependency\OptionalDependency\**" />
     <Compile Remove="Resolve\**" />
-    <Compile Remove="Value\**" />
     <EmbeddedResource Remove="Aop\**" />
     <EmbeddedResource Remove="BeanPostConstruct\**" />
     <EmbeddedResource Remove="BeanPostProcessor\**" />
@@ -30,11 +30,11 @@
     <EmbeddedResource Remove="Bean\ApplicationContextBean\**" />
     <EmbeddedResource Remove="Bean\ProfileBean\**" />
     <EmbeddedResource Remove="ComponentScan\**" />
-    <EmbeddedResource Remove="Configuration\**" />
-    <EmbeddedResource Remove="DependencyExceptions\**" />
-    <EmbeddedResource Remove="Dependency\**" />
+    <EmbeddedResource Remove="DependencyExceptions\NestedNoSuchBeanDefinitionException\**" />
+    <EmbeddedResource Remove="DependencyExceptions\NoSuchBeanDefinitionException\**" />
+    <EmbeddedResource Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
+    <EmbeddedResource Remove="Dependency\OptionalDependency\**" />
     <EmbeddedResource Remove="Resolve\**" />
-    <EmbeddedResource Remove="Value\**" />
     <None Remove="Aop\**" />
     <None Remove="BeanPostConstruct\**" />
     <None Remove="BeanPostProcessor\**" />
@@ -42,14 +42,16 @@
     <None Remove="Bean\ApplicationContextBean\**" />
     <None Remove="Bean\ProfileBean\**" />
     <None Remove="ComponentScan\**" />
-    <None Remove="Configuration\**" />
-    <None Remove="DependencyExceptions\**" />
-    <None Remove="Dependency\**" />
+    <None Remove="DependencyExceptions\NestedNoSuchBeanDefinitionException\**" />
+    <None Remove="DependencyExceptions\NoSuchBeanDefinitionException\**" />
+    <None Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
+    <None Remove="Dependency\OptionalDependency\**" />
     <None Remove="Resolve\**" />
-    <None Remove="Value\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="BeanPostConstruct\AsyncResolve\AsyncResolveTests.cs" />
+    <Compile Include="BeanPostConstruct\NonProxyBean\NonProxyBeanTests.cs" />
     <Compile Include="Bean\ProfileBean\ProfileBeanTests.cs" />
   </ItemGroup>
 

@@ -29,24 +29,21 @@ namespace UnityAddon.CoreTest.Dependency.OptionalDependency
     }
 
     [Trait("Dependency", "OptionalDependency")]
-    public class OptionalDependencyTests
+    public class OptionalDependencyTests : UnityAddonDefaultTest
     {
+        [Dependency]
+        public Service Service { get; set; }
+
         [Fact]
         public void PropertyFill_ResolveRegisteredOptionalDependency_BeanResolved()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
-
-            Assert.NotNull(appContext.Resolve<Service>().Helper);
+            Assert.NotNull(Service.Helper);
         }
 
         [Fact]
         public void PropertyFill_ResolveUnregisteredOptionalDependency_NullResolved()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
-
-            Assert.Null(appContext.Resolve<Service>().CustHelper);
+            Assert.Null(Service.CustHelper);
         }
     }
 }

@@ -37,21 +37,23 @@ namespace UnityAddon.CoreTest.Configuration.Caching
     }
 
     [Trait("Configuration", "Caching")]
-    public class CachingTests
+    public class CachingTests: UnityAddonDefaultTest
     {
+        [Dependency]
+        public Config Config { get; set; }
+
+        [Dependency("a")]
+        public string StrA { get; set; }
+
+        [Dependency("c")]
+        public string StrC { get; set; }
+
         [Fact]
         public void ConfigurationParser_ConfigureSingletonBean_BeanCached()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
-
-            var config = appContext.Resolve<Config>();
-            var strA = appContext.Resolve<string>("a");
-            var strC = appContext.Resolve<string>("c");
-
-            Assert.Equal("strAstrBstrC", strA);
-            Assert.Equal("strC", strC);
-            Assert.Equal(2, config.Counter);
+            Assert.Equal("strAstrBstrC", StrA);
+            Assert.Equal("strC", StrC);
+            Assert.Equal(2, Config.Counter);
         }
     }
 }

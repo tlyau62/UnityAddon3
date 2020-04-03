@@ -40,5 +40,14 @@ namespace UnityAddon.Core
 
             return host;
         }
+
+        public static IHost PreInstantiateSingleton(this IHost host)
+        {
+            var container = host.Services.GetService(typeof(IUnityContainer)) as IUnityContainer;
+
+            container.PreInstantiateSingleton();
+
+            return host;
+        }
     }
 }

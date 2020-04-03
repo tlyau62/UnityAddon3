@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Hosting;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Unity;
@@ -37,13 +38,15 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.OptionalDe
     }
 
     [Trait("DependencyExceptions", "CircularDependency/OptionalDependency")]
-    public class OptionalDependencyTests
+    public class OptionalDependencyTests : UnityAddonDefaultTest
     {
+        [Dependency]
+        public IHost Host { get; set; }
+
         [Fact]
         public void BeanDependencyValidatorStrategy_ResolveOptionalDependency_NoExceptionThrown()
         {
-            IUnityContainer container = new UnityContainer();
-            new ApplicationContext(container, GetType().Namespace);
+            Host.PreInstantiateSingleton();
         }
     }
 }

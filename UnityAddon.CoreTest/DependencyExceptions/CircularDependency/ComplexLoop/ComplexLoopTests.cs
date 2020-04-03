@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Hosting;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Unity;
@@ -53,14 +54,15 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.ComplexLoo
     }
 
     [Trait("DependencyExceptions", "CircularDependency/ComplexLoop")]
-    public class ComplexLoopTests
+    public class ComplexLoopTests : UnityAddonDefaultTest
     {
+        [Dependency]
+        public IHost Host { get; set; }
+
         [Fact]
         public void BeanDependencyValidatorStrategy_ResolveComplexLoopDependency_ExceptionThrown()
         {
-            var container = new UnityContainer();
-
-            Assert.Throws<CircularDependencyException>(() => new ApplicationContext(container, GetType().Namespace));
+            Assert.Throws<CircularDependencyException>(() => Host.PreInstantiateSingleton());
         }
     }
 }

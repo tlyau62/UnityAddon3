@@ -102,6 +102,7 @@ namespace UnityAddon.Core
 
             hostContainer
                 .RegisterType<IThreadLocalFactory<Stack<IInvocation>>, ThreadLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())))
+                .RegisterType<IThreadLocalFactory<Stack<ResolveStackEntry>>, ThreadLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())))
                 .RegisterType<BeanFactory>(new ContainerControlledLifetimeManager())
                 .AddNewExtension<BeanBuildStrategyExtension>();
 

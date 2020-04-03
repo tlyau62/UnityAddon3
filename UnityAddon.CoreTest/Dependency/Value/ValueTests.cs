@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -26,21 +27,26 @@ namespace UnityAddon.CoreTest.Dependency.Value
     [Trait("Dependency", "Value")]
     public class ValueTests
     {
+        [Dependency]
+        public Service Service { get; set; }
+
         [Fact]
         public void ValueProvider_ResolveValue_ValueInjected()
         {
-            var container = new UnityContainer();
+            Host.CreateDefaultBuilder()
+               .RegisterUA()
+               .ConfigureAppConfiguration(config =>
+               {
+                   config.AddInMemoryCollection(new Dictionary<string, string>
+                    {
+                        {"serviceType", "Write"},
+                    });
+               })
+               .ScanComponentsUA(GetType().Namespace)
+               .BuildUA()
+               .RunTestUA(this);
 
-            container.RegisterInstance<IConfiguration>(new ConfigurationBuilder()
-                .AddInMemoryCollection(new Dictionary<string, string>
-                {
-                    {"serviceType", "Write"},
-                })
-                .Build());
-
-            var appContext = new ApplicationContext(container, GetType().Namespace);
-
-            Assert.Equal(ServiceType.Write, appContext.Resolve<Service>().Type);
+            Assert.Equal(ServiceType.Write, Service.Type);
         }
     }
 }
