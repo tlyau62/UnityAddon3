@@ -14,7 +14,7 @@ namespace UnityAddon.Core.DependencyInjection
     /// <summary>
     /// Resolve all the dependencies found in a method parameters.
     /// </summary>
-    //TODO:[Component]
+    [Component]
     public class ParameterFill
     {
         [Dependency]

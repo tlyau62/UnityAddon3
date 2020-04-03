@@ -54,12 +54,10 @@ namespace UnityAddon.CoreTest.Bean.GuidBean
         public void BuildStrategy_DependencyOnGuidBean_BeanInjected()
         {
             Host.CreateDefaultBuilder()
-                .RegisterUnityAddon()
-                .MergeUnityAddon()
-                .Build()
-                .InitUnityAddon()
-                .ScanComponentUnityAddon("UnityAddon.CoreTest.Bean.GuidBean")
-                .EnableTestMode(this);
+                .RegisterUA()
+                .ScanComponentsUA("UnityAddon.CoreTest.Bean.GuidBean")
+                .BuildUA()
+                .RunTestUA(this);
 
             Assert.Same(GeneralService.PrintService, PrintService);
             Assert.Same(GeneralService.WriteService, WriteService);

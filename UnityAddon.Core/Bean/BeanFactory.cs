@@ -19,7 +19,6 @@ namespace UnityAddon.Core.Bean
     /// Register the constructor of any bean definition
     /// into the unity container.
     /// </summary>
-    //TODO:[Component]
     public class BeanFactory
     {
         [Dependency]
@@ -30,6 +29,14 @@ namespace UnityAddon.Core.Bean
 
         [Dependency]
         public IThreadLocalFactory<Stack<IInvocation>> InvocationStackFactory { get; set; }
+
+        public void CreateFactory(IEnumerable<IBeanDefinition> beanDefinitions, IUnityContainer container)
+        {
+            foreach (var def in beanDefinitions.Where(d => d is AbstractMemberBeanDefinition))
+            {
+                CreateFactory((dynamic)def, container);
+            }
+        }
 
         public void CreateFactory(TypeBeanDefinition typeBeanDefinition, IUnityContainer container)
         {

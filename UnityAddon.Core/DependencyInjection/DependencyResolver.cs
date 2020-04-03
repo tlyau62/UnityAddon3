@@ -9,7 +9,7 @@ using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core.DependencyInjection
 {
-    //TODO:[Component]
+    [Component]
     public class DependencyResolver
     {
         [Dependency]

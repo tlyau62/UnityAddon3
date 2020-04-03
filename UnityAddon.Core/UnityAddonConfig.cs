@@ -23,58 +23,54 @@ using UnityAddon.Core.BeanDefinition;
 using Castle.DynamicProxy;
 using UnityAddon.Core.Thread;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Component;
 
 namespace UnityAddon.Core
 {
     public static class UnityAddonConfig
     {
-        public static IHostBuilder RegisterUnityAddon(this IHostBuilder hostBuilder, IUnityContainer container = null)
+        public static IHostBuilder RegisterUA(this IHostBuilder hostBuilder, IUnityContainer container = null)
         {
-            if (container == null)
-            {
-                container = new UnityContainer();
-                hostBuilder.Properties["_UnityAddon_IsNewContainer"] = true;
-            }
-            else
-            {
-                hostBuilder.Properties["_UnityAddon_IsNewContainer"] = false;
-            }
+            var isNewContainer = container == null;
 
-            container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
-            container.RegisterType<IThreadLocalFactory<Stack<IInvocation>>, ThreadLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())));
+            container ??= new UnityContainer();
 
-            var simpleDefs = new[] {
-                typeof(IThreadLocalFactory<Stack<IInvocation>>),
-                typeof(IUnityContainer),
-                typeof(ProxyGenerator),
-                typeof(ParameterFill),
-                typeof(DependencyResolver),
-                typeof(ConfigurationFactory),
-                typeof(BeanFactory),
-                typeof(ComponentScanner)
-            };
-            var defContainer = container.Resolve<IBeanDefinitionContainer>();
-
-            foreach (var def in simpleDefs)
-            {
-                defContainer.RegisterBeanDefinition(new SimpleBeanDefinition(def));
-            }
-
-            return hostBuilder.UseUnityServiceProvider(container);
+            return hostBuilder.UseUnityServiceProvider(container)
+                .ConfigureContainer<IUnityContainer>(c =>
+                {
+                    c.RegisterType<IBeanDefinitionCollection, BeanDefinitionCollection>(new ContainerControlledLifetimeManager());
+                })
+                .ScanComponentsUA("UnityAddon.Core")
+                .MergeFromServiceCollectionUA()
+                .ConfigureContainer<IUnityContainer>((s, c) =>
+                {
+                    if (isNewContainer)
+                    {
+                        c.Resolve<IHostApplicationLifetime>().ApplicationStopped.Register(() => c.Dispose());
+                    }
+                });
         }
 
-        public static IHostBuilder MergeUnityAddon(this IHostBuilder hostBuilder)
+        public static IHostBuilder ScanComponentsUA(this IHostBuilder hostBuilder, Assembly assembly, params string[] namespaces)
+        {
+            return hostBuilder.ConfigureContainer<IUnityContainer>((s, c) =>
+            {
+                var defCollection = c.Resolve<IBeanDefinitionCollection>();
+                var scanner = c.Resolve<ComponentScanner>();
+                var defs = scanner.ScanComponents(assembly, namespaces);
+
+                ((BeanDefinitionCollection)defCollection).AddRange(defs);
+            });
+        }
+
+        public static IHostBuilder ScanComponentsUA(this IHostBuilder hostBuilder, params string[] namespaces)
+        {
+            return hostBuilder.ScanComponentsUA(Assembly.GetCallingAssembly(), namespaces);
+        }
+
+        private static IHostBuilder MergeFromServiceCollectionUA(this IHostBuilder hostBuilder)
         {
             IList<IBeanDefinition> defs = new List<IBeanDefinition>();
-
-            if (hostBuilder.Properties.ContainsKey("_UnityAddon_IsInitialized") && (bool)hostBuilder.Properties["_UnityAddon_IsInitialized"])
-            {
-                throw new InvalidOperationException("Already isInitialized");
-            }
-            else
-            {
-                hostBuilder.Properties["_UnityAddon_IsInitialized"] = true;
-            }
 
             return hostBuilder
                 .ConfigureServices((c, s) =>
@@ -86,18 +82,33 @@ namespace UnityAddon.Core
                 })
                 .ConfigureContainer<IUnityContainer>((s, c) =>
                 {
-                    var defCon = c.Resolve<IBeanDefinitionContainer>();
+                    var defCollection = c.Resolve<IBeanDefinitionCollection>();
 
-                    defCon.RegisterBeanDefinitions(defs);
-                })
-                .ConfigureContainer<IUnityContainer>((s, c) =>
-                {
-                    if ((bool)hostBuilder.Properties["_UnityAddon_IsNewContainer"])
-                    {
-                        c.Resolve<IHostApplicationLifetime>().ApplicationStopped.Register(() => c.Dispose());
-                    }
+                    ((BeanDefinitionCollection)defCollection).AddRange(defs);
                 });
         }
 
+        public static IHost BuildUA(this IHostBuilder hostBuilder)
+        {
+            var host = hostBuilder.Build();
+            var hostContainer = host.Services.GetService<IUnityContainer>();
+            var beanDefCollection = hostContainer.Resolve<IBeanDefinitionCollection>();
+
+            hostContainer
+                .RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager())
+                .Resolve<IBeanDefinitionContainer>()
+                .RegisterBeanDefinitions(beanDefCollection);
+
+            hostContainer
+                .RegisterType<IThreadLocalFactory<Stack<IInvocation>>, ThreadLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())))
+                .RegisterType<BeanFactory>(new ContainerControlledLifetimeManager())
+                .AddNewExtension<BeanBuildStrategyExtension>();
+
+            hostContainer
+                .Resolve<BeanFactory>()
+                .CreateFactory(beanDefCollection, hostContainer);
+
+            return host;
+        }
     }
 }

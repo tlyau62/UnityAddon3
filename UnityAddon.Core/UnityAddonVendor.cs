@@ -6,13 +6,13 @@ using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.Core
 {
-    //[Configuration]
-    //public class UnityAddonVendor
-    //{
-    //    [Bean]
-    //    public virtual ProxyGenerator ProxyGenerator()
-    //    {
-    //        return new ProxyGenerator();
-    //    }
-    //}
+    [Configuration]
+    public class UnityAddonVendor
+    {
+        [Bean]
+        public virtual ProxyGenerator ProxyGenerator()
+        {
+            return new ProxyGenerator();
+        }
+    }
 }

@@ -6,44 +6,33 @@ using System.Text;
 using Unity;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.BeanBuildStrategies;
+using UnityAddon.Core.BeanDefinition;
+using UnityAddon.Core.Component;
 
 namespace UnityAddon.Core
 {
     public static class UnityAddonHost
     {
-        public static IHost InitUnityAddon(this IHost host)
+        public static IHost ScanComponentsUA(this IHost host, Assembly assembly, params string[] namespaces)
         {
             var container = host.Services.GetService(typeof(IUnityContainer)) as IUnityContainer;
-
-            container.AddNewExtension<BeanBuildStrategyExtension>();
-
+            var beanDefContainer = container.Resolve<IBeanDefinitionContainer>();
+            var beanFactory = container.Resolve<BeanFactory>();
             var scanner = container.Resolve<ComponentScanner>();
-            var configParser = container.Resolve<ConfigurationParser>();
+            var beanDefs = scanner.ScanComponents(assembly, namespaces);
 
-            scanner.ScanComponent(Assembly.GetExecutingAssembly(), container, "UnityAddon.Core");
-            configParser.ParseScannedConfigurations(container);
+            beanDefContainer.RegisterBeanDefinitions(beanDefs);
+            beanFactory.CreateFactory(beanDefs, container);
 
             return host;
         }
 
-        public static IHost ScanComponentUnityAddon(this IHost host, Assembly assembly, params string[] namespaces)
+        public static IHost ScanComponentsUA(this IHost host, params string[] namespaces)
         {
-            var container = host.Services.GetService(typeof(IUnityContainer)) as IUnityContainer;
-            var scanner = container.Resolve<ComponentScanner>();
-            var configParser = container.Resolve<ConfigurationParser>();
-
-            scanner.ScanComponent(assembly, container, namespaces);
-            configParser.ParseScannedConfigurations(container);
-
-            return host;
+            return host.ScanComponentsUA(Assembly.GetCallingAssembly(), namespaces);
         }
 
-        public static IHost ScanComponentUnityAddon(this IHost host, params string[] namespaces)
-        {
-            return host.ScanComponentUnityAddon(Assembly.GetCallingAssembly(), namespaces);
-        }
-
-        public static IHost EnableTestMode(this IHost host, object testobject)
+        public static IHost RunTestUA(this IHost host, object testobject)
         {
             var container = host.Services.GetService(typeof(IUnityContainer)) as IUnityContainer;
 
