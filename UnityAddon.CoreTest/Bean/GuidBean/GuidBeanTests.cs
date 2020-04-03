@@ -39,7 +39,7 @@ namespace UnityAddon.CoreTest.Bean.GuidBean
     }
 
     [Trait("Bean", "GuidBean")]
-    public class GuidBeanTests : UnityAddonTest
+    public class GuidBeanTests
     {
         [Dependency]
         public GeneralService GeneralService { get; set; }
@@ -53,6 +53,12 @@ namespace UnityAddon.CoreTest.Bean.GuidBean
         [Fact]
         public void BuildStrategy_DependencyOnGuidBean_BeanInjected()
         {
+            Host.CreateDefaultBuilder()
+                .RegisterUA()
+                .ScanComponentsUA("UnityAddon.CoreTest.Bean.GuidBean")
+                .BuildUA()
+                .RunTestUA(this);
+
             Assert.Same(GeneralService.PrintService, PrintService);
             Assert.Same(GeneralService.WriteService, WriteService);
         }

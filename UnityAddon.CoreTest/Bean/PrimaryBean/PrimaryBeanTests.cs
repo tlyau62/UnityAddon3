@@ -20,7 +20,7 @@ namespace UnityAddon.CoreTest.Bean.PrimaryBean
     public class ServiceB : IService { }
 
     [Trait("Bean", "PrimaryBean")]
-    public class PrimaryBeanTests : UnityAddonTest
+    public class PrimaryBeanTests : UnityAddonDefaultTest
     {
         [Dependency]
         public IService PrimaryB { get; set; }

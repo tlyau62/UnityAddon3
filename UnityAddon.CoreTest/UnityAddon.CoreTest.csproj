@@ -16,7 +16,7 @@
     <Compile Remove="BeanPostProcessor\**" />
     <Compile Remove="BeanUnregister\**" />
     <Compile Remove="Bean\ApplicationContextBean\**" />
-    <Compile Remove="Bean\PrimitiveBean\**" />
+    <Compile Remove="Bean\ProfileBean\**" />
     <Compile Remove="ComponentScan\**" />
     <Compile Remove="Configuration\**" />
     <Compile Remove="DependencyExceptions\**" />
@@ -28,7 +28,7 @@
     <EmbeddedResource Remove="BeanPostProcessor\**" />
     <EmbeddedResource Remove="BeanUnregister\**" />
     <EmbeddedResource Remove="Bean\ApplicationContextBean\**" />
-    <EmbeddedResource Remove="Bean\PrimitiveBean\**" />
+    <EmbeddedResource Remove="Bean\ProfileBean\**" />
     <EmbeddedResource Remove="ComponentScan\**" />
     <EmbeddedResource Remove="Configuration\**" />
     <EmbeddedResource Remove="DependencyExceptions\**" />
@@ -40,17 +40,13 @@
     <None Remove="BeanPostProcessor\**" />
     <None Remove="BeanUnregister\**" />
     <None Remove="Bean\ApplicationContextBean\**" />
-    <None Remove="Bean\PrimitiveBean\**" />
+    <None Remove="Bean\ProfileBean\**" />
     <None Remove="ComponentScan\**" />
     <None Remove="Configuration\**" />
     <None Remove="DependencyExceptions\**" />
     <None Remove="Dependency\**" />
     <None Remove="Resolve\**" />
     <None Remove="Value\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Bean\PrimitiveBean\PrimitiveBeanTests.cs" />
   </ItemGroup>
 
   <ItemGroup>

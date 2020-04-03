@@ -43,7 +43,7 @@ namespace UnityAddon.CoreTest.Bean.SingletonBean
     }
 
     [Trait("Bean", "SingletonBean")]
-    public class SingletonBeanTests : UnityAddonTest
+    public class SingletonBeanTests : UnityAddonDefaultTest
     {
         [Dependency]
         public Counter Counter { get; set; }

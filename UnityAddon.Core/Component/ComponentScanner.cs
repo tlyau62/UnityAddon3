@@ -14,43 +14,32 @@ using Unity.Injection;
 using System.Runtime.Loader;
 using UnityAddon.Core.BeanDefinition;
 
-namespace UnityAddon.Core.Bean
+namespace UnityAddon.Core.Component
 {
-    public interface IComponentScanner
-    {
-        IEnumerable<Type> ScanComponent(Assembly asm, IUnityContainer container);
-
-        IEnumerable<Type> ScanComponent(Assembly asm, IUnityContainer container, params string[] baseNamespaces);
-    }
-
     /// <summary>
     /// Scan components from an assembly.
     /// Possible to manually add a component
     /// </summary>
-    [Component]
-    public class ComponentScanner : IComponentScanner
+    public class ComponentScanner
     {
         [Dependency]
-        public BeanRegistry BeanDefinitionRegistry { get; set; }
+        public ConfigurationParser ConfigurationParser { get; set; }
 
-        public IEnumerable<Type> ScanComponent(Assembly asm, IUnityContainer container)
+        public IEnumerable<IBeanDefinition> ScanComponents(Assembly asm)
         {
-            return ScanComponent(asm, container, asm.GetAttribute<ComponentScanAttribute>().BaseNamespaces);
+            return ScanComponents(asm, asm.GetAttribute<ComponentScanAttribute>().BaseNamespaces);
         }
 
-        public IEnumerable<Type> ScanComponent(Assembly asm, IUnityContainer container, params string[] baseNamespaces)
+        public IEnumerable<IBeanDefinition> ScanComponents(Assembly asm, params string[] baseNamespaces)
         {
             var regexes = BuildBaseNamespacesRegexes(baseNamespaces);
+
             var components = asm.GetTypes()
                 .Where(t => t.Namespace != null && regexes.Any(regex => regex.IsMatch(t.Namespace)))
-                .Where(t => t.HasAttribute<ComponentAttribute>(true));
+                .Where(t => t.HasAttribute<ComponentAttribute>(true))
+                .Select(t => new TypeBeanDefinition(t));
 
-            foreach (var component in components)
-            {
-                BeanDefinitionRegistry.Register(new TypeBeanDefinition(component), container);
-            }
-
-            return components;
+            return components.Union(ConfigurationParser.Parse(components));
         }
 
         private IEnumerable<Regex> BuildBaseNamespacesRegexes(string[] baseNamespaces)
