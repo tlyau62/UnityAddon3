@@ -43,48 +43,27 @@ namespace UnityAddon.Core
             container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
             container.RegisterType<IThreadLocalFactory<Stack<IInvocation>>, ThreadLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())));
 
-            var scanner = container.Resolve<ComponentScanner>();
+            var simpleDefs = new[] {
+                typeof(IThreadLocalFactory<Stack<IInvocation>>),
+                typeof(IUnityContainer),
+                typeof(ProxyGenerator),
+                typeof(ParameterFill),
+                typeof(DependencyResolver),
+                typeof(ConfigurationFactory),
+                typeof(BeanFactory),
+                typeof(ComponentScanner)
+            };
+            var defContainer = container.Resolve<IBeanDefinitionContainer>();
 
-            container.AddNewExtension<BeanBuildStrategyExtension>();
+            foreach (var def in simpleDefs)
+            {
+                defContainer.RegisterBeanDefinition(new SimpleBeanDefinition(def));
+            }
 
-            return hostBuilder.UseUnityServiceProvider(container)
-                .ConfigureContainer<IUnityContainer>(c =>
-                {
-                    // refresh
-                    scanner.ScanComponent(Assembly.GetExecutingAssembly(), c, "UnityAddon.Core");
-
-                    // add non-component dep def
-                    c.Resolve<IBeanDefinitionContainer>()
-                        .RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IThreadLocalFactory<Stack<IInvocation>>)))
-                        .RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IUnityContainer)));
-                });
+            return hostBuilder.UseUnityServiceProvider(container);
         }
 
-        public static IHostBuilder ScanComponentUnityAddon(this IHostBuilder hostBuilder, Assembly assembly, params string[] namespaces)
-        {
-            return hostBuilder.ConfigureContainer<IUnityContainer>((s, c) =>
-                {
-                    var scanner = c.Resolve<IComponentScanner>();
-
-                    scanner.ScanComponent(assembly, c, namespaces);
-                });
-        }
-
-        public static IHostBuilder ScanComponentUnityAddon(this IHostBuilder hostBuilder, params string[] namespaces)
-        {
-            return hostBuilder.ScanComponentUnityAddon(Assembly.GetCallingAssembly(), namespaces);
-        }
-
-        public static IHostBuilder EnableTestMode(this IHostBuilder hostBuilder, UnityAddonTest testobject)
-        {
-            return hostBuilder
-                .ConfigureContainer<IUnityContainer>((s, c) =>
-                {
-                    c.BuildUp(testobject.GetType(), testobject);
-                });
-        }
-
-        public static IHostBuilder InitUnityAddon(this IHostBuilder hostBuilder)
+        public static IHostBuilder MergeUnityAddon(this IHostBuilder hostBuilder)
         {
             IList<IBeanDefinition> defs = new List<IBeanDefinition>();
 
@@ -110,13 +89,6 @@ namespace UnityAddon.Core
                     var defCon = c.Resolve<IBeanDefinitionContainer>();
 
                     defCon.RegisterBeanDefinitions(defs);
-                })
-                .ConfigureContainer<IUnityContainer>((s, c) =>
-                {
-                    var configParser = c.Resolve<ConfigurationParser>();
-
-                    // parse config
-                    configParser.ParseScannedConfigurations(c);
                 })
                 .ConfigureContainer<IUnityContainer>((s, c) =>
                 {

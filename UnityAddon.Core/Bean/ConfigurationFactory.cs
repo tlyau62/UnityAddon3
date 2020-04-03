@@ -13,7 +13,7 @@ namespace UnityAddon.Core
     /// <summary>
     /// Create a configuration bean.
     /// </summary>
-    [Component]
+    //TODO:[Component]
     public class ConfigurationFactory
     {
         [Dependency]

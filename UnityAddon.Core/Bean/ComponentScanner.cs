@@ -29,7 +29,7 @@ namespace UnityAddon.Core.Bean
     /// Scan components from an assembly.
     /// Possible to manually add a component
     /// </summary>
-    [Component]
+    //TODO:[Component]
     public class ComponentScanner : IComponentScanner
     {
         [Dependency]

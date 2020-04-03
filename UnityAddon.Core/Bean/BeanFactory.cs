@@ -19,7 +19,7 @@ namespace UnityAddon.Core.Bean
     /// Register the constructor of any bean definition
     /// into the unity container.
     /// </summary>
-    [Component]
+    //TODO:[Component]
     public class BeanFactory
     {
         [Dependency]

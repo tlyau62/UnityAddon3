@@ -1,46 +1,46 @@
-﻿using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
-using Unity;
+﻿//using Microsoft.Extensions.Hosting;
+//using System;
+//using System.Collections.Generic;
+//using System.Reflection;
+//using System.Text;
+//using Unity;
 
-namespace UnityAddon.Core
-{
-    public abstract class UnityAddonTest : IDisposable
-    {
-        private IUnityContainer _container;
+//namespace UnityAddon.Core
+//{
+//    public abstract class UnityAddonTest : IDisposable
+//    {
+//        private IUnityContainer _container;
 
-        private IHost _host;
+//        private IHost _host;
 
-        public UnityAddonTest(bool preInstantiateSingleton) : this(Assembly.GetCallingAssembly(), null, preInstantiateSingleton)
-        {
-        }
+//        public UnityAddonTest(bool preInstantiateSingleton) : this(Assembly.GetCallingAssembly(), null, preInstantiateSingleton)
+//        {
+//        }
 
-        public UnityAddonTest(Assembly assembly = null, string testNamespace = null, bool preInstantiateSingleton = false)
-        {
-            _container = new UnityContainer();
+//        public UnityAddonTest(Assembly assembly = null, string testNamespace = null, bool preInstantiateSingleton = false)
+//        {
+//            _container = new UnityContainer();
 
-            IHostBuilder hostBuilder = Host.CreateDefaultBuilder()
-                .RegisterUnityAddon(_container)
-                .ScanComponentUnityAddon(assembly ?? Assembly.GetCallingAssembly(), testNamespace ?? GetType().Namespace)
-                .InitUnityAddon()
-                .EnableTestMode(this);
+//            IHostBuilder hostBuilder = Host.CreateDefaultBuilder()
+//                .RegisterUnityAddon(_container)
+//                .ScanComponentUnityAddon(assembly ?? Assembly.GetCallingAssembly(), testNamespace ?? GetType().Namespace)
+//                .InitUnityAddon()
+//                .EnableTestMode(this);
 
-            _host = hostBuilder.Build();
+//            _host = hostBuilder.Build();
 
-            if (preInstantiateSingleton)
-            {
-                var hostContainer = _host.Services.GetService(typeof(IUnityContainer)) as IUnityContainer;
+//            if (preInstantiateSingleton)
+//            {
+//                var hostContainer = _host.Services.GetService(typeof(IUnityContainer)) as IUnityContainer;
 
-                hostContainer.PreInstantiateSingleton();
-            }
-        }
+//                hostContainer.PreInstantiateSingleton();
+//            }
+//        }
 
-        public void Dispose()
-        {
-            _container.Dispose();
-            _host.Dispose();
-        }
-    }
-}
+//        public void Dispose()
+//        {
+//            _container.Dispose();
+//            _host.Dispose();
+//        }
+//    }
+//}
