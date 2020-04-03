@@ -28,10 +28,10 @@ namespace UnityAddon.CoreTest.Dependency.Bean.ProfileBean
     }
 
     [Trait("Bean", "ProfileBean")]
-    public class ProfileBeanTests : UnityAddonTest
+    public class ProfileBeanTests
     {
         [Dependency]
-        public IUnityContainer Container { get; set; }
+        public IService Service { get; set; }
 
         public ProfileBeanTests()
         {
@@ -39,44 +39,23 @@ namespace UnityAddon.CoreTest.Dependency.Bean.ProfileBean
 
         [Theory]
         [InlineData("prod", typeof(ProdService))]
-        //[InlineData("dev", typeof(DevService))]
+        [InlineData("dev", typeof(DevService))]
         public void BuildStrategy_DependencyOnProfileBean_BeanInjected(string activeProfile, Type resolveType)
         {
             Host.CreateDefaultBuilder()
-                .RegisterUA(config =>
-                {
-                    config.AddInMemoryCollection(new Dictionary<string, string>
+               .RegisterUA()
+               .ConfigureAppConfiguration(config =>
+               {
+                   config.AddInMemoryCollection(new Dictionary<string, string>
                     {
                         {"profiles:active", activeProfile},
                     });
-                })
-                .ScanComponentUA(GetType().Namespace)
-                .InitUA()
-                .EnableTestMode(this)
-                .Build();
+               })
+               .ScanComponentsUA(GetType().Namespace)
+               .BuildUA()
+               .RunTestUA(this);
 
-            Assert.IsType(resolveType, Container.ResolveUA<IService>());
+            Assert.IsType(resolveType, Service);
         }
-
-        //[Theory]
-        //[InlineData("prod", typeof(DevService))]
-        //[InlineData("dev", typeof(ProdService))]
-        //public void BuildStrategy_DependencyOnNonActiveProfileBean_ExceptionThrown(string activeProfile, Type resolveType)
-        //{
-        //    IHost host = Host.CreateDefaultBuilder()
-        //        .RegisterUnityAddon()
-        //        .ScanComponentUnityAddon(GetType().Namespace)
-        //        .InitUnityAddon()
-        //        .EnableTestMode(this)
-        //        .ConfigureAppConfiguration((hostingContext, config) =>
-        //        {
-        //            config.AddInMemoryCollection(new Dictionary<string, string>
-        //            {
-        //                {"profiles:active", activeProfile},
-        //            });
-        //        }).Build();
-
-        //    Assert.Throws<Exception>(() => Container.ResolveUA(resolveType));
-        //}
     }
 }

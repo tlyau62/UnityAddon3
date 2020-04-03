@@ -36,7 +36,6 @@ namespace UnityAddon.Core
             container ??= new UnityContainer();
 
             return hostBuilder.UseUnityServiceProvider(container)
-                .ConfigureAppConfiguration((ctx, conf) => config(conf)) // add config bean def
                 .ConfigureContainer<IUnityContainer>(c =>
                 {
                     c.RegisterType<IBeanDefinitionCollection, BeanDefinitionCollection>(new ContainerControlledLifetimeManager());
@@ -50,15 +49,6 @@ namespace UnityAddon.Core
                         c.Resolve<IHostApplicationLifetime>().ApplicationStopped.Register(() => c.Dispose());
                     }
                 });
-
-            IConfiguration BuildConfig()
-            {
-                var configBuilder = new ConfigurationBuilder();
-
-                config(configBuilder);
-
-                return configBuilder.Build();
-            }
         }
 
         public static IHostBuilder ScanComponentsUA(this IHostBuilder hostBuilder, Assembly assembly, params string[] namespaces)
@@ -102,7 +92,8 @@ namespace UnityAddon.Core
         {
             var host = hostBuilder.Build();
             var hostContainer = host.Services.GetService<IUnityContainer>();
-            var beanDefCollection = hostContainer.Resolve<IBeanDefinitionCollection>();
+            var beanDefCollection = hostContainer.Resolve<BeanDefintionCandidateSelector>()
+                .Select(hostContainer.Resolve<IBeanDefinitionCollection>());
 
             hostContainer
                 .RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager())

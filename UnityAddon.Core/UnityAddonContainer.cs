@@ -59,9 +59,11 @@ namespace UnityAddon.Core
 
         public static IUnityContainer RegisterInstanceUA<T>(this IUnityContainer container, T instance, string name)
         {
-            var beanRegistry = container.Resolve<BeanRegistry>();
+            var beanDef = new SimpleBeanDefinition(typeof(T), name);
 
-            beanRegistry.Register(new SimpleBeanDefinition(typeof(T), name), container);
+            container.Resolve<IBeanDefinitionContainer>()
+                .RegisterBeanDefinition(beanDef);
+
             container.RegisterInstance(name, instance);
 
             return container;
