@@ -78,6 +78,25 @@ namespace UnityAddon.Core
                 .Cast<T>();
         }
 
+        public static void UnregisterUA(this IUnityContainer container, Type type, string name = null)
+        {
+            var beanDefContainer = container.ResolveUA<IBeanDefinitionContainer>();
+            var bean = container.ResolveUA(type, name); // ensure the bean exists
+            var beanDef = beanDefContainer.RemoveBeanDefinition(type, name);
+
+            var matchedList = container.Registrations.Where(p => p.RegisteredType == beanDef.BeanType && p.Name == beanDef.BeanName);
+
+            foreach (var registration in matchedList)
+            {
+                registration.LifetimeManager.RemoveValue();
+
+                container.RegisterFactory(beanDef.BeanType, beanDef.BeanName, (c, t, n) =>
+                {
+                    throw new NoSuchBeanDefinitionException($"Type {beanDef.BeanType} with name '{beanDef.BeanName}' is unregistered.");
+                }, (IFactoryLifetimeManager)Activator.CreateInstance(registration.LifetimeManager.GetType()));
+            }
+        }
+
         /// <summary>
         /// Instantiate singleton bean recursively.
         /// Some bean may do bean registration at postconstruct,

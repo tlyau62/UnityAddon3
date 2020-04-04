@@ -48,5 +48,10 @@ namespace UnityAddon.Core
         {
             return container.RegisterInstanceUA(instance, null);
         }
+
+        public static void UnregisterUA<T>(this IUnityContainer container, string name = null)
+        {
+            container.UnregisterUA(typeof(T), null);
+        }
     }
 }

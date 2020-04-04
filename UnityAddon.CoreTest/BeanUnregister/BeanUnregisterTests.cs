@@ -22,21 +22,25 @@ namespace UnityAddon.CoreTest.BeanUnregister
     }
 
     [Trait("BeanUnRegister", "BeanUnRegister")]
-    public class BeanUnregisterTests
+    public class BeanUnregisterTests : UnityAddonDefaultTest
     {
+        [Dependency]
+        public IUnityContainer UnityContainer { get; set; }
+
         [Fact]
         public void ContainerRegistry_BeanUnregister_BeanUnregistered()
         {
-            var appCtx = new ApplicationContext(new UnityContainer(), GetType().Namespace);
-            var service = appCtx.Resolve<Service>();
+            var service = UnityContainer.ResolveUA<Service>();
 
+            Assert.True(UnityContainer.IsRegisteredUA<Service>());
             Assert.False(service.Disposed);
-            appCtx.UnregisterType<Service>();
+
+            UnityContainer.UnregisterUA<Service>();
+
+            Assert.False(UnityContainer.IsRegisteredUA<Service>());
             Assert.True(service.Disposed);
 
-            var ex = Assert.Throws<NoSuchBeanDefinitionException>(() => appCtx.Resolve<Service>());
-
-            Assert.Equal($"Type {typeof(Service)} with name '{nameof(Service)}' is unregistered.", ex.Message);
+            Assert.Throws<NoSuchBeanDefinitionException>(() => UnityContainer.ResolveUA<Service>());
         }
     }
 }

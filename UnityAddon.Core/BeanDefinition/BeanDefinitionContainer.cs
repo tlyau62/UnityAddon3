@@ -142,9 +142,16 @@ namespace UnityAddon.Core.BeanDefinition
         {
             var beanDef = GetBeanDefinition(type, name);
 
-            foreach (var atype in TypeResolver.GetAssignableTypes(beanDef.BeanType))
+            if (beanDef is TypeBeanDefinition)
             {
-                _container[atype].Remove(beanDef);
+                foreach (var atype in TypeResolver.GetAssignableTypes(beanDef.BeanType))
+                {
+                    _container[atype].Remove(beanDef);
+                }
+            }
+            else
+            {
+                _container[type].Remove(beanDef);
             }
 
             return beanDef;

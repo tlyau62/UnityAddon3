@@ -14,7 +14,6 @@
     <Compile Remove="Aop\**" />
     <Compile Remove="BeanPostConstruct\**" />
     <Compile Remove="BeanPostProcessor\**" />
-    <Compile Remove="BeanUnregister\**" />
     <Compile Remove="Bean\ApplicationContextBean\**" />
     <Compile Remove="Bean\ProfileBean\**" />
     <Compile Remove="ComponentScan\**" />
@@ -26,7 +25,6 @@
     <EmbeddedResource Remove="Aop\**" />
     <EmbeddedResource Remove="BeanPostConstruct\**" />
     <EmbeddedResource Remove="BeanPostProcessor\**" />
-    <EmbeddedResource Remove="BeanUnregister\**" />
     <EmbeddedResource Remove="Bean\ApplicationContextBean\**" />
     <EmbeddedResource Remove="Bean\ProfileBean\**" />
     <EmbeddedResource Remove="ComponentScan\**" />
@@ -38,7 +36,6 @@
     <None Remove="Aop\**" />
     <None Remove="BeanPostConstruct\**" />
     <None Remove="BeanPostProcessor\**" />
-    <None Remove="BeanUnregister\**" />
     <None Remove="Bean\ApplicationContextBean\**" />
     <None Remove="Bean\ProfileBean\**" />
     <None Remove="ComponentScan\**" />
@@ -60,7 +57,6 @@
     <Compile Include="Resolve\ResolveAllByInterface\ResolveAllByInterfaceTests.cs" />
     <Compile Include="Resolve\ResolveAllByPrimitive\ResolveAllByPrimitiveTests.cs" />
     <Compile Include="Resolve\ResolveByBeanName\ResolveByBeanNameTests.cs" />
-    <Compile Include="Resolve\ResolveByNull\ResolveByNullTests.cs" />
   </ItemGroup>
 
   <ItemGroup>
