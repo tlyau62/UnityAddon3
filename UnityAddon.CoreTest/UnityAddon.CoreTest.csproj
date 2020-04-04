@@ -20,7 +20,6 @@
     <Compile Remove="DependencyExceptions\NestedNoSuchBeanDefinitionException\**" />
     <Compile Remove="DependencyExceptions\NoSuchBeanDefinitionException\**" />
     <Compile Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
-    <Compile Remove="Dependency\OptionalDependency\**" />
     <Compile Remove="Resolve\**" />
     <EmbeddedResource Remove="Aop\**" />
     <EmbeddedResource Remove="BeanPostConstruct\**" />
@@ -31,7 +30,6 @@
     <EmbeddedResource Remove="DependencyExceptions\NestedNoSuchBeanDefinitionException\**" />
     <EmbeddedResource Remove="DependencyExceptions\NoSuchBeanDefinitionException\**" />
     <EmbeddedResource Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
-    <EmbeddedResource Remove="Dependency\OptionalDependency\**" />
     <EmbeddedResource Remove="Resolve\**" />
     <None Remove="Aop\**" />
     <None Remove="BeanPostConstruct\**" />
@@ -42,7 +40,6 @@
     <None Remove="DependencyExceptions\NestedNoSuchBeanDefinitionException\**" />
     <None Remove="DependencyExceptions\NoSuchBeanDefinitionException\**" />
     <None Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
-    <None Remove="Dependency\OptionalDependency\**" />
     <None Remove="Resolve\**" />
   </ItemGroup>
 
