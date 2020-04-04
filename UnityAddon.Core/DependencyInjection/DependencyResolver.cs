@@ -9,38 +9,16 @@ using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core.DependencyInjection
 {
-    [Component]
     public class DependencyResolver
     {
-        [Dependency]
-        public ValueProvider ValueProvider { get; set; }
+        private readonly IDictionary<Type, object> _resolveStrategies;
 
-        private IDictionary<Type, object> _resolveStrategies = new Dictionary<Type, object>();
-
-        private static MethodInfo InvokeStrategyMethod = typeof(DependencyResolver)
+        private static readonly MethodInfo InvokeStrategyMethod = typeof(DependencyResolver)
             .GetMethod(nameof(InvokeStrategy), BindingFlags.NonPublic | BindingFlags.Instance);
 
-        public DependencyResolver()
+        public DependencyResolver(IDictionary<Type, object> resolveStrategies)
         {
-            AddDefaultResolveStrategies();
-        }
-
-        protected virtual void AddDefaultResolveStrategies()
-        {
-            AddResolveStrategy<DependencyAttribute>((type, attr, container) =>
-            {
-                return container.ResolveUA(type, attr.Name);
-            });
-
-            AddResolveStrategy<OptionalDependencyAttribute>((type, attr, container) =>
-            {
-                return container.ResolveOptionalUA(type, attr.Name);
-            });
-
-            AddResolveStrategy<ValueAttribute>((type, attr, containerReg) =>
-            {
-                return ValueProvider.GetValue(type, attr.Value);
-            });
+            _resolveStrategies = resolveStrategies;
         }
 
         public object Resolve(Type resolveType, IEnumerable<Attribute> attributes, IUnityContainer container)
@@ -63,11 +41,6 @@ namespace UnityAddon.Core.DependencyInjection
             {
                 throw ex.InnerException;
             }
-        }
-
-        public void AddResolveStrategy<TAttribute>(Func<Type, TAttribute, IUnityContainer, object> strategy) where TAttribute : Attribute
-        {
-            _resolveStrategies[typeof(TAttribute)] = strategy;
         }
 
         private object InvokeStrategy<TAttribute>(Func<Type, TAttribute, IUnityContainer, object> strategy, Type type, TAttribute attr, IUnityContainer container)

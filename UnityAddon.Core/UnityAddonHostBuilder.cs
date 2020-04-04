@@ -101,6 +101,19 @@ namespace UnityAddon.Core
             });
         }
 
+        public static IHostBuilder ConfigureDependencyResolverUA(this IHostBuilder hostBuilder, Action<DependencyResolverBuilder> config)
+        {
+            return hostBuilder.ConfigureContainer<IUnityContainer>((s, c) =>
+            {
+                if (!c.IsRegistered<DependencyResolverBuilder>())
+                {
+                    c.RegisterType<DependencyResolverBuilder>(new ContainerControlledLifetimeManager());
+                }
+
+                config(c.Resolve<DependencyResolverBuilder>());
+            });
+        }
+
         public static IHost BuildUA(this IHostBuilder hostBuilder)
         {
             var host = hostBuilder.Build();
@@ -116,13 +129,14 @@ namespace UnityAddon.Core
                 .RegisterBeanDefinitions(beanDefCollection);
 
             hostContainer
-                .RegisterType<IThreadLocalFactory<Stack<IInvocation>>, ThreadLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())))
-                .RegisterType<IThreadLocalFactory<Stack<ResolveStackEntry>>, ThreadLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())))
-                .RegisterType<BeanFactory>(new ContainerControlledLifetimeManager())
+                .RegisterTypeUA<IThreadLocalFactory<Stack<IInvocation>>, ThreadLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())))
+                .RegisterTypeUA<IThreadLocalFactory<Stack<ResolveStackEntry>>, ThreadLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())))
+                .RegisterTypeUA<BeanFactory, BeanFactory>(new ContainerControlledLifetimeManager())
+                .RegisterInstanceUA(hostContainer.Resolve<DependencyResolverBuilder>().Build())
                 .AddNewExtension<BeanBuildStrategyExtension>();
 
             hostContainer
-                .Resolve<BeanFactory>()
+                .ResolveUA<BeanFactory>()
                 .CreateFactory(beanDefCollection, hostContainer);
 
             return host;
