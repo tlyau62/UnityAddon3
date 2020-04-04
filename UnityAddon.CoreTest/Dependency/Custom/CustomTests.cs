@@ -7,6 +7,7 @@ using Unity;
 using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.DependencyInjection;
 using UnityAddon.Core.Value;
 using Xunit;
 
@@ -36,7 +37,7 @@ namespace UnityAddon.CoreTest.Dependency.Custom
         {
             Host.CreateDefaultBuilder()
                .RegisterUA()
-               .ConfigureDependencyResolverUA(config =>
+               .ConfigureUA<DependencyResolverBuilder>(config =>
                {
                    config.AddResolveStrategy<CustomAttribute>((type, attr, container)
                        => attr.Descriptor + "TestString");

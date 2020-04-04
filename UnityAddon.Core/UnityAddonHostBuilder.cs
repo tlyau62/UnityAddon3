@@ -88,29 +88,16 @@ namespace UnityAddon.Core
                 });
         }
 
-        public static IHostBuilder ConfigureBeanCandidatesUA(this IHostBuilder hostBuilder, Action<BeanDefintionCandidateSelectorBuilder> config)
+        public static IHostBuilder ConfigureUA<ConfigT>(this IHostBuilder hostBuilder, Action<ConfigT> config)
         {
             return hostBuilder.ConfigureContainer<IUnityContainer>((s, c) =>
             {
-                if (!c.IsRegistered<BeanDefintionCandidateSelectorBuilder>())
+                if (!c.IsRegistered<ConfigT>())
                 {
-                    c.RegisterType<BeanDefintionCandidateSelectorBuilder>(new ContainerControlledLifetimeManager());
+                    c.RegisterType<ConfigT>(new ContainerControlledLifetimeManager());
                 }
 
-                config(c.Resolve<BeanDefintionCandidateSelectorBuilder>());
-            });
-        }
-
-        public static IHostBuilder ConfigureDependencyResolverUA(this IHostBuilder hostBuilder, Action<DependencyResolverBuilder> config)
-        {
-            return hostBuilder.ConfigureContainer<IUnityContainer>((s, c) =>
-            {
-                if (!c.IsRegistered<DependencyResolverBuilder>())
-                {
-                    c.RegisterType<DependencyResolverBuilder>(new ContainerControlledLifetimeManager());
-                }
-
-                config(c.Resolve<DependencyResolverBuilder>());
+                config(c.Resolve<ConfigT>());
             });
         }
 

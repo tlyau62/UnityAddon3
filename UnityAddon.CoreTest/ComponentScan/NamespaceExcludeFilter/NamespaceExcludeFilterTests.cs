@@ -5,6 +5,7 @@ using System.Text;
 using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.BeanDefinition.Candidate;
 using UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.B;
 using Xunit;
@@ -41,7 +42,7 @@ namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter
             new HostBuilder()
                 .RegisterUA()
                 .ScanComponentsUA(GetType().Namespace)
-                .ConfigureBeanCandidatesUA(config =>
+                .ConfigureUA<BeanDefintionCandidateSelectorBuilder>(config =>
                 {
                     config.AddExcludeFilter(new NamespaceFilter("UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.A"));
                 })
