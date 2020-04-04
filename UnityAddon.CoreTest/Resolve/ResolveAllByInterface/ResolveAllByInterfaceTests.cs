@@ -23,6 +23,8 @@ namespace UnityAddon.CoreTest.Resolve.ResolveAllByInterface
 
     public class C : IService { }
 
+    public class D : IService { }
+
     [Trait("Resolve", "ResolveAllByInterface")]
     public class ResolveAllByInterfaceTests : UnityAddonDefaultTest
     {
@@ -37,12 +39,16 @@ namespace UnityAddon.CoreTest.Resolve.ResolveAllByInterface
             var c = UnityContainer
                 .RegisterTypeUA<IService, C>("c", new SingletonLifetimeManager())
                 .ResolveUA<IService>("c");
+            var d = UnityContainer
+                .RegisterTypeUA<IService, D>(new SingletonLifetimeManager())
+                .ResolveUA<IService>(); // bean name is null
 
             var resolveAll = UnityContainer.ResolveAllUA<IService>().ToArray();
 
             Assert.Same(a, resolveAll[0]);
             Assert.Same(b, resolveAll[1]);
             Assert.Same(c, resolveAll[2]);
+            Assert.Same(d, resolveAll[3]);
         }
     }
 }
