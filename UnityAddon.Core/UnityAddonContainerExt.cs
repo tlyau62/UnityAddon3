@@ -14,19 +14,19 @@ namespace UnityAddon.Core
             return container.IsRegisteredUA(typeof(T), name);
         }
 
-        public static void RegisterTypeUA<T>(this IUnityContainer container, string name, ITypeLifetimeManager lifetimeManager, params InjectionMember[] injectionMembers)
+        public static IUnityContainer RegisterTypeUA<ResolveType, ImplType>(this IUnityContainer container, string name, ITypeLifetimeManager lifetimeManager, params InjectionMember[] injectionMembers)
         {
-            container.RegisterTypeUA(typeof(T), name, lifetimeManager, injectionMembers);
+            return container.RegisterTypeUA(name, typeof(ResolveType), typeof(ImplType), lifetimeManager, injectionMembers);
         }
 
-        public static void RegisterTypeUA<T>(this IUnityContainer container, params InjectionMember[] injectionMembers)
+        public static IUnityContainer RegisterTypeUA<ResolveType, ImplType>(this IUnityContainer container, params InjectionMember[] injectionMembers)
         {
-            container.RegisterTypeUA(typeof(T), null, new ContainerControlledTransientManager(), injectionMembers);
+            return container.RegisterTypeUA<ResolveType, ImplType>(null, new ContainerControlledTransientManager(), injectionMembers);
         }
 
-        public static void RegisterTypeUA<T>(this IUnityContainer container, ITypeLifetimeManager lifetimeManager, params InjectionMember[] injectionMembers)
+        public static IUnityContainer RegisterTypeUA<ResolveType, ImplType>(this IUnityContainer container, ITypeLifetimeManager lifetimeManager, params InjectionMember[] injectionMembers)
         {
-            container.RegisterTypeUA(typeof(T), null, lifetimeManager, injectionMembers);
+            return container.RegisterTypeUA<ResolveType, ImplType>(null, lifetimeManager, injectionMembers);
         }
 
         public static T ResolveUA<T>(this IUnityContainer container, string name = null)

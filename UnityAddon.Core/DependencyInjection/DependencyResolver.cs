@@ -34,8 +34,7 @@ namespace UnityAddon.Core.DependencyInjection
 
             AddResolveStrategy<OptionalDependencyAttribute>((type, attr, container) =>
             {
-                return container.IsRegistered(type, attr.Name) ?
-                    container.ResolveUA(type, attr.Name) : null;
+                return container.ResolveOptionalUA(type, attr.Name);
             });
 
             AddResolveStrategy<ValueAttribute>((type, attr, containerReg) =>

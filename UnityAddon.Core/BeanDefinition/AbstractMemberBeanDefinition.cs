@@ -32,9 +32,14 @@ namespace UnityAddon.Core.BeanDefinition
 
     public class SimpleBeanDefinition : IBeanDefinition
     {
-        public SimpleBeanDefinition(Type beanType, params string[] beanQualifiers)
+        public SimpleBeanDefinition(Type beanType) : this(beanType, null)
+        {
+        }
+
+        public SimpleBeanDefinition(Type beanType, string beanName, params string[] beanQualifiers)
         {
             BeanType = beanType;
+            BeanName = beanName;
             BeanQualifiers = beanQualifiers.Where(q => q != null).ToArray();
         }
 

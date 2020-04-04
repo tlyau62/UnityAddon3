@@ -21,13 +21,14 @@ namespace UnityAddon.Core
                 type.IsGenericType && defContainer.HasBeanDefinition(type.GetGenericTypeDefinition(), name);
         }
 
-        public static void RegisterTypeUA(this IUnityContainer container, Type implType, string name, ITypeLifetimeManager lifetimeManager, params InjectionMember[] injectionMembers)
+        public static IUnityContainer RegisterTypeUA(this IUnityContainer container, string name, Type resolveType, Type implType, ITypeLifetimeManager lifetimeManager, params InjectionMember[] injectionMembers)
         {
-            var beanDefContainer = container.ResolveUA<IBeanDefinitionContainer>();
+            var def = new SimpleBeanDefinition(resolveType, name);
 
-            beanDefContainer.RegisterBeanDefinition(new SimpleBeanDefinition(implType, name));
+            container.ResolveUA<IBeanDefinitionContainer>()
+                .RegisterBeanDefinition(def);
 
-            container.RegisterType(implType, lifetimeManager, injectionMembers);
+            return container.RegisterType(resolveType, implType, name, lifetimeManager, injectionMembers);
         }
 
         public static object ResolveUA(this IUnityContainer container, Type type, string name)
@@ -67,6 +68,14 @@ namespace UnityAddon.Core
             container.RegisterInstance(name, instance);
 
             return container;
+        }
+
+        public static IEnumerable<T> ResolveAllUA<T>(this IUnityContainer container)
+        {
+            return container.Resolve<IBeanDefinitionContainer>()
+                .GetAllBeanDefinitions(typeof(T))
+                .Select(def => container.ResolveUA(def.BeanType, def.BeanName))
+                .Cast<T>();
         }
 
         /// <summary>

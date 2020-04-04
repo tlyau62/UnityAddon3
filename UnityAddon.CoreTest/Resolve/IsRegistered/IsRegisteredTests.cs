@@ -6,6 +6,7 @@ using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using Xunit;
+using Unity.Lifetime;
 
 namespace UnityAddon.CoreTest.Resolve.IsRegistered
 {
@@ -21,37 +22,31 @@ namespace UnityAddon.CoreTest.Resolve.IsRegistered
     public class B : IB { }
 
     [Trait("Resolve", "IsRegistered")]
-    public class IsRegisteredTests
+    public class IsRegisteredTests : UnityAddonDefaultTest
     {
+        [Dependency]
+        public IUnityContainer UnityContainer { get; set; }
+
         [Fact]
         public void ApplicationContext_CheckOnRegisteredComponent_ReturnsTrue()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
-
-            Assert.True(appContext.IsRegistered<IA>());
+            Assert.True(UnityContainer.IsRegisteredUA<IA>());
         }
 
         [Fact]
         public void ApplicationContext_CheckOnRegisteredQualifiedComponent_ReturnsTrue()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
-
-            Assert.True(appContext.IsRegistered<IB>("b"));
-            Assert.True(appContext.IsRegistered<IB>());
+            Assert.True(UnityContainer.IsRegisteredUA<IB>("b"));
+            Assert.True(UnityContainer.IsRegisteredUA<IB>());
         }
 
         [Fact]
         public void ApplicationContext_CheckOnSelfDefinedType_ReturnsTrue()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
+            UnityContainer.RegisterTypeUA<IsRegisteredTests, IsRegisteredTests>("test", new ContainerControlledLifetimeManager());
 
-            container.RegisterType<IsRegisteredTests>("test");
-
-            Assert.True(appContext.IsRegistered<IsRegisteredTests>("test"));
-            Assert.True(appContext.IsRegistered<IsRegisteredTests>());
+            Assert.True(UnityContainer.IsRegisteredUA<IsRegisteredTests>("test"));
+            Assert.True(UnityContainer.IsRegisteredUA<IsRegisteredTests>());
         }
     }
 }

@@ -56,6 +56,10 @@
     <Compile Include="DependencyExceptions\NestedNoSuchBeanDefinitionException\NestedNoSuchBeanDefinitionExceptionTests.cs" />
     <Compile Include="DependencyExceptions\NoSuchBeanDefinitionException\NoSuchBeanDefinitionExceptionTests.cs" />
     <Compile Include="DependencyExceptions\NoUniqueBeanDefinitionException\NoUniqueBeanDefinitionExceptionTests.cs" />
+    <Compile Include="Resolve\IsRegistered\IsRegisteredTests.cs" />
+    <Compile Include="Resolve\ResolveAllByInterface\ResolveAllByInterfaceTests.cs" />
+    <Compile Include="Resolve\ResolveAllByPrimitive\ResolveAllByPrimitiveTests.cs" />
+    <Compile Include="Resolve\ResolveByBeanName\ResolveByBeanNameTests.cs" />
   </ItemGroup>
 
   <ItemGroup>
