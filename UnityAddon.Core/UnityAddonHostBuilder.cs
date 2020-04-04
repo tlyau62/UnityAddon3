@@ -88,12 +88,27 @@ namespace UnityAddon.Core
                 });
         }
 
+        public static IHostBuilder ConfigureBeanCandidatesUA(this IHostBuilder hostBuilder, Action<BeanDefintionCandidateSelectorBuilder> config)
+        {
+            return hostBuilder.ConfigureContainer<IUnityContainer>((s, c) =>
+            {
+                if (!c.IsRegistered<BeanDefintionCandidateSelectorBuilder>())
+                {
+                    c.RegisterType<BeanDefintionCandidateSelectorBuilder>(new ContainerControlledLifetimeManager());
+                }
+
+                config(c.Resolve<BeanDefintionCandidateSelectorBuilder>());
+            });
+        }
+
         public static IHost BuildUA(this IHostBuilder hostBuilder)
         {
             var host = hostBuilder.Build();
             var hostContainer = host.Services.GetService<IUnityContainer>();
-            var beanDefCollection = hostContainer.Resolve<BeanDefintionCandidateSelector>()
-                .Select(hostContainer.Resolve<IBeanDefinitionCollection>());
+            var config = hostContainer.Resolve<IConfiguration>();
+            var beanDefFilters = hostContainer
+                .Resolve<BeanDefintionCandidateSelectorBuilder>().Build(config);
+            var beanDefCollection = beanDefFilters.Select(hostContainer.Resolve<IBeanDefinitionCollection>());
 
             hostContainer
                 .RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager())
