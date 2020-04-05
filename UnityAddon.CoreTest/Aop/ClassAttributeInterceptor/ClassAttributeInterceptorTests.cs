@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Castle.DynamicProxy;
+using Microsoft.Extensions.Hosting;
 using Unity;
 using UnityAddon;
 using UnityAddon.Core;
@@ -16,8 +17,8 @@ namespace UnityAddon.CoreTest.Aop.ClassAttributeInterceptor
     {
     }
 
-    [Component]
-    public class IncInterceptor : IAttributeInterceptor<IncAttribute>
+    [AopAttribute(typeof(IncAttribute))]
+    public class IncInterceptor : IInterceptor
     {
         [Dependency]
         public Counter Counter { get; set; }
@@ -62,23 +63,32 @@ namespace UnityAddon.CoreTest.Aop.ClassAttributeInterceptor
     [Trait("Aop", "ClassAttributeInterceptor")]
     public class ClassAttributeInterceptorTests
     {
-        private ApplicationContext _appContext;
-        private IService _service;
-        private Counter _counter;
+        [Dependency]
+        public IService Service { get; set; }
+
+        [Dependency]
+        public Counter Counter { get; set; }
 
         public ClassAttributeInterceptorTests()
         {
-            _appContext = new ApplicationContext(new UnityContainer(), GetType().Namespace);
-            _service = _appContext.Resolve<IService>();
-            _counter = _appContext.Resolve<Counter>();
+            var host = new HostBuilder()
+                .RegisterUA()
+                .ScanComponentsUA(GetType().Namespace)
+                .ConfigureUA<AopInterceptorContainerBuilder>(config =>
+                {
+                    config.AddAopIntercetor<IncInterceptor>();
+                })
+                .BuildUA();
+
+            host.RunTestUA(this);
         }
 
         [Fact]
         public void BeanAopStrategy_ClassAttributeInterceptor_IncIntercepted()
         {
-            _service.Mul2();
-            _service.Mul5();
-            Assert.Equal(15, _counter.Count);
+            Service.Mul2();
+            Service.Mul5();
+            Assert.Equal(15, Counter.Count);
         }
     }
 }

@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.Extensions.Hosting;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Unity;
 using UnityAddon.Core;
+using UnityAddon.Core.Aop;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Aop.GenericMethodAttributeInterceptor
@@ -10,21 +12,31 @@ namespace UnityAddon.CoreTest.Aop.GenericMethodAttributeInterceptor
     [Trait("Aop", "MethodAttributeInterceptor")]
     public class GenericMethodAttributeInterceptorTests
     {
-        private IService _service;
-        private ApplicationContext _appContext;
+        [Dependency]
+        public IService Service { get; set; }
+
+        [Dependency]
+        public Logger Logger { get; set; }
 
         public GenericMethodAttributeInterceptorTests()
         {
-            _appContext = new ApplicationContext(new UnityContainer(), GetType().Namespace);
-            _service = _appContext.Resolve<IService>();
+            var host = new HostBuilder()
+                .RegisterUA()
+                .ScanComponentsUA(GetType().Namespace)
+                .ConfigureUA<AopInterceptorContainerBuilder>(config =>
+                {
+                    config.AddAopIntercetor<IncInterceptor>();
+                })
+                .BuildUA()
+                .RunTestUA(this);
         }
 
         [Fact]
         public void BeanInterceptionStrategy_GenericMethodInterceptors_InterceptorsAndTargetMethodAreExecuted()
         {
-            _service.Inc("abc");
+            Service.Inc("abc");
 
-            Assert.Equal("testabc", _appContext.Resolve<Logger>().Log);
+            Assert.Equal("testabc", Logger.Log);
         }
 
     }

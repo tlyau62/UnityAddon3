@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Castle.DynamicProxy;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,7 +51,7 @@ namespace UnityAddon.Core
 
             object bean = container.Resolve(type, name);
 
-            if (!type.IsAssignableFrom(bean.GetType()))
+            if (!type.IsAssignableFrom(ProxyUtil.IsProxy(bean) ? ProxyUtil.GetUnproxiedType(bean) : bean.GetType()))
             {
                 throw new ResolutionFailedException(type, name, $"Cannot convert type from {bean.GetType()} to {type}");
             }

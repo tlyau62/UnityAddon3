@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Hosting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 using Unity;
 using UnityAddon;
 using UnityAddon.Core;
+using UnityAddon.Core.Aop;
 using Xunit;
 using Assert = Xunit.Assert;
 
@@ -14,50 +16,64 @@ namespace UnityAddon.CoreTest.Aop.MethodAttributeInterceptor
     [Trait("Aop", "MethodAttributeInterceptor")]
     public class MethodAttributeInterceptorTests
     {
-        private IService _service;
-        private ApplicationContext _appContext;
+        [Dependency]
+        public IService Service { get; set; }
+
+        [Dependency]
+        public Counter Counter { get; set; }
+
+        [Dependency]
+        public IUnityContainer Container { get; set; }
 
         public MethodAttributeInterceptorTests()
         {
-            _appContext = new ApplicationContext(new UnityContainer(), GetType().Namespace);
-            _service = _appContext.Resolve<IService>();
+            var host = new HostBuilder()
+                .RegisterUA()
+                .ScanComponentsUA(GetType().Namespace)
+                .ConfigureUA<AopInterceptorContainerBuilder>(config =>
+                {
+                    config.AddAopIntercetor<IncInterceptor>();
+                    config.AddAopIntercetor<MulInterceptor>();
+                })
+                .BuildUA()
+                .RunTestUA(this);
         }
 
         [Fact]
         public void BeanInterceptionStrategy_ChainInterceptors_AllInterceptorsAndTargetMethodAreExecuted()
         {
-            _service.ChainInterceptedServe();
+            Service.ChainInterceptedServe();
 
-            Assert.Equal(3, _appContext.Resolve<Counter>().Count);
+            Assert.Equal(3, Counter.Count);
         }
 
         [Fact]
         public void BeanInterceptionStrategy_TargetMethodCallTheMethodWithinTheSameClass_CalleeInterceptorsAreNotExecuted()
         {
-            _service.CallMethodsInsideSameService();
+            Service.CallMethodsInsideSameService();
 
-            Assert.Equal(3, _appContext.Resolve<Counter>().Count);
+            Assert.Equal(3, Counter.Count);
         }
 
         [Fact]
         public void BeanInterceptionStrategy_TargetMethodCallTheMethodInAnotherClass_CalleeInterceptorsAreExecuted()
         {
-            _service.CallMethodsOutsideService();
+            Service.CallMethodsOutsideService();
 
-            Assert.Equal(8, _appContext.Resolve<Counter>().Count);
+            Assert.Equal(8, Counter.Count);
         }
 
         [Fact]
         public void BeanInterceptionStrategy_SingletonProxy_ReturnCachedProxy()
         {
-            Assert.Same(_service, _appContext.Resolve<IService>());
+            Assert.Same(Service, Container.ResolveUA<IService>());
         }
 
         [Fact]
         public void BeanInterceptionStrategy_ProxyOfDifferentInterfaces_ProxyStateIsConsistent()
         {
-            var s1 = _appContext.Resolve<ISetDep>();
-            var s2 = _appContext.Resolve<ISetDep2>();
+            var s1 = Container.ResolveUA<ISetDep>();
+            var s2 = Container.ResolveUA<ISetDep2>();
 
             Assert.Same(s1, s2);
         }

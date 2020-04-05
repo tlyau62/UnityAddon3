@@ -25,7 +25,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
     /// if a bean type is marked with a class interceptor attribute,
     /// the bean will be proxied with that class attribute interceptor.
     /// </summary>
-    //TODO:[Component]
+    [Component]
     public class BeanAopStrategy : BuilderStrategy
     {
         [Dependency]
@@ -39,19 +39,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
 
         public override void PostBuildUp(ref BuilderContext context)
         {
-            if (!AopInterceptorContainer.IsInitialized)
-            {
-                base.PostBuildUp(ref context);
-                return;
-            }
-
             var interceptors = new List<IInterceptor>();
-
-            // method interceptor
-            if (IsMethodBootstrapInterceptorNeeded(context.Type))
-            {
-                interceptors.Add(AopInterceptor);
-            }
 
             // class interceptor
             var classInterceptorsMap = AopInterceptorContainer.FindInterceptors(AttributeTargets.Class);
@@ -62,6 +50,12 @@ namespace UnityAddon.Core.BeanBuildStrategies
                 {
                     interceptors.AddRange(classInterceptorsMap[attribute.GetType()]);
                 }
+            }
+
+            // method interceptor
+            if (IsMethodBootstrapInterceptorNeeded(context.Type))
+            {
+                interceptors.Add(AopInterceptor);
             }
 
             if (interceptors.Count() > 0)

@@ -24,6 +24,7 @@ using Castle.DynamicProxy;
 using UnityAddon.Core.Thread;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Component;
+using UnityAddon.Core.Aop;
 
 namespace UnityAddon.Core
 {
@@ -118,8 +119,8 @@ namespace UnityAddon.Core
             hostContainer
                 .RegisterTypeUA<IThreadLocalFactory<Stack<IInvocation>>, ThreadLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())))
                 .RegisterTypeUA<IThreadLocalFactory<Stack<ResolveStackEntry>>, ThreadLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())))
-                .RegisterTypeUA<BeanFactory, BeanFactory>(new ContainerControlledLifetimeManager())
                 .RegisterInstanceUA(hostContainer.Resolve<DependencyResolverBuilder>().Build())
+                .RegisterInstanceUA(hostContainer.Resolve<AopInterceptorContainerBuilder>().Build(hostContainer))
                 .AddNewExtension<BeanBuildStrategyExtension>();
 
             hostContainer

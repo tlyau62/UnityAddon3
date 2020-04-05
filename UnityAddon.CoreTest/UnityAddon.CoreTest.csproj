@@ -44,6 +44,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Aop\ClassAttributeInterceptor\ClassAttributeInterceptorTests.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\Attributes.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\Components.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\GenericMethodAttributeInterceptorTests.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\Interceptors.cs" />
+    <Compile Include="Aop\MethodAttributeInterceptor\Attributes.cs" />
+    <Compile Include="Aop\MethodAttributeInterceptor\Components.cs" />
+    <Compile Include="Aop\MethodAttributeInterceptor\Interceptors.cs" />
+    <Compile Include="Aop\MethodAttributeInterceptor\MethodAttributeInterceptorTests.cs" />
     <Compile Include="BeanPostConstruct\AsyncResolve\AsyncResolveTests.cs" />
     <Compile Include="BeanPostConstruct\NonProxyBean\NonProxyBeanTests.cs" />
     <Compile Include="Bean\ProfileBean\ProfileBeanTests.cs" />
