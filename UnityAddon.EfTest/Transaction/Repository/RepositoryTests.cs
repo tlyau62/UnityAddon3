@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,38 +12,23 @@ using Xunit;
 namespace UnityAddon.EfTest.Transaction.Repository
 {
     [Trait("Transaction", "Repository")]
-    public class RepositoryTests : IDisposable
+    public class RepositoryTests : EfDefaultTest
     {
-        private ApplicationContext _appContext;
-        private IDbContextFactory<TestDbContext> _dbContextFactory;
-        private IRepo _repo;
-
-        public RepositoryTests()
-        {
-            _appContext = new ApplicationContext(new UnityContainer(), GetType().Namespace, typeof(TestDbContext).Namespace);
-            _dbContextFactory = _appContext.Resolve<IDbContextFactory<TestDbContext>>();
-            _repo = _appContext.Resolve<IRepo>();
-
-            DbSetupUtility.CreateDb(_dbContextFactory);
-        }
-
-        public void Dispose()
-        {
-            DbSetupUtility.DropDb(_dbContextFactory);
-        }
+        [Dependency]
+        public IRepo Repo { get; set; }
 
         [Fact]
         public void RequireDbContextHandler_QueryItem_ResultReceived()
         {
-            Assert.Equal(0, _repo.CountItem());
+            Assert.Equal(0, Repo.CountItem());
 
-            Assert.False(_dbContextFactory.IsOpen());
+            Assert.False(DbContextFactory.IsOpen());
         }
 
         [Fact]
         public void RequireDbContextHandler_ModifyDbWithoutTransaction_ExceptionThrown()
         {
-            var ex = Assert.Throws<InvalidOperationException>(() => _repo.InsertItem(new Item("testitem")));
+            var ex = Assert.Throws<InvalidOperationException>(() => Repo.InsertItem(new Item("testitem")));
 
             Assert.Equal($"Detected dbcontext is changed by method InsertItem at class {typeof(Repo).FullName}, but transaction is not opened.", ex.Message);
         }

@@ -57,7 +57,7 @@ namespace UnityAddon.CoreTest.Bean.GuidBean
                 .RegisterUA()
                 .ScanComponentsUA("UnityAddon.CoreTest.Bean.GuidBean")
                 .BuildUA()
-                .RunTestUA(this);
+                .BuildTestUA(this);
 
             Assert.Same(GeneralService.PrintService, PrintService);
             Assert.Same(GeneralService.WriteService, WriteService);

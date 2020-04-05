@@ -44,7 +44,7 @@ namespace UnityAddon.CoreTest.Dependency.Custom
                })
                .ScanComponentsUA(GetType().Namespace)
                .BuildUA()
-               .RunTestUA(this);
+               .BuildTestUA(this);
 
             Assert.Equal("My_TestString", Service.CustomProp);
         }

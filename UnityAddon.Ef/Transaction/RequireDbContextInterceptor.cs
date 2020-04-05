@@ -17,8 +17,8 @@ namespace UnityAddon.Ef.Transaction
     /// <summary>
     /// Handle transactional logic.
     /// </summary>
-    [Component]
-    public class RequireDbContextInterceptor : IAttributeInterceptor<RequireDbContextAttribute>
+    [AopAttribute(typeof(RequireDbContextAttribute))]
+    public class RequireDbContextInterceptor: IInterceptor
     {
         [Dependency]
         public DataSourceExtractor DataSourceExtractor { get; set; }

@@ -45,14 +45,14 @@ namespace UnityAddon.Ef
     public class DbContextFactory<T> : IDbContextFactory<T> where T : DbContext
     {
         [Dependency]
-        public IContainerRegistry ContainerRegistry { get; set; }
+        public IUnityContainer Container { get; set; }
 
-        private AsyncLocalFactory<T> _threadLocalFactory;
+        private AsyncLocalFactory<T> _asyncLocalFactory;
 
         [PostConstruct]
         public void Init()
         {
-            _threadLocalFactory = new AsyncLocalFactory<T>(() => ContainerRegistry.Resolve<T>());
+            _asyncLocalFactory = new AsyncLocalFactory<T>(() => Container.ResolveUA<T>());
         }
 
         public T Get()
@@ -62,7 +62,7 @@ namespace UnityAddon.Ef
                 throw new InvalidOperationException("Dbcontext is not opened.");
             }
 
-            return _threadLocalFactory.Get();
+            return _asyncLocalFactory.Get();
         }
 
         public T Open()
@@ -72,7 +72,7 @@ namespace UnityAddon.Ef
                 throw new InvalidOperationException("Dbcontext is already created.");
             }
 
-            return _threadLocalFactory.Set();
+            return _asyncLocalFactory.Set();
         }
 
         public void Close()
@@ -82,17 +82,17 @@ namespace UnityAddon.Ef
                 throw new InvalidOperationException("Dbcontext is already disposed.");
             }
 
-            _threadLocalFactory.Delete();
+            _asyncLocalFactory.Delete();
         }
 
         public bool IsOpen()
         {
-            if (!_threadLocalFactory.Exist())
+            if (!_asyncLocalFactory.Exist())
             {
                 return false;
             }
 
-            if (IsDisposed(_threadLocalFactory.Get()))
+            if (IsDisposed(_asyncLocalFactory.Get()))
             {
                 throw new InvalidOperationException("Dbcontext is created, but disposed.");
             }

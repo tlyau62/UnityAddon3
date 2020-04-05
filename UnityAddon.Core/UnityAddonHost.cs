@@ -15,7 +15,7 @@ namespace UnityAddon.Core
 {
     public static class UnityAddonHost
     {
-        public static IHost RunTestUA(this IHost host, object testobject)
+        public static IHost BuildTestUA(this IHost host, object testobject)
         {
             var container = host.Services.GetService(typeof(IUnityContainer)) as IUnityContainer;
 

@@ -53,7 +53,7 @@ namespace UnityAddon.CoreTest.Dependency.Bean.ProfileBean
                })
                .ScanComponentsUA(GetType().Namespace)
                .BuildUA()
-               .RunTestUA(this);
+               .BuildTestUA(this);
 
             Assert.IsType(resolveType, Service);
         }

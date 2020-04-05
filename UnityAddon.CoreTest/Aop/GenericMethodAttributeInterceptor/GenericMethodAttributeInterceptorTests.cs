@@ -28,7 +28,7 @@ namespace UnityAddon.CoreTest.Aop.GenericMethodAttributeInterceptor
                     config.AddAopIntercetor<IncInterceptor>();
                 })
                 .BuildUA()
-                .RunTestUA(this);
+                .BuildTestUA(this);
         }
 
         [Fact]
