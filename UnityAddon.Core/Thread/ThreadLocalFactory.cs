@@ -19,7 +19,6 @@ namespace UnityAddon.Core.Thread
     /// <summary>
     /// A factory to manage thread local.
     /// </summary>
-    [Component]
     public class ThreadLocalFactory<T> : IThreadLocalFactory<T>
     {
         private readonly Func<T> createFunc;
