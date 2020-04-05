@@ -47,7 +47,7 @@ namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter
                     config.AddExcludeFilter(new NamespaceFilter("UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.A"));
                 })
                 .BuildUA()
-                .RunTestUA(this);
+                .BuildTestUA(this);
 
             Assert.IsType<ServiceB>(Service);
         }

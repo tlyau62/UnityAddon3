@@ -6,6 +6,7 @@ using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
+using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.Reflection;
 using UnityAddon.Ef.Transaction;
 

@@ -13,26 +13,12 @@ using Xunit;
 namespace UnityAddon.EfTest.Transaction.MultiThreads
 {
     [Trait("Transaction", "MultiThreads")]
-    public class MultiThreadsTests : IDisposable
+    public class MultiThreadsTests : EfDefaultTest
     {
-        private ApplicationContext _appContext;
-        private IDbContextFactory<TestDbContext> _dbContextFactory;
-        private IRepo _repo;
-        private Random _random = new Random();
+        [Dependency]
+        public IRepo Repo { get; set; }
 
-        public MultiThreadsTests()
-        {
-            _appContext = new ApplicationContext(new UnityContainer(), GetType().Namespace, typeof(TestDbContext).Namespace);
-            _dbContextFactory = _appContext.Resolve<IDbContextFactory<TestDbContext>>();
-            _repo = _appContext.Resolve<IRepo>();
-
-            DbSetupUtility.CreateDb(_dbContextFactory);
-        }
-
-        public void Dispose()
-        {
-            DbSetupUtility.DropDb(_dbContextFactory);
-        }
+        private readonly Random _random = new Random();
 
         [Theory]
         [InlineData(100, 20)]
@@ -45,7 +31,7 @@ namespace UnityAddon.EfTest.Transaction.MultiThreads
             {
                 Thread.Sleep((int)(_random.NextDouble() * 100)); // add some random delay
 
-                _repo.InsertItem(new Item(Guid.NewGuid().ToString()));
+                Repo.InsertItem(new Item(Guid.NewGuid().ToString()));
             };
 
             Action<object> exceptionAction = (index) =>
@@ -54,7 +40,7 @@ namespace UnityAddon.EfTest.Transaction.MultiThreads
 
                 try
                 {
-                    _repo.InsertItemWithException(new Item(Guid.NewGuid().ToString()));
+                    Repo.InsertItemWithException(new Item(Guid.NewGuid().ToString()));
                 }
                 catch (Exception)
                 {
@@ -73,9 +59,9 @@ namespace UnityAddon.EfTest.Transaction.MultiThreads
 
             Task.WaitAll(tasks.ToArray());
 
-            Assert.False(_dbContextFactory.IsOpen());
+            Assert.False(DbContextFactory.IsOpen());
 
-            Assert.Equal(itemsAccepted, _repo.CountItem());
+            Assert.Equal(itemsAccepted, Repo.CountItem());
         }
 
     }

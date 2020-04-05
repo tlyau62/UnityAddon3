@@ -44,7 +44,7 @@ namespace UnityAddon.CoreTest.Dependency.Value
                })
                .ScanComponentsUA(GetType().Namespace)
                .BuildUA()
-               .RunTestUA(this);
+               .BuildTestUA(this);
 
             Assert.Equal(ServiceType.Write, Service.Type);
         }

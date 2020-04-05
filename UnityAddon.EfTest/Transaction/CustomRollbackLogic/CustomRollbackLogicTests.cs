@@ -14,35 +14,21 @@ using Xunit;
 namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
 {
     [Trait("Transaction", "CustomRollbackLogic")]
-    public class CustomRollbackLogicTests : IDisposable
+    public class CustomRollbackLogicTests : EfDefaultTest
     {
-        private ApplicationContext _appContext;
-        private IDbContextFactory<TestDbContext> _dbContextFactory;
-        private IRepo _repo;
-        private DbSet<Item> _items => (_dbContextFactory.IsOpen() ? _dbContextFactory.Get() : _dbContextFactory.Open()).Items;
+        [Dependency]
+        public IRepo Repo;
 
-        public CustomRollbackLogicTests()
-        {
-            _appContext = new ApplicationContext(new UnityContainer(), GetType().Namespace, typeof(TestDbContext).Namespace);
-            _dbContextFactory = _appContext.Resolve<IDbContextFactory<TestDbContext>>();
-            _repo = _appContext.Resolve<IRepo>();
-
-            DbSetupUtility.CreateDb(_dbContextFactory);
-        }
-
-        public void Dispose()
-        {
-            DbSetupUtility.DropDb(_dbContextFactory);
-        }
+        private DbSet<Item> _items => (DbContextFactory.IsOpen() ? DbContextFactory.Get() : DbContextFactory.Open()).Items;
 
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
         public void RequireDbContextHandler_RollbackOptions_RollbackOnGenericReturnValue(bool isSuccessResult)
         {
-            _repo.AddItemGeneric(isSuccessResult);
+            Repo.AddItemGeneric(isSuccessResult);
 
-            Assert.False(_dbContextFactory.IsOpen());
+            Assert.False(DbContextFactory.IsOpen());
 
             Assert.Equal(isSuccessResult ? 1 : 0, _items.Count());
         }
@@ -52,9 +38,9 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
         [InlineData(false)]
         public void RequireDbContextHandler_RollbackOptions_RollbackOnReturnValue(bool isSuccessResult)
         {
-            _repo.AddItem(isSuccessResult);
+            Repo.AddItem(isSuccessResult);
 
-            Assert.False(_dbContextFactory.IsOpen());
+            Assert.False(DbContextFactory.IsOpen());
 
             Assert.Equal(isSuccessResult ? 1 : 0, _items.Count());
         }
@@ -64,9 +50,9 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
         [InlineData(false)]
         public void RequireDbContextHandler_RollbackOptions_RollbackOnConcreteGenericReturnValue(bool isSuccessResult)
         {
-            _repo.AddStringItemConcreteGeneric(isSuccessResult);
+            Repo.AddStringItemConcreteGeneric(isSuccessResult);
 
-            Assert.False(_dbContextFactory.IsOpen());
+            Assert.False(DbContextFactory.IsOpen());
 
             Assert.Equal(isSuccessResult ? 1 : 0, _items.Count());
         }
@@ -76,9 +62,9 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
         [InlineData(false)]
         public void RequireDbContextHandler_RollbackOptionsOnNotRegisteredReturnType_NoRollbacked(bool isSuccessResult)
         {
-            _repo.AddIntItemConcreteGeneric(isSuccessResult);
+            Repo.AddIntItemConcreteGeneric(isSuccessResult);
 
-            Assert.False(_dbContextFactory.IsOpen());
+            Assert.False(DbContextFactory.IsOpen());
 
             Assert.Equal(1, _items.Count());
         }

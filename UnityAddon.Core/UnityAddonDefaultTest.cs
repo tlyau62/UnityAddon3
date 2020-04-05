@@ -21,7 +21,7 @@ namespace UnityAddon.Core
                 .RegisterUA()
                 .ScanComponentsUA(assembly ?? Assembly.GetCallingAssembly(), testNamespace ?? GetType().Namespace)
                 .BuildUA()
-                .RunTestUA(this);
+                .BuildTestUA(this);
         }
 
         public void Dispose()
