@@ -30,7 +30,6 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
             new HostBuilder()
                    .RegisterUA()
                    .ScanComponentsUA(GetType().Namespace, "UnityAddon.EfTest.Common")
-                   .EnableUnityAddonEf()
                    .ConfigureUA<DbContextTemplateBuilder>(c =>
                    {
                        // rollback depends on GenericResult<T> any type T
@@ -42,6 +41,7 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
                        // rollback depends on ConcreteGenericResult<string> only
                        c.RegisterRollbackLogic<ConcreteGenericResult<string>>(returnValue => !returnValue.IsSuccess);
                    })
+                   .EnableUnityAddonEf()
                    .BuildUA()
                    .BuildTestUA(this);
 

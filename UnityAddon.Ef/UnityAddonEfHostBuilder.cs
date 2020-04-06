@@ -24,7 +24,7 @@ namespace UnityAddon.Ef
                 })
                 .ConfigureContainer<IUnityContainer>(c =>
                 {
-                    c.RegisterInstanceUA(c.ResolveUA<DbContextTemplateBuilder>().Build(c));
+                    c.RegisterInstanceUA(c.Resolve<DbContextTemplateBuilder>().Build(c));
                 });
         }
 
