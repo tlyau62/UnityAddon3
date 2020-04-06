@@ -12,7 +12,7 @@ using Xunit;
 namespace UnityAddon.EfTest.Transaction.RequireDbContext
 {
     [Trait("Transaction", "RequireDbContext")]
-    public class RequireDbContextTests : EfDefaultTest
+    public class RequireDbContextTests : EfDefaultTest<TestDbContext>
     {
         [Dependency]
         public IRepoA RepoA { get; set; }

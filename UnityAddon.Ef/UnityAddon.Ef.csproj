@@ -18,6 +18,7 @@
   <ItemGroup>
     <Compile Include="Transaction\DataSourceAttribute.cs" />
     <Compile Include="Transaction\DbContextTemplate.cs" />
+    <Compile Include="Transaction\DbContextTemplateBuilder.cs" />
     <Compile Include="Transaction\RequireDbContextAttribute.cs" />
     <Compile Include="Transaction\TransactionManager.cs" />
     <Compile Include="Transaction\RequireDbContextHandler.cs" />

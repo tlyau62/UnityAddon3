@@ -1,35 +1,35 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using Unity;
+using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.Ef.Transaction
 {
-    public interface IDbContextTemplate<TDbContext> where TDbContext : DbContext
+    public interface IDbContextTemplate
     {
-        TTxResult ExecuteTransaction<TTxResult>(Func<TDbContext, TTxResult> transaction);
-        TTxResult ExecuteQuery<TTxResult>(Func<TDbContext, TTxResult> query, string noModifyMsg);
-        TDbContext GetDbContext();
-        DbSet<TEntity> GetEntity<TEntity>() where TEntity : class;
+        TTxResult ExecuteTransaction<TDbContext, TTxResult>(Func<TDbContext, TTxResult> transaction) where TDbContext : DbContext;
+        TTxResult ExecuteQuery<TDbContext, TTxResult>(Func<TDbContext, TTxResult> query, string noModifyMsg) where TDbContext : DbContext;
+        TDbContext GetDbContext<TDbContext>() where TDbContext : DbContext;
+        DbSet<TEntity> GetEntity<TDbContext, TEntity>() where TDbContext : DbContext where TEntity : class;
     }
 
     /// <summary>
-    /// Used by client to query db.
-    /// TODO: logic duplication with TransactionManager
+    /// Used by client to deal with any db context.
     /// </summary>
     /// <typeparam name="TDbContext"></typeparam>
     [Component]
-    public class DbContextTemplate<TDbContext> : IDbContextTemplate<TDbContext> where TDbContext : DbContext
+    public class DbContextTemplate : IDbContextTemplate
     {
-        [Dependency]
-        public IDbContextFactory<TDbContext> DbContextFactory { get; set; }
-
         [OptionalDependency]
         public RollbackOptions RollbackOptions { get; set; }
 
-        public TTxResult ExecuteQuery<TTxResult>(Func<TDbContext, TTxResult> query, string noModifyMsg)
+        [Dependency]
+        public IUnityContainer UnityContainer { get; set; }
+
+        public TTxResult ExecuteQuery<TDbContext, TTxResult>(Func<TDbContext, TTxResult> query, string noModifyMsg) where TDbContext : DbContext
         {
-            return DoInDbContext(ctx =>
+            return DoInDbContext<TDbContext, TTxResult>(ctx =>
             {
                 var result = query(ctx);
 
@@ -39,9 +39,9 @@ namespace UnityAddon.Ef.Transaction
             });
         }
 
-        public TTxResult ExecuteTransaction<TTxResult>(Func<TDbContext, TTxResult> transaction)
+        public TTxResult ExecuteTransaction<TDbContext, TTxResult>(Func<TDbContext, TTxResult> transaction) where TDbContext : DbContext
         {
-            return DoInDbContext(ctx =>
+            return DoInDbContext<TDbContext, TTxResult>(ctx =>
             {
                 if (ctx.Database.CurrentTransaction != null)
                 {
@@ -78,17 +78,22 @@ namespace UnityAddon.Ef.Transaction
             });
         }
 
-        public TDbContext GetDbContext()
+        public IDbContextFactory<TDbContext> GetDbContextFactory<TDbContext>() where TDbContext : DbContext
         {
-            return DbContextFactory.Get();
+            return UnityContainer.ResolveUA<IDbContextFactory<TDbContext>>();
         }
 
-        public DbSet<TEntity> GetEntity<TEntity>() where TEntity : class
+        public TDbContext GetDbContext<TDbContext>() where TDbContext : DbContext
         {
-            return GetDbContext().Set<TEntity>();
+            return UnityContainer.ResolveUA<IDbContextFactory<TDbContext>>().Get();
         }
 
-        private void AssertNoModifyDbContext(TDbContext dbContext, string noModifyMsg = "Detected dbcontext is changed by method, but transaction is not opened.")
+        public DbSet<TEntity> GetEntity<TDbContext, TEntity>() where TDbContext : DbContext where TEntity : class
+        {
+            return GetDbContext<TDbContext>().Set<TEntity>();
+        }
+
+        private void AssertNoModifyDbContext<TDbContext>(TDbContext dbContext, string noModifyMsg = "Detected dbcontext is changed by method, but transaction is not opened.") where TDbContext : DbContext
         {
             if (dbContext.ChangeTracker.HasChanges() && dbContext.Database.CurrentTransaction == null)
             {
@@ -96,10 +101,11 @@ namespace UnityAddon.Ef.Transaction
             }
         }
 
-        public TTxResult DoInDbContext<TTxResult>(Func<TDbContext, TTxResult> tx)
+        public TTxResult DoInDbContext<TDbContext, TTxResult>(Func<TDbContext, TTxResult> tx) where TDbContext : DbContext
         {
-            var isOpenDbCtx = DbContextFactory.IsOpen();
-            var ctx = isOpenDbCtx ? DbContextFactory.Get() : DbContextFactory.Open();
+            var dbCtxFactory = GetDbContextFactory<TDbContext>();
+            var isOpenDbCtx = dbCtxFactory.IsOpen();
+            var ctx = isOpenDbCtx ? dbCtxFactory.Get() : dbCtxFactory.Open();
 
             try
             {
@@ -109,7 +115,7 @@ namespace UnityAddon.Ef.Transaction
             {
                 if (!isOpenDbCtx)
                 {
-                    DbContextFactory.Close();
+                    dbCtxFactory.Close();
                 }
             }
         }

@@ -39,7 +39,7 @@ namespace UnityAddon.EfTest.MultipleContext
         public void Dispose()
         {
             DbSetupUtility.DropDb(DbContextFactory);
-            DbSetupUtility.CreateDb(DbContextFactory2);
+            DbSetupUtility.DropDb(DbContextFactory2);
         }
 
         [Fact]

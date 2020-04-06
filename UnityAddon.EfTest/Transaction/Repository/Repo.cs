@@ -20,9 +20,9 @@ namespace UnityAddon.EfTest.Transaction.Repository
     public class Repo : IRepo
     {
         [Dependency]
-        public IDbContextTemplate<TestDbContext> DbContextTemplate { get; set; }
+        public IDbContextTemplate DbContextTemplate { get; set; }
 
-        private DbSet<Item> _items => DbContextTemplate.GetEntity<Item>();
+        private DbSet<Item> _items => DbContextTemplate.GetEntity<TestDbContext,Item>();
 
         public void InsertItem(Item item)
         {

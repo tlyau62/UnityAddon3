@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,10 +9,10 @@ using UnityAddon.Ef;
 
 namespace UnityAddon.EfTest.Common
 {
-    public class EfDefaultTest : IDisposable
+    public class EfDefaultTest<TDbContext> : IDisposable where TDbContext : DbContext
     {
         [Dependency]
-        public IDbContextFactory<TestDbContext> DbContextFactory { get; set; }
+        public IDbContextFactory<TDbContext> DbContextFactory { get; set; }
 
         public EfDefaultTest()
         {

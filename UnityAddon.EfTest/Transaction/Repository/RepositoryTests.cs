@@ -12,7 +12,7 @@ using Xunit;
 namespace UnityAddon.EfTest.Transaction.Repository
 {
     [Trait("Transaction", "Repository")]
-    public class RepositoryTests : EfDefaultTest
+    public class RepositoryTests : EfDefaultTest<TestDbContext>
     {
         [Dependency]
         public IRepo Repo { get; set; }

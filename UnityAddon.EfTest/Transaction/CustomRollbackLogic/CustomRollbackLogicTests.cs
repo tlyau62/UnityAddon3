@@ -14,7 +14,7 @@ using Xunit;
 namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
 {
     [Trait("Transaction", "CustomRollbackLogic")]
-    public class CustomRollbackLogicTests : EfDefaultTest
+    public class CustomRollbackLogicTests : EfDefaultTest<TestDbContext>
     {
         [Dependency]
         public IRepo Repo;

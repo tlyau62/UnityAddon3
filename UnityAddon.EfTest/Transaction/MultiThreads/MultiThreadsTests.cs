@@ -13,7 +13,7 @@ using Xunit;
 namespace UnityAddon.EfTest.Transaction.MultiThreads
 {
     [Trait("Transaction", "MultiThreads")]
-    public class MultiThreadsTests : EfDefaultTest
+    public class MultiThreadsTests : EfDefaultTest<TestDbContext>
     {
         [Dependency]
         public IRepo Repo { get; set; }

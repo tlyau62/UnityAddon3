@@ -22,19 +22,19 @@ namespace UnityAddon.Ef.Transaction
     public class TransactionManager<TDbContext> : ITransactionManager<TDbContext> where TDbContext : DbContext
     {
         [Dependency]
-        public IDbContextTemplate<TDbContext> DbContextTemplate { get; set; }
+        public IDbContextTemplate DbContextTemplate { get; set; }
 
         public void DoInDbContext(IInvocation invocation, bool transactional)
         {
             if (transactional)
             {
-                DbContextTemplate.ExecuteTransaction(Tx);
+                DbContextTemplate.ExecuteTransaction<TDbContext, object>(Tx);
             }
             else
             {
                 var noModifyMsg = $"Detected dbcontext is changed by method {invocation.MethodInvocationTarget.Name} at class {invocation.MethodInvocationTarget.DeclaringType.FullName}, but transaction is not opened.";
 
-                DbContextTemplate.ExecuteQuery(Tx, noModifyMsg);
+                DbContextTemplate.ExecuteQuery<TDbContext, object>(Tx, noModifyMsg);
             }
 
             object Tx(TDbContext ctx)
