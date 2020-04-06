@@ -44,7 +44,14 @@ namespace UnityAddon.Ef.Transaction
         {
             foreach (var itr in _txInterceptors)
             {
-                itr.Rollback();
+                try
+                {
+                    itr.Rollback();
+                }
+                catch (Exception ex)
+                {
+                    _logger.Debug(ex, $"Transaction interceptor '{itr.GetType()}' throws an exception.");
+                }
             }
         }
     }
