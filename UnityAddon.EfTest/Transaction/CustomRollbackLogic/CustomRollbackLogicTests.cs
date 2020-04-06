@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +15,43 @@ using Xunit;
 namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
 {
     [Trait("Transaction", "CustomRollbackLogic")]
-    public class CustomRollbackLogicTests : EfDefaultTest<TestDbContext>
+    public class CustomRollbackLogicTests : IDisposable
     {
+        [Dependency]
+        public IDbContextFactory<TestDbContext> DbContextFactory { get; set; }
+
         [Dependency]
         public IRepo Repo;
 
         private DbSet<Item> _items => (DbContextFactory.IsOpen() ? DbContextFactory.Get() : DbContextFactory.Open()).Items;
+
+        public CustomRollbackLogicTests()
+        {
+            new HostBuilder()
+                   .RegisterUA()
+                   .ScanComponentsUA(GetType().Namespace, "UnityAddon.EfTest.Common")
+                   .EnableUnityAddonEf()
+                   .ConfigureUA<DbContextTemplateBuilder>(c =>
+                   {
+                       // rollback depends on GenericResult<T> any type T
+                       c.RegisterRollbackLogic(typeof(GenericResult<>), returnValue => !((dynamic)returnValue).IsSuccess);
+
+                       // rollback depends on Result
+                       c.RegisterRollbackLogic<Result>(returnValue => !((TestResult)returnValue).IsSuccess);
+
+                       // rollback depends on ConcreteGenericResult<string> only
+                       c.RegisterRollbackLogic<ConcreteGenericResult<string>>(returnValue => !returnValue.IsSuccess);
+                   })
+                   .BuildUA()
+                   .BuildTestUA(this);
+
+            DbSetupUtility.CreateDb(DbContextFactory);
+        }
+
+        public void Dispose()
+        {
+            DbSetupUtility.DropDb(DbContextFactory);
+        }
 
         [Theory]
         [InlineData(true)]

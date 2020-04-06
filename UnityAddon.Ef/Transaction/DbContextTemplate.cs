@@ -1,8 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.Ef.Transaction
 {
@@ -12,20 +16,26 @@ namespace UnityAddon.Ef.Transaction
         TTxResult ExecuteQuery<TDbContext, TTxResult>(Func<TDbContext, TTxResult> query, string noModifyMsg) where TDbContext : DbContext;
         TDbContext GetDbContext<TDbContext>() where TDbContext : DbContext;
         DbSet<TEntity> GetEntity<TDbContext, TEntity>() where TDbContext : DbContext where TEntity : class;
+        bool TestRollback(object returnValue);
     }
 
     /// <summary>
     /// Used by client to deal with any db context.
     /// </summary>
     /// <typeparam name="TDbContext"></typeparam>
-    [Component]
     public class DbContextTemplate : IDbContextTemplate
     {
-        [OptionalDependency]
-        public RollbackOptions RollbackOptions { get; set; }
+        private static MethodInfo LogicInvokerMethod = typeof(DbContextTemplate).GetMethod(nameof(LogicInvoker), BindingFlags.NonPublic | BindingFlags.Instance);
 
-        [Dependency]
-        public IUnityContainer UnityContainer { get; set; }
+        private IDictionary<Type, List<object>> _rollbackLogics;
+
+        private IUnityContainer _container;
+
+        public DbContextTemplate(IDictionary<Type, List<object>> rollbackLogics, IUnityContainer container)
+        {
+            _rollbackLogics = rollbackLogics;
+            _container = container;
+        }
 
         public TTxResult ExecuteQuery<TDbContext, TTxResult>(Func<TDbContext, TTxResult> query, string noModifyMsg) where TDbContext : DbContext
         {
@@ -54,7 +64,7 @@ namespace UnityAddon.Ef.Transaction
                 {
                     var result = transaction(ctx);
 
-                    if (RollbackOptions != null && RollbackOptions.TestRollback(result))
+                    if (TestRollback(result))
                     {
                         tx.Rollback();
                     }
@@ -80,12 +90,12 @@ namespace UnityAddon.Ef.Transaction
 
         public IDbContextFactory<TDbContext> GetDbContextFactory<TDbContext>() where TDbContext : DbContext
         {
-            return UnityContainer.ResolveUA<IDbContextFactory<TDbContext>>();
+            return _container.ResolveUA<IDbContextFactory<TDbContext>>();
         }
 
         public TDbContext GetDbContext<TDbContext>() where TDbContext : DbContext
         {
-            return UnityContainer.ResolveUA<IDbContextFactory<TDbContext>>().Get();
+            return _container.ResolveUA<IDbContextFactory<TDbContext>>().Get();
         }
 
         public DbSet<TEntity> GetEntity<TDbContext, TEntity>() where TDbContext : DbContext where TEntity : class
@@ -118,6 +128,52 @@ namespace UnityAddon.Ef.Transaction
                     dbCtxFactory.Close();
                 }
             }
+        }
+
+        /// <summary>
+        /// Check whether a return value will be rollbacked by the tx.
+        /// </summary>
+        public bool TestRollback(object returnValue)
+        {
+            if (returnValue == null)
+            {
+                return false;
+            }
+
+            var type = returnValue.GetType();
+            var regType = GetRegisteredType(type) ?? (type.IsGenericType ? GetRegisteredType(type.GetGenericTypeDefinition()) : null);
+
+            if (regType == null)
+            {
+                return false;
+            }
+
+            return _rollbackLogics[regType].Any(logic => (bool)LogicInvokerMethod.MakeGenericMethod(logic.GetType().GetGenericArguments()[0]).Invoke(this, new[] { logic, returnValue }));
+        }
+
+        private bool LogicInvoker<T>(Func<T, bool> logic, object returnValue)
+        {
+            return logic((T)returnValue);
+        }
+
+        private Type GetRegisteredType(Type targetType)
+        {
+            var types = TypeResolver.GetAssignableTypes(targetType);
+
+            foreach (var type in types)
+            {
+                if (_rollbackLogics.ContainsKey(type))
+                {
+                    return type;
+                }
+
+                if (type.IsGenericType && _rollbackLogics.ContainsKey(type.GetGenericTypeDefinition()))
+                {
+                    return type.GetGenericTypeDefinition();
+                }
+            }
+
+            return null;
         }
     }
 }

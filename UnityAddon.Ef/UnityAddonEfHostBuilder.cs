@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Aop;
 using UnityAddon.Ef.Transaction;
@@ -20,6 +21,10 @@ namespace UnityAddon.Ef
                     config
                         .AddAopIntercetor<RequireDbContextInterceptor>()
                         .AddAopIntercetor<RepositoryInterceptor>();
+                })
+                .ConfigureContainer<IUnityContainer>(c =>
+                {
+                    c.RegisterInstanceUA(c.ResolveUA<DbContextTemplateBuilder>().Build(c));
                 });
         }
 

@@ -24,7 +24,6 @@
     <Compile Include="Transaction\RequireDbContextHandler.cs" />
     <Compile Include="Transaction\RequireDbContextInterceptor.cs" />
     <Compile Include="Transaction\RepositoryInterceptor.cs" />
-    <Compile Include="Transaction\RollbackOptions.cs" />
   </ItemGroup>
 
   <ItemGroup>
