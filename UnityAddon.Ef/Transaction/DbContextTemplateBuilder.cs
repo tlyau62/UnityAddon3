@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Unity;
 
@@ -7,7 +8,9 @@ namespace UnityAddon.Ef.Transaction
 {
     public class DbContextTemplateBuilder
     {
-        private IDictionary<Type, List<object>> _rollbackLogics = new Dictionary<Type, List<object>>();
+        private readonly IDictionary<Type, List<object>> _rollbackLogics = new Dictionary<Type, List<object>>();
+
+        private readonly IList<Type> _txInterceptors = new List<Type>();
 
         public void RegisterRollbackLogic<TReturn>(Func<TReturn, bool> rollbackLogic)
         {
@@ -29,9 +32,16 @@ namespace UnityAddon.Ef.Transaction
             _rollbackLogics[returnType].Add(rollbackLogic);
         }
 
+        public void AddTransactionInterceptor<TTransactionInterceptor>() where TTransactionInterceptor : ITransactionInterceptor
+        {
+            _txInterceptors.Add(typeof(TTransactionInterceptor));
+        }
+
         public IDbContextTemplate Build(IUnityContainer container)
         {
-            return new DbContextTemplate(_rollbackLogics, container);
+            var txInterceptors = _txInterceptors.Select(t => (ITransactionInterceptor)container.Resolve(t));
+
+            return new DbContextTemplate(_rollbackLogics, container, new TransactionInterceptorManager(txInterceptors));
         }
     }
 }

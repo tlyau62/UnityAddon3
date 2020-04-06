@@ -24,10 +24,6 @@ namespace UnityAddon.Ef.Transaction
         [Dependency]
         public IDbContextTemplate DbContextTemplate { get; set; }
 
-        // TODO allow multi interceptors, change to List<ITransactionInterceptor>
-        [OptionalDependency]
-        public ITransactionInterceptor TransactionInterceptor { get; set; }
-
         public void DoInDbContext(IInvocation invocation, bool transactional)
         {
             if (transactional)
