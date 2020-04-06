@@ -39,7 +39,8 @@ namespace UnityAddon.Core
             return hostBuilder.UseUnityServiceProvider(container)
                 .ConfigureContainer<IUnityContainer>(c =>
                 {
-                    c.RegisterType<IBeanDefinitionCollection, BeanDefinitionCollection>(new ContainerControlledLifetimeManager());
+                    c.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager())
+                     .RegisterTypeUA<IBeanDefinitionCollection, BeanDefinitionCollection>(new ContainerControlledLifetimeManager());
                 })
                 .ScanComponentsUA("UnityAddon.Core")
                 .MergeFromServiceCollectionUA()
@@ -56,7 +57,7 @@ namespace UnityAddon.Core
         {
             return hostBuilder.ConfigureContainer<IUnityContainer>((s, c) =>
             {
-                var defCollection = c.Resolve<IBeanDefinitionCollection>();
+                var defCollection = c.ResolveUA<IBeanDefinitionCollection>();
                 var scanner = c.Resolve<ComponentScanner>();
                 var defs = scanner.ScanComponents(assembly, namespaces);
 
@@ -83,7 +84,7 @@ namespace UnityAddon.Core
                 })
                 .ConfigureContainer<IUnityContainer>((s, c) =>
                 {
-                    var defCollection = c.Resolve<IBeanDefinitionCollection>();
+                    var defCollection = c.ResolveUA<IBeanDefinitionCollection>();
 
                     ((BeanDefinitionCollection)defCollection).AddRange(defs);
                 });
@@ -93,12 +94,12 @@ namespace UnityAddon.Core
         {
             return hostBuilder.ConfigureContainer<IUnityContainer>((s, c) =>
             {
-                if (!c.IsRegistered<ConfigT>())
+                if (!c.IsRegisteredUA<ConfigT>())
                 {
-                    c.RegisterType<ConfigT>(new ContainerControlledLifetimeManager());
+                    c.RegisterTypeUA<ConfigT, ConfigT>(new ContainerControlledLifetimeManager());
                 }
 
-                config(c.Resolve<ConfigT>());
+                config(c.ResolveUA<ConfigT>());
             });
         }
 
@@ -112,7 +113,6 @@ namespace UnityAddon.Core
             var beanDefCollection = beanDefFilters.Select(hostContainer.Resolve<IBeanDefinitionCollection>());
 
             hostContainer
-                .RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager())
                 .Resolve<IBeanDefinitionContainer>()
                 .RegisterBeanDefinitions(beanDefCollection);
 
