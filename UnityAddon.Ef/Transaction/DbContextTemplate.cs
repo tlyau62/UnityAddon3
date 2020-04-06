@@ -25,6 +25,10 @@ namespace UnityAddon.Ef.Transaction
     /// <typeparam name="TDbContext"></typeparam>
     public class DbContextTemplate : IDbContextTemplate
     {
+        // TODO allow multi interceptors, change to List<ITransactionInterceptor>
+        [OptionalDependency]
+        public ITransactionInterceptor TransactionInterceptor { get; set; }
+
         private static MethodInfo LogicInvokerMethod = typeof(DbContextTemplate).GetMethod(nameof(LogicInvoker), BindingFlags.NonPublic | BindingFlags.Instance);
 
         private IDictionary<Type, List<object>> _rollbackLogics;
@@ -59,6 +63,7 @@ namespace UnityAddon.Ef.Transaction
                 }
 
                 var tx = ctx.Database.BeginTransaction();
+                TransactionInterceptor?.Begin();
 
                 try
                 {
@@ -67,11 +72,15 @@ namespace UnityAddon.Ef.Transaction
                     if (TestRollback(result))
                     {
                         tx.Rollback();
+                        TransactionInterceptor?.Rollback();
                     }
                     else
                     {
                         ctx.SaveChanges();
                         tx.Commit();
+                        // TODO try-catch all operations of interceptor,
+                        // exception in interceptor should not be thrown out after tx has already committed
+                        TransactionInterceptor?.Commit();
                     }
 
                     return result;
@@ -79,6 +88,7 @@ namespace UnityAddon.Ef.Transaction
                 catch (Exception)
                 {
                     tx.Rollback();
+                    TransactionInterceptor?.Rollback();
                     throw;
                 }
                 finally
