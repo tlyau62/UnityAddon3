@@ -22,6 +22,7 @@
     <Compile Include="Transaction\RequireDbContextAttribute.cs" />
     <Compile Include="Transaction\TransactionCallbacks.cs" />
     <Compile Include="Transaction\TransactionInterceptor.cs" />
+    <Compile Include="Transaction\TransactionInterceptorManager.cs" />
     <Compile Include="Transaction\TransactionManager.cs" />
     <Compile Include="Transaction\RequireDbContextHandler.cs" />
     <Compile Include="Transaction\RequireDbContextInterceptor.cs" />
