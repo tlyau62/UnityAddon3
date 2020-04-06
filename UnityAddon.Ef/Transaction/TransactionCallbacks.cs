@@ -15,7 +15,6 @@ namespace UnityAddon.Ef.Transaction
         void OnCommit(Action callback);
     }
 
-    [Component]
     public class TransactionCallbacks : ITransactionCallbacks, ITransactionInterceptor
     {
         private AsyncLocal<List<Action>> _callbacks;
@@ -37,7 +36,8 @@ namespace UnityAddon.Ef.Transaction
                 try
                 {
                     c();
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     // TODO log
                 }

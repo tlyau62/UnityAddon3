@@ -17,6 +17,7 @@ namespace UnityAddon.Ef.Transaction
         TDbContext GetDbContext<TDbContext>() where TDbContext : DbContext;
         DbSet<TEntity> GetEntity<TDbContext, TEntity>() where TDbContext : DbContext where TEntity : class;
         bool TestRollback(object returnValue);
+        void RegisterTransactionCallback(Action callback);
     }
 
     /// <summary>
@@ -31,13 +32,16 @@ namespace UnityAddon.Ef.Transaction
 
         private IUnityContainer _container;
 
-        private TransactionInterceptorManager _txItrManager { get; set; }
+        private TransactionInterceptorManager _txItrManager;
 
-        public DbContextTemplate(IDictionary<Type, List<object>> rollbackLogics, IUnityContainer container, TransactionInterceptorManager txItrManager)
+        private ITransactionCallbacks _txCallbacks;
+
+        public DbContextTemplate(IDictionary<Type, List<object>> rollbackLogics, IUnityContainer container, TransactionInterceptorManager txItrManager, ITransactionCallbacks txCallbacks)
         {
             _rollbackLogics = rollbackLogics;
             _container = container;
             _txItrManager = txItrManager;
+            _txCallbacks = txCallbacks;
         }
 
         public TTxResult ExecuteQuery<TDbContext, TTxResult>(Func<TDbContext, TTxResult> query, string noModifyMsg) where TDbContext : DbContext
@@ -181,6 +185,11 @@ namespace UnityAddon.Ef.Transaction
             }
 
             return null;
+        }
+
+        public void RegisterTransactionCallback(Action callback)
+        {
+            _txCallbacks.OnCommit(callback);
         }
     }
 }

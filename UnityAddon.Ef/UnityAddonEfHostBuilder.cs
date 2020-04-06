@@ -7,6 +7,7 @@ using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Aop;
 using UnityAddon.Ef.Transaction;
+using Unity.Lifetime;
 
 namespace UnityAddon.Ef
 {
@@ -24,6 +25,10 @@ namespace UnityAddon.Ef
                 })
                 .ConfigureContainer<IUnityContainer>(c =>
                 {
+                    c.RegisterTypeUA<TransactionCallbacks, TransactionCallbacks>(new ContainerControlledLifetimeManager())
+                     .RegisterInstanceUA<ITransactionInterceptor>(c.ResolveUA<TransactionCallbacks>())
+                     .RegisterInstanceUA<ITransactionCallbacks>(c.ResolveUA<TransactionCallbacks>());
+
                     c.RegisterInstanceUA(c.Resolve<DbContextTemplateBuilder>().Build(c));
                 });
         }

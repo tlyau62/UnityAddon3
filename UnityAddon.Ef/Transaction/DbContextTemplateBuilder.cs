@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Unity;
+using UnityAddon.Core;
 
 namespace UnityAddon.Ef.Transaction
 {
@@ -39,9 +40,11 @@ namespace UnityAddon.Ef.Transaction
 
         public IDbContextTemplate Build(IUnityContainer container)
         {
-            var txInterceptors = _txInterceptors.Select(t => (ITransactionInterceptor)container.Resolve(t));
+            AddTransactionInterceptor<TransactionCallbacks>();
 
-            return new DbContextTemplate(_rollbackLogics, container, new TransactionInterceptorManager(txInterceptors));
+            var txInterceptors = _txInterceptors.Select(t => (ITransactionInterceptor)container.Resolve(t)); // tolist will cause error, resolve too early
+
+            return new DbContextTemplate(_rollbackLogics, container, new TransactionInterceptorManager(txInterceptors), container.Resolve<TransactionCallbacks>());
         }
     }
 }
