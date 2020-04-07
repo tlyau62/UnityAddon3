@@ -60,11 +60,6 @@ namespace UnityAddon.Core
 
         public static IHostBuilder ScanComponentsUA(this IHostBuilder hostBuilder, Assembly assembly, params string[] namespaces)
         {
-            return hostBuilder.ScanComponentsUA(assembly, (b) => { }, namespaces);
-        }
-
-        public static IHostBuilder ScanComponentsUA(this IHostBuilder hostBuilder, Assembly assembly, Action<ComponentScannerBuilder> config, params string[] namespaces)
-        {
             return hostBuilder.ConfigureContainer<IUnityContainer>((s, c) =>
             {
                 var callbacks = c.ResolveUA<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>();
