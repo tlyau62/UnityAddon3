@@ -9,7 +9,6 @@ using System.Text;
 
 namespace UnityAddon.Hangfire
 {
-    [Component]
     public class HangfireProxyInterceptor : IInterceptor
     {
         [OptionalDependency]
