@@ -44,7 +44,8 @@ namespace UnityAddon.Core
                     beanDefCol.Add(new SimpleBeanDefinition(typeof(IUnityContainer)));
 
                     c.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager())
-                     .RegisterInstanceUA((IBeanDefinitionCollection)beanDefCol, "core");
+                     .RegisterInstanceUA((IBeanDefinitionCollection)beanDefCol, "core")
+                     .RegisterInstanceUA<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>(new List<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>());
                 })
                 .ScanComponentsUA("UnityAddon.Core")
                 .MergeFromServiceCollectionUA()
@@ -66,14 +67,9 @@ namespace UnityAddon.Core
         {
             return hostBuilder.ConfigureContainer<IUnityContainer>((s, c) =>
             {
-                var defCollection = c.ResolveUA<IBeanDefinitionCollection>("core");
-                var cpScannerBuilder = new ComponentScannerBuilder();
+                var callbacks = c.ResolveUA<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>();
 
-                config(cpScannerBuilder);
-
-                var defs = cpScannerBuilder.Build().ScanComponents(assembly, namespaces);
-
-                ((BeanDefinitionCollection)defCollection).AddRange(defs);
+                callbacks.Add(cs => cs.ScanComponents(assembly, namespaces));
             });
         }
 
@@ -122,7 +118,10 @@ namespace UnityAddon.Core
             var config = hostContainer.Resolve<IConfiguration>();
             var beanDefFilters = hostContainer
                 .Resolve<BeanDefintionCandidateSelectorBuilder>().Build(config);
+            var compScanner = hostContainer.ResolveUA<ComponentScannerBuilder>().Build(hostContainer);
+            var compScannedDefs = hostContainer.ResolveUA<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>().SelectMany(cb => cb(compScanner));
             var beanDefCollection = hostContainer.Resolve<IBeanDefinitionCollection>("core")
+                .Union(compScannedDefs)
                 .Where(d => !d.FromComponentScanning || beanDefFilters.Filter(d));
             var configParser = new ConfigurationParser();
 
