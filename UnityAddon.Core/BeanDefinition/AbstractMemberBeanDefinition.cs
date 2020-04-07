@@ -25,9 +25,13 @@ namespace UnityAddon.Core.BeanDefinition
 
         string Namespace { get; }
 
+        // TODO: currently unused
         bool RequireFactory { get; }
 
+        // TODO: currently unused
         bool RequireAssignableTypes { get; }
+
+        bool FromComponentScanning { get; set; }
     }
 
     public class SimpleBeanDefinition : IBeanDefinition
@@ -58,6 +62,8 @@ namespace UnityAddon.Core.BeanDefinition
         public bool RequireFactory => false;
 
         public bool RequireAssignableTypes => false;
+
+        public bool FromComponentScanning { get => false; set => throw new InvalidOperationException(); }
     }
 
     /// <summary>
@@ -125,6 +131,8 @@ namespace UnityAddon.Core.BeanDefinition
         public bool RequireFactory => true;
 
         public abstract bool RequireAssignableTypes { get; }
+
+        public bool FromComponentScanning { get; set; } = false;
     }
 
     public class TypeBeanDefinition : AbstractMemberBeanDefinition

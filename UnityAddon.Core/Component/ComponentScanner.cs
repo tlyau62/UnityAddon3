@@ -37,7 +37,10 @@ namespace UnityAddon.Core.Component
             var components = asm.GetTypes()
                 .Where(t => t.Namespace != null && regexes.Any(regex => regex.IsMatch(t.Namespace)))
                 .Where(t => t.HasAttribute<ComponentAttribute>(true))
-                .Select(t => new TypeBeanDefinition(t));
+                .Select(t => new TypeBeanDefinition(t)
+                {
+                    FromComponentScanning = true
+                });
 
             return components.Union(ConfigurationParser.Parse(components));
         }

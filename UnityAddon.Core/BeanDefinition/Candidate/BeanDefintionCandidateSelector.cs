@@ -31,20 +31,22 @@ namespace UnityAddon.Core.BeanDefinition
 
         public IEnumerable<IBeanDefinition> Select(IEnumerable<IBeanDefinition> beanDefinitions)
         {
-            return beanDefinitions.Where(def =>
+            return beanDefinitions.Where(def => Filter(def));
+        }
+
+        public bool Filter(IBeanDefinition definition)
+        {
+            if (_excludeFilters.Any(f => f.IsMatch(definition, _configuration)))
             {
-                if (_excludeFilters.Any(f => f.IsMatch(def, _configuration)))
-                {
-                    return false;
-                }
-
-                if (_includeFilters.Count() == 0 || _includeFilters.Any(f => f.IsMatch(def, _configuration)))
-                {
-                    return true;
-                }
-
                 return false;
-            });
+            }
+
+            if (_includeFilters.Count() == 0 || _includeFilters.Any(f => f.IsMatch(definition, _configuration)))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

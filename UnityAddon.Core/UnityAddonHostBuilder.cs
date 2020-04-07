@@ -110,7 +110,8 @@ namespace UnityAddon.Core
             var config = hostContainer.Resolve<IConfiguration>();
             var beanDefFilters = hostContainer
                 .Resolve<BeanDefintionCandidateSelectorBuilder>().Build(config);
-            var beanDefCollection = beanDefFilters.Select(hostContainer.Resolve<IBeanDefinitionCollection>());
+            var beanDefCollection = hostContainer.Resolve<IBeanDefinitionCollection>()
+                .Where(d => !d.FromComponentScanning || beanDefFilters.Filter(d));
 
             hostContainer
                 .Resolve<IBeanDefinitionContainer>()
