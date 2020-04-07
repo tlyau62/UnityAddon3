@@ -71,6 +71,18 @@ namespace UnityAddon.Core
             return container;
         }
 
+        public static IUnityContainer RegisterFactoryUA<T>(this IUnityContainer container, string name, Func<IUnityContainer, Type, string, T> factory, IFactoryLifetimeManager lifetimeManager)
+        {
+            var beanDef = new SimpleBeanDefinition(typeof(T), name);
+
+            container.Resolve<IBeanDefinitionContainer>()
+                .RegisterBeanDefinition(beanDef);
+
+            container.RegisterFactory(typeof(T), name, (c, t, n) => factory(c, t, n), lifetimeManager);
+
+            return container;
+        }
+
         public static IEnumerable<T> ResolveAllUA<T>(this IUnityContainer container)
         {
             return container.Resolve<IBeanDefinitionContainer>()

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Unity;
@@ -47,6 +47,16 @@ namespace UnityAddon.Core
         public static IUnityContainer RegisterInstanceUA<T>(this IUnityContainer container, T instance)
         {
             return container.RegisterInstanceUA(instance, null);
+        }
+
+        public static IUnityContainer RegisterFactoryUA<T>(this IUnityContainer container, Func<IUnityContainer, Type, string, T> factory, IFactoryLifetimeManager lifetimeManager)
+        {
+            return container.RegisterFactoryUA(null, factory, lifetimeManager);
+        }
+
+        public static IUnityContainer RegisterFactoryUA<T>(this IUnityContainer container, Func<IUnityContainer, Type, string, T> factory)
+        {
+            return container.RegisterFactoryUA(null, factory, new ContainerControlledLifetimeManager());
         }
 
         public static void UnregisterUA<T>(this IUnityContainer container, string name = null)
