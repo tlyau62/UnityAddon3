@@ -2,27 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Unity;
 using UnityAddon.Core.Bean;
 
 namespace UnityAddon.Core.Component
 {
     public class ComponentScannerBuilder
     {
-        private IList<IComponentScannerStrategy> _scannerStrategies = new List<IComponentScannerStrategy>();
+        private IList<Type> _scannerStrategies = new List<Type>();
 
         public ComponentScannerBuilder()
         {
-            AddComponentScannerStrategy(new DefaultComponentScannerStrategy());
+            AddComponentScannerStrategy<DefaultComponentScannerStrategy>();
         }
 
-        public void AddComponentScannerStrategy(IComponentScannerStrategy componentScannerStrategy)
+        public void AddComponentScannerStrategy<T>() where T : IComponentScannerStrategy
         {
-            _scannerStrategies.Add(componentScannerStrategy);
+            _scannerStrategies.Add(typeof(T));
         }
 
-        public ComponentScanner Build()
+        public ComponentScanner Build(IUnityContainer container)
         {
-            return new ComponentScanner(_scannerStrategies.OrderBy(stg => Ordered.GetOrder(stg.GetType())));
+            return new ComponentScanner(
+                _scannerStrategies.OrderBy(stg =>
+                    Ordered.GetOrder(stg)).Select(stg => (IComponentScannerStrategy)container.Resolve(stg)));
         }
     }
 }
