@@ -44,7 +44,8 @@ namespace UnityAddon.Core
                     beanDefCol.Add(new SimpleBeanDefinition(typeof(IUnityContainer)));
 
                     c.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager())
-                     .RegisterInstanceUA((IBeanDefinitionCollection)beanDefCol, "core");
+                     .RegisterInstanceUA((IBeanDefinitionCollection)beanDefCol, "core")
+                     .RegisterFactoryUA((c, t, n) => c.Resolve<ComponentScannerBuilder>().Build());
                 })
                 .ScanComponentsUA("UnityAddon.Core")
                 .MergeFromServiceCollectionUA()
@@ -116,6 +117,9 @@ namespace UnityAddon.Core
                 .Resolve<BeanDefintionCandidateSelectorBuilder>().Build(config);
             var beanDefCollection = hostContainer.Resolve<IBeanDefinitionCollection>("core")
                 .Where(d => !d.FromComponentScanning || beanDefFilters.Filter(d));
+            var configParser = new ConfigurationParser();
+
+            beanDefCollection = beanDefCollection.Union(configParser.Parse(beanDefCollection));
 
             hostContainer
                 .Resolve<IBeanDefinitionContainer>()
