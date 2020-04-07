@@ -128,6 +128,17 @@ namespace UnityAddon.Core
                 .ResolveUA<BeanFactory>()
                 .CreateFactory(beanDefCollection, hostContainer);
 
+            foreach (var defCollection in hostContainer.ResolveAllUA<IEnumerable<IBeanDefinition>>())
+            {
+                hostContainer
+                    .Resolve<IBeanDefinitionContainer>()
+                    .RegisterBeanDefinitions(defCollection);
+
+                hostContainer
+                    .ResolveUA<BeanFactory>()
+                    .CreateFactory(defCollection, hostContainer);
+            }
+
             return host;
         }
     }
