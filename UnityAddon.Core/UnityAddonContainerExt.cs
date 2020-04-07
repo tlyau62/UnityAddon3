@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using Unity;
@@ -21,7 +21,7 @@ namespace UnityAddon.Core
 
         public static IUnityContainer RegisterTypeUA<ResolveType, ImplType>(this IUnityContainer container, params InjectionMember[] injectionMembers)
         {
-            return container.RegisterTypeUA<ResolveType, ImplType>(null, new ContainerControlledTransientManager(), injectionMembers);
+            return container.RegisterTypeUA<ResolveType, ImplType>(null, new ContainerControlledLifetimeManager(), injectionMembers);
         }
 
         public static IUnityContainer RegisterTypeUA<ResolveType, ImplType>(this IUnityContainer container, ITypeLifetimeManager lifetimeManager, params InjectionMember[] injectionMembers)
