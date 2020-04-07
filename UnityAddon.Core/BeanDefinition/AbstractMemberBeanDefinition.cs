@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Unity.Lifetime;
 using System.Runtime.InteropServices;
+using Unity;
 
 namespace UnityAddon.Core.BeanDefinition
 {
@@ -25,13 +26,17 @@ namespace UnityAddon.Core.BeanDefinition
 
         string Namespace { get; }
 
-        // TODO: currently unused
         bool RequireFactory { get; }
 
         // TODO: currently unused
         bool RequireAssignableTypes { get; }
 
         bool FromComponentScanning { get; set; }
+    }
+
+    public interface IScopedBeanDefinition
+    {
+        public Type BeanScope { get; }
     }
 
     public class SimpleBeanDefinition : IBeanDefinition
@@ -59,17 +64,35 @@ namespace UnityAddon.Core.BeanDefinition
 
         public string Namespace { get => BeanType.Name; }
 
-        public bool RequireFactory => false;
+        public virtual bool RequireFactory => false;
 
         public bool RequireAssignableTypes => false;
 
         public bool FromComponentScanning { get => false; set => throw new InvalidOperationException(); }
     }
 
+    public class SimpleFactoryBeanDefinition : SimpleBeanDefinition, IScopedBeanDefinition
+    {
+        public SimpleFactoryBeanDefinition(Type beanType, Func<IUnityContainer, Type, string, object> ctor) : this(beanType, null, ctor)
+        {
+        }
+
+        public SimpleFactoryBeanDefinition(Type beanType, string beanName, Func<IUnityContainer, Type, string, object> ctor, params string[] beanQualifiers) : base(beanType, beanName, beanQualifiers)
+        {
+            Constructor = ctor;
+        }
+
+        public Func<IUnityContainer, Type, string, object> Constructor { get; }
+
+        public Type BeanScope { get; set; } = typeof(ContainerControlledLifetimeManager);
+
+        public override bool RequireFactory => true;
+    }
+
     /// <summary>
     /// A receipt for bean construction.
     /// </summary>
-    public abstract class AbstractMemberBeanDefinition : IBeanDefinition
+    public abstract class AbstractMemberBeanDefinition : IBeanDefinition, IScopedBeanDefinition
     {
         private MemberInfo _member;
 

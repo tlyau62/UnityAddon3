@@ -33,10 +33,20 @@ namespace UnityAddon.Core.Bean
 
         public void CreateFactory(IEnumerable<IBeanDefinition> beanDefinitions, IUnityContainer container)
         {
-            foreach (var def in beanDefinitions.Where(d => d is AbstractMemberBeanDefinition))
+            foreach (var def in beanDefinitions.Where(d => d.RequireFactory))
             {
                 CreateFactory((dynamic)def, container);
             }
+        }
+
+        public void CreateFactory(SimpleFactoryBeanDefinition simpFactoryBeanDef, IUnityContainer container)
+        {
+            var type = simpFactoryBeanDef.BeanType;
+            var scope = simpFactoryBeanDef.BeanScope;
+            var beanName = simpFactoryBeanDef.BeanName;
+            var ctor = simpFactoryBeanDef.Constructor;
+
+            container.RegisterFactory(type, beanName, ctor, BuildScope<IFactoryLifetimeManager>(scope));
         }
 
         public void CreateFactory(TypeBeanDefinition typeBeanDefinition, IUnityContainer container)
