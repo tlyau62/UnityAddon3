@@ -13,9 +13,9 @@ namespace UnityAddon.CoreTest.Configuration.EnumBeanDefinition
     public class EnumBeanDefinitionConfig
     {
         [Bean]
-        public virtual IEnumerable<IBeanDefinition> BeanDefinitions()
+        public virtual IBeanDefinitionCollection BeanDefinitions()
         {
-            var defs = new List<IBeanDefinition>();
+            var defs = new BeanDefinitionCollection();
 
             defs.Add(new SimpleFactoryBeanDefinition(typeof(string), (c, t, s) => "test"));
 

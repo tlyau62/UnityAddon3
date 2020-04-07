@@ -39,8 +39,12 @@ namespace UnityAddon.Core
             return hostBuilder.UseUnityServiceProvider(container)
                 .ConfigureContainer<IUnityContainer>(c =>
                 {
+                    var beanDefCol = new BeanDefinitionCollection("CORE");
+
+                    beanDefCol.Add(new SimpleBeanDefinition(typeof(IUnityContainer)));
+
                     c.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager())
-                     .RegisterTypeUA<IBeanDefinitionCollection, BeanDefinitionCollection>(new ContainerControlledLifetimeManager());
+                     .RegisterInstanceUA((IBeanDefinitionCollection)beanDefCol, "core");
                 })
                 .ScanComponentsUA("UnityAddon.Core")
                 .MergeFromServiceCollectionUA()
@@ -57,7 +61,7 @@ namespace UnityAddon.Core
         {
             return hostBuilder.ConfigureContainer<IUnityContainer>((s, c) =>
             {
-                var defCollection = c.ResolveUA<IBeanDefinitionCollection>();
+                var defCollection = c.ResolveUA<IBeanDefinitionCollection>("core");
                 var scanner = c.Resolve<ComponentScanner>();
                 var defs = scanner.ScanComponents(assembly, namespaces);
 
@@ -84,7 +88,7 @@ namespace UnityAddon.Core
                 })
                 .ConfigureContainer<IUnityContainer>((s, c) =>
                 {
-                    var defCollection = c.ResolveUA<IBeanDefinitionCollection>();
+                    var defCollection = c.ResolveUA<IBeanDefinitionCollection>("core");
 
                     ((BeanDefinitionCollection)defCollection).AddRange(defs);
                 });
@@ -110,7 +114,7 @@ namespace UnityAddon.Core
             var config = hostContainer.Resolve<IConfiguration>();
             var beanDefFilters = hostContainer
                 .Resolve<BeanDefintionCandidateSelectorBuilder>().Build(config);
-            var beanDefCollection = hostContainer.Resolve<IBeanDefinitionCollection>()
+            var beanDefCollection = hostContainer.Resolve<IBeanDefinitionCollection>("core")
                 .Where(d => !d.FromComponentScanning || beanDefFilters.Filter(d));
 
             hostContainer
@@ -128,7 +132,7 @@ namespace UnityAddon.Core
                 .ResolveUA<BeanFactory>()
                 .CreateFactory(beanDefCollection, hostContainer);
 
-            foreach (var defCollection in hostContainer.ResolveAllUA<IEnumerable<IBeanDefinition>>())
+            foreach (var defCollection in hostContainer.ResolveAllUA<IBeanDefinitionCollection>().Where(c => c.Name != "CORE"))
             {
                 hostContainer
                     .Resolve<IBeanDefinitionContainer>()
