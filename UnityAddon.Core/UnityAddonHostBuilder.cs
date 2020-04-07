@@ -44,8 +44,7 @@ namespace UnityAddon.Core
                     beanDefCol.Add(new SimpleBeanDefinition(typeof(IUnityContainer)));
 
                     c.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager())
-                     .RegisterInstanceUA((IBeanDefinitionCollection)beanDefCol, "core")
-                     .RegisterFactoryUA((c, t, n) => c.Resolve<ComponentScannerBuilder>().Build());
+                     .RegisterInstanceUA((IBeanDefinitionCollection)beanDefCol, "core");
                 })
                 .ScanComponentsUA("UnityAddon.Core")
                 .MergeFromServiceCollectionUA()
@@ -60,11 +59,19 @@ namespace UnityAddon.Core
 
         public static IHostBuilder ScanComponentsUA(this IHostBuilder hostBuilder, Assembly assembly, params string[] namespaces)
         {
+            return hostBuilder.ScanComponentsUA(assembly, (b) => { }, namespaces);
+        }
+
+        public static IHostBuilder ScanComponentsUA(this IHostBuilder hostBuilder, Assembly assembly, Action<ComponentScannerBuilder> config, params string[] namespaces)
+        {
             return hostBuilder.ConfigureContainer<IUnityContainer>((s, c) =>
             {
                 var defCollection = c.ResolveUA<IBeanDefinitionCollection>("core");
-                var scanner = c.Resolve<ComponentScanner>();
-                var defs = scanner.ScanComponents(assembly, namespaces);
+                var cpScannerBuilder = new ComponentScannerBuilder();
+
+                config(cpScannerBuilder);
+
+                var defs = cpScannerBuilder.Build().ScanComponents(assembly, namespaces);
 
                 ((BeanDefinitionCollection)defCollection).AddRange(defs);
             });
