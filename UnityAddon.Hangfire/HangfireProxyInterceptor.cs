@@ -6,12 +6,15 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using Unity;
+using UnityAddon.Ef.Transaction;
 
 namespace UnityAddon.Hangfire
 {
+    [Component]
     public class HangfireProxyInterceptor : IInterceptor
     {
-        [OptionalDependency]
+        [Dependency]
         public ITransactionCallbacks TransactionCallbacks { get; set; }
 
         private MethodInfo _enqueue;
@@ -27,23 +30,22 @@ namespace UnityAddon.Hangfire
              * https://docs.hangfire.io/en/latest/background-methods/writing-unit-tests.html
              */
             _enqueue = typeof(BackgroundJob).GetMethods()
-                    .Where(m =>
-                    {
-                        if (m.Name != "Enqueue" || !m.IsGenericMethodDefinition)
-                            return false;
-                        var p = m.GetParameters();
-                        if (p.Length != 1)
-                            return false;
-                        var pt = p[0].ParameterType;
-                        if (!pt.IsGenericType)
-                            return false;
-                        var pg = pt.GetGenericTypeDefinition();
-                        if (pg != typeof(Expression<>))
-                            return false;
-                        var pgg = pt.GetGenericArguments()[0];
-                        return pgg.IsGenericType && pgg.GetGenericTypeDefinition() == typeof(Action<>);
-                    })
-                    .First();
+                .Where(m =>
+                {
+                    if (m.Name != "Enqueue" || !m.IsGenericMethodDefinition)
+                        return false;
+                    var p = m.GetParameters();
+                    if (p.Length != 1)
+                        return false;
+                    var pt = p[0].ParameterType;
+                    if (!pt.IsGenericType)
+                        return false;
+                    var pg = pt.GetGenericTypeDefinition();
+                    if (pg != typeof(Expression<>))
+                        return false;
+                    var pgg = pt.GetGenericArguments()[0];
+                    return pgg.IsGenericType && pgg.GetGenericTypeDefinition() == typeof(Action<>);
+                }).First();
         }
 
         public void Intercept(IInvocation invocation)
@@ -66,7 +68,9 @@ namespace UnityAddon.Hangfire
                 TransactionCallbacks.OnCommit(callback);
             }
             else
+            {
                 callback();
+            }
         }
     }
 }

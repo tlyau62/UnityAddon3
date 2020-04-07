@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using UnityAddon.Core;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.Component;
 using UnityAddon.Core.Reflection;
@@ -12,12 +13,12 @@ namespace UnityAddon.Hangfire
     {
         public IBeanDefinition Create(Type type)
         {
-            var ProxyGenerator = new ProxyGenerator();
-            var HangfireProxyInterceptor = new HangfireProxyInterceptor();
-
             return new SimpleFactoryBeanDefinition(type, (c, t, n) =>
             {
-                return ProxyGenerator.CreateInterfaceProxyWithoutTarget(t, HangfireProxyInterceptor);
+                var proxyGenerator = c.ResolveUA<ProxyGenerator>();
+                var hangfireProxyInterceptor = c.ResolveUA<HangfireProxyInterceptor>();
+
+                return proxyGenerator.CreateInterfaceProxyWithoutTarget(t, hangfireProxyInterceptor);
             });
         }
 
