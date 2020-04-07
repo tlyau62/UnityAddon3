@@ -42,9 +42,12 @@ namespace UnityAddon.Ef.Transaction
         {
             AddTransactionInterceptor<TransactionCallbacks>();
 
-            var txInterceptors = _txInterceptors.Select(t => (ITransactionInterceptor)container.Resolve(t)); // tolist will cause error, resolve too early
+            var txCallbacks = container.Resolve<TransactionCallbacks>();
+            var txInterceptors = _txInterceptors.Select(t => (ITransactionInterceptor)container.Resolve(t)).ToList();
 
-            return new DbContextTemplate(_rollbackLogics, container, new TransactionInterceptorManager(txInterceptors), container.Resolve<TransactionCallbacks>());
+            txInterceptors.Add(txCallbacks);
+
+            return new DbContextTemplate(_rollbackLogics, container, new TransactionInterceptorManager(txInterceptors), txCallbacks);
         }
     }
 }

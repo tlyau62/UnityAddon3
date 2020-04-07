@@ -23,13 +23,12 @@ namespace UnityAddon.Ef
                         .AddAopIntercetor<RequireDbContextInterceptor>()
                         .AddAopIntercetor<RepositoryInterceptor>();
                 })
-                .ConfigureContainer<IUnityContainer>(c =>
+                .ConfigureContainer<IUnityContainer>(container =>
                 {
-                    c.RegisterTypeUA<TransactionCallbacks, TransactionCallbacks>(new ContainerControlledLifetimeManager())
-                     .RegisterInstanceUA<ITransactionInterceptor>(c.ResolveUA<TransactionCallbacks>())
-                     .RegisterInstanceUA<ITransactionCallbacks>(c.ResolveUA<TransactionCallbacks>());
+                    container.RegisterTypeUA<TransactionCallbacks, TransactionCallbacks>(new ContainerControlledLifetimeManager())
+                     .RegisterInstanceUA<ITransactionCallbacks>(container.ResolveUA<TransactionCallbacks>());
 
-                    c.RegisterInstanceUA(c.Resolve<DbContextTemplateBuilder>().Build(c));
+                    container.RegisterFactoryUA((c, t, n) => c.Resolve<DbContextTemplateBuilder>().Build(c));
                 });
         }
 
