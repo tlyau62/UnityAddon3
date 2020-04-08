@@ -9,7 +9,7 @@ using UnityAddon.Core.Attributes;
 // TODO Hangfire should be moved to a new Addon plugin project, it depends on Addon.Ef
 namespace UnityAddon.Hangfire
 {
-    [AttributeUsage(AttributeTargets.Interface)]
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property)]
     public class HangfireProxyAttribute : ComponentAttribute
     {
     }
