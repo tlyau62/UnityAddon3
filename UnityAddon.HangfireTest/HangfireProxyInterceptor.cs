@@ -9,21 +9,21 @@ using UnityAddon.Ef.Transaction;
 using UnityAddon.Hangfire;
 using Xunit;
 
-namespace UnityAddon.HangfireTest
+namespace UnityAddon.HangfireTest.HangfireProxyInterceptor
 {
     public interface IThumbnailTask
     {
         void CreateThumbnail();
     }
 
-    public class EnqueueTaskTest
+    public class HangfireProxyInterceptor
     {
         [Fact]
-        public void HangfireProxyInterceptor_EnqueueTask_TaskEnqueued()
+        public void EnqueueTask()
         {
             var client = new Mock<IBackgroundJobClient>();
             var proxyGenerator = new ProxyGenerator();
-            var hfInterceptor = new HangfireProxyInterceptor()
+            var hfInterceptor = new Hangfire.HangfireProxyInterceptor()
             {
                 BackgroundJobClient = client.Object
             };

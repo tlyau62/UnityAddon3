@@ -10,7 +10,7 @@ namespace UnityAddon.Hangfire
 {
     public static class UnityAddonHangfireHostBuilder
     {
-        public static IHostBuilder EnableUnityAddonHangfireEf(this IHostBuilder hostBuilder)
+        public static IHostBuilder EnableUnityAddonHangfire(this IHostBuilder hostBuilder)
         {
             return hostBuilder
                 .ConfigureUA<ComponentScannerBuilder>(c =>

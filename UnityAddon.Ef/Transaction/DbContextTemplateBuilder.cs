@@ -40,8 +40,6 @@ namespace UnityAddon.Ef.Transaction
 
         public IDbContextTemplate Build(IUnityContainer container)
         {
-            AddTransactionInterceptor<TransactionCallbacks>();
-
             var txCallbacks = container.Resolve<TransactionCallbacks>();
             var txInterceptors = _txInterceptors.Select(t => (ITransactionInterceptor)container.Resolve(t)).ToList();
 

@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\UnityAddon.EfTest\UnityAddon.EfTest.csproj" />
     <ProjectReference Include="..\UnityAddon.Hangfire\UnityAddon.Hangfire.csproj" />
   </ItemGroup>
 
