@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using Unity;
+using UnityAddon.Core.Attributes;
 using UnityAddon.Ef.Transaction;
 
 namespace UnityAddon.Hangfire

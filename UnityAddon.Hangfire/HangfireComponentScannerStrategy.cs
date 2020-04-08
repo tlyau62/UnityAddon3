@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.Component;
@@ -11,15 +12,20 @@ namespace UnityAddon.Hangfire
 {
     public class HangfireComponentScannerStrategy : IComponentScannerStrategy
     {
-        public IBeanDefinition Create(Type type)
+        public IBeanDefinitionCollection Create(Type type)
         {
-            return new SimpleFactoryBeanDefinition(type, (c, t, n) =>
-            {
-                var proxyGenerator = c.ResolveUA<ProxyGenerator>();
-                var hangfireProxyInterceptor = c.ResolveUA<HangfireProxyInterceptor>();
+            var beanDef = new TypeBeanDefinition(type);
+            var proxybeanDef = new SimpleFactoryBeanDefinition(type, $"{type.Name}HangfireProxy", ProxybeanFactory);
 
-                return proxyGenerator.CreateInterfaceProxyWithoutTarget(t, hangfireProxyInterceptor);
-            });
+            return new BeanDefinitionCollection() { beanDef, proxybeanDef };
+
+            object ProxybeanFactory(IUnityContainer container, Type type, string name)
+            {
+                var proxyGenerator = container.ResolveUA<ProxyGenerator>();
+                var hangfireProxyInterceptor = container.ResolveUA<HangfireProxyInterceptor>();
+
+                return proxyGenerator.CreateInterfaceProxyWithoutTarget(type, hangfireProxyInterceptor);
+            }
         }
 
         public bool IsMatch(Type type)
