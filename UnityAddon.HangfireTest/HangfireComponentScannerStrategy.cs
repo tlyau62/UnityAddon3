@@ -41,6 +41,25 @@ namespace UnityAddon.HangfireTest.HangfireComponentScannerStrategy
         void CreateThumbnail();
     }
 
+    [Component]
+    [Primary]
+    public class ThumbnailTask : IThumbnailTask
+    {
+        [Dependency]
+        public Logger Logger { get; set; }
+
+        public void CreateThumbnail()
+        {
+            Logger.Log += "A";
+        }
+    }
+
+    [Component]
+    public class Logger
+    {
+        public string Log = "";
+    }
+
     public class HangfireComponentScannerStrategy
     {
         [Dependency("client")]
@@ -51,6 +70,12 @@ namespace UnityAddon.HangfireTest.HangfireComponentScannerStrategy
 
         [Dependency]
         public Mock<IBackgroundJobClient> HfClientMock { get; set; }
+
+        [Dependency]
+        public IThumbnailTask ThumbnailTaskServer { get; set; }
+
+        [Dependency]
+        public Logger Logger { get; set; }
 
         public HangfireComponentScannerStrategy()
         {
@@ -64,7 +89,7 @@ namespace UnityAddon.HangfireTest.HangfireComponentScannerStrategy
         }
 
         [Fact]
-        public void ScanHangfireComponents()
+        public void ScanHangfireComponentsOnClient()
         {
             DbContextTemplate.ExecuteTransaction<TestDbContext, object>(ctx =>
             {
@@ -76,6 +101,14 @@ namespace UnityAddon.HangfireTest.HangfireComponentScannerStrategy
             HfClientMock.Verify(x => x.Create(
                It.Is<Job>(job => job.Method.Name == "CreateThumbnail"),
                It.IsAny<EnqueuedState>()));
+        }
+
+        [Fact]
+        public void ScanHangfireComponentsOnServer()
+        {
+            ThumbnailTaskServer.CreateThumbnail();
+
+            Assert.Equal("A", Logger.Log);
         }
     }
 }
