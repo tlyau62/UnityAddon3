@@ -68,7 +68,7 @@ namespace UnityAddon.Core.BeanDefinition
 
         public bool RequireAssignableTypes => false;
 
-        public bool FromComponentScanning { get => false; set => throw new InvalidOperationException(); }
+        public bool FromComponentScanning { get; set; } = false;
     }
 
     public class SimpleFactoryBeanDefinition : SimpleBeanDefinition, IScopedBeanDefinition
