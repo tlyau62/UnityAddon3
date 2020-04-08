@@ -35,7 +35,6 @@ namespace UnityAddon.HangfireTest.HangfireComponentScannerStrategy
     }
 
     [HangfireProxy]
-    [Qualifier("client")]
     public interface IThumbnailTask
     {
         void CreateThumbnail();
@@ -62,7 +61,7 @@ namespace UnityAddon.HangfireTest.HangfireComponentScannerStrategy
 
     public class HangfireComponentScannerStrategy
     {
-        [Dependency("client")]
+        [HangfireProxy]
         public IThumbnailTask ThumbnailTaskClient { get; set; }
 
         [Dependency]

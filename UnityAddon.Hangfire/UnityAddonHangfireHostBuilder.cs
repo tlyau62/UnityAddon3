@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using UnityAddon.Core;
 using UnityAddon.Core.Component;
+using UnityAddon.Core.DependencyInjection;
 
 namespace UnityAddon.Hangfire
 {
@@ -17,6 +18,12 @@ namespace UnityAddon.Hangfire
                 {
                     c.AddComponentScannerStrategy<HangfireComponentScannerStrategy>();
                 })
+                .ConfigureUA<DependencyResolverBuilder>(c =>
+                    c.AddResolveStrategy<HangfireProxyAttribute>((t, n, c) =>
+                    {
+                        return c.ResolveUA(t, $"{t.Name}HangfireProxy");
+                    })
+                )
                 .ScanComponentsUA(Assembly.GetExecutingAssembly(), "UnityAddon.Hangfire");
         }
     }
