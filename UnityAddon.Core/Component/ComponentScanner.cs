@@ -42,13 +42,16 @@ namespace UnityAddon.Core.Component
                 .Where(t => t.Namespace != null && regexes.Any(regex => regex.IsMatch(t.Namespace)))
                 .Where(t => t.HasAttribute<ComponentAttribute>(true))
                 .SkipWhile(t => !_scannerStrategies.Any(stg => stg.IsMatch(t)))
-                .Select(t =>
+                .SelectMany(t =>
                 {
-                    var def = _scannerStrategies.First(stg => stg.IsMatch(t)).Create(t);
+                    var defs = _scannerStrategies.First(stg => stg.IsMatch(t)).Create(t);
 
-                    def.FromComponentScanning = true;
+                    foreach (var def in defs)
+                    {
+                        def.FromComponentScanning = true;
+                    }
 
-                    return def;
+                    return defs;
                 });
         }
 

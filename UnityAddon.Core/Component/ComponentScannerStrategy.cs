@@ -12,15 +12,15 @@ namespace UnityAddon.Core.Component
     {
         bool IsMatch(Type type);
 
-        IBeanDefinition Create(Type type);
+        IBeanDefinitionCollection Create(Type type);
     }
 
     [Order(Ordered.LOWEST_PRECEDENCE)]
     public class DefaultComponentScannerStrategy : IComponentScannerStrategy
     {
-        public IBeanDefinition Create(Type type)
+        public IBeanDefinitionCollection Create(Type type)
         {
-            return new TypeBeanDefinition(type);
+            return new BeanDefinitionCollection() { new TypeBeanDefinition(type) };
         }
 
         public bool IsMatch(Type type)
