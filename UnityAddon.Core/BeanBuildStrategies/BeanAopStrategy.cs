@@ -65,7 +65,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
             {
                 if (ProxyUtil.IsProxy(context.Existing))
                 {
-                    context.Existing = ProxyGenerator.CreateInterfaceProxyWithoutTarget(context.Type, interceptors.ToArray());
+                    CastleProxyUtil.MergeProxy(context.Existing, interceptors);
                 }
                 else
                 {

@@ -1,6 +1,7 @@
 ﻿using Castle.DynamicProxy;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -10,10 +11,10 @@ namespace UnityAddon.Core.Reflection
     {
         public static void MergeProxy(object proxy, IEnumerable<IInterceptor> interceptors)
         {
-            dynamic dyn = proxy;
-            List<IInterceptor> itors = dyn.__interceptors;
+            var field = (FieldInfo)proxy.GetType().GetMember("__interceptors", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(0);
+            var proxyInterceptors = (IInterceptor[])field.GetValue(proxy);
 
-            itors.AddRange(interceptors);
+            field.SetValue(proxy, proxyInterceptors.ToList().Union(interceptors).ToArray());
         }
     }
 }
