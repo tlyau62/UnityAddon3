@@ -37,12 +37,15 @@ namespace UnityAddon.Core.BeanBuildStrategies
         [Dependency]
         public AopInterceptorContainer AopInterceptorContainer { get; set; }
 
+        [Dependency]
+        public ProxyGenerator ProxyGenerator { get; set; }
+
         public override void PostBuildUp(ref BuilderContext context)
         {
             var interceptors = new List<IInterceptor>();
 
-            // class interceptor
-            var classInterceptorsMap = AopInterceptorContainer.FindInterceptors(AttributeTargets.Class);
+            // class/interface interceptor
+            var classInterceptorsMap = AopInterceptorContainer.FindInterceptors(AttributeTargets.Class | AttributeTargets.Interface);
 
             foreach (var attribute in context.Type.GetCustomAttributes(false))
             {
@@ -60,7 +63,14 @@ namespace UnityAddon.Core.BeanBuildStrategies
 
             if (interceptors.Count() > 0)
             {
-                context.Existing = InterfaceProxyFactory.CreateInterfaceProxy(context.Existing, interceptors.ToArray());
+                if (ProxyUtil.IsProxy(context.Existing))
+                {
+                    context.Existing = ProxyGenerator.CreateInterfaceProxyWithoutTarget(context.Type, interceptors.ToArray());
+                }
+                else
+                {
+                    context.Existing = InterfaceProxyFactory.CreateInterfaceProxy(context.Existing, interceptors.ToArray());
+                }
             }
 
             base.PostBuildUp(ref context);

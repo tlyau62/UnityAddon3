@@ -113,7 +113,7 @@ namespace UnityAddon.Core
             var config = hostContainer.Resolve<IConfiguration>();
             var beanDefFilters = hostContainer
                 .Resolve<BeanDefintionCandidateSelectorBuilder>().Build(config);
-            var compScanner = hostContainer.ResolveUA<ComponentScannerBuilder>().Build(hostContainer);
+            var compScanner = hostContainer.Resolve<ComponentScannerBuilder>().Build(hostContainer);
             var compScannedDefs = hostContainer.ResolveUA<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>().SelectMany(cb => cb(compScanner));
             var beanDefCollection = hostContainer.Resolve<IBeanDefinitionCollection>("core")
                 .Union(compScannedDefs)

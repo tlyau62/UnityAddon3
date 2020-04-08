@@ -25,7 +25,7 @@ namespace UnityAddon.Core.Component
 
         public bool IsMatch(Type type)
         {
-            return type.IsClass;
+            return true;
         }
     }
 }
