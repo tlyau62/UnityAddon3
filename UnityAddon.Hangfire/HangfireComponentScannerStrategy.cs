@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Unity;
 using UnityAddon.Core;
+using UnityAddon.Core.Attributes;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.Component;
 using UnityAddon.Core.Reflection;
@@ -14,10 +15,10 @@ namespace UnityAddon.Hangfire
     {
         public IBeanDefinitionCollection Create(Type type)
         {
-            var beanDef = new TypeBeanDefinition(type);
-            var proxybeanDef = new SimpleFactoryBeanDefinition(type, $"{type.Name}HangfireProxy", ProxybeanFactory);
+            var qualifiers = type.HasAttribute<QualifierAttribute>() ? type.GetAttribute<QualifierAttribute>().Values : new string[0];
+            var proxybeanDef = new SimpleFactoryBeanDefinition(type, $"{type.Name}HangfireProxy", ProxybeanFactory, qualifiers);
 
-            return new BeanDefinitionCollection() { beanDef, proxybeanDef };
+            return new BeanDefinitionCollection() { proxybeanDef };
 
             object ProxybeanFactory(IUnityContainer container, Type type, string name)
             {

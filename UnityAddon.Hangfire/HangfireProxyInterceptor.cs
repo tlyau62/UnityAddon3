@@ -20,6 +20,9 @@ namespace UnityAddon.Hangfire
 
         private MethodInfo _enqueue;
 
+        [Dependency]
+        public IBackgroundJobClient BackgroundJobClient { get; set; }
+
         public HangfireProxyInterceptor()
         {
             /*
@@ -57,11 +60,10 @@ namespace UnityAddon.Hangfire
                 .Select(a => Expression.Constant(a));
             var callExpr = Expression.Call(paramExpr, invocation.Method,
                 argExprs);
-            var lambdaType = typeof(Action<>).MakeGenericType(intrfcType);
-            var lambda = Expression.Lambda(lambdaType, callExpr, paramExpr);
+            var create = typeof(HangfireProxyInterceptor).GetMethod(nameof(CreateCallBack)).MakeGenericMethod(intrfcType);
+            var lambda = Expression.Lambda(callExpr, paramExpr);
 
-            var enqueue = _enqueue.MakeGenericMethod(intrfcType);
-            Action callback = () => enqueue.Invoke(null, new object[] { lambda });
+            Action callback = (Action)create.Invoke(this, new[] { lambda });
 
             if (TransactionCallbacks != null)
             {
@@ -72,6 +74,11 @@ namespace UnityAddon.Hangfire
             {
                 callback();
             }
+        }
+
+        public Action CreateCallBack<T>(Expression<Action<T>> expression)
+        {
+            return () => BackgroundJobClient.Enqueue(expression);
         }
     }
 }
