@@ -30,9 +30,11 @@ namespace UnityAddon.Core
 {
     public static class UnityAddonHostBuilder
     {
+        private static readonly string IS_NEW_CONTAINER = "__IS_NEW_CONTAINER";
+
         public static IHostBuilder RegisterUA(this IHostBuilder hostBuilder, IUnityContainer container = null)
         {
-            var isNewContainer = container == null;
+            hostBuilder.Properties[IS_NEW_CONTAINER] = container == null;
 
             container ??= new UnityContainer();
 
@@ -48,14 +50,7 @@ namespace UnityAddon.Core
                      .RegisterInstanceUA<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>(new List<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>());
                 })
                 .ScanComponentsUA("UnityAddon.Core")
-                .MergeFromServiceCollectionUA()
-                .ConfigureContainer<IUnityContainer>((s, c) =>
-                {
-                    if (isNewContainer)
-                    {
-                        c.Resolve<IHostApplicationLifetime>().ApplicationStopped.Register(() => c.Dispose());
-                    }
-                });
+                .MergeFromServiceCollectionUA();
         }
 
         public static IHostBuilder ScanComponentsUA(this IHostBuilder hostBuilder, Assembly assembly, params string[] namespaces)
@@ -146,6 +141,13 @@ namespace UnityAddon.Core
                 hostContainer
                     .ResolveUA<BeanFactory>()
                     .CreateFactory(defCollection, hostContainer);
+            }
+
+            if ((bool)hostBuilder.Properties[IS_NEW_CONTAINER])
+            {
+                hostContainer
+                    .Resolve<IHostApplicationLifetime>()
+                    .ApplicationStopped.Register(() => hostContainer.Dispose());
             }
 
             return host;
