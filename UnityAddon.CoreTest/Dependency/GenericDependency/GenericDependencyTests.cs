@@ -28,36 +28,38 @@ namespace UnityAddon.CoreTest.Dependency.GenericDependency
     }
 
     [Trait("Dependency", "GenericDependency")]
-    public class GenericDependencyTests
+    public class GenericDependencyTests : UnityAddonDefaultTest
     {
+        [Dependency]
+        public IService<int> IntService { get; set; }
+
+        [Dependency]
+        public IService<string> StringService { get; set; }
+
+        [Dependency]
+        public MainService MainService { get; set; }
+
+        [Dependency]
+        public IUnityContainer UnityContainer { get; set; }
+
         [Fact]
         public void BuildStrategy_DependencyOnGenericTypeBean_BeanInjected()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
+            Assert.Same(IntService, MainService.IntService);
+            Assert.Same(StringService, MainService.StringService);
 
-            var intService = appContext.Resolve<IService<int>>();
-            var stringService = appContext.Resolve<IService<string>>();
-            var mainService = appContext.Resolve<MainService>();
-
-            Assert.Same(intService, mainService.IntService);
-            Assert.Same(stringService, mainService.StringService);
-
-            Assert.IsType<IntService>(intService);
-            Assert.IsType<Service<string>>(stringService);
+            Assert.IsType<IntService>(IntService);
+            Assert.IsType<Service<string>>(StringService);
         }
 
         [Fact]
         public void BuildStrategy_CheckOnGenericTypeBeanIsRegistered_TrueReturned()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, false, GetType().Namespace);
-
-            Assert.True(appContext.IsRegistered<IntService>());
-            Assert.True(appContext.IsRegistered<IService<int>>());
-            Assert.True(appContext.IsRegistered<IService<string>>());
-            Assert.True(appContext.IsRegistered<IService<double>>());
-            Assert.True(appContext.IsRegistered(typeof(IService<>)));
+            Assert.True(UnityContainer.IsRegisteredUA<IntService>());
+            Assert.True(UnityContainer.IsRegisteredUA<IService<int>>());
+            Assert.True(UnityContainer.IsRegisteredUA<IService<string>>());
+            Assert.True(UnityContainer.IsRegisteredUA<IService<double>>());
+            Assert.True(UnityContainer.IsRegisteredUA(typeof(IService<>)));
         }
     }
 

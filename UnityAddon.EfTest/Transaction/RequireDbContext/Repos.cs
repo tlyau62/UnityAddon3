@@ -28,9 +28,9 @@ namespace UnityAddon.EfTest.Transaction.RequireDbContext
     public class RepoA : IRepoA
     {
         [Dependency]
-        public IDbContextTemplate<TestDbContext> DbContextTemplate { get; set; }
+        public IDbContextTemplate DbContextTemplate { get; set; }
 
-        private DbSet<Item> _items => DbContextTemplate.GetEntity<Item>();
+        private DbSet<Item> _items => DbContextTemplate.GetEntity<TestDbContext,Item>();
 
         [Dependency]
         public IRepoB RepoB { get; set; }
@@ -54,9 +54,9 @@ namespace UnityAddon.EfTest.Transaction.RequireDbContext
     public class RepoB : IRepoB
     {
         [Dependency]
-        public IDbContextTemplate<TestDbContext> DbContextTemplate { get; set; }
+        public IDbContextTemplate DbContextTemplate { get; set; }
 
-        private DbSet<Item> _items => DbContextTemplate.GetEntity<Item>();
+        private DbSet<Item> _items => DbContextTemplate.GetEntity<TestDbContext,Item>();
 
         [RequireDbContext(Transactional = true)]
         public void AddItem()

@@ -52,7 +52,14 @@ namespace UnityAddon.Core.Reflection
                 throw new InvalidOperationException("Type full name should not be null.");
             }
 
-            return Type.GetType(typeName) ?? type; // proxy type maybe null
+            try
+            {
+                return Type.GetType(typeName) ?? type; // proxy type maybe null    
+            }
+            catch
+            {
+                return type;
+            }
         }
 
         private static string TypeToString(Type t)

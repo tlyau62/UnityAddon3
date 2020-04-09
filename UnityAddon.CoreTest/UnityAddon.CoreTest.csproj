@@ -11,9 +11,69 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Aop\**" />
+    <Compile Remove="BeanPostConstruct\**" />
+    <Compile Remove="BeanPostProcessor\**" />
+    <Compile Remove="Bean\ApplicationContextBean\**" />
+    <Compile Remove="Bean\ProfileBean\**" />
+    <Compile Remove="ComponentScan\**" />
+    <Compile Remove="DependencyExceptions\NestedNoSuchBeanDefinitionException\**" />
+    <Compile Remove="DependencyExceptions\NoSuchBeanDefinitionException\**" />
+    <Compile Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
+    <Compile Remove="Resolve\**" />
+    <EmbeddedResource Remove="Aop\**" />
+    <EmbeddedResource Remove="BeanPostConstruct\**" />
+    <EmbeddedResource Remove="BeanPostProcessor\**" />
+    <EmbeddedResource Remove="Bean\ApplicationContextBean\**" />
+    <EmbeddedResource Remove="Bean\ProfileBean\**" />
+    <EmbeddedResource Remove="ComponentScan\**" />
+    <EmbeddedResource Remove="DependencyExceptions\NestedNoSuchBeanDefinitionException\**" />
+    <EmbeddedResource Remove="DependencyExceptions\NoSuchBeanDefinitionException\**" />
+    <EmbeddedResource Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
+    <EmbeddedResource Remove="Resolve\**" />
+    <None Remove="Aop\**" />
+    <None Remove="BeanPostConstruct\**" />
+    <None Remove="BeanPostProcessor\**" />
+    <None Remove="Bean\ApplicationContextBean\**" />
+    <None Remove="Bean\ProfileBean\**" />
+    <None Remove="ComponentScan\**" />
+    <None Remove="DependencyExceptions\NestedNoSuchBeanDefinitionException\**" />
+    <None Remove="DependencyExceptions\NoSuchBeanDefinitionException\**" />
+    <None Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
+    <None Remove="Resolve\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Aop\ClassAttributeInterceptor\ClassAttributeInterceptorTests.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\Attributes.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\Components.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\GenericMethodAttributeInterceptorTests.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\Interceptors.cs" />
+    <Compile Include="Aop\MethodAttributeInterceptor\Attributes.cs" />
+    <Compile Include="Aop\MethodAttributeInterceptor\Components.cs" />
+    <Compile Include="Aop\MethodAttributeInterceptor\Interceptors.cs" />
+    <Compile Include="Aop\MethodAttributeInterceptor\MethodAttributeInterceptorTests.cs" />
+    <Compile Include="BeanPostConstruct\AsyncResolve\AsyncResolveTests.cs" />
+    <Compile Include="BeanPostConstruct\NonProxyBean\NonProxyBeanTests.cs" />
+    <Compile Include="Bean\ProfileBean\ProfileBeanTests.cs" />
+    <Compile Include="ComponentScan\NamespaceExcludeFilter\NamespaceExcludeFilterTests.cs" />
+    <Compile Include="DependencyExceptions\NestedNoSuchBeanDefinitionException\NestedNoSuchBeanDefinitionExceptionTests.cs" />
+    <Compile Include="DependencyExceptions\NoSuchBeanDefinitionException\NoSuchBeanDefinitionExceptionTests.cs" />
+    <Compile Include="DependencyExceptions\NoUniqueBeanDefinitionException\NoUniqueBeanDefinitionExceptionTests.cs" />
+    <Compile Include="Resolve\IsRegistered\IsRegisteredTests.cs" />
+    <Compile Include="Resolve\ResolveAllByInterface\ResolveAllByInterfaceTests.cs" />
+    <Compile Include="Resolve\ResolveAllByPrimitive\ResolveAllByPrimitiveTests.cs" />
+    <Compile Include="Resolve\ResolveByBeanName\ResolveByBeanNameTests.cs" />
+    <Compile Include="Resolve\ResolveByNull\ResolveByNullTests.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.3" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
     <PackageReference Include="Moq" Version="4.13.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="Xunit.DependencyInjection" Version="6.1.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
   </ItemGroup>
 

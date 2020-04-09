@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Unity;
 using UnityAddon;
@@ -28,18 +29,18 @@ namespace UnityAddon.CoreTest.Resolve.ResolveAllByPrimitive
     }
 
     [Trait("Resolve", "ResolveAllByPrimitive")]
-    public class ResolveAllByPrimitiveTests
+    public class ResolveAllByPrimitiveTests : UnityAddonDefaultTest
     {
+        [Dependency]
+        public IUnityContainer UnityContainer { get; set; }
+
         [Fact]
         public void ApplicationContext_ResolveAllByPrimitive_AllQualifiedBeanResolved()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
+            var a = UnityContainer.ResolveUA<string>("a");
+            var b = UnityContainer.ResolveUA<string>("b");
 
-            var a = appContext.Resolve<string>("a");
-            var b = appContext.Resolve<string>("b");
-
-            var resolveAll = appContext.ResolveAll<string>();
+            var resolveAll = UnityContainer.ResolveAllUA<string>().ToArray();
 
             Assert.Same(a, resolveAll[0]);
             Assert.Same(b, resolveAll[1]);

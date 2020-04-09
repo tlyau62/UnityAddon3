@@ -22,7 +22,7 @@ namespace UnityAddon.CoreTest.Value
         public void ValueProvider_ParseValueByType_ValueParsed(Type valType, string valExpr, string valParsed, object expected)
         {
             var provider = new ValueProvider();
-            var configParserMock = new Mock<ConfigBracketParser>(null);
+            var configParserMock = new Mock<ConfigBracketParser>();
 
             configParserMock.Setup(m => m.Parse(It.Is<string>(str => str == valExpr))).Returns(valParsed);
 

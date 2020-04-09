@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Microsoft.Extensions.Hosting;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.BeanDefinition;
+using UnityAddon.Core.BeanDefinition.Candidate;
 using UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.B;
 using Xunit;
 
@@ -30,18 +33,23 @@ namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter
     [Trait("ComponentScan", "NamespaceExclude")]
     public class NamespaceFilterTests
     {
+        [Dependency]
+        public ISerivce Service { get; set; }
+
         [Fact]
         public void BeanDefinitionRegistry_ComponentScanNamespaceExcludeFilter_TargetNamespaceExluced()
         {
-            var unityContainer = new UnityContainer();
-            var excludeFilter = new ComponentScanNamespaceExcludeFilter("UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.A");
+            new HostBuilder()
+                .RegisterUA()
+                .ScanComponentsUA(GetType().Namespace)
+                .ConfigureUA<BeanDefintionCandidateSelectorBuilder>(config =>
+                {
+                    config.AddExcludeFilter(new NamespaceFilter("UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.A"));
+                })
+                .BuildUA()
+                .BuildTestUA(this);
 
-            unityContainer.RegisterInstance(excludeFilter);
-
-            var appCtx = new ApplicationContext(unityContainer, GetType().Namespace);
-            var service = appCtx.Resolve<ISerivce>();
-
-            Assert.IsType<ServiceB>(service);
+            Assert.IsType<ServiceB>(Service);
         }
     }
 }

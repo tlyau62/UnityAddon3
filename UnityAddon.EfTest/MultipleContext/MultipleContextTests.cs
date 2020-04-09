@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,26 +14,32 @@ namespace UnityAddon.EfTest.MultipleContext
     [Trait("Transaction", "Repository")]
     public class MultipleContextTests : IDisposable
     {
-        private ApplicationContext _appContext;
-        private IDbContextFactory<TestDbContext> _dbContextFactory;
-        private IDbContextFactory<TestDbContext2> _dbContextFactory2;
-        private IRepo _repo;
+        [Dependency]
+        public IDbContextFactory<TestDbContext> DbContextFactory { get; set; }
+
+        [Dependency]
+        public IDbContextFactory<TestDbContext2> DbContextFactory2 { get; set; }
+
+        [Dependency]
+        public IRepo Repo { get; set; }
 
         public MultipleContextTests()
         {
-            _appContext = new ApplicationContext(new UnityContainer(), GetType().Namespace, typeof(TestDbContext).Namespace);
-            _dbContextFactory = _appContext.Resolve<IDbContextFactory<TestDbContext>>();
-            _dbContextFactory2 = _appContext.Resolve<IDbContextFactory<TestDbContext2>>();
-            _repo = _appContext.Resolve<IRepo>();
+            new HostBuilder()
+                .RegisterUA()
+                .ScanComponentsUA(GetType().Namespace, "UnityAddon.EfTest.Common")
+                .EnableUnityAddonEf()
+                .BuildUA()
+                .BuildTestUA(this);
 
-            DbSetupUtility.CreateDb(_dbContextFactory);
-            DbSetupUtility.CreateDb(_dbContextFactory2);
+            DbSetupUtility.CreateDb(DbContextFactory);
+            DbSetupUtility.CreateDb(DbContextFactory2);
         }
 
         public void Dispose()
         {
-            DbSetupUtility.DropDb(_dbContextFactory);
-            DbSetupUtility.DropDb(_dbContextFactory2);
+            DbSetupUtility.DropDb(DbContextFactory);
+            DbSetupUtility.DropDb(DbContextFactory2);
         }
 
         [Fact]
@@ -42,15 +49,15 @@ namespace UnityAddon.EfTest.MultipleContext
             var item2a = new Item2("testitem2a");
             var item2b = new Item2("testitem2b");
 
-            _repo.InsertItem(item);
-            _repo.InsertItem2(item2a);
-            _repo.InsertItem2(item2b);
+            Repo.InsertItem(item);
+            Repo.InsertItem2(item2a);
+            Repo.InsertItem2(item2b);
 
-            Assert.Equal(1, _repo.CountItem());
-            Assert.Equal(2, _repo.CountItem2());
+            Assert.Equal(1, Repo.CountItem());
+            Assert.Equal(2, Repo.CountItem2());
 
-            Assert.False(_dbContextFactory.IsOpen());
-            Assert.False(_dbContextFactory2.IsOpen());
+            Assert.False(DbContextFactory.IsOpen());
+            Assert.False(DbContextFactory2.IsOpen());
         }
 
     }

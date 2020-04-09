@@ -44,8 +44,11 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.AsyncResolve
     }
 
     [Trait("BeanPostConstruct", "AsyncResolve")]
-    public class AsyncResolveTests
+    public class AsyncResolveTests : UnityAddonDefaultTest
     {
+        [Dependency]
+        public IUnityContainer UnityContainer { get; set; }
+
         /// <summary>
         /// Sequential
         /// Time   Description
@@ -70,7 +73,7 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.AsyncResolve
         {
             for (var i = 0; i < loop; i++)
             {
-                var appCtx = new ApplicationContext(new UnityContainer(), GetType().Namespace);
+                UnityContainer.Resolve<IAsyncService>();
             }
         }
     }

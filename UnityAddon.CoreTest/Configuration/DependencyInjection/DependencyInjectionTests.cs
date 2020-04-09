@@ -39,20 +39,22 @@ namespace UnityAddon.CoreTest.Configuration.DependencyInjection
     }
 
     [Trait("Configuration", "DependencyInjection")]
-    public class DependencyInjectionTests
+    public class DependencyInjectionTests : UnityAddonDefaultTest
     {
+        [Dependency]
+        public Service Service { get; set; }
+
+        [Dependency]
+        public CtorHelper CtorHelper { get; set; }
+
+        [Dependency]
+        public PropertyHelper PropertyHelper { get; set; }
+
         [Fact]
         public void BuildStrategy_BeanMethodDependency_BeanInjected()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
-
-            var service = appContext.Resolve<Service>();
-            var ctorHelper = appContext.Resolve<CtorHelper>();
-            var propertyHelper = appContext.Resolve<PropertyHelper>();
-
-            Assert.Same(ctorHelper, service.CtorHelper);
-            Assert.Same(propertyHelper, service.PropertyHelper);
+            Assert.Same(CtorHelper, Service.CtorHelper);
+            Assert.Same(PropertyHelper, Service.PropertyHelper);
         }
     }
 }

@@ -6,6 +6,7 @@ using UnityAddon.Core.Bean;
 using System.Linq;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Reflection;
+using UnityAddon.Core.BeanDefinition;
 
 namespace UnityAddon.Core.BeanPostprocessor
 {
@@ -16,9 +17,6 @@ namespace UnityAddon.Core.BeanPostprocessor
     {
         [Dependency]
         public IBeanDefinitionContainer BeanDefinitionContainer { get; set; }
-
-        [Dependency]
-        public IContainerRegistry ContainerRegistry { get; set; }
 
         public IEnumerable<IBeanPostProcessor> BeanPostProcessors { get; set; }
 
@@ -32,13 +30,15 @@ namespace UnityAddon.Core.BeanPostprocessor
         /// <returns>All beanPostProcessors</returns>
         public IEnumerable<IBeanPostProcessor> LoadBeanPostProcessors()
         {
-            return BeanPostProcessors = BeanDefinitionContainer
-                .GetAllBeanDefinitions(typeof(IBeanPostProcessor))
-                .Where(def => !def.BeanType.IsGenericType || !def.BeanType.ContainsGenericParameters)
-                .Select(def => ContainerRegistry.Resolve(def.BeanType, def.BeanName))
-                .OrderBy(bean => bean.GetType().GetOrder())
-                .Cast<IBeanPostProcessor>()
-                .ToList();
+            throw new NotImplementedException();
+
+            //return BeanPostProcessors = BeanDefinitionContainer
+            //    .GetAllBeanDefinitions(typeof(IBeanPostProcessor))
+            //    .Where(def => !def.BeanType.IsGenericType || !def.BeanType.ContainsGenericParameters)
+            //    .Select(def => ContainerRegistry.Resolve(def.BeanType, def.BeanName))
+            //    .OrderBy(bean => bean.GetType().GetOrder())
+            //    .Cast<IBeanPostProcessor>()
+            //    .ToList();
         }
 
 

@@ -9,7 +9,7 @@ namespace UnityAddon.Core.Attributes
     /// <summary>
     /// Specify a bean name
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Interface)]
     public class QualifierAttribute : Attribute
     {
         public string[] Values { get; set; } = new string[0];

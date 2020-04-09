@@ -21,9 +21,9 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
     public class Repo : IRepo
     {
         [Dependency]
-        public IDbContextTemplate<TestDbContext> DbContextTemplate { get; set; }
+        public IDbContextTemplate DbContextTemplate { get; set; }
 
-        private DbSet<Item> _items => DbContextTemplate.GetEntity<Item>();
+        private DbSet<Item> _items => DbContextTemplate.GetEntity<TestDbContext, Item>();
 
         [RequireDbContext(Transactional = true)]
         public GenericResult<string> AddItemGeneric(bool isSuccess)

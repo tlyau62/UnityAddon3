@@ -14,11 +14,11 @@ namespace UnityAddon.Ef.Transaction
     public class RequireDbContextHandler
     {
         [Dependency]
-        public IContainerRegistry ContainerRegistry { get; set; }
+        public IUnityContainer Container { get; set; }
 
         public void InvokeContextHandler(Type dataSource, IInvocation invocation, bool transactional)
         {
-            dynamic txMan = ContainerRegistry.Resolve(typeof(ITransactionManager<>).MakeGenericType(dataSource));
+            dynamic txMan = Container.Resolve(typeof(ITransactionManager<>).MakeGenericType(dataSource));
 
             txMan.DoInDbContext(invocation, transactional);
         }

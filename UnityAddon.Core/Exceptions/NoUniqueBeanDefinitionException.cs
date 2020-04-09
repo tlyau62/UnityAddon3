@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityAddon.Core.Bean;
+using UnityAddon.Core.BeanDefinition;
 
 namespace UnityAddon.Core.Exceptions
 {

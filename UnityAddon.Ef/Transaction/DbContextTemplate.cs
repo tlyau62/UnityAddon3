@@ -1,65 +1,195 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Unity;
+using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.Ef.Transaction
 {
-    public interface IDbContextTemplate<T> where T : DbContext
+    public interface IDbContextTemplate
     {
-        void ExecuteTransaction(Action<T> transaction);
-        T GetDbContext();
-        DbSet<TEntity> GetEntity<TEntity>() where TEntity : class;
+        TTxResult ExecuteTransaction<TDbContext, TTxResult>(Func<TDbContext, TTxResult> transaction) where TDbContext : DbContext;
+        TTxResult ExecuteQuery<TDbContext, TTxResult>(Func<TDbContext, TTxResult> query, string noModifyMsg) where TDbContext : DbContext;
+        TDbContext GetDbContext<TDbContext>() where TDbContext : DbContext;
+        DbSet<TEntity> GetEntity<TDbContext, TEntity>() where TDbContext : DbContext where TEntity : class;
+        bool TestRollback(object returnValue);
+        void RegisterTransactionCallback(Action callback);
     }
 
     /// <summary>
-    /// Used by client to query db.
-    /// TODO: logic duplication with TransactionManager
+    /// Used by client to deal with any db context.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    [Component]
-    public class DbContextTemplate<T> : IDbContextTemplate<T> where T : DbContext
+    /// <typeparam name="TDbContext"></typeparam>
+    public class DbContextTemplate : IDbContextTemplate
     {
-        [Dependency]
-        public IDbContextFactory<T> DbContextFactory { get; set; }
+        private static MethodInfo LogicInvokerMethod = typeof(DbContextTemplate).GetMethod(nameof(LogicInvoker), BindingFlags.NonPublic | BindingFlags.Instance);
 
-        public void ExecuteTransaction(Action<T> transaction)
+        private IDictionary<Type, List<object>> _rollbackLogics;
+
+        private IUnityContainer _container;
+
+        private TransactionInterceptorManager _txItrManager;
+
+        private ITransactionCallbacks _txCallbacks;
+
+        public DbContextTemplate(IDictionary<Type, List<object>> rollbackLogics, IUnityContainer container, TransactionInterceptorManager txItrManager, ITransactionCallbacks txCallbacks)
         {
-            var isOpenDbCtx = DbContextFactory.IsOpen();
-            T ctx = isOpenDbCtx ? DbContextFactory.Get() : DbContextFactory.Open();
-            var tx = ctx.Database.BeginTransaction();
+            _rollbackLogics = rollbackLogics;
+            _container = container;
+            _txItrManager = txItrManager;
+            _txCallbacks = txCallbacks;
+        }
+
+        public TTxResult ExecuteQuery<TDbContext, TTxResult>(Func<TDbContext, TTxResult> query, string noModifyMsg) where TDbContext : DbContext
+        {
+            return DoInDbContext<TDbContext, TTxResult>(ctx =>
+            {
+                var result = query(ctx);
+
+                AssertNoModifyDbContext(ctx, noModifyMsg);
+
+                return result;
+            });
+        }
+
+        public TTxResult ExecuteTransaction<TDbContext, TTxResult>(Func<TDbContext, TTxResult> transaction) where TDbContext : DbContext
+        {
+            return DoInDbContext<TDbContext, TTxResult>(ctx =>
+            {
+                if (ctx.Database.CurrentTransaction != null)
+                {
+                    return transaction(ctx);
+                }
+
+                var tx = ctx.Database.BeginTransaction();
+                _txItrManager.ExecuteBeginCallbacks();
+
+                try
+                {
+                    var result = transaction(ctx);
+
+                    if (TestRollback(result))
+                    {
+                        tx.Rollback();
+                        _txItrManager.ExecuteRollbackCallbacks();
+                    }
+                    else
+                    {
+                        ctx.SaveChanges();
+                        tx.Commit();
+                        _txItrManager.ExecuteCommitCallbacks();
+                    }
+
+                    return result;
+                }
+                catch (Exception)
+                {
+                    tx.Rollback();
+                    _txItrManager.ExecuteRollbackCallbacks();
+                    throw;
+                }
+                finally
+                {
+                    tx.Dispose();
+                }
+            });
+        }
+
+        public IDbContextFactory<TDbContext> GetDbContextFactory<TDbContext>() where TDbContext : DbContext
+        {
+            return _container.ResolveUA<IDbContextFactory<TDbContext>>();
+        }
+
+        public TDbContext GetDbContext<TDbContext>() where TDbContext : DbContext
+        {
+            return _container.ResolveUA<IDbContextFactory<TDbContext>>().Get();
+        }
+
+        public DbSet<TEntity> GetEntity<TDbContext, TEntity>() where TDbContext : DbContext where TEntity : class
+        {
+            return GetDbContext<TDbContext>().Set<TEntity>();
+        }
+
+        private void AssertNoModifyDbContext<TDbContext>(TDbContext dbContext, string noModifyMsg = "Detected dbcontext is changed by method, but transaction is not opened.") where TDbContext : DbContext
+        {
+            if (dbContext.ChangeTracker.HasChanges() && dbContext.Database.CurrentTransaction == null)
+            {
+                throw new InvalidOperationException(noModifyMsg);
+            }
+        }
+
+        public TTxResult DoInDbContext<TDbContext, TTxResult>(Func<TDbContext, TTxResult> tx) where TDbContext : DbContext
+        {
+            var dbCtxFactory = GetDbContextFactory<TDbContext>();
+            var isOpenDbCtx = dbCtxFactory.IsOpen();
+            var ctx = isOpenDbCtx ? dbCtxFactory.Get() : dbCtxFactory.Open();
 
             try
             {
-                transaction(ctx);
-
-                ctx.SaveChanges();
-                tx.Commit();
-            }
-            catch (Exception)
-            {
-                tx.Rollback();
-                throw;
+                return tx(ctx);
             }
             finally
             {
-                tx.Dispose();
-
                 if (!isOpenDbCtx)
                 {
-                    DbContextFactory.Close();
+                    dbCtxFactory.Close();
                 }
             }
         }
 
-        public T GetDbContext()
+        /// <summary>
+        /// Check whether a return value will be rollbacked by the tx.
+        /// </summary>
+        public bool TestRollback(object returnValue)
         {
-            return DbContextFactory.Get();
+            if (returnValue == null)
+            {
+                return false;
+            }
+
+            var type = returnValue.GetType();
+            var regType = GetRegisteredType(type) ?? (type.IsGenericType ? GetRegisteredType(type.GetGenericTypeDefinition()) : null);
+
+            if (regType == null)
+            {
+                return false;
+            }
+
+            return _rollbackLogics[regType].Any(logic => (bool)LogicInvokerMethod.MakeGenericMethod(logic.GetType().GetGenericArguments()[0]).Invoke(this, new[] { logic, returnValue }));
         }
 
-        public DbSet<TEntity> GetEntity<TEntity>() where TEntity : class
+        private bool LogicInvoker<T>(Func<T, bool> logic, object returnValue)
         {
-            return GetDbContext().Set<TEntity>();
+            return logic((T)returnValue);
+        }
+
+        private Type GetRegisteredType(Type targetType)
+        {
+            var types = TypeResolver.GetAssignableTypes(targetType);
+
+            foreach (var type in types)
+            {
+                if (_rollbackLogics.ContainsKey(type))
+                {
+                    return type;
+                }
+
+                if (type.IsGenericType && _rollbackLogics.ContainsKey(type.GetGenericTypeDefinition()))
+                {
+                    return type.GetGenericTypeDefinition();
+                }
+            }
+
+            return null;
+        }
+
+        public void RegisterTransactionCallback(Action callback)
+        {
+            _txCallbacks.OnCommit(callback);
         }
     }
 }

@@ -63,8 +63,11 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.NonProxy
     }
 
     [Trait("BeanPostConstruct", "NonProxyBean")]
-    public class NonProxyBeanTests
+    public class NonProxyBeanTests : UnityAddonDefaultTest
     {
+        [Dependency]
+        public IUnityContainer UnityContainer { get; set; }
+
         [Theory]
         [InlineData(0, 1, 2)]
         [InlineData(0, 2, 1)]
@@ -74,10 +77,7 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.NonProxy
         [InlineData(2, 0, 1)]
         public void BuildStrategy_PostConstructNonProxyBean_BeanPostConstructed(int orderA, int orderB, int orderC)
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
-
-            var stringStore = appContext.Resolve<StringStore>();
+            var stringStore = UnityContainer.Resolve<StringStore>();
             var resolveOrder = new Type[3];
 
             resolveOrder[orderA] = typeof(ServiceA);
@@ -86,7 +86,7 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.NonProxy
 
             foreach (var t in resolveOrder)
             {
-                appContext.Resolve(t);
+                UnityContainer.Resolve(t);
             }
 
             Assert.Equal("ABC", stringStore.TestString);

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Linq;
 using Unity;
@@ -11,35 +12,22 @@ using Xunit;
 namespace UnityAddon.EfTest.Transaction.RequireDbContext
 {
     [Trait("Transaction", "RequireDbContext")]
-    public class RequireDbContextTests : IDisposable
+    public class RequireDbContextTests : EfDefaultTest<TestDbContext>
     {
-        private ApplicationContext _appContext;
-        private IDbContextFactory<TestDbContext> _dbContextFactory;
-        private IRepoA _repoA;
-        private IRepoB _repoB;
-        private DbSet<Item> _items => (_dbContextFactory.IsOpen() ? _dbContextFactory.Get() : _dbContextFactory.Open()).Items;
+        [Dependency]
+        public IRepoA RepoA { get; set; }
 
-        public RequireDbContextTests()
-        {
-            _appContext = new ApplicationContext(new UnityContainer(), GetType().Namespace, typeof(TestDbContext).Namespace);
-            _dbContextFactory = _appContext.Resolve<IDbContextFactory<TestDbContext>>();
-            _repoA = _appContext.Resolve<IRepoA>();
-            _repoB = _appContext.Resolve<IRepoB>();
+        [Dependency]
+        public IRepoB RepoB { get; set; }
 
-            DbSetupUtility.CreateDb(_dbContextFactory);
-        }
-
-        public void Dispose()
-        {
-            DbSetupUtility.DropDb(_dbContextFactory);
-        }
+        private DbSet<Item> _items => (DbContextFactory.IsOpen() ? DbContextFactory.Get() : DbContextFactory.Open()).Items;
 
         [Fact]
         public void RequireDbContextHandler_AddItem_ItemCreated()
         {
-            _repoB.AddItem();
+            RepoB.AddItem();
 
-            Assert.False(_dbContextFactory.IsOpen());
+            Assert.False(DbContextFactory.IsOpen());
 
             Assert.Equal("testitem", _items.Single().Name);
         }
@@ -47,9 +35,9 @@ namespace UnityAddon.EfTest.Transaction.RequireDbContext
         [Fact]
         public void RequireDbContextHandler_ExceptionThrownInTransaction_DbRollback()
         {
-            Assert.Throws<InvalidOperationException>(() => _repoB.AddItemException());
+            Assert.Throws<InvalidOperationException>(() => RepoB.AddItemException());
 
-            Assert.False(_dbContextFactory.IsOpen());
+            Assert.False(DbContextFactory.IsOpen());
 
             Assert.Empty(_items);
         }
@@ -57,9 +45,9 @@ namespace UnityAddon.EfTest.Transaction.RequireDbContext
         [Fact]
         public void RequireDbContextHandler_NestedCallOnRequireDbMethod_ItemCreated()
         {
-            _repoA.AddDoubleItem();
+            RepoA.AddDoubleItem();
 
-            Assert.False(_dbContextFactory.IsOpen());
+            Assert.False(DbContextFactory.IsOpen());
 
             Assert.Equal(2, _items.Count());
         }
@@ -67,9 +55,9 @@ namespace UnityAddon.EfTest.Transaction.RequireDbContext
         [Fact]
         public void RequireDbContextHandler_NestedDoInDbContextWithException_DbRollback()
         {
-            Assert.Throws<InvalidOperationException>(() => _repoA.AddDoubleItemException());
+            Assert.Throws<InvalidOperationException>(() => RepoA.AddDoubleItemException());
 
-            Assert.False(_dbContextFactory.IsOpen());
+            Assert.False(DbContextFactory.IsOpen());
 
             Assert.Empty(_items);
         }
@@ -77,13 +65,13 @@ namespace UnityAddon.EfTest.Transaction.RequireDbContext
         [Fact]
         public void RequireDbContextHandler_NormalQuery_ResultReceived()
         {
-            Assert.Equal(0, _repoB.CountItems());
+            Assert.Equal(0, RepoB.CountItems());
         }
 
         [Fact]
         public void RequireDbContextHandler_ModifyDbWithoutRequireDb_ExceptionThrown()
         {
-            var ex = Assert.Throws<InvalidOperationException>(() => _repoB.AddItemWithNoTransaction());
+            var ex = Assert.Throws<InvalidOperationException>(() => RepoB.AddItemWithNoTransaction());
 
             Assert.Equal($"Detected dbcontext is changed by method AddItemWithNoTransaction at class {typeof(RepoB).FullName}, but transaction is not opened.", ex.Message);
         }

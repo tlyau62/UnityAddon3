@@ -36,19 +36,19 @@ namespace UnityAddon.CoreTest.Bean.PrimitiveBean
     }
 
     [Trait("Bean", "PrimitiveBean")]
-    public class PrimitiveBeanTests
+    public class PrimitiveBeanTests : UnityAddonDefaultTest
     {
+        [Dependency]
+        public Config Config { get; set; }
+
+        [Dependency]
+        public Service Service { get; set; }
+
         [Fact]
         public void BuildStrategy_DependencyOnPrimitiveBean_BeanInjected()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
-
-            var config = appContext.Resolve<Config>();
-            var service = appContext.Resolve<Service>();
-
-            Assert.Equal(service.IntBean, config.CreateIntBean());
-            Assert.Same(service.StringBean, config.CreateStringBean());
+            Assert.Equal(Service.IntBean, Config.CreateIntBean());
+            Assert.Same(Service.StringBean, Config.CreateStringBean());
         }
     }
 }

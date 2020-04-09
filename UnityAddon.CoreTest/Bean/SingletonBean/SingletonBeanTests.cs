@@ -43,17 +43,20 @@ namespace UnityAddon.CoreTest.Bean.SingletonBean
     }
 
     [Trait("Bean", "SingletonBean")]
-    public class SingletonBeanTests
+    public class SingletonBeanTests : UnityAddonDefaultTest
     {
+        [Dependency]
+        public IUnityContainer Container { get; set; }
+
+        //public SingletonBeanTests() : base(true)
+        //{
+        //}
+
         [Fact]
         public void ApplicationContext_PreinstantiateSingletonBean_SingletonBeanCreatedAtApplicationStart()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
-
-            var counter = appContext.Resolve<Counter>();
-
-            Assert.Equal(1, counter.Count);
+            Container.Resolve<SingletonService>();
+            Assert.Equal(1, Container.Resolve<Counter>().Count);
         }
     }
 }

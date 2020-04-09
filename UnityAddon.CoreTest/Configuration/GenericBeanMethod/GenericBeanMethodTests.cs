@@ -26,19 +26,19 @@ namespace UnityAddon.CoreTest.Configuration.GenericBeanMethod
     }
 
     [Trait("Configuration", "GenericBeanMethod")]
-    public class GenericBeanMethodTests
+    public class GenericBeanMethodTests : UnityAddonDefaultTest
     {
+        [Dependency]
+        public List<int> A { get; set; }
+
+        [Dependency]
+        public IEnumerable<string> B { get; set; }
+
         [Fact]
         public void BeanMethodInterceptor_GenericBeanMethod_BeanInjected()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, false, GetType().Namespace);
-
-            var a = appContext.Resolve<List<int>>();
-            var b = appContext.Resolve<IEnumerable<string>>();
-
-            Assert.IsType<List<int>>(a);
-            Assert.IsType<List<string>>(b);
+            Assert.IsType<List<int>>(A);
+            Assert.IsType<List<string>>(B);
         }
     }
 }

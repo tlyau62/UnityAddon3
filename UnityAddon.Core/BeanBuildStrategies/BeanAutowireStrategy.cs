@@ -6,7 +6,6 @@ using System.Text;
 using Unity;
 using Unity.Builder;
 using Unity.Strategies;
-using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.Exceptions;
@@ -22,7 +21,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
 
         public override void PostBuildUp(ref BuilderContext context)
         {
-            PropertyFill.FillAllProperties(context.Existing);
+            PropertyFill.FillAllProperties(context.Existing, context.Container);
 
             base.PostBuildUp(ref context);
         }

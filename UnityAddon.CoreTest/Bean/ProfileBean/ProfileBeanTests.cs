@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,41 +11,51 @@ using Xunit;
 
 namespace UnityAddon.CoreTest.Dependency.Bean.ProfileBean
 {
-    interface IService
+    public interface IService
     {
     }
 
     [Component]
     [Profile("dev")]
-    class DevService : IService
+    public class DevService : IService
     {
     }
 
     [Component]
     [Profile("prod")]
-    class ProdService : IService
+    public class ProdService : IService
     {
     }
 
     [Trait("Bean", "ProfileBean")]
     public class ProfileBeanTests
     {
+        [Dependency]
+        public IService Service { get; set; }
+
+        public ProfileBeanTests()
+        {
+        }
+
         [Theory]
         [InlineData("prod", typeof(ProdService))]
         [InlineData("dev", typeof(DevService))]
         public void BuildStrategy_DependencyOnProfileBean_BeanInjected(string activeProfile, Type resolveType)
         {
-            var container = new UnityContainer();
-            container.RegisterInstance<IConfiguration>(new ConfigurationBuilder()
-                .AddInMemoryCollection(new Dictionary<string, string>
-                {
-                    {"profiles:active", activeProfile},
-                })
-                .Build());
+            Host.CreateDefaultBuilder()
+               .RegisterUA()
+               .ConfigureAppConfiguration(config =>
+               {
+                   config.AddInMemoryCollection(new Dictionary<string, string>
+                    {
+                        {"profiles:active", activeProfile},
+                    });
+               })
+               .ScanComponentsUA(GetType().Namespace)
+               .BuildUA()
+               .BuildTestUA(this);
 
-            var appContext = new ApplicationContext(container, GetType().Namespace);
-
-            Assert.IsType(resolveType, appContext.Resolve<IService>());
+            Assert.IsType(resolveType, Service);
         }
     }
 }

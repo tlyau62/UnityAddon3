@@ -18,8 +18,8 @@ namespace UnityAddon.Ef.Transaction
     /// <summary>
     /// Auto open a db connection for any bean marked with Repository attribute
     /// </summary>
-    [Component]
-    public class RepositoryInterceptor : IAttributeInterceptor<RepositoryAttribute>
+    [AopAttribute(typeof(RepositoryAttribute))]
+    public class RepositoryInterceptor : IInterceptor
     {
         [Dependency]
         public DataSourceExtractor DataSourceExtractor { get; set; }

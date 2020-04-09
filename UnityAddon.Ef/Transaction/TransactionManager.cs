@@ -19,95 +19,31 @@ namespace UnityAddon.Ef.Transaction
     /// Handle transaction logic.
     /// </summary>
     [Component]
-    public class TransactionManager<T> : ITransactionManager<T> where T: DbContext
+    public class TransactionManager<TDbContext> : ITransactionManager<TDbContext> where TDbContext : DbContext
     {
         [Dependency]
-        public IDbContextFactory<T> _dbContextFactory { get; set; }
-
-        [OptionalDependency]
-        public RollbackOptions RollbackOptions { get; set; }
+        public IDbContextTemplate DbContextTemplate { get; set; }
 
         public void DoInDbContext(IInvocation invocation, bool transactional)
         {
-            var isOpen = _dbContextFactory.IsOpen();
-
-            if (!isOpen)
-            {
-                _dbContextFactory.Open();
-            }
-
-            try
-            {
-                Proceed(invocation, transactional);
-            }
-            finally
-            {
-                if (!isOpen)
-                {
-                    _dbContextFactory.Close();
-                }
-            }
-        }
-
-        private void Proceed(IInvocation invocation, bool transactional)
-        {
             if (transactional)
             {
-                DoInDbContextTx(_dbContextFactory.Get(), invocation);
+                DbContextTemplate.ExecuteTransaction<TDbContext, object>(Tx);
             }
             else
             {
-                invocation.Proceed();
-                AssertNoModifyDbContext(invocation);
+                var noModifyMsg = $"Detected dbcontext is changed by method {invocation.MethodInvocationTarget.Name} at class {invocation.MethodInvocationTarget.DeclaringType.FullName}, but transaction is not opened.";
+
+                DbContextTemplate.ExecuteQuery<TDbContext, object>(Tx, noModifyMsg);
             }
-        }
 
-        private void AssertNoModifyDbContext(IInvocation invocation)
-        {
-            var dbContext = _dbContextFactory.Get();
-
-            if (dbContext.ChangeTracker.HasChanges() && dbContext.Database.CurrentTransaction == null)
-            {
-                throw new InvalidOperationException($"Detected dbcontext is changed by method {invocation.MethodInvocationTarget.Name} at class {invocation.MethodInvocationTarget.DeclaringType.FullName}, but transaction is not opened.");
-            }
-        }
-
-        private void DoInDbContextTx(T context, IInvocation invocation)
-        {
-            if (context.Database.CurrentTransaction != null)
+            object Tx(TDbContext ctx)
             {
                 invocation.Proceed();
 
-                return;
-            }
-
-            var tx = context.Database.BeginTransaction();
-
-            try
-            {
-                invocation.Proceed();
-
-                if (RollbackOptions != null && RollbackOptions.TestRollback(invocation.ReturnValue))
-                {
-                    tx.Rollback();
-                }
-                else
-                {
-                    context.SaveChanges();
-                    tx.Commit();
-                }
-            }
-            catch (Exception)
-            {
-                tx.Rollback();
-                throw;
-            }
-            finally
-            {
-                tx.Dispose();
+                return invocation.ReturnValue;
             }
         }
-
     }
 
 }

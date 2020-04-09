@@ -10,8 +10,8 @@ using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.CoreTest.Aop.GenericMethodAttributeInterceptor
 {
-    [Component]
-    public class IncInterceptor : IAttributeInterceptor<PrefixAttribute>
+    [AopAttribute(typeof(PrefixAttribute))]
+    public class IncInterceptor : IInterceptor
     {
         [Dependency]
         public Logger Logger { get; set; }

@@ -30,9 +30,6 @@ namespace UnityAddon.Core.Aop
     public class AopMethodBootstrapInterceptor : IInterceptor
     {
         [Dependency]
-        public IContainerRegistry ContainerRegistry { get; set; }
-
-        [Dependency]
         public InterfaceProxyFactory InterfaceProxyFactory { get; set; }
 
         [Dependency]

@@ -7,6 +7,7 @@ using UnityAddon.Core.Attributes;
 using Xunit;
 using Unity.Lifetime;
 using UnityAddon.Core;
+using System.Linq;
 
 namespace UnityAddon.CoreTest.Resolve.ResolveAllByInterface
 {
@@ -22,26 +23,32 @@ namespace UnityAddon.CoreTest.Resolve.ResolveAllByInterface
 
     public class C : IService { }
 
+    public class D : IService { }
+
     [Trait("Resolve", "ResolveAllByInterface")]
-    public class ResolveAllByInterfaceTests
+    public class ResolveAllByInterfaceTests : UnityAddonDefaultTest
     {
+        [Dependency]
+        public IUnityContainer UnityContainer { get; set; }
+
         [Fact]
         public void ApplicationContext_ResolveAllByInterface_AllQualifiedBeanResolved()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
+            var a = UnityContainer.ResolveUA<IService>("a");
+            var b = UnityContainer.ResolveUA<IService>("b");
+            var c = UnityContainer
+                .RegisterTypeUA<IService, C>("c", new SingletonLifetimeManager())
+                .ResolveUA<IService>("c");
+            var d = UnityContainer
+                .RegisterTypeUA<IService, D>(new SingletonLifetimeManager())
+                .ResolveUA<IService>(); // bean name is null
 
-            appContext.RegisterType<IService, C>("c", new SingletonLifetimeManager());
-
-            var a = appContext.Resolve<IService>("a");
-            var b = appContext.Resolve<IService>("b");
-            var c = appContext.Resolve<IService>("c");
-
-            var resolveAll = appContext.ResolveAll<IService>();
+            var resolveAll = UnityContainer.ResolveAllUA<IService>().ToArray();
 
             Assert.Same(a, resolveAll[0]);
             Assert.Same(b, resolveAll[1]);
             Assert.Same(c, resolveAll[2]);
+            Assert.Same(d, resolveAll[3]);
         }
     }
 }

@@ -44,21 +44,23 @@ namespace UnityAddon.CoreTest.Configuration.BeanMethod
     }
 
     [Trait("Configuration", "BeanMethod")]
-    public class BeanMethodTests
+    public class BeanMethodTests: UnityAddonDefaultTest
     {
+        [Dependency]
+        public IService ServiceA { get; set; }
+
+        [Dependency("B")]
+        public ICommonService ServiceB { get; set; }
+
+        [Dependency("C")]
+        public ICommonService ServiceC { get; set; }
+
         [Fact]
         public void ConfigurationParser_ConfigureBean_BeanRegistered()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
-
-            var serviceA = appContext.Resolve<IService>();
-            var serviceB = appContext.Resolve<ICommonService>("B");
-            var serviceC = appContext.Resolve<ICommonService>("C");
-
-            Assert.IsType<ServiceA>(serviceA);
-            Assert.IsType<ServiceB>(serviceB);
-            Assert.IsType<ServiceC>(serviceC);
+            Assert.IsType<ServiceA>(ServiceA);
+            Assert.IsType<ServiceB>(ServiceB);
+            Assert.IsType<ServiceC>(ServiceC);
         }
     }
 }

@@ -22,14 +22,11 @@ namespace UnityAddon.EfTest.MultipleContext
     public class Repo : IRepo
     {
         [Dependency]
-        public IDbContextTemplate<TestDbContext> DbContextTemplate { get; set; }
+        public IDbContextTemplate DbContextTemplate { get; set; }
 
-        [Dependency]
-        public IDbContextTemplate<TestDbContext2> DbContextTemplate2 { get; set; }
+        private DbSet<Item> _items => DbContextTemplate.GetEntity<TestDbContext, Item>();
 
-        private DbSet<Item> _items => DbContextTemplate.GetEntity<Item>();
-
-        private DbSet<Item2> _items2 => DbContextTemplate2.GetEntity<Item2>();
+        private DbSet<Item2> _items2 => DbContextTemplate.GetEntity<TestDbContext2, Item2>();
 
         [RequireDbContext(Transactional = true)]
         [DataSource(typeof(TestDbContext))]

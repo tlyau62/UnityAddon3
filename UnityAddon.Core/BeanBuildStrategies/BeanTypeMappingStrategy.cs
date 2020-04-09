@@ -7,8 +7,8 @@ using Unity.Builder;
 using Unity.Strategies;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
+using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.Reflection;
-using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core.BeanBuildStrategies
 {
@@ -21,12 +21,6 @@ namespace UnityAddon.Core.BeanBuildStrategies
     {
         [Dependency]
         public IBeanDefinitionContainer BeanDefinitionContainer { get; set; }
-
-        [Dependency]
-        public ValueProvider ValueProvider { get; set; }
-
-        [Dependency]
-        public IContainerRegistry ContainerRegistry { get; set; }
 
         /// <summary>
         /// TODO: This function has too many logics.
@@ -43,7 +37,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
 
                     if (context.Type != beanDef.BeanType || context.Name != beanDef.BeanName)
                     {
-                        resolved = ContainerRegistry.Resolve(beanDef.BeanType, beanDef.BeanName);
+                        resolved = context.Container.ResolveUA(beanDef.BeanType, beanDef.BeanName);
                     }
                 }
             }
@@ -57,7 +51,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
 
                     if (makeGenericType != context.Type || context.Name != beanDef.BeanName)
                     {
-                        resolved = ContainerRegistry.Resolve(makeGenericType, beanDef.BeanName);
+                        resolved = context.Container.ResolveUA(makeGenericType, beanDef.BeanName);
                     }
                 }
             }

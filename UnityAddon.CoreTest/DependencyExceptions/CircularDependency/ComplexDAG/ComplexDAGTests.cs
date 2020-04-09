@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Hosting;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Unity;
@@ -53,14 +54,15 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.ComplexDAG
     }
 
     [Trait("DependencyExceptions", "CircularDependency/ComplexDAG")]
-    public class ComplexDAGTests
+    public class ComplexDAGTests : UnityAddonDefaultTest
     {
+        [Dependency]
+        public IHost Host { get; set; }
+
         [Fact]
         public void BeanDependencyValidatorStrategy_ResolveComplexDAGDependency_NoExceptionThrown()
         {
-            var container = new UnityContainer();
-            
-            new ApplicationContext(container, GetType().Namespace);
+            Host.PreInstantiateSingleton();
         }
     }
 }

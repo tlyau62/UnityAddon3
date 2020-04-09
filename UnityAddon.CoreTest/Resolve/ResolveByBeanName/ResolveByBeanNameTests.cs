@@ -31,17 +31,26 @@ namespace UnityAddon.CoreTest.Resolve.ResolveByBeanName
     }
 
     [Trait("Resolve", "ResolveByBeanName")]
-    public class ResolveByBeanNameTests
+    public class ResolveByBeanNameTests : UnityAddonDefaultTest
     {
+        [Dependency]
+        public IUnityContainer UnityContainer { get; set; }
+
+        [Dependency("TestString")]
+        public string TestString { get; set; }
+
+        [Dependency("ServiceA")]
+        public IService ServiceA { get; set; }
+
+        [Dependency("ServiceB")]
+        public IService ServiceB { get; set; }
+
         [Fact]
         public void BeanDefinitionRegistry_ResolveByBeanName_BeanResolved()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
-
-            Assert.Equal("test", appContext.Resolve<string>("TestString"));
-            Assert.IsType<ServiceA>(appContext.Resolve<IService>("ServiceA"));
-            Assert.IsType<ServiceB>(appContext.Resolve<IService>("ServiceB"));
+            Assert.Equal("test", TestString);
+            Assert.IsType<ServiceA>(ServiceA);
+            Assert.IsType<ServiceB>(ServiceB);
         }
     }
 }

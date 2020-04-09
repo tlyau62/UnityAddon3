@@ -33,15 +33,15 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NestedNoSuchBeanDefinitionExc
     }
 
     [Trait("DependencyExceptions", "NoSuchBeanDefinition")]
-    public class NestedNoSuchBeanDefinitionExceptionTests
+    public class NestedNoSuchBeanDefinitionExceptionTests : UnityAddonDefaultTest
     {
+        [Dependency]
+        public IUnityContainer UnityContainer { get; set; }
+
         [Fact]
         public void PropertyFill_NestedNoSuchBeanDefinition_ExceptionThrown()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, false, GetType().Namespace);
-
-            var ex = Assert.Throws<BeanCreationException>(() => appContext.Resolve<IService>());
+            var ex = Assert.Throws<BeanCreationException>(() => UnityContainer.Resolve<IService>());
 
             Assert.Equal($"Property Root in {typeof(CommonService).FullName} required a bean of type '{typeof(IRoot).FullName}' that could not be found.", ex.Message);
         }

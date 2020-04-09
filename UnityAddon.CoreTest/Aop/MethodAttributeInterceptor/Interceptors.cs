@@ -10,8 +10,8 @@ using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.CoreTest.Aop.MethodAttributeInterceptor
 {
-    [Component]
-    public class IncInterceptor : IAttributeInterceptor<IncAttribute>
+    [AopAttribute(typeof(IncAttribute))]
+    public class IncInterceptor : IInterceptor
     {
         [Dependency]
         public Counter Counter { get; set; }
@@ -25,8 +25,8 @@ namespace UnityAddon.CoreTest.Aop.MethodAttributeInterceptor
         }
     }
 
-    [Component]
-    public class Mul2Interceptor : IAttributeInterceptor<MulAttribute>
+    [AopAttribute(typeof(MulAttribute))]
+    public class MulInterceptor : IInterceptor
     {
         [Dependency]
         public Counter Counter { get; set; }

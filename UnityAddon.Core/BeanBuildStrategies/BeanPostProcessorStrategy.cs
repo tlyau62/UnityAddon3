@@ -10,7 +10,7 @@ using UnityAddon.Core.BeanPostprocessor;
 
 namespace UnityAddon.Core.BeanBuildStrategies
 {
-    [Component]
+    //TODO:[Component]
     public class BeanPostProcessorStrategy : BuilderStrategy
     {
         [Dependency]
