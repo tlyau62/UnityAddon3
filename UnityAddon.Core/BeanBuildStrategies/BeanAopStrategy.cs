@@ -37,12 +37,15 @@ namespace UnityAddon.Core.BeanBuildStrategies
         [Dependency]
         public AopInterceptorContainer AopInterceptorContainer { get; set; }
 
+        [Dependency]
+        public ProxyGenerator ProxyGenerator { get; set; }
+
         public override void PostBuildUp(ref BuilderContext context)
         {
             var interceptors = new List<IInterceptor>();
 
-            // class interceptor
-            var classInterceptorsMap = AopInterceptorContainer.FindInterceptors(AttributeTargets.Class);
+            // class/interface interceptor
+            var classInterceptorsMap = AopInterceptorContainer.FindInterceptors(AttributeTargets.Class | AttributeTargets.Interface);
 
             foreach (var attribute in context.Type.GetCustomAttributes(false))
             {
@@ -60,7 +63,14 @@ namespace UnityAddon.Core.BeanBuildStrategies
 
             if (interceptors.Count() > 0)
             {
-                context.Existing = InterfaceProxyFactory.CreateInterfaceProxy(context.Existing, interceptors.ToArray());
+                if (ProxyUtil.IsProxy(context.Existing))
+                {
+                    AddInterceptorsToProxy(context.Existing, interceptors);
+                }
+                else
+                {
+                    context.Existing = InterfaceProxyFactory.CreateInterfaceProxy(context.Existing, interceptors.ToArray());
+                }
             }
 
             base.PostBuildUp(ref context);
@@ -74,6 +84,19 @@ namespace UnityAddon.Core.BeanBuildStrategies
                 .SelectMany(m => m.GetCustomAttributes())
                 .Select(attr => attr.GetType())
                 .Any(attrType => methodInterceptorsMap.ContainsKey(attrType));
+        }
+
+        /// <summary>
+        /// Use with caution.
+        /// Should be used only when the bean is not resolved or during resolving.
+        /// Once the bean is resolved, adding interceptors to it is dangerous.
+        /// </summary>
+        private static void AddInterceptorsToProxy(object proxy, IEnumerable<IInterceptor> interceptors)
+        {
+            var field = (FieldInfo)proxy.GetType().GetMember("__interceptors", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(0);
+            var proxyInterceptors = (IInterceptor[])field.GetValue(proxy);
+
+            field.SetValue(proxy, proxyInterceptors.ToList().Union(interceptors).ToArray());
         }
     }
 }

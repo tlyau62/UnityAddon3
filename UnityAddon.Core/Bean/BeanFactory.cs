@@ -31,6 +31,9 @@ namespace UnityAddon.Core.Bean
         [Dependency]
         public IThreadLocalFactory<Stack<IInvocation>> InvocationStackFactory { get; set; }
 
+        [Dependency]
+        public ProxyGenerator ProxyGenerator { get; set; }
+
         public void CreateFactory(IEnumerable<IBeanDefinition> beanDefinitions, IUnityContainer container)
         {
             foreach (var def in beanDefinitions.Where(d => d.RequireFactory))
@@ -77,6 +80,11 @@ namespace UnityAddon.Core.Bean
 
             object componentFactory(IUnityContainer c, Type t, string n)
             {
+                if (t.IsInterface)
+                {
+                    return ProxyGenerator.CreateInterfaceProxyWithoutTarget(t);
+                }
+
                 var ctor = DefaultConstructor.Select(t);
 
                 return ctor.Invoke(ParameterFill.FillAllParamaters(ctor, container));

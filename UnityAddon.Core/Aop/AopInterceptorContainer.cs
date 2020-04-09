@@ -35,7 +35,7 @@ namespace UnityAddon.Core.Aop
 
         private bool IsAttributeTargetMatch(AttributeTargets requiredInterceptorType, AttributeTargets actualInterceptorType)
         {
-            return (actualInterceptorType & requiredInterceptorType) == requiredInterceptorType;
+            return (actualInterceptorType & requiredInterceptorType) > 0;
         }
     }
 }
