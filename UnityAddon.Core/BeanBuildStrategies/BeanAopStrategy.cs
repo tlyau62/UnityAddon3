@@ -65,7 +65,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
             {
                 if (ProxyUtil.IsProxy(context.Existing))
                 {
-                    CastleProxyUtil.MergeProxy(context.Existing, interceptors);
+                    AddInterceptorsToProxy(context.Existing, interceptors);
                 }
                 else
                 {
@@ -84,6 +84,19 @@ namespace UnityAddon.Core.BeanBuildStrategies
                 .SelectMany(m => m.GetCustomAttributes())
                 .Select(attr => attr.GetType())
                 .Any(attrType => methodInterceptorsMap.ContainsKey(attrType));
+        }
+
+        /// <summary>
+        /// Use with caution.
+        /// Should be used only when the bean is not resolved or during resolving.
+        /// Once the bean is resolved, adding interceptors to it is dangerous.
+        /// </summary>
+        private static void AddInterceptorsToProxy(object proxy, IEnumerable<IInterceptor> interceptors)
+        {
+            var field = (FieldInfo)proxy.GetType().GetMember("__interceptors", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(0);
+            var proxyInterceptors = (IInterceptor[])field.GetValue(proxy);
+
+            field.SetValue(proxy, proxyInterceptors.ToList().Union(interceptors).ToArray());
         }
     }
 }
