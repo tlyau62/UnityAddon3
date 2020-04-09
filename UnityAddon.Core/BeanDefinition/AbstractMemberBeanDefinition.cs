@@ -71,6 +71,7 @@ namespace UnityAddon.Core.BeanDefinition
         public bool FromComponentScanning { get; set; } = false;
     }
 
+    [Obsolete("Please use RegisterFactory to register your bean.")]
     public class SimpleFactoryBeanDefinition : SimpleBeanDefinition, IScopedBeanDefinition
     {
         public SimpleFactoryBeanDefinition(Type beanType, Func<IUnityContainer, Type, string, object> ctor) : this(beanType, null, ctor)
