@@ -28,11 +28,6 @@ namespace UnityAddon.Core.BeanBuildStrategies
         /// </summary>
         public override void PreBuildUp(ref BuilderContext context)
         {
-            if (context.RegistrationType == typeof(IHostedService))
-            {
-                var a = 10;
-            }
-
             object resolved = null;
 
             if (BeanDefinitionContainer.HasBeanDefinition(context.Type, context.Name))

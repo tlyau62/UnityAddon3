@@ -16,6 +16,9 @@ namespace WebApplication3
 {
     public class LifetimeEventsHostedService : IHostedService
     {
+        [Value("{AllowedHosts}")]
+        public string Test { get; set; }
+
         private readonly IHostApplicationLifetime _appLifetime;
 
         public LifetimeEventsHostedService(IHostApplicationLifetime appLifetime)
