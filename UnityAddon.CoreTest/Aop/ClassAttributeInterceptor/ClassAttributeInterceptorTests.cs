@@ -78,9 +78,8 @@ namespace UnityAddon.CoreTest.Aop.ClassAttributeInterceptor
                 {
                     config.AddAopIntercetor<IncInterceptor>();
                 })
-                .BuildUA();
-
-            host.BuildTestUA(this);
+                .BuildUA()
+                .BuildTestUA(this);
         }
 
         [Fact]

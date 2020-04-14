@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -43,7 +44,7 @@ namespace UnityAddon.CoreTest.HostService
         {
             _host = new HostBuilder()
                 .RegisterUA()
-                .ConfigureServices(c => c.AddHostedServiceUA<LifetimeEventsHostedService>())
+                .ConfigureServices(c => c.AddHostedService<LifetimeEventsHostedService>())
                 .BuildUA();
         }
 

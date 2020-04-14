@@ -16,12 +16,37 @@ namespace UnityAddon.Core.DependencyInjection
         private static readonly MethodInfo InvokeStrategyMethod = typeof(DependencyResolver)
             .GetMethod(nameof(InvokeStrategy), BindingFlags.NonPublic | BindingFlags.Instance);
 
-        public DependencyResolver(IDictionary<Type, object> resolveStrategies)
+        internal DependencyResolver()
         {
-            _resolveStrategies = resolveStrategies;
+            _resolveStrategies = new Dictionary<Type, object>();
+
+            AddInternalResolveStrategies();
         }
 
-        public object Resolve(Type resolveType, IEnumerable<Attribute> attributes, IUnityContainer container)
+        protected void AddInternalResolveStrategies()
+        {
+            AddResolveStrategy<DependencyAttribute>((type, attr, container) =>
+            {
+                return container.ResolveUA(type, attr.Name);
+            });
+
+            AddResolveStrategy<OptionalDependencyAttribute>((type, attr, container) =>
+            {
+                return container.ResolveOptionalUA(type, attr.Name);
+            });
+
+            AddResolveStrategy<ValueAttribute>((type, attr, container) =>
+            {
+                return container.Resolve<ValueProvider>().GetValue(type, attr.Value);
+            });
+        }
+
+        public void AddResolveStrategy<TAttribute>(Func<Type, TAttribute, IUnityContainer, object> strategy) where TAttribute : Attribute
+        {
+            _resolveStrategies[typeof(TAttribute)] = strategy;
+        }
+
+        internal object Resolve(Type resolveType, IEnumerable<Attribute> attributes, IUnityContainer container)
         {
             try
             {
