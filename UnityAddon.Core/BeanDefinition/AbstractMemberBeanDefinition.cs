@@ -28,7 +28,6 @@ namespace UnityAddon.Core.BeanDefinition
 
         bool RequireFactory { get; }
 
-        // TODO: currently unused
         bool RequireAssignableTypes { get; }
 
         bool FromComponentScanning { get; set; }

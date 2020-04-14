@@ -161,7 +161,14 @@ namespace UnityAddon.Core.BeanDefinition
         {
             foreach (var def in beanDefinitions)
             {
-                RegisterBeanDefinitionForAllTypes(def);
+                if (def.RequireAssignableTypes)
+                {
+                    RegisterBeanDefinitionForAllTypes(def);
+                }
+                else
+                {
+                    RegisterBeanDefinition(def);
+                }
             }
         }
     }
