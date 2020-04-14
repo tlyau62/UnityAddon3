@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Unity;
 using Unity.Injection;
 using Unity.Lifetime;
+using UnityAddon.Core.BeanDefinition;
 
 namespace UnityAddon.Core
 {
@@ -61,7 +63,12 @@ namespace UnityAddon.Core
 
         public static void UnregisterUA<T>(this IUnityContainer container, string name = null)
         {
-            container.UnregisterUA(typeof(T), null);
+            container.UnregisterUA(typeof(T), name);
+        }
+
+        public static IEnumerable<T> ResolveAllUA<T>(this IUnityContainer container)
+        {
+            return container.ResolveAllUA(typeof(T)).Cast<T>();
         }
     }
 }

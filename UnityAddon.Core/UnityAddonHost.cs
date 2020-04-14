@@ -46,7 +46,7 @@ namespace UnityAddon.Core
 
                 if (!reg.RegisteredType.IsGenericType || !reg.RegisteredType.ContainsGenericParameters)
                 {
-                    container.Resolve(reg.RegisteredType, reg.Name);
+                    container.ResolveAllUA(reg.RegisteredType).ToList();
                 }
             }
 
