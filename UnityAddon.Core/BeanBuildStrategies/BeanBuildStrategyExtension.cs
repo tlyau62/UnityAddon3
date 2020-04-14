@@ -25,9 +25,6 @@ namespace UnityAddon.Core.BeanBuildStrategies
         public BeanPostConstructStrategy BeanPostConstructStrategy { get; set; }
 
         [Dependency]
-        public BeanAopStrategy BeanAopStrategy { get; set; }
-
-        [Dependency]
         public BeanAutowireStrategy BeanAutowireStrategy { get; set; }
 
         //[Dependency]
@@ -43,7 +40,6 @@ namespace UnityAddon.Core.BeanBuildStrategies
             Context.Strategies.Add(BeanTypeMappingStrategy, UnityBuildStage.TypeMapping); // 1
             Context.Strategies.Add(BeanDependencyValidatorStrategy, UnityBuildStage.PreCreation); // 2
             //Context.Strategies.Add(BeanPostProcessorStrategy, UnityBuildStage.PostInitialization); // 6
-            Context.Strategies.Add(BeanAopStrategy, UnityBuildStage.PostInitialization); // 5
             Context.Strategies.Add(BeanPostConstructStrategy, UnityBuildStage.PostInitialization); // 4 (before BeanAopStrategy, so interceptor will not trigget at postconstruct)
             Context.Strategies.Add(BeanAutowireStrategy, UnityBuildStage.PostInitialization); // 3
         }

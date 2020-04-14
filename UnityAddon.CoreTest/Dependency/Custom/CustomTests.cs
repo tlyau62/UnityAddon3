@@ -37,7 +37,7 @@ namespace UnityAddon.CoreTest.Dependency.Custom
         {
             Host.CreateDefaultBuilder()
                .RegisterUA()
-               .ConfigureUA<DependencyResolverBuilder>(config =>
+               .ConfigureUA<DependencyResolver>(config =>
                {
                    config.AddResolveStrategy<CustomAttribute>((type, attr, container)
                        => attr.Descriptor + "TestString");

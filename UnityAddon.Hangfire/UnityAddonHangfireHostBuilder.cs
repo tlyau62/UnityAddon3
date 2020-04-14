@@ -15,7 +15,7 @@ namespace UnityAddon.Hangfire
         public static IHostBuilder EnableUnityAddonHangfire(this IHostBuilder hostBuilder)
         {
             return hostBuilder
-                .ConfigureUA<DependencyResolverBuilder>(c =>
+                .ConfigureUA<DependencyResolver>(c =>
                     c.AddResolveStrategy<HangfireProxyAttribute>((t, n, c) =>
                     {
                         return c.ResolveUA(t, t.Name);
