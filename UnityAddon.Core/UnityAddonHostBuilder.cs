@@ -44,10 +44,6 @@ namespace UnityAddon.Core
                 .RegisterTypeUA<IThreadLocalFactory<Stack<IInvocation>>, ThreadLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())))
                 .RegisterTypeUA<IThreadLocalFactory<Stack<ResolveStackEntry>>, ThreadLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())))
                 .RegisterTypeUA<DependencyResolver, DependencyResolver>(new ContainerControlledLifetimeManager())
-                .RegisterFactoryUA((c, t, n) =>
-                {
-                    return c.Resolve<AopInterceptorContainerBuilder>().Build(c);
-                })
                 .AddNewExtension<BeanBuildStrategyExtension>();
 
             return hostBuilder.UseUnityServiceProvider(container)
@@ -131,6 +127,10 @@ namespace UnityAddon.Core
             hostContainer
                 .Resolve<IBeanDefinitionContainer>()
                 .RegisterBeanDefinitions(beanDefCollection);
+
+            hostContainer.RegisterInstanceUA(hostContainer
+                .Resolve<AopInterceptorContainerBuilder>().Build(hostContainer));
+            hostContainer.AddNewExtension<AopBuildStrategyExtension>();
 
             hostContainer
                 .ResolveUA<BeanFactory>()
