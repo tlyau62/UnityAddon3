@@ -25,6 +25,8 @@ using UnityAddon.Core.Thread;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Component;
 using UnityAddon.Core.Aop;
+using Unity.Strategies;
+using Unity.Builder;
 
 namespace UnityAddon.Core
 {
@@ -38,6 +40,16 @@ namespace UnityAddon.Core
 
             container ??= new UnityContainer();
 
+            container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager())
+                .RegisterTypeUA<IThreadLocalFactory<Stack<IInvocation>>, ThreadLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())))
+                .RegisterTypeUA<IThreadLocalFactory<Stack<ResolveStackEntry>>, ThreadLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())))
+                .RegisterTypeUA<DependencyResolver, DependencyResolver>(new ContainerControlledLifetimeManager())
+                .RegisterFactoryUA((c, t, n) =>
+                {
+                    return c.Resolve<AopInterceptorContainerBuilder>().Build(c);
+                })
+                .AddNewExtension<BeanBuildStrategyExtension>();
+
             return hostBuilder.UseUnityServiceProvider(container)
                 .ConfigureContainer<IUnityContainer>(c =>
                 {
@@ -45,8 +57,7 @@ namespace UnityAddon.Core
 
                     beanDefCol.Add(new SimpleBeanDefinition(typeof(IUnityContainer)));
 
-                    c.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager())
-                     .RegisterInstanceUA((IBeanDefinitionCollection)beanDefCol, "core")
+                    c.RegisterInstanceUA((IBeanDefinitionCollection)beanDefCol, "core")
                      .RegisterInstanceUA<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>(new List<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>());
                 })
                 .ScanComponentsUA("UnityAddon.Core")
@@ -120,13 +131,6 @@ namespace UnityAddon.Core
             hostContainer
                 .Resolve<IBeanDefinitionContainer>()
                 .RegisterBeanDefinitions(beanDefCollection);
-
-            hostContainer
-                .RegisterTypeUA<IThreadLocalFactory<Stack<IInvocation>>, ThreadLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())))
-                .RegisterTypeUA<IThreadLocalFactory<Stack<ResolveStackEntry>>, ThreadLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())))
-                .RegisterInstanceUA(hostContainer.Resolve<DependencyResolverBuilder>().Build())
-                .RegisterInstanceUA(hostContainer.Resolve<AopInterceptorContainerBuilder>().Build(hostContainer))
-                .AddNewExtension<BeanBuildStrategyExtension>();
 
             hostContainer
                 .ResolveUA<BeanFactory>()
