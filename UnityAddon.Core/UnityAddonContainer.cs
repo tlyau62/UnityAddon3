@@ -83,12 +83,11 @@ namespace UnityAddon.Core
             return container;
         }
 
-        public static IEnumerable<T> ResolveAllUA<T>(this IUnityContainer container)
+        public static IEnumerable<object> ResolveAllUA(this IUnityContainer container, Type type)
         {
             return container.Resolve<IBeanDefinitionContainer>()
-                .GetAllBeanDefinitions(typeof(T))
-                .Select(def => container.ResolveUA(def.BeanType, def.BeanName))
-                .Cast<T>();
+                .GetAllBeanDefinitions(type)
+                .Select(def => container.ResolveUA(def.BeanType, def.BeanName));
         }
 
         public static void UnregisterUA(this IUnityContainer container, Type type, string name = null)
