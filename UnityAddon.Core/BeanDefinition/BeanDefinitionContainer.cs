@@ -22,8 +22,6 @@ namespace UnityAddon.Core.BeanDefinition
 
         IBeanDefinitionContainer RegisterBeanDefinition(IBeanDefinition beanDefinition);
 
-        void RegisterBeanDefinitionForAllTypes(IBeanDefinition beanDefinition);
-
         void RegisterBeanDefinitions(IEnumerable<IBeanDefinition> beanDefinitions);
 
         IEnumerable<IBeanDefinition> FindBeanDefinitionsByAttribute<TAttribute>() where TAttribute : Attribute;
@@ -43,22 +41,25 @@ namespace UnityAddon.Core.BeanDefinition
         public BeanDefinitionContainer()
         {
             RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IBeanDefinitionContainer)));
+            RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IUnityContainer)));
         }
 
         public IBeanDefinitionContainer RegisterBeanDefinition(IBeanDefinition beanDefinition)
         {
-            AddBeanDefinition(beanDefinition.BeanType, beanDefinition);
+            if (beanDefinition.RequireAssignableTypes)
+            {
+                // bad time and space
+                foreach (var type in TypeResolver.GetAssignableTypes(beanDefinition.BeanType))
+                {
+                    AddBeanDefinition(type, beanDefinition);
+                }
+            }
+            else
+            {
+                AddBeanDefinition(beanDefinition.BeanType, beanDefinition);
+            }
 
             return this;
-        }
-
-        // bad time and space
-        public void RegisterBeanDefinitionForAllTypes(IBeanDefinition beanDefinition)
-        {
-            foreach (var type in TypeResolver.GetAssignableTypes(beanDefinition.BeanType))
-            {
-                AddBeanDefinition(type, beanDefinition);
-            }
         }
 
         private void AddBeanDefinition(Type type, IBeanDefinition beanDefinition)
@@ -161,14 +162,7 @@ namespace UnityAddon.Core.BeanDefinition
         {
             foreach (var def in beanDefinitions)
             {
-                if (def.RequireAssignableTypes)
-                {
-                    RegisterBeanDefinitionForAllTypes(def);
-                }
-                else
-                {
-                    RegisterBeanDefinition(def);
-                }
+                RegisterBeanDefinition(def);
             }
         }
     }

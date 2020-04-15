@@ -13,6 +13,7 @@ using Unity.Lifetime;
 using Unity.Injection;
 using System.Runtime.Loader;
 using UnityAddon.Core.BeanDefinition;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace UnityAddon.Core.Component
 {
@@ -53,6 +54,11 @@ namespace UnityAddon.Core.Component
 
                     return defs;
                 });
+        }
+
+        public IEnumerable<IBeanDefinition> ScanComponents(IServiceCollection serviceCollection)
+        {
+            return serviceCollection.Select(descriptor => new SimpleBeanDefinition(descriptor.ServiceType));
         }
 
         private IEnumerable<Regex> BuildBaseNamespacesRegexes(string[] baseNamespaces)
