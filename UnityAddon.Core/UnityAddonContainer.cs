@@ -59,11 +59,6 @@ namespace UnityAddon.Core
             return bean;
         }
 
-        public static IUnityContainer RegisterInstanceUA<T>(this IUnityContainer container, T instance, string name)
-        {
-            return container.RegisterInstanceUA(typeof(T), instance, name);
-        }
-
         public static IUnityContainer RegisterInstanceUA(this IUnityContainer container, Type type, object instance, string name)
         {
             var beanDef = new SimpleBeanDefinition(type, name);
@@ -71,7 +66,7 @@ namespace UnityAddon.Core
             container.Resolve<IBeanDefinitionContainer>()
                 .RegisterBeanDefinition(beanDef);
 
-            container.RegisterInstance(name, instance);
+            container.RegisterInstance(type, name, instance);
 
             return container;
         }

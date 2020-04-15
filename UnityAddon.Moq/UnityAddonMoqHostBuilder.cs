@@ -14,7 +14,7 @@ namespace UnityAddon.Moq
         public static IHostBuilder EnableUnityAddonMoq(this IHostBuilder hostBuilder)
         {
             return hostBuilder
-                .ConfigureUA<DependencyResolverBuilder>(c =>
+                .ConfigureUA<DependencyResolver>(c =>
                 {
                     c.AddResolveStrategy<MockAttribute>((type, attr, c) =>
                     {
