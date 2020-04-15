@@ -49,7 +49,7 @@ namespace UnityAddon.Moq
                             container.RegisterTypeUA(null, p.PropertyType, p.PropertyType, new ContainerControlledLifetimeManager());
                         });
                 })
-                .ConfigureUA<DependencyResolverBuilder>(c =>
+                .ConfigureUA<DependencyResolver>(c =>
                 {
                     c.AddResolveStrategy<MockAttribute>((type, attr, c) =>
                     {
