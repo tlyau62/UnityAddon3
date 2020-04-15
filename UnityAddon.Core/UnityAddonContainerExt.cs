@@ -51,14 +51,21 @@ namespace UnityAddon.Core
             return container.RegisterInstanceUA(instance, null);
         }
 
-        public static IUnityContainer RegisterFactoryUA<T>(this IUnityContainer container, Func<IUnityContainer, Type, string, T> factory, IFactoryLifetimeManager lifetimeManager)
+        public static IUnityContainer RegisterInstanceUA<T>(this IUnityContainer container, T instance, string name)
         {
-            return container.RegisterFactoryUA(null, factory, lifetimeManager);
+            return container.RegisterInstanceUA(typeof(T), instance, name);
+        }
+
+        public static IUnityContainer RegisterFactoryUA<T>(this IUnityContainer container, Func<IUnityContainer, Type, string, T> factory, IFactoryLifetimeManager lifetimeManager)
+            where T : class
+        {
+            return container.RegisterFactoryUA(typeof(T), null, factory, lifetimeManager);
         }
 
         public static IUnityContainer RegisterFactoryUA<T>(this IUnityContainer container, Func<IUnityContainer, Type, string, T> factory)
+            where T : class
         {
-            return container.RegisterFactoryUA(null, factory, new ContainerControlledLifetimeManager());
+            return container.RegisterFactoryUA(typeof(T), null, factory, new ContainerControlledLifetimeManager());
         }
 
         public static void UnregisterUA<T>(this IUnityContainer container, string name = null)
