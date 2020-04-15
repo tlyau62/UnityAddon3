@@ -49,12 +49,7 @@ namespace UnityAddon.Core
             return hostBuilder.UseUnityServiceProvider(container)
                 .ConfigureContainer<IUnityContainer>(c =>
                 {
-                    var beanDefCol = new BeanDefinitionCollection("CORE");
-
-                    beanDefCol.Add(new SimpleBeanDefinition(typeof(IUnityContainer)));
-
-                    c.RegisterInstanceUA((IBeanDefinitionCollection)beanDefCol, "core")
-                     .RegisterInstanceUA<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>(new List<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>());
+                    c.RegisterInstanceUA<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>(new List<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>());
                 })
                 .ScanComponentsUA("UnityAddon.Core")
                 .MergeFromServiceCollectionUA();
@@ -77,21 +72,18 @@ namespace UnityAddon.Core
 
         private static IHostBuilder MergeFromServiceCollectionUA(this IHostBuilder hostBuilder)
         {
-            IList<IBeanDefinition> defs = new List<IBeanDefinition>();
+            IServiceCollection serviceCollection = new ServiceCollection();
 
             return hostBuilder
                 .ConfigureServices((c, s) =>
                 {
-                    foreach (var descriptor in s)
-                    {
-                        defs.Add(new SimpleBeanDefinition(descriptor.ServiceType));
-                    }
+                    serviceCollection = s;
                 })
                 .ConfigureContainer<IUnityContainer>((s, c) =>
                 {
-                    var defCollection = c.ResolveUA<IBeanDefinitionCollection>("core");
+                    var callbacks = c.ResolveUA<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>();
 
-                    ((BeanDefinitionCollection)defCollection).AddRange(defs);
+                    callbacks.Add(cs => cs.ScanComponents(serviceCollection));
                 });
         }
 
@@ -117,9 +109,7 @@ namespace UnityAddon.Core
                 .Resolve<BeanDefintionCandidateSelectorBuilder>().Build(config);
             var compScanner = hostContainer.Resolve<ComponentScannerBuilder>().Build(hostContainer);
             var compScannedDefs = hostContainer.ResolveUA<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>().SelectMany(cb => cb(compScanner));
-            var beanDefCollection = hostContainer.Resolve<IBeanDefinitionCollection>("core")
-                .Union(compScannedDefs)
-                .Where(d => !d.FromComponentScanning || beanDefFilters.Filter(d));
+            var beanDefCollection = compScannedDefs.Where(d => !d.FromComponentScanning || beanDefFilters.Filter(d));
             var configParser = new ConfigurationParser();
 
             beanDefCollection = beanDefCollection.Union(configParser.Parse(beanDefCollection));
@@ -136,7 +126,7 @@ namespace UnityAddon.Core
                 .ResolveUA<BeanFactory>()
                 .CreateFactory(beanDefCollection, hostContainer);
 
-            foreach (var defCollection in hostContainer.ResolveAllUA<IBeanDefinitionCollection>().Where(c => c.Name != "CORE"))
+            foreach (var defCollection in hostContainer.ResolveAllUA<IBeanDefinitionCollection>())
             {
                 hostContainer
                     .Resolve<IBeanDefinitionContainer>()
