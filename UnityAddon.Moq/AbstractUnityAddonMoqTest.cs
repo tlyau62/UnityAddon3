@@ -13,7 +13,7 @@ namespace UnityAddon.Moq
         {
             var host = new HostBuilder()
                 .RegisterUA()
-                .EnableUnityAddonMoq()
+                .EnableUnityAddonMoq(this)
                 .BuildUA();
 
             var container = host.Services.GetService(typeof(IUnityContainer)) as IUnityContainer;
