@@ -43,6 +43,7 @@ namespace UnityAddon.Core.BeanDefinition
         public BeanDefinitionContainer()
         {
             RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IBeanDefinitionContainer)));
+            RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IUnityContainer)));
         }
 
         public IBeanDefinitionContainer RegisterBeanDefinition(IBeanDefinition beanDefinition)
