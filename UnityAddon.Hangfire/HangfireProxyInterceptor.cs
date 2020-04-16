@@ -17,7 +17,7 @@ namespace UnityAddon.Hangfire
     [AopAttribute(typeof(HangfireProxyAttribute))]
     public class HangfireProxyInterceptor : IInterceptor
     {
-        [Dependency]
+        [OptionalDependency]
         public ITransactionCallbacks TransactionCallbacks { get; set; }
 
         [Dependency]
