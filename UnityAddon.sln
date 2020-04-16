@@ -19,11 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityAddon.Hangfire", "Unit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityAddon.HangfireTest", "UnityAddon.HangfireTest\UnityAddon.HangfireTest.csproj", "{47E2759F-65A8-46E8-9B7C-D6E6E0BF8B03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication3", "WebApplication3\WebApplication3.csproj", "{0D17D8A5-5E8E-4ABD-B9CD-D47351BC2452}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityAddon.Moq", "UnityAddon.Moq\UnityAddon.Moq.csproj", "{5623CCAD-E0A8-4021-B537-0BDD779DEED8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityAddon.Moq", "UnityAddon.Moq\UnityAddon.Moq.csproj", "{5623CCAD-E0A8-4021-B537-0BDD779DEED8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityAddon.MoqTest", "UnityAddon.MoqTest\UnityAddon.MoqTest.csproj", "{7EC42560-4428-4CDA-956C-C656328567D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnityAddon.MoqTest", "UnityAddon.MoqTest\UnityAddon.MoqTest.csproj", "{7EC42560-4428-4CDA-956C-C656328567D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,10 +61,6 @@ Global
 		{47E2759F-65A8-46E8-9B7C-D6E6E0BF8B03}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47E2759F-65A8-46E8-9B7C-D6E6E0BF8B03}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47E2759F-65A8-46E8-9B7C-D6E6E0BF8B03}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0D17D8A5-5E8E-4ABD-B9CD-D47351BC2452}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D17D8A5-5E8E-4ABD-B9CD-D47351BC2452}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D17D8A5-5E8E-4ABD-B9CD-D47351BC2452}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D17D8A5-5E8E-4ABD-B9CD-D47351BC2452}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5623CCAD-E0A8-4021-B537-0BDD779DEED8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5623CCAD-E0A8-4021-B537-0BDD779DEED8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5623CCAD-E0A8-4021-B537-0BDD779DEED8}.Release|Any CPU.ActiveCfg = Release|Any CPU
