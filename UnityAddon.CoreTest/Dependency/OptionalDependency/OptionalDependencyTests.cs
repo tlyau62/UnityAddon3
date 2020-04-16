@@ -18,6 +18,8 @@ namespace UnityAddon.CoreTest.Dependency.OptionalDependency
     {
     }
 
+    public interface ITest { }
+
     [Component]
     public class Service
     {
@@ -26,6 +28,9 @@ namespace UnityAddon.CoreTest.Dependency.OptionalDependency
 
         [OptionalDependency]
         public CustHelper CustHelper { get; set; }
+
+        [OptionalDependency]
+        public ITest Test { get; set; }
     }
 
     [Trait("Dependency", "OptionalDependency")]
@@ -44,6 +49,12 @@ namespace UnityAddon.CoreTest.Dependency.OptionalDependency
         public void PropertyFill_ResolveUnregisteredOptionalDependency_NullResolved()
         {
             Assert.Null(Service.CustHelper);
+        }
+
+        [Fact]
+        public void PropertyFill_ResolveUnregisteredOptionalInterfaceDependency_NullResolved()
+        {
+            Assert.Null(Service.Test);
         }
     }
 }
