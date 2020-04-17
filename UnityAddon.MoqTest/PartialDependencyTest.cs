@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Unity;
+using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Moq;
 using Xunit;
@@ -13,7 +14,6 @@ namespace UnityAddon.MoqTest.PartialDependency
         string GetMessage();
     }
 
-    [Component]
     public class MessageService
     {
         [Dependency]
@@ -22,7 +22,7 @@ namespace UnityAddon.MoqTest.PartialDependency
 
     public class PartialDependencyTest : AbstractUnityAddonMoqTest
     {
-        [Dependency]
+        [TestSubject]
         public MessageService MessageService { get; set; }
 
         public PartialDependencyTest() : base(true) { }
