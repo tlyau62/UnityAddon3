@@ -81,7 +81,7 @@ namespace UnityAddon.Core
             container.Resolve<IBeanDefinitionContainer>()
                 .RegisterBeanDefinition(beanDef);
 
-            container.RegisterFactory(type, name, (c, t, n) => factory(c, t, n), lifetimeManager);
+            container.RegisterFactory(type, name, factory, lifetimeManager);
 
             return container;
         }
