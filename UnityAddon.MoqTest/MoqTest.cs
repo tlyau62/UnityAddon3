@@ -4,7 +4,7 @@ using Unity;
 using UnityAddon.Moq;
 using Xunit;
 
-namespace UnityAddon.MoqTest
+namespace UnityAddon.MoqTest.Moq
 {
     public interface IMessageRepository
     {
