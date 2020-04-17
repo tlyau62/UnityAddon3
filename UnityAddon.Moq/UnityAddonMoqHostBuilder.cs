@@ -15,7 +15,7 @@ namespace UnityAddon.Moq
 {
     public static class UnityAddonMoqHostBuilder
     {
-        public static IHostBuilder EnableUnityAddonMoq(this IHostBuilder hostBuilder, object testcase)
+        public static IHostBuilder EnableUnityAddonMoq(this IHostBuilder hostBuilder, object testcase, bool partial)
         {
             return hostBuilder
                 .ConfigureUA<IUnityContainer>(container =>
@@ -57,9 +57,17 @@ namespace UnityAddon.Moq
                     });
 
                     c.AddResolveStrategy<TestSubjectAttribute>((type, attr, c) =>
-                    {   
+                    {
                         return c.ResolveUA(type);
                     });
+
+                    if (partial)
+                    {
+                        c.AddResolveStrategy<DependencyAttribute>((type, attr, c) =>
+                        {
+                            return c.ResolveOptionalUA(type, attr.Name);
+                        });
+                    }
                 });
         }
     }
