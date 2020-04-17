@@ -8,7 +8,9 @@ using Unity.Injection;
 using Unity.Lifetime;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.BeanDefinition;
+using UnityAddon.Core.DependencyInjection;
 using UnityAddon.Core.Exceptions;
+using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.Core
 {
@@ -22,14 +24,15 @@ namespace UnityAddon.Core
                 type.IsGenericType && defContainer.HasBeanDefinition(type.GetGenericTypeDefinition(), name);
         }
 
-        public static IUnityContainer RegisterTypeUA(this IUnityContainer container, string name, Type resolveType, Type implType, ITypeLifetimeManager lifetimeManager, params InjectionMember[] injectionMembers)
+        public static IUnityContainer RegisterTypeUA(this IUnityContainer container, string name, Type resolveType, Type implType, ITypeLifetimeManager lifetimeManager)
         {
-            var def = new SimpleBeanDefinition(resolveType, name);
+            return container.RegisterFactoryUA(resolveType, name, (c, t, n) =>
+            {
+                var parameterFill = c.Resolve<ParameterFill>();
+                var ctor = DefaultConstructor.Select(implType);
 
-            container.ResolveUA<IBeanDefinitionContainer>()
-                .RegisterBeanDefinition(def);
-
-            return container.RegisterType(resolveType, implType, name, lifetimeManager, injectionMembers);
+                return ctor.Invoke(parameterFill.FillAllParamaters(ctor, container));
+            }, (IFactoryLifetimeManager)lifetimeManager);
         }
 
         public static object ResolveUA(this IUnityContainer container, Type type, string name)

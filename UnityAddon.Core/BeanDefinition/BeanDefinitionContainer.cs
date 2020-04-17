@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 using UnityAddon.Core.Reflection;
 using System.Collections.Concurrent;
 using Unity;
+using UnityAddon.Core.DependencyInjection;
+using UnityAddon.Core.Thread;
+using Castle.DynamicProxy;
+using UnityAddon.Core.BeanBuildStrategies;
 
 namespace UnityAddon.Core.BeanDefinition
 {
@@ -42,6 +46,9 @@ namespace UnityAddon.Core.BeanDefinition
         {
             RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IBeanDefinitionContainer)));
             RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IUnityContainer)));
+            RegisterBeanDefinition(new SimpleBeanDefinition(typeof(DependencyResolver)));
+            RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IThreadLocalFactory<Stack<IInvocation>>)));
+            RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IThreadLocalFactory<Stack<ResolveStackEntry>>)));
         }
 
         public IBeanDefinitionContainer RegisterBeanDefinition(IBeanDefinition beanDefinition)
