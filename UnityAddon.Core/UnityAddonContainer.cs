@@ -24,8 +24,7 @@ namespace UnityAddon.Core
                 type.IsGenericType && defContainer.HasBeanDefinition(type.GetGenericTypeDefinition(), name);
         }
 
-        // TODO: put in bean factory
-        public static IUnityContainer RegisterTypeUA(this IUnityContainer container, string name, Type resolveType, Type implType, ITypeLifetimeManager lifetimeManager, params InjectionMember[] injectionMembers)
+        public static IUnityContainer RegisterTypeUA(this IUnityContainer container, string name, Type resolveType, Type implType, ITypeLifetimeManager lifetimeManager)
         {
             return container.RegisterFactoryUA(resolveType, name, (c, t, n) =>
             {
@@ -82,7 +81,7 @@ namespace UnityAddon.Core
             container.Resolve<IBeanDefinitionContainer>()
                 .RegisterBeanDefinition(beanDef);
 
-            container.RegisterFactory(type, name, (c, t, n) => factory(c, t, n), lifetimeManager);
+            container.RegisterFactory(type, name, factory, lifetimeManager);
 
             return container;
         }
