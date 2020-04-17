@@ -11,19 +11,14 @@ namespace UnityAddon.Moq
 {
     public abstract class AbstractUnityAddonMoqTest
     {
-        public AbstractUnityAddonMoqTest() : this(Assembly.GetCallingAssembly(), false)
+        public AbstractUnityAddonMoqTest() : this(false)
         {
         }
 
-        public AbstractUnityAddonMoqTest(bool partial) : this(Assembly.GetCallingAssembly(), partial)
-        {
-        }
-
-        public AbstractUnityAddonMoqTest(Assembly assembly, bool partial)
+        public AbstractUnityAddonMoqTest(bool partial)
         {
             var host = new HostBuilder()
                 .RegisterUA()
-                .ScanComponentsUA(assembly, this.GetType().Namespace)
                 .EnableUnityAddonMoq(this, partial)
                 .BuildUA();
 
