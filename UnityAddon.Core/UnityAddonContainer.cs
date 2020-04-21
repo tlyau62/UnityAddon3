@@ -45,7 +45,10 @@ namespace UnityAddon.Core
         {
             if (!container.IsRegisteredUA(type, name))
             {
-                throw new NoSuchBeanDefinitionException($"Type {type} with name '{name}' is not registered.");
+                if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(IEnumerable<>) || !container.IsRegisteredUA(type.GetGenericArguments()[0], name))
+                {
+                    throw new NoSuchBeanDefinitionException($"Type {type} with name '{name}' is not registered.");
+                }
             }
 
             return container.ResolveOptionalUA(type, name);
@@ -55,7 +58,14 @@ namespace UnityAddon.Core
         {
             if (!container.IsRegisteredUA(type, name))
             {
-                return null;
+                if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(IEnumerable<>) || !container.IsRegisteredUA(type.GetGenericArguments()[0], name))
+                {
+                    return null;
+                }
+                else
+                {
+                    return container.ResolveAllUA(type.GetGenericArguments()[0]);
+                }
             }
 
             object bean = container.Resolve(type, name);
@@ -92,11 +102,12 @@ namespace UnityAddon.Core
             return container;
         }
 
-        public static IEnumerable<object> ResolveAllUA(this IUnityContainer container, Type type)
+        public static IEnumerable<T> ResolveAllUA<T>(this IUnityContainer container)
         {
             return container.Resolve<IBeanDefinitionContainer>()
-                .GetAllBeanDefinitions(type)
-                .Select(def => container.ResolveUA(def.BeanType, def.BeanName));
+                .GetAllBeanDefinitions(typeof(T))
+                .Select(def => (T)container.ResolveUA(def.BeanType, def.BeanName))
+                .ToList();
         }
 
         public static void UnregisterUA(this IUnityContainer container, Type type, string name = null)
