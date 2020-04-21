@@ -29,6 +29,12 @@ namespace UnityAddon.Core
             return container.RegisterFactoryUA(resolveType, name, (c, t, n) =>
             {
                 var parameterFill = c.Resolve<ParameterFill>();
+
+                if (implType.IsGenericType)
+                {
+                    implType = implType.MakeGenericType(t.GetGenericArguments());
+                }
+
                 var ctor = DefaultConstructor.Select(implType);
 
                 return ctor.Invoke(parameterFill.FillAllParamaters(ctor, container));

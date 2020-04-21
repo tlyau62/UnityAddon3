@@ -65,6 +65,7 @@
     <Compile Include="Resolve\ResolveAllByPrimitive\ResolveAllByPrimitiveTests.cs" />
     <Compile Include="Resolve\ResolveByBeanName\ResolveByBeanNameTests.cs" />
     <Compile Include="Resolve\ResolveByNull\ResolveByNullTests.cs" />
+    <Compile Include="Resolve\ResolveGeneric\ResolveGenericTests.cs" />
   </ItemGroup>
 
   <ItemGroup>
