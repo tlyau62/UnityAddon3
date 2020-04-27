@@ -9,7 +9,7 @@ namespace UnityAddon.Core.Attributes
     /// the primary bean will be resolved. Otherwise, NoUniqueBeanDefinitionException
     /// will be thrown.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Interface, AllowMultiple = false)]
     public class PrimaryAttribute : Attribute
     {
     }

@@ -7,7 +7,7 @@ namespace UnityAddon.Core.Attributes
     /// <summary>
     /// Profiled bean will be created only when its profile is included in the active profiles.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Interface)]
     public class ProfileAttribute : Attribute
     {
         public string[] Values { get; set; }
