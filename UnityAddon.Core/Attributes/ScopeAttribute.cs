@@ -10,7 +10,7 @@ namespace UnityAddon.Core.Attributes
     /// <summary>
     /// Indicate the scope of a bean.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Interface)]
     public class ScopeAttribute : Attribute
     {
         private static Dictionary<ScopeType, Type> scopeMap = new Dictionary<ScopeType, Type>()

@@ -9,7 +9,7 @@ namespace UnityAddon.Core.Attributes
     /// <summary>
     /// Marked class will be included during component scanning.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
     public class ComponentAttribute : Attribute
     {
     }
