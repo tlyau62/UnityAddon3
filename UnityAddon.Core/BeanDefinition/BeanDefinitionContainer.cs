@@ -42,28 +42,11 @@ namespace UnityAddon.Core.BeanDefinition
     {
         private ConcurrentDictionary<Type, BeanDefinitionHolder> _container = new ConcurrentDictionary<Type, BeanDefinitionHolder>();
 
-        public BeanDefinitionContainer()
-        {
-            RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IBeanDefinitionContainer)));
-            RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IUnityContainer)));
-            RegisterBeanDefinition(new SimpleBeanDefinition(typeof(DependencyResolver)));
-            RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IThreadLocalFactory<Stack<IInvocation>>)));
-            RegisterBeanDefinition(new SimpleBeanDefinition(typeof(IThreadLocalFactory<Stack<ResolveStackEntry>>)));
-        }
-
         public IBeanDefinitionContainer RegisterBeanDefinition(IBeanDefinition beanDefinition)
         {
-            if (beanDefinition.RequireAssignableTypes)
+            foreach (var type in beanDefinition.AutoWiredTypes)
             {
-                // bad time and space
-                foreach (var type in TypeResolver.GetAssignableTypes(beanDefinition.BeanType))
-                {
-                    AddBeanDefinition(type, beanDefinition);
-                }
-            }
-            else
-            {
-                AddBeanDefinition(beanDefinition.BeanType, beanDefinition);
+                AddBeanDefinition(type, beanDefinition);
             }
 
             return this;
@@ -152,7 +135,7 @@ namespace UnityAddon.Core.BeanDefinition
 
             if (beanDef is TypeBeanDefinition)
             {
-                foreach (var atype in TypeResolver.GetAssignableTypes(beanDef.BeanType))
+                foreach (var atype in TypeResolver.GetAssignableTypes(beanDef.Type))
                 {
                     _container[atype].Remove(beanDef);
                 }

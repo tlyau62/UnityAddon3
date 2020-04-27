@@ -106,7 +106,7 @@ namespace UnityAddon.Core
         {
             return container.Resolve<IBeanDefinitionContainer>()
                 .GetAllBeanDefinitions(typeof(T))
-                .Select(def => (T)container.ResolveUA(def.BeanType, def.BeanName))
+                .Select(def => (T)container.ResolveUA(def.Type, def.Name))
                 .ToList();
         }
 
@@ -116,15 +116,15 @@ namespace UnityAddon.Core
             var bean = container.ResolveUA(type, name); // ensure the bean exists
             var beanDef = beanDefContainer.RemoveBeanDefinition(type, name);
 
-            var matchedList = container.Registrations.Where(p => p.RegisteredType == beanDef.BeanType && p.Name == beanDef.BeanName);
+            var matchedList = container.Registrations.Where(p => p.RegisteredType == beanDef.Type && p.Name == beanDef.Name);
 
             foreach (var registration in matchedList)
             {
                 registration.LifetimeManager.RemoveValue();
 
-                container.RegisterFactory(beanDef.BeanType, beanDef.BeanName, (c, t, n) =>
+                container.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) =>
                 {
-                    throw new NoSuchBeanDefinitionException($"Type {beanDef.BeanType} with name '{beanDef.BeanName}' is unregistered.");
+                    throw new NoSuchBeanDefinitionException($"Type {beanDef.Type} with name '{beanDef.Name}' is unregistered.");
                 }, (IFactoryLifetimeManager)Activator.CreateInstance(registration.LifetimeManager.GetType()));
             }
         }

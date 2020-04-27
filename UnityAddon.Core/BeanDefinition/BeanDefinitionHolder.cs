@@ -48,7 +48,7 @@ namespace UnityAddon.Core.BeanDefinition
                 return _beanDefinitions;
             }
 
-            return _beanDefinitions.Where(d => d.BeanQualifiers.Any(q => q == name) || d.BeanName == name);
+            return _beanDefinitions.Where(d => d.Qualifiers.Any(q => q == name) || d.Name == name);
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace UnityAddon.Core.BeanDefinition
             }
             else if (results.Count() > 1)
             {
-                throw new NoUniqueBeanDefinitionException(this);
+                return results.Last();
             }
 
             return results.Single();

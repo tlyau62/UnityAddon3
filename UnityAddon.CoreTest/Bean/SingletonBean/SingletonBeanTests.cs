@@ -15,7 +15,7 @@ namespace UnityAddon.CoreTest.Bean.SingletonBean
     }
 
     [Component]
-    [Scope(ScopeType.ContainerControlled)]
+    [Scope(ScopeType.Singleton)]
     public class SingletonService
     {
         [Dependency]

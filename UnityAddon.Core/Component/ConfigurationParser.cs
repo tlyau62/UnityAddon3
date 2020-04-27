@@ -20,7 +20,7 @@ namespace UnityAddon.Core.Component
             return beanDefinitions
                 .Where(def => def is TypeBeanDefinition typeDef && typeDef.IsConfiguration)
                 .Cast<TypeBeanDefinition>()
-                .SelectMany(def => MethodSelector.GetAllMethodsByAttribute<BeanAttribute>(def.BeanType))
+                .SelectMany(def => MethodSelector.GetAllMethodsByAttribute<BeanAttribute>(def.Type))
                 .Select(beanMethod => new MethodBeanDefinition(beanMethod));
         }
     }

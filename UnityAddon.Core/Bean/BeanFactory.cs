@@ -44,19 +44,19 @@ namespace UnityAddon.Core.Bean
 
         public void CreateFactory(SimpleFactoryBeanDefinition simpFactoryBeanDef, IUnityContainer container)
         {
-            var type = simpFactoryBeanDef.BeanType;
+            var type = simpFactoryBeanDef.Type;
             var scope = simpFactoryBeanDef.BeanScope;
-            var beanName = simpFactoryBeanDef.BeanName;
+            var beanName = simpFactoryBeanDef.Name;
             var ctor = simpFactoryBeanDef.Constructor;
 
             container.RegisterFactory(type, beanName, ctor, BuildScope<IFactoryLifetimeManager>(scope));
         }
 
-        public void CreateFactory(TypeBeanDefinition typeBeanDefinition, IUnityContainer container)
+        public void CreateFactory(MemberTypeBeanDefinition typeBeanDefinition, IUnityContainer container)
         {
-            var type = typeBeanDefinition.BeanType;
+            var type = typeBeanDefinition.Type;
             var scope = typeBeanDefinition.BeanScope;
-            var beanName = typeBeanDefinition.BeanName;
+            var beanName = typeBeanDefinition.Name;
 
             if (type.HasAttribute<ConfigurationAttribute>())
             {
@@ -91,12 +91,12 @@ namespace UnityAddon.Core.Bean
             }
         }
 
-        public void CreateFactory(MethodBeanDefinition methodBeanDefinition, IUnityContainer container)
+        public void CreateFactory(MemberMethodDefinition methodBeanDefinition, IUnityContainer container)
         {
-            var type = methodBeanDefinition.BeanType;
+            var type = methodBeanDefinition.Type;
             var configType = methodBeanDefinition.ConfigType;
             var ctor = methodBeanDefinition.Method;
-            var beanName = methodBeanDefinition.BeanName;
+            var beanName = methodBeanDefinition.Name;
             var factoryName = methodBeanDefinition.FactoryName;
             var scope = methodBeanDefinition.BeanScope;
 

@@ -32,10 +32,10 @@ namespace UnityAddon.Core.Bean
         public void Intercept(IInvocation invocation)
         {
             var method = invocation.Method;
-            var tempBeanDef = new MethodBeanDefinition(method);
-            var beanName = tempBeanDef.BeanName;
+            var tempBeanDef = new MemberMethodDefinition(method);
+            var beanName = tempBeanDef.Name;
             var factoryName = tempBeanDef.FactoryName;
-            var beanType = tempBeanDef.BeanType;
+            var beanType = tempBeanDef.Type;
 
             if (!method.HasAttribute<BeanAttribute>())
             {
@@ -50,7 +50,7 @@ namespace UnityAddon.Core.Bean
 
                 stack.Push(invocation);
 
-                invocation.ReturnValue = _container.ResolveUA(beanDef.BeanType, factoryName);
+                invocation.ReturnValue = _container.ResolveUA(beanDef.Type, factoryName);
 
                 stack.Pop();
 
