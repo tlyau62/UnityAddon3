@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -6,10 +8,12 @@ using System.Linq;
 using Unity;
 using Unity.Injection;
 using Unity.Lifetime;
+using UnityAddon.Core.Aop;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.BeanBuildStrategies;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.BeanDefinition.ServiceBeanDefinition;
+using UnityAddon.Core.Component;
 using UnityAddon.Core.Thread;
 using UnityAddon.Core.Value;
 
@@ -29,8 +33,11 @@ namespace UnityAddon
 
         private readonly IThreadLocalFactory<Stack<ResolveStackEntry>> _threadLocalResolveStack;
 
+        private bool _isNewContainer = false;
+
         public ServiceProviderFactory() : this(new UnityContainer())
         {
+            _isNewContainer = true;
         }
 
         public ServiceProviderFactory(IUnityContainer container)
@@ -65,7 +72,9 @@ namespace UnityAddon
             services.AddSingleton<ValueProvider>();
             services.AddSingleton<ConfigBracketParser>();
             services.AddSingleton(_threadLocalResolveStack);
-
+            services.AddSingleton(sp => sp.GetService<AopInterceptorContainerBuilder>()?.Build(sp));
+            services.AddSingleton(sp => sp.GetService<BeanDefintionCandidateSelectorBuilder>().Build(sp.GetService<IConfiguration>()));
+            services.AddSingleton(sp => sp.GetService<ComponentScannerBuilder>().Build(sp));
 
             _container.AddNewExtension<BeanBuildStrategyExtension>();
 
@@ -92,6 +101,38 @@ namespace UnityAddon
 
                 _beanDefContainer.RegisterBeanDefinition(beanDef);
                 _container.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(_sp, t, n), (IFactoryLifetimeManager)beanDef.Scope);
+            }
+
+            var beanDefFilters = _sp.GetRequiredService<BeanDefintionCandidateSelector>();
+            var compScanner = _sp.GetRequiredService<ComponentScanner>();
+            var compScannedDefs = _sp.GetRequiredService<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>().SelectMany(cb => cb(compScanner));
+            var beanDefCollection = compScannedDefs.Where(d => !d.FromComponentScanning || beanDefFilters.Filter(d));
+            var configParser = new ConfigurationParser();
+
+            beanDefCollection = beanDefCollection.Union(configParser.Parse(beanDefCollection));
+
+            _beanDefContainer.RegisterBeanDefinitions(beanDefCollection);
+
+            _container.AddNewExtension<AopBuildStrategyExtension>();
+
+            foreach (var beanDef in beanDefCollection)
+            {
+                _container.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(_sp, t, n), (IFactoryLifetimeManager)beanDef.Scope);
+            }
+
+            foreach (var defCollection in _sp.GetServices<IBeanDefinitionCollection>())
+            {
+                _beanDefContainer.RegisterBeanDefinitions(defCollection);
+
+                foreach (var beanDef in defCollection)
+                {
+                    _container.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(_sp, t, n), (IFactoryLifetimeManager)beanDef.Scope);
+                }
+            }
+
+            if (_isNewContainer)
+            {
+                _sp.GetService<IHostApplicationLifetime>()?.ApplicationStopped.Register(() => _container.Dispose());
             }
 
             return _container;

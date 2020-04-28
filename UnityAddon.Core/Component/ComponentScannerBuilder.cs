@@ -21,11 +21,11 @@ namespace UnityAddon.Core.Component
             _scannerStrategies.Add(typeof(T));
         }
 
-        public ComponentScanner Build(IUnityContainer container)
+        public ComponentScanner Build(IServiceProvider sp)
         {
             return new ComponentScanner(
                 _scannerStrategies.OrderBy(stg =>
-                    Ordered.GetOrder(stg)).Select(stg => (IComponentScannerStrategy)container.Resolve(stg)));
+                    Ordered.GetOrder(stg)).Select(stg => (IComponentScannerStrategy)sp.GetService(stg)));
         }
     }
 }
