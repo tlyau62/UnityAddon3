@@ -21,6 +21,8 @@ namespace UnityAddon
 
         private readonly IServiceProvider _sp;
 
+        private readonly BeanFactory _beanFactory;
+
         public ServiceProviderFactory() : this(new UnityContainer())
         {
         }
@@ -32,10 +34,12 @@ namespace UnityAddon
             _container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
             _container.RegisterType<IServiceProvider, ServiceProvider>(new ContainerControlledLifetimeManager());
             _container.RegisterType<ConstructorResolver>(new ContainerControlledLifetimeManager());
+            _container.RegisterType<BeanFactory>(new ContainerControlledLifetimeManager());
 
             _beanDefContainer = container.Resolve<IBeanDefinitionContainer>();
             _sp = _container.Resolve<IServiceProvider>();
             _ctorResolver = container.Resolve<ConstructorResolver>();
+            _beanFactory = container.Resolve<BeanFactory>();
         }
 
         public IUnityContainer CreateBuilder(IServiceCollection services)
@@ -48,6 +52,7 @@ namespace UnityAddon
             // internal
             services.AddSingleton(_beanDefContainer);
             services.AddSingleton(_ctorResolver);
+            services.AddSingleton(_beanFactory);
 
             _container.AddNewExtension<BeanBuildStrategyExtension>();
 
