@@ -11,8 +11,6 @@ namespace UnityAddon
         bool CanResolve(Type serviceType, string name);
 
         bool IsRegistered(Type serviceType, string name);
-
-        IEnumerable<object> GetAllServices(Type serviceType);
     }
 
     public interface ISupportNamedService
@@ -53,16 +51,6 @@ namespace UnityAddon
         {
             return ((IUnityServiceProvider)sp).IsRegistered(serviceType, name);
         }
-
-        public static IEnumerable<object> GetAllServices(this IServiceProvider sp, Type serviceType)
-        {
-            return ((IUnityServiceProvider)sp).GetAllServices(serviceType);
-        }
-
-        public static IEnumerable<T> GetAllServices<T>(this IServiceProvider sp)
-        {
-            return (IEnumerable<T>)((IUnityServiceProvider)sp).GetAllServices(typeof(T));
-        }
     }
 
     // Support name interface
@@ -88,11 +76,6 @@ namespace UnityAddon
             return _container.Resolve(serviceType, name);
         }
 
-        public IEnumerable<object> GetAllServices(Type serviceType)
-        {
-            return (IEnumerable<object>)GetService(typeof(IEnumerable<>).MakeGenericType(serviceType));
-        }
-
         public object GetRequiredService(Type serviceType)
         {
             return GetRequiredService(serviceType, null);
@@ -100,7 +83,7 @@ namespace UnityAddon
 
         public object GetRequiredService(Type serviceType, string name)
         {
-            if (!IsRegistered(serviceType, name))
+            if (!CanResolve(serviceType, name))
             {
                 throw new InvalidOperationException("Service not register");
             }
