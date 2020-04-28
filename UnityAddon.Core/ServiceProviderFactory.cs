@@ -4,8 +4,10 @@ using System;
 using System.Linq;
 using Unity;
 using Unity.Lifetime;
-using UnityAddon.Bean;
-using UnityAddon.BeanBuildStrategies;
+using UnityAddon.Core.Bean;
+using UnityAddon.Core.BeanBuildStrategies;
+using UnityAddon.Core.BeanDefinition;
+using UnityAddon.Core.BeanDefinition.ServiceBeanDefinition;
 
 namespace UnityAddon
 {
@@ -71,7 +73,7 @@ namespace UnityAddon
                 }
 
                 _beanDefContainer.RegisterBeanDefinition(beanDef);
-                _container.RegisterFactory(beanDef.BeanType, beanDef.BeanName, beanDef.Constructor, (IFactoryLifetimeManager)beanDef.BeanScope);
+                _container.RegisterFactory(beanDef.Type, beanDef.Name, beanDef.Constructor, (IFactoryLifetimeManager)beanDef.Scope);
             }
 
             return _container;

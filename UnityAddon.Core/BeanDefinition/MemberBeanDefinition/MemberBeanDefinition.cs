@@ -17,12 +17,12 @@ namespace UnityAddon.Core.BeanDefinition
     /// </summary>
     public abstract class MemberBeanDefinition : IBeanDefinition
     {
-        private MemberInfo _member;
-
         public MemberBeanDefinition(MemberInfo member)
         {
-            _member = member;
+            Member = member;
         }
+
+        public MemberInfo Member { get; }
 
         public abstract Type Type { get; }
 
@@ -37,7 +37,7 @@ namespace UnityAddon.Core.BeanDefinition
                     return _scope;
                 }
 
-                var scopeAttr = _member.GetAttribute<ScopeAttribute>();
+                var scopeAttr = Member.GetAttribute<ScopeAttribute>();
                 var scope = scopeAttr != null ? scopeAttr.Value : typeof(ContainerControlledLifetimeManager);
 
                 return _scope = (LifetimeManager)Activator.CreateInstance(scope);
@@ -46,12 +46,12 @@ namespace UnityAddon.Core.BeanDefinition
 
         public abstract string Name { get; }
 
-        public string[] Qualifiers
+        public virtual string[] Qualifiers
         {
             get
             {
-                var qAttr = _member.GetAttribute<QualifierAttribute>();
-                var gAttr = _member.GetAttribute<GuidAttribute>();
+                var qAttr = Member.GetAttribute<QualifierAttribute>();
+                var gAttr = Member.GetAttribute<GuidAttribute>();
                 var qualifiers = new List<string>();
 
                 if (qAttr != null)
@@ -68,21 +68,21 @@ namespace UnityAddon.Core.BeanDefinition
             }
         }
 
-        public string[] Profiles => _member.GetAttribute<ProfileAttribute>()?.Values ?? new string[0];
+        public string[] Profiles => Member.GetAttribute<ProfileAttribute>()?.Values ?? new string[0];
 
-        public bool IsPrimary => _member.HasAttribute<PrimaryAttribute>();
+        public bool IsPrimary => Member.HasAttribute<PrimaryAttribute>();
+
+        public abstract object Constructor(IUnityContainer container, Type type, string name);
+
+        public abstract string Namespace { get; }
+
+        public abstract Type[] AutoWiredTypes { get; }
+
+        public bool FromComponentScanning { get; set; }
 
         public override string ToString()
         {
             return Type.FullName;
         }
-
-        public abstract object Constructor(IUnityContainer container, Type type, string name);
-
-        public string Namespace { get; set; }
-
-        public Type[] AutoWiredTypes { get; set; }
-
-        public bool FromComponentScanning { get; set; }
     }
 }

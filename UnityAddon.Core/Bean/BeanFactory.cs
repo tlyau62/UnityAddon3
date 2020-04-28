@@ -34,37 +34,27 @@ namespace UnityAddon.Core.Bean
         [Dependency]
         public ProxyGenerator ProxyGenerator { get; set; }
 
-        public void CreateFactory(IEnumerable<IBeanDefinition> beanDefinitions, IUnityContainer container)
-        {
-            foreach (var def in beanDefinitions.Where(d => d.RequireFactory))
-            {
-                CreateFactory((dynamic)def, container);
-            }
-        }
-
-        public void CreateFactory(SimpleFactoryBeanDefinition simpFactoryBeanDef, IUnityContainer container)
-        {
-            var type = simpFactoryBeanDef.Type;
-            var scope = simpFactoryBeanDef.BeanScope;
-            var beanName = simpFactoryBeanDef.Name;
-            var ctor = simpFactoryBeanDef.Constructor;
-
-            container.RegisterFactory(type, beanName, ctor, BuildScope<IFactoryLifetimeManager>(scope));
-        }
+        //public void CreateFactory(IEnumerable<IBeanDefinition> beanDefinitions, IUnityContainer container)
+        //{
+        //    foreach (var def in beanDefinitions.Where(d => d.RequireFactory))
+        //    {
+        //        CreateFactory((dynamic)def, container);
+        //    }
+        //}
 
         public void CreateFactory(MemberTypeBeanDefinition typeBeanDefinition, IUnityContainer container)
         {
             var type = typeBeanDefinition.Type;
-            var scope = typeBeanDefinition.BeanScope;
+            var scope = typeBeanDefinition.Scope;
             var beanName = typeBeanDefinition.Name;
 
             if (type.HasAttribute<ConfigurationAttribute>())
             {
-                container.RegisterFactory(type, beanName, configFactory, BuildScope<IFactoryLifetimeManager>(scope));
+                container.RegisterFactory(type, beanName, configFactory, (IFactoryLifetimeManager)scope);
             }
             else if (type.HasAttribute<ComponentAttribute>(true))
             {
-                container.RegisterFactory(type, beanName, componentFactory, BuildScope<IFactoryLifetimeManager>(scope));
+                container.RegisterFactory(type, beanName, componentFactory, (IFactoryLifetimeManager)scope);
             }
             else
             {
@@ -98,7 +88,7 @@ namespace UnityAddon.Core.Bean
             var ctor = methodBeanDefinition.Method;
             var beanName = methodBeanDefinition.Name;
             var factoryName = methodBeanDefinition.FactoryName;
-            var scope = methodBeanDefinition.BeanScope;
+            var scope = methodBeanDefinition.Scope;
 
             container.RegisterFactory(type, beanName, (c, t, n) =>
             {
@@ -106,7 +96,7 @@ namespace UnityAddon.Core.Bean
                 var config = c.Resolve(configType);
 
                 return ctor.Invoke(config, ParameterFill.FillAllParamaters(ctor, container));
-            }, BuildScope<IFactoryLifetimeManager>(scope));
+            }, (IFactoryLifetimeManager)scope);
 
             container.RegisterFactory(type, factoryName, (c, t, n) =>
             {
@@ -115,7 +105,7 @@ namespace UnityAddon.Core.Bean
                 invocation.Proceed();
 
                 return invocation.ReturnValue;
-            }, BuildScope<IFactoryLifetimeManager>(scope));
+            }, (IFactoryLifetimeManager)Activator.CreateInstance(scope.GetType()));
         }
 
         private TLifetimeManager BuildScope<TLifetimeManager>(Type scope)

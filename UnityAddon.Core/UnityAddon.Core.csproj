@@ -10,6 +10,53 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="BeanDefinition\Candidate\**" />
+    <Compile Remove="BeanPostprocessor\**" />
+    <Compile Remove="DependencyInjection\**" />
+    <Compile Remove="Exceptions\**" />
+    <Compile Remove="Thread\**" />
+    <Compile Remove="Value\**" />
+    <EmbeddedResource Remove="BeanDefinition\Candidate\**" />
+    <EmbeddedResource Remove="BeanPostprocessor\**" />
+    <EmbeddedResource Remove="DependencyInjection\**" />
+    <EmbeddedResource Remove="Exceptions\**" />
+    <EmbeddedResource Remove="Thread\**" />
+    <EmbeddedResource Remove="Value\**" />
+    <None Remove="BeanDefinition\Candidate\**" />
+    <None Remove="BeanPostprocessor\**" />
+    <None Remove="DependencyInjection\**" />
+    <None Remove="Exceptions\**" />
+    <None Remove="Thread\**" />
+    <None Remove="Value\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="BeanBuildStrategies\BeanAutowireStrategy.cs" />
+    <Compile Remove="BeanBuildStrategies\BeanDependencyValidatorStrategy.cs" />
+    <Compile Remove="BeanBuildStrategies\BeanPostConstructStrategy.cs" />
+    <Compile Remove="BeanBuildStrategies\BeanPostProcessorStrategy.cs" />
+    <Compile Remove="BeanBuildStrategies\ResolveStackEntry.cs" />
+    <Compile Remove="Bean\BeanFactory.cs" />
+    <Compile Remove="Bean\BeanMethodInterceptor.cs" />
+    <Compile Remove="Bean\ConfigurationFactory.cs" />
+    <Compile Remove="Bean\Ordered.cs" />
+    <Compile Remove="Component\ComponentScanner.cs" />
+    <Compile Remove="Component\ComponentScannerBuilder.cs" />
+    <Compile Remove="Component\ComponentScannerStrategy.cs" />
+    <Compile Remove="Component\ConfigurationParser.cs" />
+    <Compile Remove="UnityAddonContainer.cs" />
+    <Compile Remove="UnityAddonContainerExt.cs" />
+    <Compile Remove="UnityAddonDefaultTest.cs" />
+    <Compile Remove="UnityAddonHost.cs" />
+    <Compile Remove="UnityAddonHostBuilder.cs" />
+    <Compile Remove="UnityAddonVendor.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Exceptions\NoSuchBeanDefinitionException.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Castle.Core" Version="4.4.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.3" />
@@ -19,6 +66,10 @@
     <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
     <PackageReference Include="Unity" Version="5.11.4" />
     <PackageReference Include="Unity.Microsoft.DependencyInjection" Version="5.11.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Component\" />
   </ItemGroup>
 
   <PropertyGroup>

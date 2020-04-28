@@ -3,6 +3,7 @@ using UnityAddon.Core.Reflection;
 using System;
 using System.Reflection;
 using Unity;
+using System.Linq;
 
 namespace UnityAddon.Core.BeanDefinition
 {
@@ -16,27 +17,27 @@ namespace UnityAddon.Core.BeanDefinition
             {
                 throw new InvalidOperationException($"Bean method {method} in class {method.DeclaringType} must be virtual.");
             }
-
-            Method = method;
         }
 
-        public MethodInfo Method { get; private set; }
+        public MethodInfo Method => (MethodInfo)Member;
 
         public override Type Type => Method.ReturnType;
 
-        public Type ConfigType => Method.DeclaringType;
-
         public override string Name => $"member-method-{Method.Name}-{_uuid}";
 
-        public string FactoryName => $"#{Name}";
-
-        public override string Namespace { get => ConfigType.Namespace; }
-
-        public override bool RequireAssignableTypes => false;
+        public override string[] Qualifiers => base.Qualifiers.Union(new[] { Method.Name }).ToArray();
 
         public override object Constructor(IUnityContainer container, Type type, string name)
         {
             throw new NotImplementedException();
         }
+
+        public override string Namespace => Method.DeclaringType.Namespace;
+
+        public override Type[] AutoWiredTypes => new[] { Type };
+
+        public Type ConfigType => Method.DeclaringType;
+
+        public string FactoryName => $"#{Name}";
     }
 }

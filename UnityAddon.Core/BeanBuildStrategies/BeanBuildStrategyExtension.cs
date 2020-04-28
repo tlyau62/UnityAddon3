@@ -5,7 +5,6 @@ using Unity;
 using Unity.Builder;
 using Unity.Extension;
 using UnityAddon.Core.Attributes;
-using UnityAddon.Core.BeanPostprocessor;
 
 namespace UnityAddon.Core.BeanBuildStrategies
 {
@@ -18,14 +17,14 @@ namespace UnityAddon.Core.BeanBuildStrategies
         [Dependency]
         public BeanTypeMappingStrategy BeanTypeMappingStrategy { get; set; }
 
-        [Dependency]
-        public BeanDependencyValidatorStrategy BeanDependencyValidatorStrategy { get; set; }
+        //[Dependency]
+        //public BeanDependencyValidatorStrategy BeanDependencyValidatorStrategy { get; set; }
 
-        [Dependency]
-        public BeanPostConstructStrategy BeanPostConstructStrategy { get; set; }
+        //[Dependency]
+        //public BeanPostConstructStrategy BeanPostConstructStrategy { get; set; }
 
-        [Dependency]
-        public BeanAutowireStrategy BeanAutowireStrategy { get; set; }
+        //[Dependency]
+        //public BeanAutowireStrategy BeanAutowireStrategy { get; set; }
 
         //[Dependency]
         //public BeanPostProcessorStrategy BeanPostProcessorStrategy { get; set; }
@@ -38,10 +37,10 @@ namespace UnityAddon.Core.BeanBuildStrategies
         protected override void Initialize()
         {
             Context.Strategies.Add(BeanTypeMappingStrategy, UnityBuildStage.TypeMapping); // 1
-            Context.Strategies.Add(BeanDependencyValidatorStrategy, UnityBuildStage.PreCreation); // 2
+            // Context.Strategies.Add(BeanDependencyValidatorStrategy, UnityBuildStage.PreCreation); // 2
             //Context.Strategies.Add(BeanPostProcessorStrategy, UnityBuildStage.PostInitialization); // 6
-            Context.Strategies.Add(BeanPostConstructStrategy, UnityBuildStage.PostInitialization); // 4 (before BeanAopStrategy, so interceptor will not trigget at postconstruct)
-            Context.Strategies.Add(BeanAutowireStrategy, UnityBuildStage.PostInitialization); // 3
+            // Context.Strategies.Add(BeanPostConstructStrategy, UnityBuildStage.PostInitialization); // 4 (before BeanAopStrategy, so interceptor will not trigget at postconstruct)
+            // Context.Strategies.Add(BeanAutowireStrategy, UnityBuildStage.PostInitialization); // 3
         }
     }
 }

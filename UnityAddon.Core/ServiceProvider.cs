@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Unity;
+using UnityAddon.Core.BeanDefinition;
 
 namespace UnityAddon
 {

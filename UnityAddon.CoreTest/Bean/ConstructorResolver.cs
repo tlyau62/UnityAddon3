@@ -41,7 +41,7 @@ namespace UnityAddonTests.Bean
     public class ConstructorResolver
     {
         [Fact]
-        public void Test1()
+        public void NoArgCtor()
         {
             var choice = 0;
             var serCol = new ServiceCollection();
@@ -56,7 +56,7 @@ namespace UnityAddonTests.Bean
         }
 
         [Fact]
-        public void Test2()
+        public void NoArgCtor2()
         {
             var choice = 0;
             var serCol = new ServiceCollection();
@@ -72,7 +72,7 @@ namespace UnityAddonTests.Bean
         }
 
         [Fact]
-        public void Test3()
+        public void ArgCtor()
         {
             var choice = 1;
             var serCol = new ServiceCollection();
@@ -89,7 +89,7 @@ namespace UnityAddonTests.Bean
         }
 
         [Fact]
-        public void Test4()
+        public void ArgCtor2()
         {
             var choice = 2;
             var serCol = new ServiceCollection();
@@ -106,7 +106,7 @@ namespace UnityAddonTests.Bean
         }
 
         [Fact]
-        public void Test5()
+        public void AmbiguousCtor()
         {
             var serCol = new ServiceCollection();
 

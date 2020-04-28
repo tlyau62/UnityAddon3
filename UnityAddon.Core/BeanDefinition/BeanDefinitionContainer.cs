@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using UnityAddon.Core.Reflection;
 using System.Collections.Concurrent;
 using Unity;
-using UnityAddon.Core.DependencyInjection;
-using UnityAddon.Core.Thread;
 using Castle.DynamicProxy;
 using UnityAddon.Core.BeanBuildStrategies;
 
@@ -133,16 +131,9 @@ namespace UnityAddon.Core.BeanDefinition
         {
             var beanDef = GetBeanDefinition(type, name);
 
-            if (beanDef is TypeBeanDefinition)
+            foreach (var atype in beanDef.AutoWiredTypes)
             {
-                foreach (var atype in TypeResolver.GetAssignableTypes(beanDef.Type))
-                {
-                    _container[atype].Remove(beanDef);
-                }
-            }
-            else
-            {
-                _container[type].Remove(beanDef);
+                _container[atype].Remove(beanDef);
             }
 
             return beanDef;
