@@ -39,7 +39,7 @@ namespace UnityAddon.Core.Bean.DependencyInjection
 
             AddResolveStrategy<ValueAttribute>((type, attr, sp) =>
             {
-                return sp.GetService<ValueProvider>().GetValue(type, attr.Value);
+                return sp.GetRequiredService<ValueProvider>().GetValue(type, attr.Value);
             });
         }
 
@@ -70,6 +70,16 @@ namespace UnityAddon.Core.Bean.DependencyInjection
 
                 throw;
             }
+        }
+
+        public bool ContainAttribute(Type attributeType)
+        {
+            if (!typeof(Attribute).IsAssignableFrom(attributeType))
+            {
+                throw new InvalidOperationException("Given value is not attribute type");
+            }
+
+            return _resolveStrategies.ContainsKey(attributeType);
         }
 
         private object InvokeStrategy<TAttribute>(Func<Type, TAttribute, IServiceProvider, object> strategy, Type type, TAttribute attr, IServiceProvider sp)

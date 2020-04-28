@@ -8,6 +8,7 @@ using UnityAddon.Core.Bean;
 using UnityAddon.Core.BeanBuildStrategies;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.BeanDefinition.ServiceBeanDefinition;
+using UnityAddon.Core.Value;
 
 namespace UnityAddon
 {
@@ -53,6 +54,8 @@ namespace UnityAddon
             services.AddSingleton(_beanDefContainer);
             services.AddSingleton(_ctorResolver);
             services.AddSingleton(_beanFactory);
+            services.AddSingleton<ValueProvider>();
+            services.AddSingleton<ConfigBracketParser>();
 
             _container.AddNewExtension<BeanBuildStrategyExtension>();
 

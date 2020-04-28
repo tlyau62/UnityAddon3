@@ -4,7 +4,7 @@ using Unity;
 using UnityAddon;
 using Xunit;
 
-namespace UnityAddon.CoreTest.Bean
+namespace UnityAddon.CoreTest.Bean.ConstructorResolver
 {
     public interface IA { }
 

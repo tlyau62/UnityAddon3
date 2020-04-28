@@ -47,6 +47,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Bean\BeanFactory.cs" />
     <Compile Include="Bean\ConstructorResolver.cs" />
     <Compile Include="Bean\DependencyInjection\DependencyResolver.cs" />
   </ItemGroup>

@@ -37,5 +37,10 @@ namespace UnityAddon.Core.Bean.DependencyInjection
 
             return DependencyResolver.Resolve(param.ParameterType, attrs, sp);
         }
+
+        public bool CanResolve(ParameterInfo param)
+        {
+            return param.CustomAttributes.Any(p => DependencyResolver.ContainAttribute(p.AttributeType));
+        }
     }
 }

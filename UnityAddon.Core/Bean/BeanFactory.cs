@@ -48,7 +48,26 @@ namespace UnityAddon.Core.Bean
             var ctor = CtorResolver.ChooseConstuctor(type, sp);
             var bean = ctor.Invoke(ParameterFill.FillAllParamaters(ctor, sp).ToArray());
 
-            return PropertyFill.FillAllProperties(bean, sp);
+            PropertyFill.FillAllProperties(bean, sp);
+
+            return PostConstruct(bean);
+        }
+
+        public object PostConstruct(object bean)
+        {
+            var postConstructors = MethodSelector.GetAllMethodsByAttribute<PostConstructAttribute>(bean.GetType()); // context.Existing.GetType()
+
+            foreach (var pc in postConstructors)
+            {
+                if (pc.GetParameters().Length > 0 || pc.ReturnType != typeof(void))
+                {
+                    throw new InvalidOperationException("no-arg, void");
+                }
+
+                pc.Invoke(bean, new object[0]);
+            }
+
+            return bean;
         }
 
         //public void CreateFactory(IEnumerable<IBeanDefinition> beanDefinitions, IUnityContainer container)

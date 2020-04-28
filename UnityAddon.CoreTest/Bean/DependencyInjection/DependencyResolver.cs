@@ -5,7 +5,7 @@ using System.Text;
 using Xunit;
 using DepResolver = UnityAddon.Core.Bean.DependencyInjection.DependencyResolver;
 
-namespace UnityAddon.CoreTest.Bean.DependencyInjection
+namespace UnityAddon.CoreTest.Bean.DependencyInjection.DependencyResolver
 {
     public class TestAttribute : Attribute { }
 
