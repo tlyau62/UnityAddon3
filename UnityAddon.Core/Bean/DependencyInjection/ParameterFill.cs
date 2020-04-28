@@ -38,4 +38,3 @@ namespace UnityAddon.Core.Bean.DependencyInjection
         }
     }
 }
-}
