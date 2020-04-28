@@ -14,7 +14,6 @@ namespace UnityAddon.Core.BeanBuildStrategies
     /// <summary>
     /// Check for circular dep.
     /// </summary>
-    [Component]
     public class BeanDependencyValidatorStrategy : BuilderStrategy
     {
         [Dependency]
@@ -57,7 +56,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
             if (stack.Any(ent => ent.ResolveType == type && ent.ResolveName == name))
             {
                 stack.Push(new ResolveStackEntry(type, name));
-                var ex = new CircularDependencyException(string.Join("\r\n<-", stack.Select(t => $"type {t.ResolveType} (name: {t.ResolveName})").ToArray()));
+                var ex = new CircularDependencyException(string.Join("\r\n->", stack.Reverse().Select(t => $"type {t.ResolveType} (name: {t.ResolveName})").ToArray()));
 
                 StackFactory.Delete();
 

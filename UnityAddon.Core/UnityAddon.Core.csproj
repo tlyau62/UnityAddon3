@@ -26,10 +26,8 @@
 
   <ItemGroup>
     <Compile Remove="BeanBuildStrategies\BeanAutowireStrategy.cs" />
-    <Compile Remove="BeanBuildStrategies\BeanDependencyValidatorStrategy.cs" />
     <Compile Remove="BeanBuildStrategies\BeanPostConstructStrategy.cs" />
     <Compile Remove="BeanBuildStrategies\BeanPostProcessorStrategy.cs" />
-    <Compile Remove="BeanBuildStrategies\ResolveStackEntry.cs" />
     <Compile Remove="Bean\BeanMethodInterceptor.cs" />
     <Compile Remove="Bean\ConfigurationFactory.cs" />
     <Compile Remove="Bean\Ordered.cs" />
@@ -46,7 +44,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Exceptions\CircularDependencyException.cs" />
     <Compile Include="Exceptions\NoSuchBeanDefinitionException.cs" />
+    <Compile Include="Thread\ThreadLocalFactory.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,13 +1,16 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Unity;
+using Unity.Injection;
 using Unity.Lifetime;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.BeanBuildStrategies;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.BeanDefinition.ServiceBeanDefinition;
+using UnityAddon.Core.Thread;
 using UnityAddon.Core.Value;
 
 namespace UnityAddon
@@ -24,6 +27,8 @@ namespace UnityAddon
 
         private readonly BeanFactory _beanFactory;
 
+        private readonly IThreadLocalFactory<Stack<ResolveStackEntry>> _threadLocalResolveStack;
+
         public ServiceProviderFactory() : this(new UnityContainer())
         {
         }
@@ -32,15 +37,18 @@ namespace UnityAddon
         {
             _container = container;
 
-            _container.RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
-            _container.RegisterType<IServiceProvider, ServiceProvider>(new ContainerControlledLifetimeManager());
-            _container.RegisterType<ConstructorResolver>(new ContainerControlledLifetimeManager());
-            _container.RegisterType<BeanFactory>(new ContainerControlledLifetimeManager());
+            _container
+                .RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager())
+                .RegisterType<IServiceProvider, ServiceProvider>(new ContainerControlledLifetimeManager())
+                .RegisterType<ConstructorResolver>(new ContainerControlledLifetimeManager())
+                .RegisterType<BeanFactory>(new ContainerControlledLifetimeManager())
+                .RegisterType<IThreadLocalFactory<Stack<ResolveStackEntry>>, ThreadLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())));
 
             _beanDefContainer = container.Resolve<IBeanDefinitionContainer>();
             _sp = _container.Resolve<IServiceProvider>();
             _ctorResolver = container.Resolve<ConstructorResolver>();
             _beanFactory = container.Resolve<BeanFactory>();
+            _threadLocalResolveStack = container.Resolve<IThreadLocalFactory<Stack<ResolveStackEntry>>>();
         }
 
         public IUnityContainer CreateBuilder(IServiceCollection services)
@@ -56,6 +64,8 @@ namespace UnityAddon
             services.AddSingleton(_beanFactory);
             services.AddSingleton<ValueProvider>();
             services.AddSingleton<ConfigBracketParser>();
+            services.AddSingleton(_threadLocalResolveStack);
+
 
             _container.AddNewExtension<BeanBuildStrategyExtension>();
 
