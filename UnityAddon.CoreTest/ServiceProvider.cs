@@ -53,8 +53,8 @@ namespace UnityAddon.CoreTest
             var usp = new ServiceProviderFactory().CreateBuilder(serCol).Resolve<IServiceProvider>();
             var serAs = new IA[] { usp.GetService<IA>("A"), usp.GetService<IA>("A2") };
 
-            Assert.Equal(usp.GetAllServices<IA>(), serAs);
-            Assert.IsType<IA[]>(usp.GetAllServices<IA>());
+            Assert.Equal(usp.GetServices<IA>(), serAs);
+            Assert.IsType<IA[]>(usp.GetServices<IA>());
         }
 
         [Fact]
