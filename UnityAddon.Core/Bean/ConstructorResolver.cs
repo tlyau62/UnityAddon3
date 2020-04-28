@@ -11,13 +11,10 @@ namespace UnityAddon.Core.Bean
     [Component]
     public class ConstructorResolver
     {
-        [Dependency]
-        public IServiceProvider Sp { get; set; }
-
-        public ConstructorInfo ChooseConstuctor(Type type)
+        public ConstructorInfo ChooseConstuctor(Type type, IServiceProvider sp)
         {
             var ctors = type.GetConstructors()
-                .Where(ctor => ctor.GetParameters().Select(p => p.ParameterType).All(t => Sp.CanResolve(t)));
+                .Where(ctor => ctor.GetParameters().Select(p => p.ParameterType).All(t => sp.CanResolve(t)));
             var maxFill = ctors.Max(ctor => ctor.GetParameters().Count());
 
             return ctors.Where(ctor => ctor.GetParameters().Count() == maxFill).Single();

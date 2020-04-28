@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 using Unity;
 using Unity.Lifetime;
 using System.Reflection;
-using UnityAddon.Core.DependencyInjection;
-using UnityAddon.Core.BeanDefinition;
-using UnityAddon.Core.Thread;
 using Castle.DynamicProxy;
+using UnityAddon.Core.Bean.DependencyInjection;
 
 namespace UnityAddon.Core.Bean
 {
@@ -22,17 +20,36 @@ namespace UnityAddon.Core.Bean
     [Component]
     public class BeanFactory
     {
+        //[Dependency]
+        //public ConfigurationFactory ConfigurationFactory { get; set; }
+
+        //[Dependency]
+        //public IThreadLocalFactory<Stack<IInvocation>> InvocationStackFactory { get; set; }
+
+        [Dependency]
+        public ProxyGenerator ProxyGenerator { get; set; }
+
+        [Dependency]
+        public ConstructorResolver CtorResolver { get; set; }
+
         [Dependency]
         public ParameterFill ParameterFill { get; set; }
 
         [Dependency]
-        public ConfigurationFactory ConfigurationFactory { get; set; }
+        public PropertyFill PropertyFill { get; set; }
 
-        [Dependency]
-        public IThreadLocalFactory<Stack<IInvocation>> InvocationStackFactory { get; set; }
+        public object Construct(Type type, IServiceProvider sp)
+        {
+            if (type.IsInterface)
+            {
+                return ProxyGenerator.CreateInterfaceProxyWithoutTarget(type);
+            }
 
-        [Dependency]
-        public ProxyGenerator ProxyGenerator { get; set; }
+            var ctor = CtorResolver.ChooseConstuctor(type, sp);
+            var bean = ctor.Invoke(ParameterFill.FillAllParamaters(ctor, sp).ToArray());
+
+            return PropertyFill.FillAllProperties(bean, sp);
+        }
 
         //public void CreateFactory(IEnumerable<IBeanDefinition> beanDefinitions, IUnityContainer container)
         //{
@@ -42,75 +59,75 @@ namespace UnityAddon.Core.Bean
         //    }
         //}
 
-        public void CreateFactory(MemberTypeBeanDefinition typeBeanDefinition, IUnityContainer container)
-        {
-            var type = typeBeanDefinition.Type;
-            var scope = typeBeanDefinition.Scope;
-            var beanName = typeBeanDefinition.Name;
+        //public void CreateFactory(MemberTypeBeanDefinition typeBeanDefinition, IUnityContainer container)
+        //{
+        //    var type = typeBeanDefinition.Type;
+        //    var scope = typeBeanDefinition.Scope;
+        //    var beanName = typeBeanDefinition.Name;
 
-            if (type.HasAttribute<ConfigurationAttribute>())
-            {
-                container.RegisterFactory(type, beanName, configFactory, (IFactoryLifetimeManager)scope);
-            }
-            else if (type.HasAttribute<ComponentAttribute>(true))
-            {
-                container.RegisterFactory(type, beanName, componentFactory, (IFactoryLifetimeManager)scope);
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
+        //    if (type.HasAttribute<ConfigurationAttribute>())
+        //    {
+        //        container.RegisterFactory(type, beanName, configFactory, (IFactoryLifetimeManager)scope);
+        //    }
+        //    else if (type.HasAttribute<ComponentAttribute>(true))
+        //    {
+        //        container.RegisterFactory(type, beanName, componentFactory, (IFactoryLifetimeManager)scope);
+        //    }
+        //    else
+        //    {
+        //        throw new NotImplementedException();
+        //    }
 
-            object configFactory(IUnityContainer c, Type t, string n)
-            {
-                var ctor = DefaultConstructor.Select(t);
+        //    object configFactory(IUnityContainer c, Type t, string n)
+        //    {
+        //        var ctor = DefaultConstructor.Select(t);
 
-                return ConfigurationFactory.CreateConfiguration(type, ctor, c);
-            }
+        //        return ConfigurationFactory.CreateConfiguration(type, ctor, c);
+        //    }
 
-            object componentFactory(IUnityContainer c, Type t, string n)
-            {
-                if (t.IsInterface)
-                {
-                    return ProxyGenerator.CreateInterfaceProxyWithoutTarget(t);
-                }
+        //    object componentFactory(IUnityContainer c, Type t, string n)
+        //    {
+        //        if (t.IsInterface)
+        //        {
+        //            return ProxyGenerator.CreateInterfaceProxyWithoutTarget(t);
+        //        }
 
-                var ctor = DefaultConstructor.Select(t);
+        //        var ctor = DefaultConstructor.Select(t);
 
-                return ctor.Invoke(ParameterFill.FillAllParamaters(ctor, container));
-            }
-        }
+        //        return ctor.Invoke(ParameterFill.FillAllParamaters(ctor, container));
+        //    }
+        //}
 
-        public void CreateFactory(MemberMethodDefinition methodBeanDefinition, IUnityContainer container)
-        {
-            var type = methodBeanDefinition.Type;
-            var configType = methodBeanDefinition.ConfigType;
-            var ctor = methodBeanDefinition.Method;
-            var beanName = methodBeanDefinition.Name;
-            var factoryName = methodBeanDefinition.FactoryName;
-            var scope = methodBeanDefinition.Scope;
+        //public void CreateFactory(MemberMethodDefinition methodBeanDefinition, IUnityContainer container)
+        //{
+        //    var type = methodBeanDefinition.Type;
+        //    var configType = methodBeanDefinition.ConfigType;
+        //    var ctor = methodBeanDefinition.Method;
+        //    var beanName = methodBeanDefinition.Name;
+        //    var factoryName = methodBeanDefinition.FactoryName;
+        //    var scope = methodBeanDefinition.Scope;
 
-            container.RegisterFactory(type, beanName, (c, t, n) =>
-            {
-                // enter into the interceptor, construct the bean inside the interceptor
-                var config = c.Resolve(configType);
+        //    container.RegisterFactory(type, beanName, (c, t, n) =>
+        //    {
+        //        // enter into the interceptor, construct the bean inside the interceptor
+        //        var config = c.Resolve(configType);
 
-                return ctor.Invoke(config, ParameterFill.FillAllParamaters(ctor, container));
-            }, (IFactoryLifetimeManager)scope);
+        //        return ctor.Invoke(config, ParameterFill.FillAllParamaters(ctor, container));
+        //    }, (IFactoryLifetimeManager)scope);
 
-            container.RegisterFactory(type, factoryName, (c, t, n) =>
-            {
-                var invocation = InvocationStackFactory.Get().Peek();
+        //    container.RegisterFactory(type, factoryName, (c, t, n) =>
+        //    {
+        //        var invocation = InvocationStackFactory.Get().Peek();
 
-                invocation.Proceed();
+        //        invocation.Proceed();
 
-                return invocation.ReturnValue;
-            }, (IFactoryLifetimeManager)Activator.CreateInstance(scope.GetType()));
-        }
+        //        return invocation.ReturnValue;
+        //    }, (IFactoryLifetimeManager)Activator.CreateInstance(scope.GetType()));
+        //}
 
-        private TLifetimeManager BuildScope<TLifetimeManager>(Type scope)
-        {
-            return (TLifetimeManager)Activator.CreateInstance(scope);
-        }
+        //private TLifetimeManager BuildScope<TLifetimeManager>(Type scope)
+        //{
+        //    return (TLifetimeManager)Activator.CreateInstance(scope);
+        //}
     }
 }

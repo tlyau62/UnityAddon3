@@ -8,7 +8,7 @@ using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
 
-namespace UnityAddon.Core.DependencyInjection
+namespace UnityAddon.Core.Bean.DependencyInjection
 {
     /// <summary>
     /// Resolve all the dependencies found in all type properties.
@@ -19,40 +19,33 @@ namespace UnityAddon.Core.DependencyInjection
         [Dependency]
         public DependencyResolver DependencyResolver { get; set; }
 
-        public object FillAllProperties(object obj, IUnityContainer container)
+        public object FillAllProperties(object obj, IServiceProvider sp)
         {
             foreach (var prop in SelectAllProperties(obj.GetType()))
             {
-                InjectDependency(prop, obj, container);
+                InjectDependency(prop, obj, sp);
             }
 
             return obj;
         }
 
-        public void InjectDependency(PropertyInfo prop, object obj, IUnityContainer container)
+        public void InjectDependency(PropertyInfo prop, object obj, IServiceProvider sp)
         {
             if (prop.SetMethod == null)
             {
                 return;
             }
 
-            try
-            {
-                var dep = DependencyResolver.Resolve(prop.PropertyType, prop.GetCustomAttributes(false).Cast<Attribute>(), container);
+            var dep = DependencyResolver.Resolve(prop.PropertyType, prop.GetCustomAttributes(false).Cast<Attribute>(), sp);
 
-                // must add null check, else something will be wrong.
-                if (dep != null)
-                {
-                    prop.SetMethod.Invoke(obj, new[] { dep });
-                }
-            }
-            catch (NoSuchBeanDefinitionException ex)
+            // must add null check, else something will be wrong.
+            if (dep != null)
             {
-                throw new BeanCreationException(prop, (dynamic)ex);
+                prop.SetMethod.Invoke(obj, new[] { dep });
             }
         }
 
-        public static IEnumerable<PropertyInfo> SelectAllProperties(Type type)
+        private IEnumerable<PropertyInfo> SelectAllProperties(Type type)
         {
             ISet<PropertyInfo> props = new HashSet<PropertyInfo>();
 

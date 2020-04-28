@@ -14,7 +14,7 @@ namespace UnityAddon.Core.BeanDefinition.ServiceBeanDefinition
 
         public override string Name => $"service-instance-{Type.Name}-{_uuid}";
 
-        public override object Constructor(IUnityContainer container, Type type, string name)
+        public override object Constructor(IServiceProvider serviceProvider, Type type, string name)
         {
             return Descriptor.ImplementationInstance;
         }

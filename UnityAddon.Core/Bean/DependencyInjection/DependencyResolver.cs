@@ -1,13 +1,15 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
 using UnityAddon.Core.Value;
 
-namespace UnityAddon.Core.DependencyInjection
+namespace UnityAddon.Core.Bean.DependencyInjection
 {
     public class DependencyResolver
     {
@@ -25,28 +27,28 @@ namespace UnityAddon.Core.DependencyInjection
 
         protected void AddInternalResolveStrategies()
         {
-            AddResolveStrategy<DependencyAttribute>((type, attr, container) =>
+            AddResolveStrategy<DependencyAttribute>((type, attr, sp) =>
             {
-                return container.ResolveUA(type, attr.Name);
+                return sp.GetRequiredService(type, attr.Name);
             });
 
-            AddResolveStrategy<OptionalDependencyAttribute>((type, attr, container) =>
+            AddResolveStrategy<OptionalDependencyAttribute>((type, attr, sp) =>
             {
-                return container.ResolveOptionalUA(type, attr.Name);
+                return sp.GetService(type, attr.Name);
             });
 
-            AddResolveStrategy<ValueAttribute>((type, attr, container) =>
+            AddResolveStrategy<ValueAttribute>((type, attr, sp) =>
             {
-                return container.Resolve<ValueProvider>().GetValue(type, attr.Value);
+                return sp.GetService<ValueProvider>().GetValue(type, attr.Value);
             });
         }
 
-        public void AddResolveStrategy<TAttribute>(Func<Type, TAttribute, IUnityContainer, object> strategy) where TAttribute : Attribute
+        public void AddResolveStrategy<TAttribute>(Func<Type, TAttribute, IServiceProvider, object> strategy) where TAttribute : Attribute
         {
             _resolveStrategies[typeof(TAttribute)] = strategy;
         }
 
-        internal object Resolve(Type resolveType, IEnumerable<Attribute> attributes, IUnityContainer container)
+        internal object Resolve(Type resolveType, IEnumerable<Attribute> attributes, IServiceProvider sp)
         {
             try
             {
@@ -56,7 +58,7 @@ namespace UnityAddon.Core.DependencyInjection
 
                     if (_resolveStrategies.ContainsKey(attrType))
                     {
-                        return InvokeStrategyMethod.MakeGenericMethod(attrType).Invoke(this, new object[] { _resolveStrategies[attrType], resolveType, attribute, container });
+                        return InvokeStrategyMethod.MakeGenericMethod(attrType).Invoke(this, new object[] { _resolveStrategies[attrType], resolveType, attribute, sp });
                     }
                 }
 
@@ -64,13 +66,15 @@ namespace UnityAddon.Core.DependencyInjection
             }
             catch (TargetInvocationException ex)
             {
-                throw ex.InnerException;
+                ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
+
+                throw;
             }
         }
 
-        private object InvokeStrategy<TAttribute>(Func<Type, TAttribute, IUnityContainer, object> strategy, Type type, TAttribute attr, IUnityContainer container)
+        private object InvokeStrategy<TAttribute>(Func<Type, TAttribute, IServiceProvider, object> strategy, Type type, TAttribute attr, IServiceProvider sp)
         {
-            return strategy(type, attr, container);
+            return strategy(type, attr, sp);
         }
     }
 

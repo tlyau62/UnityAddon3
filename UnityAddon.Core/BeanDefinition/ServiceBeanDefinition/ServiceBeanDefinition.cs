@@ -61,6 +61,6 @@ namespace UnityAddon.Core.BeanDefinition.ServiceBeanDefinition
 
         public bool FromComponentScanning => false;
 
-        public abstract object Constructor(IUnityContainer container, Type type, string name);
+        public abstract object Constructor(IServiceProvider serviceProvider, Type type, string name);
     }
 }

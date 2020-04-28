@@ -16,7 +16,7 @@ namespace UnityAddon.Core.BeanDefinition
 
         string[] Qualifiers { get; }
 
-        object Constructor(IUnityContainer container, Type type, string name);
+        object Constructor(IServiceProvider serviceProvider, Type type, string name);
 
         string[] Profiles { get; }
 

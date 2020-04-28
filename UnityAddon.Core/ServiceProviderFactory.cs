@@ -73,7 +73,7 @@ namespace UnityAddon
                 }
 
                 _beanDefContainer.RegisterBeanDefinition(beanDef);
-                _container.RegisterFactory(beanDef.Type, beanDef.Name, beanDef.Constructor, (IFactoryLifetimeManager)beanDef.Scope);
+                _container.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(_sp, t, n), (IFactoryLifetimeManager)beanDef.Scope);
             }
 
             return _container;
