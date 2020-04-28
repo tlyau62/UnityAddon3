@@ -27,7 +27,7 @@ namespace UnityAddon.Core.BeanDefinition
 
         public override string[] Qualifiers => base.Qualifiers.Union(new[] { Method.Name }).ToArray();
 
-        public override object Constructor(IUnityContainer container, Type type, string name)
+        public override object Constructor(IServiceProvider serviceProvider, Type type, string name)
         {
             throw new NotImplementedException();
         }

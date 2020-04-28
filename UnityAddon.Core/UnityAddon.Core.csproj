@@ -12,17 +12,14 @@
   <ItemGroup>
     <Compile Remove="BeanDefinition\Candidate\**" />
     <Compile Remove="BeanPostprocessor\**" />
-    <Compile Remove="DependencyInjection\**" />
     <Compile Remove="Exceptions\**" />
     <Compile Remove="Thread\**" />
     <EmbeddedResource Remove="BeanDefinition\Candidate\**" />
     <EmbeddedResource Remove="BeanPostprocessor\**" />
-    <EmbeddedResource Remove="DependencyInjection\**" />
     <EmbeddedResource Remove="Exceptions\**" />
     <EmbeddedResource Remove="Thread\**" />
     <None Remove="BeanDefinition\Candidate\**" />
     <None Remove="BeanPostprocessor\**" />
-    <None Remove="DependencyInjection\**" />
     <None Remove="Exceptions\**" />
     <None Remove="Thread\**" />
   </ItemGroup>
@@ -33,7 +30,6 @@
     <Compile Remove="BeanBuildStrategies\BeanPostConstructStrategy.cs" />
     <Compile Remove="BeanBuildStrategies\BeanPostProcessorStrategy.cs" />
     <Compile Remove="BeanBuildStrategies\ResolveStackEntry.cs" />
-    <Compile Remove="Bean\BeanFactory.cs" />
     <Compile Remove="Bean\BeanMethodInterceptor.cs" />
     <Compile Remove="Bean\ConfigurationFactory.cs" />
     <Compile Remove="Bean\Ordered.cs" />
