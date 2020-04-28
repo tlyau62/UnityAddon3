@@ -112,7 +112,9 @@ namespace UnityAddon.CoreTest
             var usp = new ServiceProviderFactory().CreateBuilder(serCol).Resolve<IServiceProvider>();
 
             Assert.True(usp.IsRegistered(typeof(IA)));
+            Assert.True(usp.IsRegistered(typeof(IA), "A"));
             Assert.False(usp.IsRegistered(typeof(A)));
+            Assert.False(usp.IsRegistered(typeof(IA), "B"));
         }
 
         [Fact]
