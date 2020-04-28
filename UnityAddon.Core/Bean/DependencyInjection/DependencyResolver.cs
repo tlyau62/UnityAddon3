@@ -18,7 +18,7 @@ namespace UnityAddon.Core.Bean.DependencyInjection
         private static readonly MethodInfo InvokeStrategyMethod = typeof(DependencyResolver)
             .GetMethod(nameof(InvokeStrategy), BindingFlags.NonPublic | BindingFlags.Instance);
 
-        internal DependencyResolver()
+        public DependencyResolver()
         {
             _resolveStrategies = new Dictionary<Type, object>();
 
@@ -48,7 +48,7 @@ namespace UnityAddon.Core.Bean.DependencyInjection
             _resolveStrategies[typeof(TAttribute)] = strategy;
         }
 
-        internal object Resolve(Type resolveType, IEnumerable<Attribute> attributes, IServiceProvider sp)
+        public object Resolve(Type resolveType, IEnumerable<Attribute> attributes, IServiceProvider sp)
         {
             try
             {
