@@ -6,7 +6,7 @@ using Unity;
 using UnityAddon;
 using Xunit;
 
-namespace UnityAddonTest
+namespace UnityAddon.CoreTest
 {
     public interface IA
     {

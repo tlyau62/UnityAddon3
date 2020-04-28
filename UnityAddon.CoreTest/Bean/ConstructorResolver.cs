@@ -4,7 +4,7 @@ using Unity;
 using UnityAddon;
 using Xunit;
 
-namespace UnityAddonTests.Bean
+namespace UnityAddon.CoreTest.Bean
 {
     public interface IA { }
 

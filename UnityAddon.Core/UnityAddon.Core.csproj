@@ -15,19 +15,16 @@
     <Compile Remove="DependencyInjection\**" />
     <Compile Remove="Exceptions\**" />
     <Compile Remove="Thread\**" />
-    <Compile Remove="Value\**" />
     <EmbeddedResource Remove="BeanDefinition\Candidate\**" />
     <EmbeddedResource Remove="BeanPostprocessor\**" />
     <EmbeddedResource Remove="DependencyInjection\**" />
     <EmbeddedResource Remove="Exceptions\**" />
     <EmbeddedResource Remove="Thread\**" />
-    <EmbeddedResource Remove="Value\**" />
     <None Remove="BeanDefinition\Candidate\**" />
     <None Remove="BeanPostprocessor\**" />
     <None Remove="DependencyInjection\**" />
     <None Remove="Exceptions\**" />
     <None Remove="Thread\**" />
-    <None Remove="Value\**" />
   </ItemGroup>
 
   <ItemGroup>
