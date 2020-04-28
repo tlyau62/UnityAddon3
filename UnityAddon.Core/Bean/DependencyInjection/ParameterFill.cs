@@ -8,6 +8,7 @@ using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
 using UnityAddon.Core.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace UnityAddon.Core.Bean.DependencyInjection
 {
@@ -31,7 +32,7 @@ namespace UnityAddon.Core.Bean.DependencyInjection
 
             if (attrs.Count() == 0)
             {
-                return sp.GetService(param.ParameterType);
+                return sp.GetRequiredService(param.ParameterType);
             }
 
             return DependencyResolver.Resolve(param.ParameterType, attrs, sp);
