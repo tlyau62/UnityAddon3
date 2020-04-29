@@ -10,7 +10,7 @@ using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using Xunit;
 
-namespace UnityAddon.CoreTest.IntegrationTests.HostService
+namespace UnityAddon.CoreTest.HostService
 {
     public class LifetimeEventsHostedService : IHostedService
     {
@@ -35,20 +35,21 @@ namespace UnityAddon.CoreTest.IntegrationTests.HostService
         }
     }
 
-    public class HostService
+    [Trait("HostService", "HostService")]
+    public class HostServiceTests
     {
         private IHost _host;
 
-        public HostService()
+        public HostServiceTests()
         {
             _host = new HostBuilder()
-                .UseServiceProviderFactory(new ServiceProviderFactory())
+                .RegisterUA()
                 .ConfigureServices(c => c.AddHostedService<LifetimeEventsHostedService>())
-                .Build();
+                .BuildUA();
         }
 
         [Fact]
-        public void Test()
+        public void UnityAddonServiceCollection_AddHostedService_HostedServiceAdded()
         {
             _host.Run();
         }

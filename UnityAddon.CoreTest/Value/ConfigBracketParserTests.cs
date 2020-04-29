@@ -7,7 +7,8 @@ using Xunit;
 
 namespace UnityAddon.CoreTest.Value
 {
-    public class ConfigBracketParser
+    [Trait("Value", "ConfigBracketParser")]
+    public class ConfigBracketParserTests
     {
         private IConfiguration _config;
         private static Dictionary<string, string> arrayDict = new Dictionary<string, string>
@@ -20,7 +21,7 @@ namespace UnityAddon.CoreTest.Value
             { "test:test2:test3", "123" }
         };
 
-        public ConfigBracketParser()
+        public ConfigBracketParserTests()
         {
             _config = new ConfigurationBuilder()
                 .AddInMemoryCollection(arrayDict)
@@ -36,7 +37,7 @@ namespace UnityAddon.CoreTest.Value
         [InlineData("test{test.test2.test3}test", "test123test")]
         public void ConfigBracketParser_ValueExpression_Parsed(string input, string expected)
         {
-            var parser = new Core.Value.ConfigBracketParser();
+            var parser = new ConfigBracketParser();
 
             parser.Config = _config;
 
@@ -48,7 +49,7 @@ namespace UnityAddon.CoreTest.Value
         [InlineData("test{undefined:}test", "testtest")]
         public void ConfigBracketParser_DefaultValueExpression_Parsed(string input, string expected)
         {
-            var parser = new Core.Value.ConfigBracketParser();
+            var parser = new ConfigBracketParser();
 
             parser.Config = _config;
 

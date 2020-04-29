@@ -13,7 +13,7 @@ namespace UnityAddon.CoreTest.Value
     }
 
     [Trait("Value", "ValueProvider")]
-    public class ValueProvider
+    public class ValueProviderTests
     {
         [Theory]
         [InlineData(typeof(string), "abc", "abc", "abc")]
@@ -21,8 +21,8 @@ namespace UnityAddon.CoreTest.Value
         [InlineData(typeof(EnumValue), "A", "A", EnumValue.A)]
         public void ValueProvider_ParseValueByType_ValueParsed(Type valType, string valExpr, string valParsed, object expected)
         {
-            var provider = new Core.Value.ValueProvider();
-            var configParserMock = new Mock<Core.Value.ConfigBracketParser>();
+            var provider = new ValueProvider();
+            var configParserMock = new Mock<ConfigBracketParser>();
 
             configParserMock.Setup(m => m.Parse(It.Is<string>(str => str == valExpr))).Returns(valParsed);
 
