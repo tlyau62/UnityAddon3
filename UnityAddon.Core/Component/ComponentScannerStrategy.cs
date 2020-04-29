@@ -20,7 +20,7 @@ namespace UnityAddon.Core.Component
     {
         public IBeanDefinitionCollection Create(Type type)
         {
-            return new BeanDefinitionCollection() { new TypeBeanDefinition(type) };
+            return new BeanDefinitionCollection() { new MemberTypeBeanDefinition(type) };
         }
 
         public bool IsMatch(Type type)

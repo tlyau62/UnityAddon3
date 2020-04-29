@@ -59,7 +59,7 @@ namespace UnityAddon.Core.BeanDefinition.ServiceBeanDefinition
 
         public string Namespace => Type.Namespace;
 
-        public bool FromComponentScanning => false;
+        public bool FromComponentScanning { get; set; } = false;
 
         public abstract object Constructor(IServiceProvider serviceProvider, Type type, string name);
     }

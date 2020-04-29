@@ -7,11 +7,11 @@ using System.Linq;
 
 namespace UnityAddon.Core.BeanDefinition
 {
-    public class MemberMethodDefinition : MemberBeanDefinition
+    public class MemberMethodBeanDefinition : MemberBeanDefinition
     {
         private string _uuid = Guid.NewGuid().ToString();
 
-        public MemberMethodDefinition(MethodInfo method) : base(method)
+        public MemberMethodBeanDefinition(MethodInfo method) : base(method)
         {
             if (method.HasAttribute<BeanAttribute>() && !method.IsVirtual)
             {

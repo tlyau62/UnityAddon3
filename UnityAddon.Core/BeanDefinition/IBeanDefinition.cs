@@ -24,6 +24,6 @@ namespace UnityAddon.Core.BeanDefinition
 
         string Namespace { get; }
 
-        bool FromComponentScanning { get; }
+        bool FromComponentScanning { get; set; }
     }
 }

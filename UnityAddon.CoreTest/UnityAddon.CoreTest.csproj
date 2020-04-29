@@ -20,6 +20,7 @@
     <Compile Remove="Configuration\**" />
     <Compile Remove="DependencyExceptions\**" />
     <Compile Remove="Dependency\**" />
+    <Compile Remove="IntegrationTests\Dependency\**" />
     <Compile Remove="Resolve\**" />
     <EmbeddedResource Remove="Aop\**" />
     <EmbeddedResource Remove="BeanPostConstruct\**" />
@@ -30,6 +31,7 @@
     <EmbeddedResource Remove="Configuration\**" />
     <EmbeddedResource Remove="DependencyExceptions\**" />
     <EmbeddedResource Remove="Dependency\**" />
+    <EmbeddedResource Remove="IntegrationTests\Dependency\**" />
     <EmbeddedResource Remove="Resolve\**" />
     <None Remove="Aop\**" />
     <None Remove="BeanPostConstruct\**" />
@@ -40,6 +42,7 @@
     <None Remove="Configuration\**" />
     <None Remove="DependencyExceptions\**" />
     <None Remove="Dependency\**" />
+    <None Remove="IntegrationTests\Dependency\**" />
     <None Remove="Resolve\**" />
   </ItemGroup>
 

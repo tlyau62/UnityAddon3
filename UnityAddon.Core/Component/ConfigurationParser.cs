@@ -18,10 +18,10 @@ namespace UnityAddon.Core.Component
         public IEnumerable<IBeanDefinition> Parse(IEnumerable<IBeanDefinition> beanDefinitions)
         {
             return beanDefinitions
-                .Where(def => def is TypeBeanDefinition typeDef && typeDef.IsConfiguration)
-                .Cast<TypeBeanDefinition>()
+                .Where(def => def is MemberTypeBeanDefinition typeDef && typeDef.IsConfiguration)
+                .Cast<MemberTypeBeanDefinition>()
                 .SelectMany(def => MethodSelector.GetAllMethodsByAttribute<BeanAttribute>(def.Type))
-                .Select(beanMethod => new MethodBeanDefinition(beanMethod));
+                .Select(beanMethod => new MemberMethodBeanDefinition(beanMethod));
         }
     }
 }

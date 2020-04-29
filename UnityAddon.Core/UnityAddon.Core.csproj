@@ -10,15 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="BeanDefinition\Candidate\**" />
     <Compile Remove="BeanPostprocessor\**" />
     <Compile Remove="Exceptions\**" />
     <Compile Remove="Thread\**" />
-    <EmbeddedResource Remove="BeanDefinition\Candidate\**" />
     <EmbeddedResource Remove="BeanPostprocessor\**" />
     <EmbeddedResource Remove="Exceptions\**" />
     <EmbeddedResource Remove="Thread\**" />
-    <None Remove="BeanDefinition\Candidate\**" />
     <None Remove="BeanPostprocessor\**" />
     <None Remove="Exceptions\**" />
     <None Remove="Thread\**" />
@@ -30,11 +27,6 @@
     <Compile Remove="BeanBuildStrategies\BeanPostProcessorStrategy.cs" />
     <Compile Remove="Bean\BeanMethodInterceptor.cs" />
     <Compile Remove="Bean\ConfigurationFactory.cs" />
-    <Compile Remove="Bean\Ordered.cs" />
-    <Compile Remove="Component\ComponentScanner.cs" />
-    <Compile Remove="Component\ComponentScannerBuilder.cs" />
-    <Compile Remove="Component\ComponentScannerStrategy.cs" />
-    <Compile Remove="Component\ConfigurationParser.cs" />
     <Compile Remove="UnityAddonContainer.cs" />
     <Compile Remove="UnityAddonContainerExt.cs" />
     <Compile Remove="UnityAddonDefaultTest.cs" />
@@ -59,10 +51,6 @@
     <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
     <PackageReference Include="Unity" Version="5.11.4" />
     <PackageReference Include="Unity.Microsoft.DependencyInjection" Version="5.11.5" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Component\" />
   </ItemGroup>
 
   <PropertyGroup>

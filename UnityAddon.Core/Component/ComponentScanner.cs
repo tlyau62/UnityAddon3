@@ -30,11 +30,6 @@ namespace UnityAddon.Core.Component
             _scannerStrategies = scannerStrategies;
         }
 
-        public IEnumerable<IBeanDefinition> ScanComponents(Assembly asm)
-        {
-            return ScanComponents(asm, asm.GetAttribute<ComponentScanAttribute>().BaseNamespaces);
-        }
-
         public IEnumerable<IBeanDefinition> ScanComponents(Assembly asm, params string[] baseNamespaces)
         {
             var regexes = BuildBaseNamespacesRegexes(baseNamespaces);
@@ -54,11 +49,6 @@ namespace UnityAddon.Core.Component
 
                     return defs;
                 });
-        }
-
-        public IEnumerable<IBeanDefinition> ScanComponents(IServiceCollection serviceCollection)
-        {
-            return serviceCollection.Select(descriptor => new SimpleBeanDefinition(descriptor.ServiceType));
         }
 
         private IEnumerable<Regex> BuildBaseNamespacesRegexes(string[] baseNamespaces)

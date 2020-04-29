@@ -78,7 +78,7 @@ namespace UnityAddon.Core.BeanDefinition
 
         public abstract Type[] AutoWiredTypes { get; }
 
-        public bool FromComponentScanning { get; set; }
+        public bool FromComponentScanning { get; set; } = false;
 
         public override string ToString()
         {
