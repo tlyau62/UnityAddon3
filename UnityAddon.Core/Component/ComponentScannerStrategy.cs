@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.BeanDefinition;
+using UnityAddon.Core.BeanDefinition.MemberBean;
 using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.Core.Component
@@ -20,12 +22,40 @@ namespace UnityAddon.Core.Component
     {
         public IBeanDefinitionCollection Create(Type type)
         {
-            return new BeanDefinitionCollection() { new MemberTypeBeanDefinition(type) };
+            return new BeanDefinitionCollection() { new MemberComponentBeanDefinition(type) };
         }
 
         public bool IsMatch(Type type)
         {
             return true;
+        }
+    }
+
+    [Order(Ordered.LOWEST_PRECEDENCE - 1)]
+    public class ConfigurationScannerStrategy : IComponentScannerStrategy
+    {
+        public IBeanDefinitionCollection Create(Type type)
+        {
+            var defCol = new BeanDefinitionCollection() { new MemberConfigurationBeanDefinition(type) };
+
+            defCol.AddRange(Parse(type));
+
+            return defCol;
+        }
+
+        public IBeanDefinitionCollection Parse(Type config)
+        {
+            var defCol = new BeanDefinitionCollection();
+
+            defCol.AddRange(MethodSelector.GetAllMethodsByAttribute<BeanAttribute>(config)
+                .Select(beanMethod => new MemberMethodBeanDefinition(beanMethod)));
+
+            return defCol;
+        }
+
+        public bool IsMatch(Type type)
+        {
+            return type.HasAttribute<ConfigurationAttribute>();
         }
     }
 }
