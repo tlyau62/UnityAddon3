@@ -14,6 +14,7 @@ namespace UnityAddon.Core.Component
         public ComponentScannerBuilder()
         {
             AddComponentScannerStrategy<DefaultComponentScannerStrategy>();
+            AddComponentScannerStrategy<ConfigurationScannerStrategy>();
         }
 
         public void AddComponentScannerStrategy<T>() where T : IComponentScannerStrategy
