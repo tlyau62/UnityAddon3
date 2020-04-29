@@ -72,9 +72,9 @@ namespace UnityAddon
             services.AddSingleton<ValueProvider>();
             services.AddSingleton<ConfigBracketParser>();
             services.AddSingleton(_threadLocalResolveStack);
-            services.AddSingleton(sp => sp.GetService<AopInterceptorContainerBuilder>()?.Build(sp));
-            services.AddSingleton(sp => sp.GetService<BeanDefintionCandidateSelectorBuilder>().Build(sp.GetService<IConfiguration>()));
-            services.AddSingleton(sp => sp.GetService<ComponentScannerBuilder>().Build(sp));
+            services.AddSingleton(sp => (sp.GetService<AopInterceptorContainerBuilder>() ?? new AopInterceptorContainerBuilder()).Build(sp));
+            services.AddSingleton(sp => (sp.GetService<BeanDefintionCandidateSelectorBuilder>() ?? new BeanDefintionCandidateSelectorBuilder()).Build(sp.GetService<IConfiguration>()));
+            services.AddSingleton(sp => (sp.GetService<ComponentScannerBuilder>() ?? new ComponentScannerBuilder()).Build(sp));
 
             _container.AddNewExtension<BeanBuildStrategyExtension>();
 
@@ -107,9 +107,6 @@ namespace UnityAddon
             var compScanner = _sp.GetRequiredService<ComponentScanner>();
             var compScannedDefs = _sp.GetRequiredService<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>().SelectMany(cb => cb(compScanner));
             var beanDefCollection = compScannedDefs.Where(d => !d.FromComponentScanning || beanDefFilters.Filter(d));
-            var configParser = new ConfigurationParser();
-
-            beanDefCollection = beanDefCollection.Union(configParser.Parse(beanDefCollection));
 
             _beanDefContainer.RegisterBeanDefinitions(beanDefCollection);
 
