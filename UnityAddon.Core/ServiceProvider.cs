@@ -2,15 +2,18 @@
 using System;
 using System.Collections.Generic;
 using Unity;
+using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.BeanDefinition;
 
-namespace UnityAddon
+namespace UnityAddon.Core
 {
     public interface IUnityServiceProvider
     {
         bool CanResolve(Type serviceType, string name);
 
         bool IsRegistered(Type serviceType, string name);
+
+        object BuildUp(object service);
     }
 
     public interface ISupportNamedService
@@ -29,7 +32,7 @@ namespace UnityAddon
 
         public static T GetRequiredService<T>(this IServiceProvider sp, string name)
         {
-            return (T)((ISupportNamedService)sp).GetRequiredService(typeof(T), name);
+            return (T)sp.GetRequiredService(typeof(T), name);
         }
 
         public static object GetService(this IServiceProvider sp, Type serviceType, string name)
@@ -39,7 +42,7 @@ namespace UnityAddon
 
         public static T GetService<T>(this IServiceProvider sp, string name)
         {
-            return (T)((ISupportNamedService)sp).GetService(typeof(T), name);
+            return (T)sp.GetService(typeof(T), name);
         }
 
         public static bool CanResolve(this IServiceProvider sp, Type serviceType, string name = null)
@@ -47,9 +50,24 @@ namespace UnityAddon
             return ((IUnityServiceProvider)sp).CanResolve(serviceType, name);
         }
 
+        public static bool CanResolve<T>(this IServiceProvider sp, string name = null)
+        {
+            return sp.CanResolve(typeof(T), name);
+        }
+
         public static bool IsRegistered(this IServiceProvider sp, Type serviceType, string name = null)
         {
             return ((IUnityServiceProvider)sp).IsRegistered(serviceType, name);
+        }
+
+        public static bool IsRegistered<T>(this IServiceProvider sp, string name = null)
+        {
+            return sp.IsRegistered(typeof(T), name);
+        }
+
+        public static object BuildUp(this IServiceProvider sp, object service)
+        {
+            return ((IUnityServiceProvider)sp).BuildUp(service);
         }
     }
 
@@ -110,6 +128,11 @@ namespace UnityAddon
         {
             return _beanDefContainer.HasBeanDefinition(serviceType, name) || serviceType.IsGenericType &&
                 _beanDefContainer.HasBeanDefinition(serviceType.GetGenericTypeDefinition(), name);
+        }
+
+        public object BuildUp(object service)
+        {
+            return _container.Resolve<PropertyFill>().FillAllProperties(service, this);
         }
 
         IServiceProvider IServiceScope.ServiceProvider => this;

@@ -30,7 +30,6 @@
     <Compile Remove="UnityAddonContainerExt.cs" />
     <Compile Remove="UnityAddonDefaultTest.cs" />
     <Compile Remove="UnityAddonHost.cs" />
-    <Compile Remove="UnityAddonHostBuilder.cs" />
     <Compile Remove="UnityAddonVendor.cs" />
   </ItemGroup>
 

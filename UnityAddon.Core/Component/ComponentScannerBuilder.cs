@@ -25,8 +25,8 @@ namespace UnityAddon.Core.Component
         public ComponentScanner Build(IServiceProvider sp)
         {
             return new ComponentScanner(
-                _scannerStrategies.OrderBy(stg =>
-                    Ordered.GetOrder(stg)).Select(stg => (IComponentScannerStrategy)sp.GetService(stg)));
+                _scannerStrategies.OrderBy(stg => Ordered.GetOrder(stg))
+                    .Select(stg => (IComponentScannerStrategy)sp.BuildUp(Activator.CreateInstance(stg))));
         }
     }
 }

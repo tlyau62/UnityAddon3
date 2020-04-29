@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Castle.DynamicProxy;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -17,7 +18,7 @@ using UnityAddon.Core.Component;
 using UnityAddon.Core.Thread;
 using UnityAddon.Core.Value;
 
-namespace UnityAddon
+namespace UnityAddon.Core
 {
     public class ServiceProviderFactory : IServiceProviderFactory<IUnityContainer>
     {
@@ -33,7 +34,11 @@ namespace UnityAddon
 
         private readonly IThreadLocalFactory<Stack<ResolveStackEntry>> _threadLocalResolveStack;
 
+        private readonly IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>> _scannedBeanDefinitions;
+
         private bool _isNewContainer = false;
+
+        private IServiceCollection _servicesCollection;
 
         public ServiceProviderFactory() : this(new UnityContainer())
         {
@@ -49,36 +54,51 @@ namespace UnityAddon
                 .RegisterType<IServiceProvider, ServiceProvider>(new ContainerControlledLifetimeManager())
                 .RegisterType<ConstructorResolver>(new ContainerControlledLifetimeManager())
                 .RegisterType<BeanFactory>(new ContainerControlledLifetimeManager())
-                .RegisterType<IThreadLocalFactory<Stack<ResolveStackEntry>>, ThreadLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())));
+                .RegisterType<IThreadLocalFactory<Stack<ResolveStackEntry>>, ThreadLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())))
+                .RegisterType<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>, List<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>(new ContainerControlledLifetimeManager());
 
             _beanDefContainer = container.Resolve<IBeanDefinitionContainer>();
             _sp = _container.Resolve<IServiceProvider>();
             _ctorResolver = container.Resolve<ConstructorResolver>();
             _beanFactory = container.Resolve<BeanFactory>();
             _threadLocalResolveStack = container.Resolve<IThreadLocalFactory<Stack<ResolveStackEntry>>>();
+            _scannedBeanDefinitions = container.Resolve<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>();
         }
 
         public IUnityContainer CreateBuilder(IServiceCollection services)
         {
+            _servicesCollection = services;
+
+            return _container;
+        }
+
+        public IServiceProvider CreateServiceProvider(IUnityContainer container)
+        {
             // sp
-            services.AddSingleton(_sp);
-            services.AddSingleton<IServiceScopeFactory>((ServiceProvider)_sp);
-            services.AddSingleton<IServiceScope>((ServiceProvider)_sp);
+            _servicesCollection.AddSingleton(_sp);
+            _servicesCollection.AddSingleton<IServiceScopeFactory>((ServiceProvider)_sp);
+            _servicesCollection.AddSingleton<IServiceScope>((ServiceProvider)_sp);
 
             // internal
-            services.AddSingleton(_beanDefContainer);
-            services.AddSingleton(_ctorResolver);
-            services.AddSingleton(_beanFactory);
-            services.AddSingleton<ValueProvider>();
-            services.AddSingleton<ConfigBracketParser>();
-            services.AddSingleton(_threadLocalResolveStack);
-            services.AddSingleton(sp => (sp.GetService<AopInterceptorContainerBuilder>() ?? new AopInterceptorContainerBuilder()).Build(sp));
-            services.AddSingleton(sp => (sp.GetService<BeanDefintionCandidateSelectorBuilder>() ?? new BeanDefintionCandidateSelectorBuilder()).Build(sp.GetService<IConfiguration>()));
-            services.AddSingleton(sp => (sp.GetService<ComponentScannerBuilder>() ?? new ComponentScannerBuilder()).Build(sp));
+            _servicesCollection.AddSingleton(_beanDefContainer);
+            _servicesCollection.AddSingleton(_ctorResolver);
+            _servicesCollection.AddSingleton(_beanFactory);
+            _servicesCollection.AddSingleton<ValueProvider>();
+            _servicesCollection.AddSingleton<ConfigBracketParser>();
+            _servicesCollection.AddSingleton(_threadLocalResolveStack);
+            _servicesCollection.AddSingleton(sp => (sp.GetService<AopInterceptorContainerBuilder>() ?? new AopInterceptorContainerBuilder()).Build(sp));
+            _servicesCollection.AddSingleton(sp => (sp.GetService<BeanDefintionCandidateSelectorBuilder>() ?? new BeanDefintionCandidateSelectorBuilder()).Build(sp.GetService<IConfiguration>()));
+            _servicesCollection.AddSingleton(sp => (sp.GetService<ComponentScannerBuilder>() ?? new ComponentScannerBuilder()).Build(sp));
+            _servicesCollection.AddSingleton(_scannedBeanDefinitions);
+            _servicesCollection.AddSingleton<AopBuildStrategyExtension>();
+            _servicesCollection.AddSingleton<BeanAopStrategy>();
+            _servicesCollection.AddSingleton<AopMethodBootstrapInterceptor>();
+            _servicesCollection.AddSingleton<InterfaceProxyFactory>();
+            _servicesCollection.AddSingleton<ProxyGenerator>();
 
             _container.AddNewExtension<BeanBuildStrategyExtension>();
 
-            foreach (var d in services)
+            foreach (var d in _servicesCollection)
             {
                 IBeanDefinition beanDef = null;
 
@@ -132,12 +152,8 @@ namespace UnityAddon
                 _sp.GetService<IHostApplicationLifetime>()?.ApplicationStopped.Register(() => _container.Dispose());
             }
 
-            return _container;
-        }
 
-        public IServiceProvider CreateServiceProvider(IUnityContainer container)
-        {
-            return container.Resolve<IServiceProvider>();
+            return _sp;
         }
     }
 }

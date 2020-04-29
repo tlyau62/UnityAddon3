@@ -11,6 +11,11 @@ using Xunit;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityAddon.Core.BeanDefinition;
+using System.Linq;
+using UnityAddon.Core.Component;
+using System.Reflection;
+using Unity.Lifetime;
 
 namespace UnityAddon.CoreTest.Bean.GuidBean
 {
@@ -30,6 +35,10 @@ namespace UnityAddon.CoreTest.Bean.GuidBean
     [Guid("b1368cba-7614-4923-9426-8cd4456da29e")]
     public class PrintService : IService
     {
+        public PrintService()
+        {
+            var a = 10;
+        }
     }
 
     [Component]
@@ -53,11 +62,45 @@ namespace UnityAddon.CoreTest.Bean.GuidBean
         [Fact]
         public void BuildStrategy_DependencyOnGuidBean_BeanInjected()
         {
-            Host.CreateDefaultBuilder()
-                .RegisterUA()
-                .ScanComponentsUA("UnityAddon.CoreTest.Bean.GuidBean")
-                .BuildUA()
-                .BuildTestUA(this);
+            var f = new ServiceProviderFactory();
+            var c = f.CreateBuilder(new ServiceCollection());
+            var a = f.CreateServiceProvider(c);
+
+            var s = a.GetRequiredService<ComponentScanner>();
+
+            var dfs = s.ScanComponents(Assembly.GetExecutingAssembly(), "UnityAddon.CoreTest.Bean.GuidBean");
+
+            var dc = a.GetRequiredService<IBeanDefinitionContainer>();
+
+            dc.RegisterBeanDefinitions(dfs);
+
+            foreach (var df in dfs)
+            {
+                c.RegisterFactory(df.Type, df.Name, (c, t, n) => df.Constructor(a, t, n), (IFactoryLifetimeManager)df.Scope);
+            }
+
+            var r = dfs.Last();
+            var y = c.Resolve(r.Type, r.Name) == c.Resolve(r.Type, r.Name);
+            var u = c.Resolve(r.Type, r.Qualifiers.First()) == c.Resolve(r.Type, r.Qualifiers.First());
+
+
+
+            //IUnityContainer container = new UnityContainer();
+
+            //var host = Host.CreateDefaultBuilder()
+            //    .RegisterUA(container)
+            //    .ScanComponentsUA("UnityAddon.CoreTest.Bean.GuidBean")
+            //    .Build();
+
+            //var t = container.Resolve<IBeanDefinitionContainer>().GetAllBeanDefinitions(typeof(IService)).Last();
+
+            //var l = container.Resolve(t.AutoWiredTypes[1], t.Name) == container.Resolve(t.AutoWiredTypes[1], t.Name);
+
+            var x = c.Resolve<IService>("4e55e61a-c57f-4b55-84dd-044d539dfbc7");
+            var z = c.Resolve<IService>("4e55e61a-c57f-4b55-84dd-044d539dfbc7");
+            var q = x == z;
+
+            //host.Services.BuildUp(this);
 
             Assert.Same(GeneralService.PrintService, PrintService);
             Assert.Same(GeneralService.WriteService, WriteService);
