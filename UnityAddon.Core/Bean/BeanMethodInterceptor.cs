@@ -1,6 +1,7 @@
 ﻿using Castle.DynamicProxy;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
@@ -40,13 +41,13 @@ namespace UnityAddon.Core.Bean
             }
             else
             {
-                var tempBeanDef = new MemberMethodFactoryBeanDefinition(method);
+                var beanDef = DefContainer.GetAllBeanDefinitions(method.ReturnType).Where(def => def is MemberMethodFactoryBeanDefinition).Single();
                 var hasStack = InvocationStackFactory.Exist();
                 var stack = hasStack ? InvocationStackFactory.Get() : InvocationStackFactory.Set();
 
                 stack.Push(invocation);
 
-                invocation.ReturnValue = _serviceProvider.GetRequiredService(tempBeanDef.Type, tempBeanDef.Name);
+                invocation.ReturnValue = _serviceProvider.GetRequiredService(beanDef.Type, beanDef.Name);
 
                 stack.Pop();
 

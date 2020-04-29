@@ -17,9 +17,7 @@ namespace UnityAddon.Core.BeanDefinition.MemberBean
         {
         }
 
-        public override string Name => $"member-method-factory-{Method.Name}-{_uuid}";
-
-        public override string[] Qualifiers => base.Qualifiers.SkipLast(1).Union(new[] { $"#{Method.Name}" }).ToArray();
+        public override string Name => base.Name + "-factory";
 
         public override object Constructor(IServiceProvider serviceProvider, Type type, string name)
         {

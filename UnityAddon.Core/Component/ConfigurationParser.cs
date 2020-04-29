@@ -6,6 +6,7 @@ using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.BeanDefinition;
+using UnityAddon.Core.BeanDefinition.MemberBean;
 using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.Core.Component
@@ -18,10 +19,9 @@ namespace UnityAddon.Core.Component
         public IEnumerable<IBeanDefinition> Parse(IEnumerable<IBeanDefinition> beanDefinitions)
         {
             return beanDefinitions
-                .Where(def => def is MemberTypeBeanDefinition typeDef && typeDef.IsConfiguration)
-                .Cast<MemberTypeBeanDefinition>()
+                .Where(def => def is MemberConfigurationBeanDefinition)
                 .SelectMany(def => MethodSelector.GetAllMethodsByAttribute<BeanAttribute>(def.Type))
-                .Select(beanMethod => new MemberMethodBeanDefinition(beanMethod));
+                .Select(beanMethod => new MemberMethodFactoryBeanDefinition(beanMethod));
         }
     }
 }

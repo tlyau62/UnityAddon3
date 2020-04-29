@@ -25,7 +25,6 @@
     <Compile Remove="BeanBuildStrategies\BeanAutowireStrategy.cs" />
     <Compile Remove="BeanBuildStrategies\BeanPostConstructStrategy.cs" />
     <Compile Remove="BeanBuildStrategies\BeanPostProcessorStrategy.cs" />
-    <Compile Remove="Bean\BeanMethodInterceptor.cs" />
     <Compile Remove="Bean\ConfigurationFactory.cs" />
     <Compile Remove="UnityAddonContainer.cs" />
     <Compile Remove="UnityAddonContainerExt.cs" />
