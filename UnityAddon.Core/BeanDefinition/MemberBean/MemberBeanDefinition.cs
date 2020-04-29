@@ -10,7 +10,7 @@ using Unity.Lifetime;
 using System.Runtime.InteropServices;
 using Unity;
 
-namespace UnityAddon.Core.BeanDefinition
+namespace UnityAddon.Core.BeanDefinition.MemberBean
 {
     /// <summary>
     /// A receipt for bean construction.

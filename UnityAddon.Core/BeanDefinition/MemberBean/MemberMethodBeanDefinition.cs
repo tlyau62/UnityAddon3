@@ -4,8 +4,10 @@ using System;
 using System.Reflection;
 using Unity;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using UnityAddon.Core.Bean.DependencyInjection;
 
-namespace UnityAddon.Core.BeanDefinition
+namespace UnityAddon.Core.BeanDefinition.MemberBean
 {
     public class MemberMethodBeanDefinition : MemberBeanDefinition
     {
@@ -29,7 +31,11 @@ namespace UnityAddon.Core.BeanDefinition
 
         public override object Constructor(IServiceProvider serviceProvider, Type type, string name)
         {
-            throw new NotImplementedException();
+            var config = serviceProvider.GetRequiredService(ConfigType);
+            var paramFill = serviceProvider.GetRequiredService<ParameterFill>();
+
+            // enter into the interceptor, construct the bean inside the interceptor
+            return Method.Invoke(config, paramFill.FillAllParamaters(Method, serviceProvider));
         }
 
         public override string Namespace => Method.DeclaringType.Namespace;
@@ -37,7 +43,5 @@ namespace UnityAddon.Core.BeanDefinition
         public override Type[] AutoWiredTypes => new[] { Type };
 
         public Type ConfigType => Method.DeclaringType;
-
-        public string FactoryName => $"#{Name}";
     }
 }

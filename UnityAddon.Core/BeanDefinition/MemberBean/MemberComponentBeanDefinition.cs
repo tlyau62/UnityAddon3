@@ -3,19 +3,17 @@ using UnityAddon.Core.Reflection;
 using System;
 using Unity;
 using System.Linq;
+using UnityAddon.Core.Bean;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace UnityAddon.Core.BeanDefinition
+namespace UnityAddon.Core.BeanDefinition.MemberBean
 {
-    public class MemberTypeBeanDefinition : MemberBeanDefinition
+    public class MemberComponentBeanDefinition : MemberBeanDefinition
     {
         private string _uuid = Guid.NewGuid().ToString();
 
-        public MemberTypeBeanDefinition(Type type) : base(type)
+        public MemberComponentBeanDefinition(Type type) : base(type)
         {
-            if (type.HasAttribute<ConfigurationAttribute>() && !type.IsPublic)
-            {
-                throw new InvalidOperationException($"Configuration {type} must be public.");
-            }
         }
 
         public override Type Type => (Type)Member;
@@ -26,13 +24,12 @@ namespace UnityAddon.Core.BeanDefinition
 
         public override object Constructor(IServiceProvider serviceProvider, Type type, string name)
         {
-            throw new NotImplementedException();
+            return serviceProvider.GetRequiredService<BeanFactory>()
+                .Construct(type, serviceProvider);
         }
 
         public override string Namespace => Type.Namespace;
 
         public override Type[] AutoWiredTypes => TypeResolver.GetAssignableTypes(Type).ToArray();
-
-        public bool IsConfiguration => Type.HasAttribute<ConfigurationAttribute>();
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.BeanDefinition;
+using UnityAddon.Core.BeanDefinition.MemberBean;
 using UnityAddon.Core.Reflection;
 using UnityAddon.Core.Thread;
 
@@ -22,20 +23,16 @@ namespace UnityAddon.Core.Bean
         [Dependency]
         public IThreadLocalFactory<Stack<IInvocation>> InvocationStackFactory { get; set; }
 
-        public IUnityContainer _container { get; set; }
+        public IServiceProvider _serviceProvider { get; set; }
 
-        public BeanMethodInterceptor(IUnityContainer container)
+        public BeanMethodInterceptor(IServiceProvider serviceProvider)
         {
-            _container = container;
+            _serviceProvider = serviceProvider;
         }
 
         public void Intercept(IInvocation invocation)
         {
             var method = invocation.Method;
-            var tempBeanDef = new MemberMethodDefinition(method);
-            var beanName = tempBeanDef.Name;
-            var factoryName = tempBeanDef.FactoryName;
-            var beanType = tempBeanDef.Type;
 
             if (!method.HasAttribute<BeanAttribute>())
             {
@@ -43,14 +40,13 @@ namespace UnityAddon.Core.Bean
             }
             else
             {
-                var beanDef = DefContainer.GetBeanDefinition(beanType, beanName);
-
+                var tempBeanDef = new MemberMethodFactoryBeanDefinition(method);
                 var hasStack = InvocationStackFactory.Exist();
                 var stack = hasStack ? InvocationStackFactory.Get() : InvocationStackFactory.Set();
 
                 stack.Push(invocation);
 
-                invocation.ReturnValue = _container.ResolveUA(beanDef.Type, factoryName);
+                invocation.ReturnValue = _serviceProvider.GetRequiredService(tempBeanDef.Type, tempBeanDef.Name);
 
                 stack.Pop();
 
@@ -59,7 +55,6 @@ namespace UnityAddon.Core.Bean
                     InvocationStackFactory.Delete();
                 }
             }
-
         }
     }
 }
