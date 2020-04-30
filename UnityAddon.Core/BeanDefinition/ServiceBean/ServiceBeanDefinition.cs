@@ -4,7 +4,7 @@ using Unity;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 
-namespace UnityAddon.Core.BeanDefinition.ServiceBeanDefinition
+namespace UnityAddon.Core.BeanDefinition.ServiceBean
 {
     public abstract class ServiceBeanDefinition : IBeanDefinition
     {

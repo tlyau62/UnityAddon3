@@ -2,7 +2,7 @@
 using Unity;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace UnityAddon.Core.BeanDefinition.ServiceBeanDefinition
+namespace UnityAddon.Core.BeanDefinition.ServiceBean
 {
     public class ServiceFactoryBeanDefinition : ServiceBeanDefinition
     {

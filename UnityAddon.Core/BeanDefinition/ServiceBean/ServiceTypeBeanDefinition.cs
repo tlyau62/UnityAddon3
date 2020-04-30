@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using System.Reflection;
 using UnityAddon.Core.Bean;
 
-namespace UnityAddon.Core.BeanDefinition.ServiceBeanDefinition
+namespace UnityAddon.Core.BeanDefinition.ServiceBean
 {
     public class ServiceTypeBeanDefinition : ServiceBeanDefinition
     {
