@@ -24,7 +24,7 @@ namespace UnityAddon.Core.BeanDefinition.MemberBean
 
         public override object Constructor(IServiceProvider serviceProvider, Type type, string name)
         {
-            var invocation = serviceProvider.GetRequiredService<IThreadLocalFactory<Stack<IInvocation>>>().Get().Peek();
+            var invocation = _parentBeanDef.Invocation;
 
             invocation.Proceed();
 

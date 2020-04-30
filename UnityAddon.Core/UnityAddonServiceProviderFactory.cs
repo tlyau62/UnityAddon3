@@ -35,8 +35,6 @@ namespace UnityAddon.Core
 
         private readonly IThreadLocalFactory<Stack<ResolveStackEntry>> _threadLocalResolveStack;
 
-        private readonly IThreadLocalFactory<Stack<IInvocation>> _threadLocalInvokeStack;
-
         private bool _isNewContainer = false;
 
         public UnityAddonServiceProviderFactory() : this(new UnityContainer())
@@ -54,8 +52,7 @@ namespace UnityAddon.Core
                 .RegisterType<ConstructorResolver>(new ContainerControlledLifetimeManager())
                 .RegisterType<ParameterFill>(new ContainerControlledLifetimeManager())
                 .RegisterType<BeanFactory>(new ContainerControlledLifetimeManager())
-                .RegisterType<IThreadLocalFactory<Stack<ResolveStackEntry>>, ThreadLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())))
-                .RegisterType<IThreadLocalFactory<Stack<IInvocation>>, ThreadLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())));
+                .RegisterType<IThreadLocalFactory<Stack<ResolveStackEntry>>, ThreadLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())));
 
             _beanDefContainer = container.Resolve<IBeanDefinitionContainer>();
             _sp = _container.Resolve<IServiceProvider>();
@@ -63,7 +60,6 @@ namespace UnityAddon.Core
             _paramFill = container.Resolve<ParameterFill>();
             _beanFactory = container.Resolve<BeanFactory>();
             _threadLocalResolveStack = container.Resolve<IThreadLocalFactory<Stack<ResolveStackEntry>>>();
-            _threadLocalInvokeStack = container.Resolve<IThreadLocalFactory<Stack<IInvocation>>>();
         }
 
         public IBeanDefinitionCollection CreateBuilder(IServiceCollection services = null)
@@ -91,7 +87,6 @@ namespace UnityAddon.Core
             services.AddSingleton<InterfaceProxyFactory>();
             services.AddSingleton<ProxyGenerator>();
             services.AddSingleton<BeanMethodInterceptor>();
-            services.AddSingleton(_threadLocalInvokeStack);
 
             var beanDefCol = new BeanDefinitionCollection();
 

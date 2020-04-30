@@ -21,10 +21,9 @@ namespace UnityAddon.Core.Bean
         [Dependency]
         public IBeanDefinitionContainer DefContainer { get; set; }
 
-        [Dependency]
-        public IThreadLocalFactory<Stack<IInvocation>> InvocationStackFactory { get; set; }
-
         public IServiceProvider _serviceProvider { get; set; }
+
+        private readonly object _lockObj = new object();
 
         public BeanMethodInterceptor(IServiceProvider serviceProvider)
         {
@@ -41,19 +40,22 @@ namespace UnityAddon.Core.Bean
             }
             else
             {
-                var beanDef = DefContainer.GetBeanDefinition(method.ReturnType);
-                var hasStack = InvocationStackFactory.Exist();
-                var stack = hasStack ? InvocationStackFactory.Get() : InvocationStackFactory.Set();
+                var beanDef = (MemberMethodBeanDefinition)DefContainer.GetBeanDefinition(method.ReturnType);
 
-                stack.Push(invocation);
-
-                invocation.ReturnValue = _serviceProvider.GetRequiredService<MethodFactoryValue>(beanDef.Name + "-factory").Value;
-
-                stack.Pop();
-
-                if (!hasStack)
+                if (beanDef.Invocation != null)
                 {
-                    InvocationStackFactory.Delete();
+                    throw new InvalidOperationException("Someting wrong.");
+                }
+
+                lock (_lockObj)
+                {
+                    // ensure no other thread can access to this invocation field until this resolution is finished.
+                    // may cause deadlock if circular dep happens, but detected by BeanDependencyValidatorStrategy.
+                    beanDef.Invocation = invocation;
+
+                    invocation.ReturnValue = _serviceProvider.GetRequiredService<MethodFactoryValue>(beanDef.Name + "-factory").Value;
+
+                    beanDef.Invocation = null;
                 }
             }
         }
