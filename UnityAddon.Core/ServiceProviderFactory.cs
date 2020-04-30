@@ -62,8 +62,10 @@ namespace UnityAddon.Core
             _scannedBeanDefinitions = container.Resolve<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>();
         }
 
-        public IBeanDefinitionCollection CreateBuilder(IServiceCollection services)
+        public IBeanDefinitionCollection CreateBuilder(IServiceCollection services = null)
         {
+            services ??= new ServiceCollection();
+
             // sp
             services.AddSingleton(_sp);
             services.AddSingleton<IServiceScopeFactory>((ServiceProvider)_sp);

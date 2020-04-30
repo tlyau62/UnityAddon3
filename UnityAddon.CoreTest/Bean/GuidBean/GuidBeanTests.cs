@@ -60,7 +60,7 @@ namespace UnityAddon.CoreTest.Bean.GuidBean
         public void BuildStrategy_DependencyOnGuidBean_BeanInjected()
         {
             var f = new ServiceProviderFactory();
-            var defCol = f.CreateBuilder(new ServiceCollection());
+            var defCol = f.CreateBuilder();
 
             defCol.AddComponent<GeneralService>()
                 .AddComponent<PrintService>()
