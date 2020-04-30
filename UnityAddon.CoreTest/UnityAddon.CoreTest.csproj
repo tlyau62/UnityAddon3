@@ -23,7 +23,6 @@
     <Compile Remove="HostService\**" />
     <Compile Remove="IntegrationTests\Dependency\**" />
     <Compile Remove="Resolve\**" />
-    <Compile Remove="Value\**" />
     <EmbeddedResource Remove="Aop\**" />
     <EmbeddedResource Remove="BeanPostConstruct\**" />
     <EmbeddedResource Remove="BeanPostProcessor\**" />
@@ -36,7 +35,6 @@
     <EmbeddedResource Remove="HostService\**" />
     <EmbeddedResource Remove="IntegrationTests\Dependency\**" />
     <EmbeddedResource Remove="Resolve\**" />
-    <EmbeddedResource Remove="Value\**" />
     <None Remove="Aop\**" />
     <None Remove="BeanPostConstruct\**" />
     <None Remove="BeanPostProcessor\**" />
@@ -49,7 +47,6 @@
     <None Remove="HostService\**" />
     <None Remove="IntegrationTests\Dependency\**" />
     <None Remove="Resolve\**" />
-    <None Remove="Value\**" />
   </ItemGroup>
 
   <ItemGroup>
