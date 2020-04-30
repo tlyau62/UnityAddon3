@@ -48,7 +48,8 @@ namespace UnityAddon.Core.Component
                     }
 
                     return defs;
-                });
+                })
+                .ToArray();
         }
 
         private IEnumerable<Regex> BuildBaseNamespacesRegexes(string[] baseNamespaces)

@@ -81,6 +81,9 @@ namespace UnityAddon.CoreTest.Bean.GuidBean
 
             var r = dfs.Last();
             var y = c.Resolve(r.Type, r.Name) == c.Resolve(r.Type, r.Name);
+
+            var o = c.Resolve(r.Type, r.Qualifiers.First());
+
             var u = c.Resolve(r.Type, r.Qualifiers.First()) == c.Resolve(r.Type, r.Qualifiers.First());
 
 
@@ -100,7 +103,7 @@ namespace UnityAddon.CoreTest.Bean.GuidBean
             var z = c.Resolve<IService>("4e55e61a-c57f-4b55-84dd-044d539dfbc7");
             var q = x == z;
 
-            //host.Services.BuildUp(this);
+            a.BuildUp(this);
 
             Assert.Same(GeneralService.PrintService, PrintService);
             Assert.Same(GeneralService.WriteService, WriteService);
