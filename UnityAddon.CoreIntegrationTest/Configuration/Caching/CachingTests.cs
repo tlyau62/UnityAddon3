@@ -36,8 +36,7 @@ namespace UnityAddon.CoreTest.Configuration.Caching
         }
     }
 
-    [Trait("Configuration", "Caching")]
-    public class CachingTests: UnityAddonDefaultTest
+    public class CachingTests : DefaultTest
     {
         [Dependency]
         public Config Config { get; set; }
@@ -49,7 +48,7 @@ namespace UnityAddon.CoreTest.Configuration.Caching
         public string StrC { get; set; }
 
         [Fact]
-        public void ConfigurationParser_ConfigureSingletonBean_BeanCached()
+        public void Caching()
         {
             Assert.Equal("strAstrBstrC", StrA);
             Assert.Equal("strC", StrC);

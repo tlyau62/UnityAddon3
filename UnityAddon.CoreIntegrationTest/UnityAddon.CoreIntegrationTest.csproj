@@ -15,7 +15,7 @@
     <Compile Remove="Bean\ProfileBean\**" />
     <Compile Remove="Bean\SingletonBean\**" />
     <Compile Remove="ComponentScan\**" />
-    <Compile Remove="Configuration\**" />
+    <Compile Remove="Configuration\EnumBeanDefinition\**" />
     <Compile Remove="DependencyExceptions\**" />
     <Compile Remove="Dependency\**" />
     <Compile Remove="Util\**" />
@@ -28,7 +28,7 @@
     <EmbeddedResource Remove="Bean\ProfileBean\**" />
     <EmbeddedResource Remove="Bean\SingletonBean\**" />
     <EmbeddedResource Remove="ComponentScan\**" />
-    <EmbeddedResource Remove="Configuration\**" />
+    <EmbeddedResource Remove="Configuration\EnumBeanDefinition\**" />
     <EmbeddedResource Remove="DependencyExceptions\**" />
     <EmbeddedResource Remove="Dependency\**" />
     <EmbeddedResource Remove="Util\**" />
@@ -41,7 +41,7 @@
     <None Remove="Bean\ProfileBean\**" />
     <None Remove="Bean\SingletonBean\**" />
     <None Remove="ComponentScan\**" />
-    <None Remove="Configuration\**" />
+    <None Remove="Configuration\EnumBeanDefinition\**" />
     <None Remove="DependencyExceptions\**" />
     <None Remove="Dependency\**" />
     <None Remove="Util\**" />

@@ -25,8 +25,7 @@ namespace UnityAddon.CoreTest.Configuration.GenericBeanMethod
         }
     }
 
-    [Trait("Configuration", "GenericBeanMethod")]
-    public class GenericBeanMethodTests : UnityAddonDefaultTest
+    public class GenericBeanMethodTests : DefaultTest
     {
         [Dependency]
         public List<int> A { get; set; }
@@ -35,7 +34,7 @@ namespace UnityAddon.CoreTest.Configuration.GenericBeanMethod
         public IEnumerable<string> B { get; set; }
 
         [Fact]
-        public void BeanMethodInterceptor_GenericBeanMethod_BeanInjected()
+        public void GenericBeanMethod()
         {
             Assert.IsType<List<int>>(A);
             Assert.IsType<List<string>>(B);

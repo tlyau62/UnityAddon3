@@ -43,8 +43,7 @@ namespace UnityAddon.CoreTest.Configuration.BeanMethod
         }
     }
 
-    [Trait("Configuration", "BeanMethod")]
-    public class BeanMethodTests: UnityAddonDefaultTest
+    public class BeanMethodTests : DefaultTest
     {
         [Dependency]
         public IService ServiceA { get; set; }
@@ -56,7 +55,7 @@ namespace UnityAddon.CoreTest.Configuration.BeanMethod
         public ICommonService ServiceC { get; set; }
 
         [Fact]
-        public void ConfigurationParser_ConfigureBean_BeanRegistered()
+        public void BeanMethod()
         {
             Assert.IsType<ServiceA>(ServiceA);
             Assert.IsType<ServiceB>(ServiceB);

@@ -23,8 +23,7 @@ namespace UnityAddon.CoreTest.Configuration.EnumBeanDefinition
         }
     }
 
-    [Trait("Configuration", "EnumBeanDefinition")]
-    public class EnumBeanDefinitionTests : UnityAddonDefaultTest
+    public class EnumBeanDefinitionTests : DefaultTest
     {
         [Dependency]
         public string TestString { get; set; }

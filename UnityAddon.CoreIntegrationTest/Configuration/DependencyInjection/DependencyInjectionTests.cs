@@ -38,8 +38,7 @@ namespace UnityAddon.CoreTest.Configuration.DependencyInjection
         }
     }
 
-    [Trait("Configuration", "DependencyInjection")]
-    public class DependencyInjectionTests : UnityAddonDefaultTest
+    public class DependencyInjectionTests : DefaultTest
     {
         [Dependency]
         public Service Service { get; set; }
@@ -51,10 +50,10 @@ namespace UnityAddon.CoreTest.Configuration.DependencyInjection
         public PropertyHelper PropertyHelper { get; set; }
 
         [Fact]
-        public void BuildStrategy_BeanMethodDependency_BeanInjected()
+        public void DependencyInjection()
         {
             Assert.Same(CtorHelper, Service.CtorHelper);
-            Assert.Same(PropertyHelper, Service.PropertyHelper);
+            Assert.Null(Service.PropertyHelper);
         }
     }
 }
