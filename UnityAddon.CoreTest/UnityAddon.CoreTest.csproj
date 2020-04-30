@@ -15,7 +15,6 @@
     <Compile Remove="BeanPostConstruct\**" />
     <Compile Remove="BeanPostProcessor\**" />
     <Compile Remove="BeanUnregister\**" />
-    <Compile Remove="Bean\**" />
     <Compile Remove="ComponentScan\**" />
     <Compile Remove="Configuration\**" />
     <Compile Remove="DependencyExceptions\**" />
@@ -27,7 +26,6 @@
     <EmbeddedResource Remove="BeanPostConstruct\**" />
     <EmbeddedResource Remove="BeanPostProcessor\**" />
     <EmbeddedResource Remove="BeanUnregister\**" />
-    <EmbeddedResource Remove="Bean\**" />
     <EmbeddedResource Remove="ComponentScan\**" />
     <EmbeddedResource Remove="Configuration\**" />
     <EmbeddedResource Remove="DependencyExceptions\**" />
@@ -39,7 +37,6 @@
     <None Remove="BeanPostConstruct\**" />
     <None Remove="BeanPostProcessor\**" />
     <None Remove="BeanUnregister\**" />
-    <None Remove="Bean\**" />
     <None Remove="ComponentScan\**" />
     <None Remove="Configuration\**" />
     <None Remove="DependencyExceptions\**" />

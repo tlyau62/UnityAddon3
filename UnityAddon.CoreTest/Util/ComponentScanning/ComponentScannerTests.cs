@@ -5,10 +5,10 @@ using System.Text;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.Util.ComponentScanning;
-using UnityAddon.CoreTest.Util.ComponentScanning.Fakes;
+using UnityAddon.CoreTest.Util.Mocks.ComponentScanning;
 using Xunit;
 
-namespace UnityAddon.CoreTest.Util.ComponentScanning.Fakes
+namespace UnityAddon.CoreTest.Util.Mocks.ComponentScanning
 {
     public interface IService { }
 
@@ -19,7 +19,7 @@ namespace UnityAddon.CoreTest.Util.ComponentScanning.Fakes
     public class Config { }
 }
 
-namespace UnityAddon.CoreTest.Util.ComponentScanning
+namespace UnityAddon.CoreTest.Util
 {
     public class ComponentScannerTests
     {

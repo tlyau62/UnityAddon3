@@ -5,9 +5,10 @@ using System.Text;
 using Unity;
 using UnityAddon;
 using UnityAddon.Core;
+using UnityAddon.CoreTest.Mocks.UnityAddonServiceProvider;
 using Xunit;
 
-namespace UnityAddon.CoreTest
+namespace UnityAddon.CoreTest.Mocks.UnityAddonServiceProvider
 {
     public interface IA
     {
@@ -29,7 +30,11 @@ namespace UnityAddon.CoreTest
         public bool Disposed => true;
     }
 
-    public class UnityAddonServiceProvider
+}
+
+namespace UnityAddon.CoreTest
+{
+    public class UnityAddonServiceProviderTests
     {
         [Fact]
         public void GetService()
