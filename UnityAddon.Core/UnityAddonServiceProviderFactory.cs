@@ -18,7 +18,7 @@ using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core
 {
-    public class ServiceProviderFactory : IServiceProviderFactory<IBeanDefinitionCollection>
+    public class UnityAddonServiceProviderFactory : IServiceProviderFactory<IBeanDefinitionCollection>
     {
         private readonly IUnityContainer _container;
 
@@ -34,18 +34,18 @@ namespace UnityAddon.Core
 
         private bool _isNewContainer = false;
 
-        public ServiceProviderFactory() : this(new UnityContainer())
+        public UnityAddonServiceProviderFactory() : this(new UnityContainer())
         {
             _isNewContainer = true;
         }
 
-        public ServiceProviderFactory(IUnityContainer container)
+        public UnityAddonServiceProviderFactory(IUnityContainer container)
         {
             _container = container;
 
             _container
                 .RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager())
-                .RegisterType<IServiceProvider, ServiceProvider>(new ContainerControlledLifetimeManager())
+                .RegisterType<IServiceProvider, UnityAddonServiceProvider>(new ContainerControlledLifetimeManager())
                 .RegisterType<ConstructorResolver>(new ContainerControlledLifetimeManager())
                 .RegisterType<BeanFactory>(new ContainerControlledLifetimeManager())
                 .RegisterType<IThreadLocalFactory<Stack<ResolveStackEntry>>, ThreadLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())));
@@ -63,8 +63,8 @@ namespace UnityAddon.Core
 
             // sp
             services.AddSingleton(_sp);
-            services.AddSingleton<IServiceScopeFactory>((ServiceProvider)_sp);
-            services.AddSingleton<IServiceScope>((ServiceProvider)_sp);
+            services.AddSingleton<IServiceScopeFactory>((UnityAddonServiceProvider)_sp);
+            services.AddSingleton<IServiceScope>((UnityAddonServiceProvider)_sp);
 
             // internal
             services.AddSingleton(_beanDefContainer);

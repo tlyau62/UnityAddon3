@@ -28,7 +28,6 @@
     <Compile Remove="Bean\ConfigurationFactory.cs" />
     <Compile Remove="UnityAddonContainer.cs" />
     <Compile Remove="UnityAddonContainerExt.cs" />
-    <Compile Remove="UnityAddonDefaultTest.cs" />
     <Compile Remove="UnityAddonHost.cs" />
     <Compile Remove="UnityAddonVendor.cs" />
   </ItemGroup>

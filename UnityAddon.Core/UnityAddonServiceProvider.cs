@@ -72,13 +72,13 @@ namespace UnityAddon.Core
     }
 
     // Support name interface
-    public class ServiceProvider : IServiceProvider, IDisposable, ISupportRequiredService, IServiceScopeFactory, IServiceScope, IUnityServiceProvider, ISupportNamedService
+    public class UnityAddonServiceProvider : IServiceProvider, IDisposable, ISupportRequiredService, IServiceScopeFactory, IServiceScope, IUnityServiceProvider, ISupportNamedService
     {
         private readonly IUnityContainer _container;
 
         private readonly IBeanDefinitionContainer _beanDefContainer;
 
-        public ServiceProvider(IUnityContainer container)
+        public UnityAddonServiceProvider(IUnityContainer container)
         {
             _container = container;
             _beanDefContainer = container.Resolve<IBeanDefinitionContainer>();
@@ -116,7 +116,7 @@ namespace UnityAddon.Core
 
         public IServiceScope CreateScope()
         {
-            return new ServiceProvider(_container.CreateChildContainer());
+            return new UnityAddonServiceProvider(_container.CreateChildContainer());
         }
 
         public bool CanResolve(Type serviceType, string name)

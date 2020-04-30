@@ -43,8 +43,7 @@ namespace UnityAddon.CoreIntegrationTest.Bean.GuidBean
     {
     }
 
-    [Trait("Bean", "GuidBean")]
-    public class GuidBeanTests
+    public class GuidBeanTests : DefaultTest
     {
         [Dependency]
         public GeneralService GeneralService { get; set; }
@@ -56,17 +55,8 @@ namespace UnityAddon.CoreIntegrationTest.Bean.GuidBean
         public IService WriteService { get; set; }
 
         [Fact]
-        public void BuildStrategy_DependencyOnGuidBean_BeanInjected()
+        public void GuidBean()
         {
-            var f = new ServiceProviderFactory();
-            var defCol = f.CreateBuilder();
-
-            defCol.AddFromComponentScanner(cs => cs.ScanAssembly(GetType().Assembly, GetType().Namespace));
-
-            var a = f.CreateServiceProvider(defCol);
-
-            a.BuildUp(this);
-
             Assert.Same(GeneralService.PrintService, PrintService);
             Assert.Same(GeneralService.WriteService, WriteService);
         }
