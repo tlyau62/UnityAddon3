@@ -45,7 +45,7 @@ namespace UnityAddon.CoreTest.HostService
             _host = new HostBuilder()
                 .RegisterUA()
                 .ConfigureServices(c => c.AddHostedService<LifetimeEventsHostedService>())
-                .BuildUA();
+                .Build();
         }
 
         [Fact]

@@ -18,8 +18,6 @@
     <Compile Remove="Configuration\**" />
     <Compile Remove="DependencyExceptions\**" />
     <Compile Remove="Dependency\**" />
-    <Compile Remove="HostService\**" />
-    <Compile Remove="Resolve\**" />
     <Compile Remove="Util\**" />
     <Compile Remove="Value\**" />
     <EmbeddedResource Remove="Aop\**" />
@@ -33,8 +31,6 @@
     <EmbeddedResource Remove="Configuration\**" />
     <EmbeddedResource Remove="DependencyExceptions\**" />
     <EmbeddedResource Remove="Dependency\**" />
-    <EmbeddedResource Remove="HostService\**" />
-    <EmbeddedResource Remove="Resolve\**" />
     <EmbeddedResource Remove="Util\**" />
     <EmbeddedResource Remove="Value\**" />
     <None Remove="Aop\**" />
@@ -48,8 +44,6 @@
     <None Remove="Configuration\**" />
     <None Remove="DependencyExceptions\**" />
     <None Remove="Dependency\**" />
-    <None Remove="HostService\**" />
-    <None Remove="Resolve\**" />
     <None Remove="Util\**" />
     <None Remove="Value\**" />
   </ItemGroup>
