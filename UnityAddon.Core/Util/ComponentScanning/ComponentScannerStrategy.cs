@@ -48,7 +48,12 @@ namespace UnityAddon.Core.Util.ComponentScanning
             var defCol = new BeanDefinitionCollection();
 
             defCol.AddRange(MethodSelector.GetAllMethodsByAttribute<BeanAttribute>(config)
-                .Select(beanMethod => new MemberMethodBeanDefinition(beanMethod)));
+                .SelectMany(beanMethod =>
+                {
+                    var def = new MemberMethodBeanDefinition(beanMethod);
+
+                    return new[] { def, new MemberMethodFactoryBeanDefinition(def) };
+                }));
 
             return defCol;
         }

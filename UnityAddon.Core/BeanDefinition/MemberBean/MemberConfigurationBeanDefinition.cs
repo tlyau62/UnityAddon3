@@ -29,7 +29,7 @@ namespace UnityAddon.Core.BeanDefinition.MemberBean
             return proxyGenerator.CreateClassProxy(
                 type,
                 paramFill.FillAllParamaters(ctorResolver.ChooseConstuctor(type, serviceProvider), serviceProvider),
-                serviceProvider.GetService<BeanMethodInterceptor>());
+                serviceProvider.GetRequiredService<BeanMethodInterceptor>());
         }
     }
 }

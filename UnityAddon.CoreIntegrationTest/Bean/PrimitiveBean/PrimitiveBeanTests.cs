@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Unity;
@@ -37,17 +38,22 @@ namespace UnityAddon.CoreTest.Bean.PrimitiveBean
 
     public class PrimitiveBeanTests : DefaultTest
     {
-        [Dependency]
-        public Config Config { get; set; }
+        //[Dependency]
+        //public Config Config { get; set; }
+
+        //[Dependency]
+        //public Service Service { get; set; }
 
         [Dependency]
-        public Service Service { get; set; }
+        public IServiceProvider ServiceProvider { get; set; }
 
         [Fact]
         public void PrimitiveBean()
         {
-            Assert.Equal(Service.IntBean, Config.CreateIntBean());
-            Assert.Same(Service.StringBean, Config.CreateStringBean());
+            var a = ServiceProvider.GetRequiredService<string>();
+
+            //Assert.Equal(Service.IntBean, Config.CreateIntBean());
+            //Assert.Same(Service.StringBean, Config.CreateStringBean());
         }
     }
 }

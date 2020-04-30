@@ -6,6 +6,7 @@ using Unity;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using UnityAddon.Core.Bean.DependencyInjection;
+using Castle.DynamicProxy;
 
 namespace UnityAddon.Core.BeanDefinition.MemberBean
 {
@@ -43,5 +44,7 @@ namespace UnityAddon.Core.BeanDefinition.MemberBean
         public override Type[] AutoWiredTypes => new[] { Type };
 
         public Type ConfigType => Method.DeclaringType;
+
+        public IInvocation Invocation { get; set; }
     }
 }

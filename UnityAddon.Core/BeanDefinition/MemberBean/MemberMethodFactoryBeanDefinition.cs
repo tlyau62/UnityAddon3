@@ -11,13 +11,16 @@ namespace UnityAddon.Core.BeanDefinition.MemberBean
 {
     public class MemberMethodFactoryBeanDefinition : MemberMethodBeanDefinition
     {
-        private string _uuid = Guid.NewGuid().ToString();
+        private MemberMethodBeanDefinition _parentBeanDef;
 
-        public MemberMethodFactoryBeanDefinition(MethodInfo method) : base(method)
+        public MemberMethodFactoryBeanDefinition(MemberMethodBeanDefinition methodBeanDef) : base(methodBeanDef.Method)
         {
+            _parentBeanDef = methodBeanDef;
         }
 
-        public override string Name => base.Name + "-factory";
+        public override string Name => _parentBeanDef.Name + "-factory";
+
+        public override Type Type => typeof(MethodFactoryValue);
 
         public override object Constructor(IServiceProvider serviceProvider, Type type, string name)
         {
@@ -25,7 +28,17 @@ namespace UnityAddon.Core.BeanDefinition.MemberBean
 
             invocation.Proceed();
 
-            return invocation.ReturnValue;
+            return new MethodFactoryValue(invocation.ReturnValue);
+        }
+    }
+
+    public class MethodFactoryValue
+    {
+        public object Value { get; }
+
+        public MethodFactoryValue(object val)
+        {
+            Value = val;
         }
     }
 }

@@ -41,13 +41,13 @@ namespace UnityAddon.Core.Bean
             }
             else
             {
-                var beanDef = DefContainer.GetAllBeanDefinitions(method.ReturnType).Where(def => def is MemberMethodFactoryBeanDefinition).Single();
+                var beanDef = DefContainer.GetBeanDefinition(method.ReturnType);
                 var hasStack = InvocationStackFactory.Exist();
                 var stack = hasStack ? InvocationStackFactory.Get() : InvocationStackFactory.Set();
 
                 stack.Push(invocation);
 
-                invocation.ReturnValue = _serviceProvider.GetRequiredService(beanDef.Type, beanDef.Name);
+                invocation.ReturnValue = _serviceProvider.GetRequiredService<MethodFactoryValue>(beanDef.Name + "-factory").Value;
 
                 stack.Pop();
 
