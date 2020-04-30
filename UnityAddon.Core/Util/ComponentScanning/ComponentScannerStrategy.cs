@@ -8,7 +8,7 @@ using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.BeanDefinition.MemberBean;
 using UnityAddon.Core.Reflection;
 
-namespace UnityAddon.Core.Component
+namespace UnityAddon.Core.Util.ComponentScanning
 {
     public interface IComponentScannerStrategy
     {

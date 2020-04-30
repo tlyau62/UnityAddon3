@@ -22,7 +22,6 @@ using UnityAddon.Core.BeanDefinition;
 using Castle.DynamicProxy;
 using UnityAddon.Core.Thread;
 using UnityAddon.Core.Attributes;
-using UnityAddon.Core.Component;
 using UnityAddon.Core.Aop;
 using Unity.Strategies;
 using Unity.Builder;
@@ -41,21 +40,6 @@ namespace UnityAddon.Core
         public static IHostBuilder RegisterUA(this IHostBuilder hostBuilder)
         {
             return hostBuilder.UseServiceProviderFactory(new ServiceProviderFactory());
-        }
-
-        public static IHostBuilder ScanComponentsUA(this IHostBuilder hostBuilder, Assembly assembly, params string[] namespaces)
-        {
-            return hostBuilder.ConfigureContainer<IUnityContainer>((s, c) =>
-            {
-                var callbacks = c.Resolve<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>();
-
-                callbacks.Add(cs => cs.ScanComponents(assembly, namespaces));
-            });
-        }
-
-        public static IHostBuilder ScanComponentsUA(this IHostBuilder hostBuilder, params string[] namespaces)
-        {
-            return hostBuilder.ScanComponentsUA(Assembly.GetCallingAssembly(), namespaces);
         }
 
         //public static IHostBuilder ConfigureUA<ConfigT>(this IHostBuilder hostBuilder, Action<ConfigT> config)

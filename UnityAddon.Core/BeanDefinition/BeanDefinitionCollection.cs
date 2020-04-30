@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Unity;
+using UnityAddon.Core.BeanDefinition.GeneralBean;
 using UnityAddon.Core.BeanDefinition.MemberBean;
 using UnityAddon.Core.BeanDefinition.ServiceBean;
 
@@ -11,10 +12,22 @@ namespace UnityAddon.Core.BeanDefinition
     public interface IBeanDefinitionCollection : IList<IBeanDefinition>
     {
         public IBeanDefinitionCollection AddComponent(Type type);
+
+        public IBeanDefinitionCollection AddFromService(Func<IServiceProvider, IBeanDefinitionCollection> action);
+
+        public IBeanDefinitionCollection AddFromExisting(IBeanDefinitionCollection beanDefCollection);
     }
 
     public class BeanDefinitionCollection : List<IBeanDefinition>, IBeanDefinitionCollection
     {
+        public IBeanDefinitionCollection AddFromService(Func<IServiceProvider, IBeanDefinitionCollection> action)
+        {
+            throw new NotImplementedException();
+            //Add(new FactoryBeanDefinition<IBeanDefinitionCollection>((sp, t, n) => action(sp)));
+
+            //return this;
+        }
+
         public IBeanDefinitionCollection AddComponent(Type type)
         {
             Add(new MemberComponentBeanDefinition(type));
@@ -47,6 +60,13 @@ namespace UnityAddon.Core.BeanDefinition
 
                 Add(beanDef);
             }
+
+            return this;
+        }
+
+        public IBeanDefinitionCollection AddFromExisting(IBeanDefinitionCollection beanDefCollection)
+        {
+            AddRange(beanDefCollection);
 
             return this;
         }

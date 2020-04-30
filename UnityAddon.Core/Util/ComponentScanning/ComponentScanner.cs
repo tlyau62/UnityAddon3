@@ -15,7 +15,7 @@ using System.Runtime.Loader;
 using UnityAddon.Core.BeanDefinition;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace UnityAddon.Core.Component
+namespace UnityAddon.Core.Util.ComponentScanning
 {
     /// <summary>
     /// Scan components from an assembly.
@@ -25,16 +25,17 @@ namespace UnityAddon.Core.Component
     {
         private IEnumerable<IComponentScannerStrategy> _scannerStrategies;
 
-        public ComponentScanner(IEnumerable<IComponentScannerStrategy> scannerStrategies)
+        public ComponentScanner(ComponentScannerOption option)
         {
-            _scannerStrategies = scannerStrategies;
+            _scannerStrategies = option.ScannerStrategies;
         }
 
-        public IEnumerable<IBeanDefinition> ScanComponents(Assembly asm, params string[] baseNamespaces)
+        public IBeanDefinitionCollection ScanAssembly(Assembly asm, params string[] baseNamespaces)
         {
             var regexes = BuildBaseNamespacesRegexes(baseNamespaces);
+            var beanDefCol = new BeanDefinitionCollection();
 
-            return asm.GetTypes()
+            beanDefCol.AddRange(asm.GetTypes()
                 .Where(t => t.Namespace != null && regexes.Any(regex => regex.IsMatch(t.Namespace)))
                 .Where(t => t.HasAttribute<ComponentAttribute>(true))
                 .SkipWhile(t => !_scannerStrategies.Any(stg => stg.IsMatch(t)))
@@ -49,7 +50,9 @@ namespace UnityAddon.Core.Component
 
                     return defs;
                 })
-                .ToArray();
+                .ToArray());
+
+            return beanDefCol;
         }
 
         private IEnumerable<Regex> BuildBaseNamespacesRegexes(string[] baseNamespaces)
