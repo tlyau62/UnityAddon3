@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using Unity;
+using UnityAddon.Core.Util.ComponentScanning;
 
 namespace UnityAddon.Core
 {
