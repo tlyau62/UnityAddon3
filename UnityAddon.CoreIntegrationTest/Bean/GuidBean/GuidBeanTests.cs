@@ -13,14 +13,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityAddon.Core.BeanDefinition;
 using System.Linq;
-using UnityAddon.Core.Component;
 using System.Reflection;
 using Unity.Lifetime;
+using UnityAddon.Core.Util.ComponentScanning;
 
-namespace UnityAddon.CoreTest.Bean.GuidBean
+namespace UnityAddon.CoreIntegrationTest.Bean.GuidBean
 {
     public interface IService { }
 
+    [Component]
     public class GeneralService
     {
         [Dependency("b1368cba-7614-4923-9426-8cd4456da29e")]
@@ -31,15 +32,13 @@ namespace UnityAddon.CoreTest.Bean.GuidBean
     }
 
     [Guid("b1368cba-7614-4923-9426-8cd4456da29e")]
+    [Component]
     public class PrintService : IService
     {
-        public PrintService()
-        {
-            var a = 10;
-        }
     }
 
     [Guid("4e55e61a-c57f-4b55-84dd-044d539dfbc7")]
+    [Component]
     public class WriteService : IService
     {
     }
@@ -62,9 +61,7 @@ namespace UnityAddon.CoreTest.Bean.GuidBean
             var f = new ServiceProviderFactory();
             var defCol = f.CreateBuilder();
 
-            defCol.AddComponent<GeneralService>()
-                .AddComponent<PrintService>()
-                .AddComponent<WriteService>();
+            defCol.AddFromComponentScanner(cs => cs.ScanAssembly(GetType().Assembly, GetType().Namespace));
 
             var a = f.CreateServiceProvider(defCol);
 
