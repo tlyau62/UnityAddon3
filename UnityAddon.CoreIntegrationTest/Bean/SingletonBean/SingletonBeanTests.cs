@@ -42,8 +42,7 @@ namespace UnityAddon.CoreTest.Bean.SingletonBean
         }
     }
 
-    [Trait("Bean", "SingletonBean")]
-    public class SingletonBeanTests : UnityAddonDefaultTest
+    public class SingletonBeanTests : DefaultTest
     {
         [Dependency]
         public IUnityContainer Container { get; set; }

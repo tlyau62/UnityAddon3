@@ -35,8 +35,7 @@ namespace UnityAddon.CoreTest.Bean.PrimitiveBean
         public int IntBean { get; set; }
     }
 
-    [Trait("Bean", "PrimitiveBean")]
-    public class PrimitiveBeanTests : UnityAddonDefaultTest
+    public class PrimitiveBeanTests : DefaultTest
     {
         [Dependency]
         public Config Config { get; set; }
@@ -45,7 +44,7 @@ namespace UnityAddon.CoreTest.Bean.PrimitiveBean
         public Service Service { get; set; }
 
         [Fact]
-        public void BuildStrategy_DependencyOnPrimitiveBean_BeanInjected()
+        public void PrimitiveBean()
         {
             Assert.Equal(Service.IntBean, Config.CreateIntBean());
             Assert.Same(Service.StringBean, Config.CreateStringBean());

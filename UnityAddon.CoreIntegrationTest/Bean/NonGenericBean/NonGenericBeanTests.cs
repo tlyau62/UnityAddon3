@@ -35,8 +35,7 @@ namespace UnityAddon.CoreTest.Dependency.Bean.NonGenericBean
     {
     }
 
-    [Trait("Bean", "NonGenericBean")]
-    public class NonGenericBeanTests : UnityAddonDefaultTest
+    public class NonGenericBeanTests : DefaultTest
     {
         [Dependency]
         public AbstractA A { get; set; }
@@ -48,7 +47,7 @@ namespace UnityAddon.CoreTest.Dependency.Bean.NonGenericBean
         public IC C { get; set; }
 
         [Fact]
-        public void BuildStrategy_DependencyOnNonGenericBean_BeanInjected()
+        public void NonGenericBean()
         {
             Assert.Same(A.B, B);
             Assert.Same(B.C, C);

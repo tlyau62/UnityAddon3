@@ -19,14 +19,13 @@ namespace UnityAddon.CoreTest.Bean.PrimaryBean
     [Primary]
     public class ServiceB : IService { }
 
-    [Trait("Bean", "PrimaryBean")]
-    public class PrimaryBeanTests : UnityAddonDefaultTest
+    public class PrimaryBeanTests : DefaultTest
     {
         [Dependency]
         public IService PrimaryB { get; set; }
 
         [Fact]
-        public void BuildStrategy_DependencyOnPrimaryBean_BeanInjected()
+        public void PrimaryBean()
         {
             Assert.IsType<ServiceB>(PrimaryB);
         }

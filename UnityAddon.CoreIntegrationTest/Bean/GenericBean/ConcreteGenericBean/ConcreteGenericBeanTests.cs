@@ -13,20 +13,19 @@ namespace UnityAddon.CoreTest.Bean.GenericBean.ConcreteGenericBean
     [Component]
     public class Service : IService<int> { }
 
-    [Trait("Bean", "GenericBean/ConcreteGenericBean")]
-    public class ConcreteGenericBeanTests : UnityAddonDefaultTest
+    public class ConcreteGenericBeanTests : DefaultTest
     {
         [Dependency]
         public IService<int> Service { get; set; }
 
         [Dependency]
-        public IUnityContainer Container { get; set; }
+        public IServiceProvider Sp { get; set; }
 
         [Fact]
-        public void BuildStrategy_DependencyOnConcreteGenericBean_BeanInjected()
+        public void ConcreteGenericBean()
         {
             Assert.IsType<Service>(Service);
-            Assert.True(Container.IsRegisteredUA<IService<int>>());
+            Assert.True(Sp.IsRegistered<IService<int>>());
         }
     }
 }

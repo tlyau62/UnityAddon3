@@ -51,8 +51,7 @@ namespace UnityAddon.CoreTest.Bean.QualifiedBean
     {
     }
 
-    [Trait("Bean", "QualifiedBean")]
-    public class QualifiedBeanTests : UnityAddonDefaultTest
+    public class QualifiedBeanTests : DefaultTest
     {
         [Dependency("CommonA")]
         public ICommon A { get; set; }
@@ -67,7 +66,7 @@ namespace UnityAddon.CoreTest.Bean.QualifiedBean
         public Service Service { get; set; }
 
         [Fact]
-        public void BuildStrategy_DependencyOnQualifiedBean_BeanInjected()
+        public void QualifiedBean()
         {
             Assert.Same(Service.BCommon, B);
             Assert.Same(Service.BRare, B);

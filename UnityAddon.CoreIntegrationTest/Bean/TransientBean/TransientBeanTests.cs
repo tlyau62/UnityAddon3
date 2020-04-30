@@ -25,14 +25,13 @@ namespace UnityAddon.CoreTest.Bean.TransientBean
         public Helper Helper2 { get; set; }
     }
 
-    [Trait("Bean", "TransientBean")]
-    public class TransientBeanTests : UnityAddonDefaultTest
+    public class TransientBeanTests : DefaultTest
     {
         [Dependency]
         public Service Service { get; set; }
 
         [Fact]
-        public void BuildStrategy_DependencyOnTransientBean_BeanInjected()
+        public void TransientBean()
         {
             Assert.NotSame(Service.Helper, Service.Helper2);
         }
