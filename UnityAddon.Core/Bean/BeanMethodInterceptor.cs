@@ -40,7 +40,7 @@ namespace UnityAddon.Core.Bean
             }
             else
             {
-                var beanDef = (MemberMethodBeanDefinition)DefContainer.GetBeanDefinition(method.ReturnType);
+                var beanDef = (MemberMethodBeanDefinition)DefContainer.GetBeanDefinition(method.ReturnType, method.Name);
 
                 if (beanDef.Invocation != null)
                 {

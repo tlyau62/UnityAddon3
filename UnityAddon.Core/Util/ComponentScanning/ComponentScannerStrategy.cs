@@ -53,7 +53,8 @@ namespace UnityAddon.Core.Util.ComponentScanning
                     var def = new MemberMethodBeanDefinition(beanMethod);
 
                     return new[] { def, new MemberMethodFactoryBeanDefinition(def) };
-                }));
+                })
+                .ToArray());
 
             return defCol;
         }
