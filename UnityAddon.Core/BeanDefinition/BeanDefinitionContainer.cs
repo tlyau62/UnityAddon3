@@ -20,13 +20,9 @@ namespace UnityAddon.Core.BeanDefinition
 
         IEnumerable<IBeanDefinition> GetAllBeanDefinitions(Type type);
 
-        IEnumerable<IBeanDefinition> GetAllGenericBeanDefinitionsByTypeDefinition(Type type);
-
         IBeanDefinitionContainer RegisterBeanDefinition(IBeanDefinition beanDefinition);
 
         void RegisterBeanDefinitions(IEnumerable<IBeanDefinition> beanDefinitions);
-
-        IEnumerable<IBeanDefinition> FindBeanDefinitionsByAttribute<TAttribute>() where TAttribute : Attribute;
 
         IBeanDefinition RemoveBeanDefinition(Type type, string name = null);
     }
@@ -44,20 +40,15 @@ namespace UnityAddon.Core.BeanDefinition
         {
             foreach (var type in beanDefinition.AutoWiredTypes)
             {
-                AddBeanDefinition(type, beanDefinition);
+                if (!_container.ContainsKey(type))
+                {
+                    _container[type] = new BeanDefinitionHolder();
+                }
+
+                _container[type].Add(beanDefinition);
             }
 
             return this;
-        }
-
-        private void AddBeanDefinition(Type type, IBeanDefinition beanDefinition)
-        {
-            if (!_container.ContainsKey(type))
-            {
-                _container[type] = new BeanDefinitionHolder();
-            }
-
-            _container[type].Add(beanDefinition);
         }
 
         public bool HasBeanDefinition(Type type, string name)
@@ -65,11 +56,6 @@ namespace UnityAddon.Core.BeanDefinition
             if (!_container.ContainsKey(type))
             {
                 return false;
-            }
-
-            if (name != null && name.StartsWith("#"))
-            {
-                name = name.Substring(1);
             }
 
             return _container[type].Exist(name);
@@ -80,41 +66,12 @@ namespace UnityAddon.Core.BeanDefinition
         /// </summary>
         public IBeanDefinition GetBeanDefinition(Type type, string name)
         {
-            if (!_container.ContainsKey(type))
+            if (!HasBeanDefinition(type, name))
             {
                 throw new InvalidOperationException($"No such bean definition of type {type}.");
             }
 
-            if (name != null && name.StartsWith("#"))
-            {
-                name = name.Substring(1);
-            }
-
             return _container[type].Get(name);
-        }
-
-        /// <summary>
-        /// Find all implementation types by attribute
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<IBeanDefinition> FindBeanDefinitionsByAttribute<TAttribute>() where TAttribute : Attribute
-        {
-            return _container
-                .Where(ent => ent.Key.HasAttribute<TAttribute>()) // find all implementation types
-                .Select(ent => ent.Value.Get()); // implementation type must have only 1 bean definition
-        }
-
-        public IEnumerable<IBeanDefinition> GetAllGenericBeanDefinitionsByTypeDefinition(Type type)
-        {
-            if (!type.IsGenericType || !type.IsTypeDefinition)
-            {
-                throw new InvalidOperationException("Not generic type definition.");
-            }
-
-            return _container
-                .Where(ent => ent.Key == type || (ent.Key.IsGenericType && ent.Key.GetGenericTypeDefinition() == type))
-                .SelectMany(ent => ent.Value.GetAll())
-                .Distinct();
         }
 
         public IEnumerable<IBeanDefinition> GetAllBeanDefinitions(Type type)
