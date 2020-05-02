@@ -95,7 +95,9 @@ namespace UnityAddon.Core.Bean
 
             beanConstructEntry.PreProcess += container =>
             {
-                _container.RegisterType<ProxyGenerator>(new ContainerControlledLifetimeManager())
+                container.AddNewExtension<BeanBuildStrategyExtension>();
+
+                container.RegisterType<ProxyGenerator>(new ContainerControlledLifetimeManager())
                     .RegisterType<ConstructorResolver>(new ContainerControlledLifetimeManager())
                     .RegisterType<ParameterFill>(new ContainerControlledLifetimeManager())
                     .RegisterType<PropertyFill>(new ContainerControlledLifetimeManager())
@@ -121,20 +123,6 @@ namespace UnityAddon.Core.Bean
                 });
             });
 
-            var loaderEntry = new BeanLoaderEntry(BeanLoaderEntryOrder.Intern, true);
-
-            loaderEntry.PreProcess += container => container.RegisterFactory<IThreadLocalFactory<Stack<ResolveStackEntry>>>(c => new ThreadLocalFactory<Stack<ResolveStackEntry>>(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())));
-
-            loaderEntry.ConfigureBeanDefinitions(defs =>
-            {
-                defs.AddFromServiceCollection(services =>
-                {
-                    services.AddSingleton(sp => _container.Resolve<IThreadLocalFactory<Stack<ResolveStackEntry>>>());
-                });
-            });
-
-            loaderEntry.PostProcess += container => container.AddNewExtension<BeanBuildStrategyExtension>();
-
             var beanResolveEntry = new BeanLoaderEntry(BeanLoaderEntryOrder.Intern, false);
 
             beanResolveEntry.ConfigureBeanDefinitions(defs =>
@@ -154,7 +142,6 @@ namespace UnityAddon.Core.Bean
                 });
             });
 
-            Add(loaderEntry);
             Add(beanConstructEntry);
             Add(beanResolveEntry);
         }

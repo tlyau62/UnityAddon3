@@ -16,15 +16,19 @@ namespace UnityAddon.Core.BeanBuildStrategies
     /// </summary>
     public class BeanDependencyValidatorStrategy : BuilderStrategy
     {
-        [Dependency]
-        public IThreadLocalFactory<Stack<ResolveStackEntry>> StackFactory { get; set; }
+        private readonly IThreadLocalFactory<Stack<ResolveStackEntry>> _stackFactory;
+
+        public BeanDependencyValidatorStrategy()
+        {
+            _stackFactory = new ThreadLocalFactory<Stack<ResolveStackEntry>>(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>()));
+        }
 
         /// <summary>
         /// Remove stack entry
         /// </summary>
         public override void PostBuildUp(ref BuilderContext context)
         {
-            var stack = StackFactory.Get();
+            var stack = _stackFactory.Get();
             ResolveStackEntry entry;
 
             while (stack.Peek().ResolveType != context.Type || stack.Peek().ResolveName != context.Name)
@@ -35,7 +39,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
 
             if (entry != null && entry.IsBaseResolve)
             {
-                StackFactory.Delete();
+                _stackFactory.Delete();
             }
 
             base.PostBuildUp(ref context);
@@ -47,8 +51,8 @@ namespace UnityAddon.Core.BeanBuildStrategies
         /// </summary>
         public override void PreBuildUp(ref BuilderContext context)
         {
-            var stackExist = StackFactory.Exist();
-            Stack<ResolveStackEntry> stack = stackExist ? StackFactory.Get() : StackFactory.Set();
+            var stackExist = _stackFactory.Exist();
+            Stack<ResolveStackEntry> stack = stackExist ? _stackFactory.Get() : _stackFactory.Set();
             var name = context.Name;
             var type = context.Type;
 
@@ -58,7 +62,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
                 stack.Push(new ResolveStackEntry(type, name));
                 var ex = new CircularDependencyException(string.Join("\r\n->", stack.Reverse().Select(t => $"type {t.ResolveType} (name: {t.ResolveName})").ToArray()));
 
-                StackFactory.Delete();
+                _stackFactory.Delete();
 
                 throw ex;
             }
