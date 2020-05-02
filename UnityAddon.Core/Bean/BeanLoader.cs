@@ -91,35 +91,44 @@ namespace UnityAddon.Core.Bean
                     .RegisterFactory<IServiceScope>(c => c.Resolve<UnityAddonServiceProvider>())
                     .Resolve<IServiceProvider>();
 
+            var mainEntry = new BeanLoaderEntry(BeanLoaderEntryOrder.Intern, true);
+
+            mainEntry.ConfigureBeanDefinitions(defs =>
+            {
+                defs.AddFromServiceCollection(services =>
+                {
+                    services
+                        .AddSingleton(_sp)
+                        .AddSingleton((IServiceScopeFactory)_sp)
+                        .AddSingleton((IServiceScope)_sp)
+                        .AddSingleton(_beanDefContainer);
+                });
+            });
+
+            mainEntry.PreProcess += container => container.AddNewExtension<BeanBuildStrategyExtension>();
+
             var beanConstructEntry = new BeanLoaderEntry(BeanLoaderEntryOrder.Intern, true);
 
-            beanConstructEntry.PreProcess += container =>
+            beanConstructEntry.ConfigureBeanDefinitions(defs =>
             {
-                container.AddNewExtension<BeanBuildStrategyExtension>();
+                var child = container.CreateChildContainer();
 
-                container.RegisterType<ProxyGenerator>(new ContainerControlledLifetimeManager())
+                child.RegisterType<ProxyGenerator>(new ContainerControlledLifetimeManager())
                     .RegisterType<ConstructorResolver>(new ContainerControlledLifetimeManager())
                     .RegisterType<ParameterFill>(new ContainerControlledLifetimeManager())
                     .RegisterType<PropertyFill>(new ContainerControlledLifetimeManager())
                     .RegisterType<DependencyResolver>(new ContainerControlledLifetimeManager())
                     .RegisterType<BeanFactory>(new ContainerControlledLifetimeManager());
-            };
 
-            beanConstructEntry.ConfigureBeanDefinitions(defs =>
-            {
                 defs.AddFromServiceCollection(services =>
                 {
                     services
-                        .AddSingleton(_container.Resolve<ProxyGenerator>())
-                        .AddSingleton(_container.Resolve<ConstructorResolver>())
-                        .AddSingleton(_container.Resolve<ParameterFill>())
-                        .AddSingleton(_container.Resolve<PropertyFill>())
-                        .AddSingleton(_container.Resolve<DependencyResolver>())
-                        .AddSingleton(_sp)
-                        .AddSingleton((IServiceScopeFactory)_sp)
-                        .AddSingleton((IServiceScope)_sp)
-                        .AddSingleton(_beanDefContainer)
-                        .AddSingleton(_container.Resolve<BeanFactory>());
+                        .AddSingleton(child.Resolve<ProxyGenerator>())
+                        .AddSingleton(child.Resolve<ConstructorResolver>())
+                        .AddSingleton(child.Resolve<ParameterFill>())
+                        .AddSingleton(child.Resolve<PropertyFill>())
+                        .AddSingleton(child.Resolve<DependencyResolver>())
+                        .AddSingleton(child.Resolve<BeanFactory>());
                 });
             });
 
@@ -142,6 +151,7 @@ namespace UnityAddon.Core.Bean
                 });
             });
 
+            Add(mainEntry);
             Add(beanConstructEntry);
             Add(beanResolveEntry);
         }
