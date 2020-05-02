@@ -16,6 +16,7 @@ using System.Linq;
 using System.Reflection;
 using Unity.Lifetime;
 using UnityAddon.Core.Util.ComponentScanning;
+using UnityAddon.Core.Bean;
 
 namespace UnityAddon.CoreIntegrationTest.Bean.GuidBean
 {
@@ -43,7 +44,7 @@ namespace UnityAddon.CoreIntegrationTest.Bean.GuidBean
     {
     }
 
-    public class GuidBeanTests : DefaultTest
+    public class GuidBeanTests
     {
         [Dependency]
         public GeneralService GeneralService { get; set; }
@@ -57,6 +58,19 @@ namespace UnityAddon.CoreIntegrationTest.Bean.GuidBean
         [Fact]
         public void GuidBean()
         {
+            var beanLoader = new BeanLoader();
+
+            beanLoader.Add(new BeanLoaderEntry().ConfigureBeanDefinitions(config =>
+            {
+                config.AddComponent<GeneralService>();
+                config.AddComponent<PrintService>();
+                config.AddComponent<WriteService>();
+            }));
+
+            var sp = beanLoader.Build();
+
+            sp.BuildUp(this);
+
             Assert.Same(GeneralService.PrintService, PrintService);
             Assert.Same(GeneralService.WriteService, WriteService);
         }

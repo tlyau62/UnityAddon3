@@ -9,6 +9,8 @@ namespace UnityAddon.Core.BeanDefinition.GeneralBean
     {
         private readonly Func<IServiceProvider, Type, string, T> _factory;
 
+        private readonly string _uuid = Guid.NewGuid().ToString();
+
         public FactoryBeanDefinition(Func<IServiceProvider, Type, string, T> factory)
         {
             _factory = factory;
@@ -22,7 +24,7 @@ namespace UnityAddon.Core.BeanDefinition.GeneralBean
 
         public Type Type => typeof(T);
 
-        public string Name => throw new NotImplementedException();
+        public string Name => $"factory-{_uuid}";
 
         private LifetimeManager _scope;
 
@@ -30,15 +32,15 @@ namespace UnityAddon.Core.BeanDefinition.GeneralBean
 
         public Type[] AutoWiredTypes => new[] { Type };
 
-        public string[] Qualifiers => throw new NotImplementedException();
+        public string[] Qualifiers => new string[0];
 
-        public string[] Profiles => throw new NotImplementedException();
+        public string[] Profiles => new string[0];
 
-        public bool IsPrimary => throw new NotImplementedException();
+        public bool IsPrimary => false;
 
-        public string Namespace => throw new NotImplementedException();
+        public string Namespace => Type.Namespace;
 
-        public bool FromComponentScanning { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool FromComponentScanning { get; set; } = false;
 
         public object Constructor(IServiceProvider serviceProvider, Type type, string name)
         {
