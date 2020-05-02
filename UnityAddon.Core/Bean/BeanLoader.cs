@@ -1,7 +1,4 @@
 ﻿using C5;
-using Castle.DynamicProxy;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,60 +7,11 @@ using System.Linq;
 using System.Text;
 using Unity;
 using Unity.Lifetime;
-using UnityAddon.Core.Aop;
-using UnityAddon.Core.Bean.DependencyInjection;
-using UnityAddon.Core.BeanBuildStrategies;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.Thread;
-using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core.Bean
 {
-    public enum BeanLoaderEntryOrder
-    {
-        Intern = 0,
-        NetAsp = 100,
-        App = 200
-    }
-
-    public class BeanLoaderEntry
-    {
-        public BeanLoaderEntry()
-        {
-        }
-
-        public BeanLoaderEntry(BeanLoaderEntryOrder order, bool preInstantiate)
-        {
-            Order = order;
-            PreInstantiate = preInstantiate;
-        }
-
-        public BeanLoaderEntryOrder Order { get; set; } = BeanLoaderEntryOrder.App;
-
-        public bool PreInstantiate { get; set; } = false;
-
-        public IBeanDefinitionCollection BeanDefinitionCollection { get; } = new BeanDefinitionCollection();
-
-        public Action<IUnityContainer> PreProcess { get; set; } = container => { };
-
-        public Action<IUnityContainer> PostProcess { get; set; } = container => { };
-
-        public BeanLoaderEntry ConfigureBeanDefinitions(Action<IBeanDefinitionCollection> config)
-        {
-            config(BeanDefinitionCollection);
-
-            return this;
-        }
-
-        public BeanLoaderEntry ConfigureBeanDefinitions(Action<IServiceProvider, IBeanDefinitionCollection> config)
-        {
-            //config(container. BeanDefinitionCollection);
-
-            throw new NotImplementedException();
-
-            // return this;
-        }
-    }
 
     public class BeanLoader
     {
@@ -71,94 +19,34 @@ namespace UnityAddon.Core.Bean
 
         private readonly IUnityContainer _container;
 
-        private readonly IBeanDefinitionContainer _beanDefContainer;
-
-        private readonly IServiceProvider _sp;
-
         public BeanLoader() : this(new UnityContainer()) { }
 
         public BeanLoader(IUnityContainer container)
         {
             _container = container;
 
-            _beanDefContainer = _container
-                .RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager())
-                .Resolve<IBeanDefinitionContainer>();
-
-            _sp = _container.RegisterType<UnityAddonServiceProvider>(new ContainerControlledLifetimeManager())
-                    .RegisterFactory<IServiceProvider>(c => c.Resolve<UnityAddonServiceProvider>())
-                    .RegisterFactory<IServiceScopeFactory>(c => c.Resolve<UnityAddonServiceProvider>())
-                    .RegisterFactory<IServiceScope>(c => c.Resolve<UnityAddonServiceProvider>())
-                    .Resolve<IServiceProvider>();
-
-            var mainEntry = new BeanLoaderEntry(BeanLoaderEntryOrder.Intern, true);
-
-            mainEntry.ConfigureBeanDefinitions(defs =>
-            {
-                defs.AddFromServiceCollection(services =>
-                {
-                    services
-                        .AddSingleton(_sp)
-                        .AddSingleton((IServiceScopeFactory)_sp)
-                        .AddSingleton((IServiceScope)_sp)
-                        .AddSingleton(_beanDefContainer);
-                });
-            });
-
-            mainEntry.PreProcess += container => container.AddNewExtension<BeanBuildStrategyExtension>();
-
-            var beanConstructEntry = new BeanLoaderEntry(BeanLoaderEntryOrder.Intern, true);
-
-            beanConstructEntry.ConfigureBeanDefinitions(defs =>
-            {
-                var child = container.CreateChildContainer();
-
-                child.RegisterType<ProxyGenerator>(new ContainerControlledLifetimeManager())
-                    .RegisterType<ConstructorResolver>(new ContainerControlledLifetimeManager())
-                    .RegisterType<ParameterFill>(new ContainerControlledLifetimeManager())
-                    .RegisterType<PropertyFill>(new ContainerControlledLifetimeManager())
-                    .RegisterType<DependencyResolver>(new ContainerControlledLifetimeManager())
-                    .RegisterType<BeanFactory>(new ContainerControlledLifetimeManager());
-
-                defs.AddFromServiceCollection(services =>
-                {
-                    services
-                        .AddSingleton(child.Resolve<ProxyGenerator>())
-                        .AddSingleton(child.Resolve<ConstructorResolver>())
-                        .AddSingleton(child.Resolve<ParameterFill>())
-                        .AddSingleton(child.Resolve<PropertyFill>())
-                        .AddSingleton(child.Resolve<DependencyResolver>())
-                        .AddSingleton(child.Resolve<BeanFactory>());
-                });
-            });
-
-            var beanResolveEntry = new BeanLoaderEntry(BeanLoaderEntryOrder.Intern, false);
-
-            beanResolveEntry.ConfigureBeanDefinitions(defs =>
-            {
-                defs.AddFromServiceCollection(services =>
-                {
-                    services.AddSingleton<ValueProvider>()
-                        .AddSingleton<ConfigBracketParser>()
-                        .AddSingleton<AopBuildStrategyExtension>()
-                        .AddSingleton<BeanAopStrategy>()
-                        .AddSingleton<AopMethodBootstrapInterceptor>()
-                        .AddSingleton<InterfaceProxyFactory>()
-                        .AddSingleton<ProxyGenerator>()
-                        .AddSingleton<BeanMethodInterceptor>()
-                        .AddSingleton(sp => (sp.GetService<AopInterceptorContainerBuilder>() ?? new AopInterceptorContainerBuilder()).Build(sp))
-                        .AddSingleton(sp => (sp.GetService<BeanDefintionCandidateSelectorBuilder>() ?? new BeanDefintionCandidateSelectorBuilder()).Build(sp.GetService<IConfiguration>()));
-                });
-            });
-
-            Add(mainEntry);
-            Add(beanConstructEntry);
-            Add(beanResolveEntry);
+            Add(new BeanLoaderMainEntry());
+            Add(new BeanLoaderConstructEntry());
+            Add(new BeanLoaderResolveEntry());
         }
 
         public void Add(BeanLoaderEntry entry)
         {
             _entries.Add(entry);
+        }
+
+        public void Add(IBeanLoaderEntry entry)
+        {
+            var wrapEntry = new BeanLoaderEntry(entry.Order, entry.PreInstantiate);
+
+            wrapEntry.PreProcess += c =>
+            {
+                entry.PreProcess(c);
+                wrapEntry.ConfigureBeanDefinitions(c => entry.ConfigureBeanDefinitions(c));
+            };
+            wrapEntry.PostProcess += c => entry.PostProcess(c);
+
+            _entries.Add(wrapEntry);
         }
 
         public IServiceProvider Build()
@@ -187,7 +75,7 @@ namespace UnityAddon.Core.Bean
                 }
                 else
                 {
-                    _beanDefContainer.RegisterBeanDefinition(beanDef);
+                    _container.Resolve<IBeanDefinitionContainer>().RegisterBeanDefinition(beanDef);
                     _container.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(c.Resolve<IServiceProvider>(), t, n), (IFactoryLifetimeManager)beanDef.Scope);
                 }
             }
