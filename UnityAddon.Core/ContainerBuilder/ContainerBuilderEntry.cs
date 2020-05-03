@@ -4,19 +4,19 @@ using UnityAddon.Core.BeanDefinition;
 
 namespace UnityAddon.Core.Bean
 {
-    public class BeanLoaderEntry
+    public class ContainerBuilderEntry
     {
-        public BeanLoaderEntry()
+        public ContainerBuilderEntry()
         {
         }
 
-        public BeanLoaderEntry(BeanLoaderEntryOrder order, bool preInstantiate)
+        public ContainerBuilderEntry(ContainerBuilderEntryOrder order, bool preInstantiate)
         {
             Order = order;
             PreInstantiate = preInstantiate;
         }
 
-        public BeanLoaderEntryOrder Order { get; set; } = BeanLoaderEntryOrder.App;
+        public ContainerBuilderEntryOrder Order { get; set; } = ContainerBuilderEntryOrder.App;
 
         public bool PreInstantiate { get; set; } = false;
 
@@ -26,14 +26,14 @@ namespace UnityAddon.Core.Bean
 
         public Action<IUnityContainer> PostProcess { get; set; } = container => { };
 
-        public BeanLoaderEntry ConfigureBeanDefinitions(Action<IBeanDefinitionCollection> config)
+        public ContainerBuilderEntry ConfigureBeanDefinitions(Action<IBeanDefinitionCollection> config)
         {
             config(BeanDefinitionCollection);
 
             return this;
         }
 
-        public BeanLoaderEntry ConfigureBeanDefinitions(Action<IServiceProvider, IBeanDefinitionCollection> config)
+        public ContainerBuilderEntry ConfigureBeanDefinitions(Action<IServiceProvider, IBeanDefinitionCollection> config)
         {
             //config(container. BeanDefinitionCollection);
 

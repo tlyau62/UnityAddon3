@@ -7,9 +7,9 @@ using UnityAddon.Core.BeanDefinition;
 
 namespace UnityAddon.Core.Bean
 {
-    public class BeanLoaderConstructEntry : IBeanLoaderEntry
+    public class ConstructEntry : IContainerBuilderEntry
     {
-        public BeanLoaderEntryOrder Order => BeanLoaderEntryOrder.Intern;
+        public ContainerBuilderEntryOrder Order => ContainerBuilderEntryOrder.Intern;
 
         public bool PreInstantiate => true;
 
@@ -36,11 +36,11 @@ namespace UnityAddon.Core.Bean
             });
         }
 
-        void IBeanLoaderEntry.PostProcess(IUnityContainer container)
+        void IContainerBuilderEntry.PostProcess(IUnityContainer container)
         {
         }
 
-        void IBeanLoaderEntry.PreProcess(IUnityContainer container)
+        void IContainerBuilderEntry.PreProcess(IUnityContainer container)
         {
         }
     }

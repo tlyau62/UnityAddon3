@@ -3,9 +3,9 @@ using UnityAddon.Core.BeanDefinition;
 
 namespace UnityAddon.Core.Bean
 {
-    public interface IBeanLoaderEntry
+    public interface IContainerBuilderEntry
     {
-        BeanLoaderEntryOrder Order { get; }
+        ContainerBuilderEntryOrder Order { get; }
 
         bool PreInstantiate { get; }
 

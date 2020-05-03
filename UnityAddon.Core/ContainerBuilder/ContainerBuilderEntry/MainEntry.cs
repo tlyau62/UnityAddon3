@@ -7,13 +7,13 @@ using UnityAddon.Core.BeanDefinition;
 
 namespace UnityAddon.Core.Bean
 {
-    public class BeanLoaderMainEntry : IBeanLoaderEntry
+    public class MainEntry : IContainerBuilderEntry
     {
         private IBeanDefinitionContainer _definitionContainer;
 
         private IServiceProvider _sp;
 
-        public BeanLoaderEntryOrder Order => BeanLoaderEntryOrder.Intern;
+        public ContainerBuilderEntryOrder Order => ContainerBuilderEntryOrder.Intern;
 
         public bool PreInstantiate => true;
 

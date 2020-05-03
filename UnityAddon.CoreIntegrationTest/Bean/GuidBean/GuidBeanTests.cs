@@ -58,9 +58,9 @@ namespace UnityAddon.CoreIntegrationTest.Bean.GuidBean
         [Fact]
         public void GuidBean()
         {
-            var beanLoader = new BeanLoader();
+            var beanLoader = new ContainerBuilder();
 
-            beanLoader.Add(new BeanLoaderEntry().ConfigureBeanDefinitions(config =>
+            beanLoader.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
             {
                 config.AddComponent<GeneralService>();
                 config.AddComponent<PrintService>();

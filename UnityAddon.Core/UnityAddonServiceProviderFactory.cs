@@ -19,9 +19,9 @@ using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core
 {
-    public class UnityAddonServiceProviderFactory : IServiceProviderFactory<BeanLoader>
+    public class UnityAddonServiceProviderFactory : IServiceProviderFactory<ContainerBuilder>
     {
-        private readonly BeanLoader _beanLoader;
+        private readonly ContainerBuilder _beanLoader;
 
         private bool _isNewContainer = false;
 
@@ -32,12 +32,12 @@ namespace UnityAddon.Core
 
         public UnityAddonServiceProviderFactory(IUnityContainer container)
         {
-            _beanLoader = new BeanLoader(container);
+            _beanLoader = new ContainerBuilder(container);
         }
 
-        public BeanLoader CreateBuilder(IServiceCollection services = null)
+        public ContainerBuilder CreateBuilder(IServiceCollection services = null)
         {
-            var beanAppEntry = new BeanLoaderEntry(BeanLoaderEntryOrder.NetAsp, false);
+            var beanAppEntry = new ContainerBuilderEntry(ContainerBuilderEntryOrder.NetAsp, false);
 
             beanAppEntry.ConfigureBeanDefinitions(defs =>
             {
@@ -49,7 +49,7 @@ namespace UnityAddon.Core
             return _beanLoader;
         }
 
-        public IServiceProvider CreateServiceProvider(BeanLoader beanDefCol)
+        public IServiceProvider CreateServiceProvider(ContainerBuilder beanDefCol)
         {
             return _beanLoader.Build();
 

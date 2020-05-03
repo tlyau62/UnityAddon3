@@ -1,6 +1,6 @@
 ﻿namespace UnityAddon.Core.Bean
 {
-    public enum BeanLoaderEntryOrder
+    public enum ContainerBuilderEntryOrder
     {
         Intern = 0,
         NetAsp = 100,

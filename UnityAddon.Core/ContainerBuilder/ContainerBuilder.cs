@@ -13,31 +13,31 @@ using UnityAddon.Core.Thread;
 namespace UnityAddon.Core.Bean
 {
 
-    public class BeanLoader
+    public class ContainerBuilder
     {
-        private readonly IntervalHeap<BeanLoaderEntry> _entries = new IntervalHeap<BeanLoaderEntry>(Comparer<BeanLoaderEntry>.Create((a, b) => a.Order - b.Order));
+        private readonly IntervalHeap<ContainerBuilderEntry> _entries = new IntervalHeap<ContainerBuilderEntry>(Comparer<ContainerBuilderEntry>.Create((a, b) => a.Order - b.Order));
 
         private readonly IUnityContainer _container;
 
-        public BeanLoader() : this(new UnityContainer()) { }
+        public ContainerBuilder() : this(new UnityContainer()) { }
 
-        public BeanLoader(IUnityContainer container)
+        public ContainerBuilder(IUnityContainer container)
         {
             _container = container;
 
-            Add(new BeanLoaderMainEntry());
-            Add(new BeanLoaderConstructEntry());
-            Add(new BeanLoaderResolveEntry());
+            Add(new MainEntry());
+            Add(new ConstructEntry());
+            Add(new ResolveEntry());
         }
 
-        public void Add(BeanLoaderEntry entry)
+        public void Add(ContainerBuilderEntry entry)
         {
             _entries.Add(entry);
         }
 
-        public void Add(IBeanLoaderEntry entry)
+        public void Add(IContainerBuilderEntry entry)
         {
-            var wrapEntry = new BeanLoaderEntry(entry.Order, entry.PreInstantiate);
+            var wrapEntry = new ContainerBuilderEntry(entry.Order, entry.PreInstantiate);
 
             wrapEntry.PreProcess += c =>
             {
@@ -61,7 +61,7 @@ namespace UnityAddon.Core.Bean
             return new UnityAddonServiceProvider(_container);
         }
 
-        private void Register(BeanLoaderEntry loadEntry, BeanLoaderEntryOrder curOrder)
+        private void Register(ContainerBuilderEntry loadEntry, ContainerBuilderEntryOrder curOrder)
         {
             var child = _container.CreateChildContainer();
 
@@ -69,7 +69,7 @@ namespace UnityAddon.Core.Bean
 
             foreach (var beanDef in loadEntry.BeanDefinitionCollection)
             {
-                if (beanDef.Type == typeof(BeanLoader))
+                if (beanDef.Type == typeof(ContainerBuilder))
                 {
                     child.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(c.Resolve<IServiceProvider>(), t, n), (IFactoryLifetimeManager)beanDef.Scope);
                 }
@@ -84,7 +84,7 @@ namespace UnityAddon.Core.Bean
             {
                 foreach (var beanDef in loadEntry.BeanDefinitionCollection)
                 {
-                    if (beanDef.Type != typeof(BeanLoaderEntry))
+                    if (beanDef.Type != typeof(ContainerBuilderEntry))
                     {
                         _container.Resolve(beanDef.Type, beanDef.Name);
                     }
@@ -93,7 +93,7 @@ namespace UnityAddon.Core.Bean
 
             loadEntry.PostProcess(_container);
 
-            foreach (var entry in child.ResolveAll<BeanLoaderEntry>())
+            foreach (var entry in child.ResolveAll<ContainerBuilderEntry>())
             {
                 if (entry.Order <= curOrder)
                 {

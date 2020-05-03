@@ -9,9 +9,9 @@ using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core.Bean
 {
-    public class BeanLoaderResolveEntry : IBeanLoaderEntry
+    public class ResolveEntry : IContainerBuilderEntry
     {
-        public BeanLoaderEntryOrder Order => BeanLoaderEntryOrder.Intern;
+        public ContainerBuilderEntryOrder Order => ContainerBuilderEntryOrder.Intern;
 
         public bool PreInstantiate => false;
 
