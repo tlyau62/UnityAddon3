@@ -24,6 +24,7 @@
     <Compile Remove="DependencyExceptions\**" />
     <Compile Remove="Dependency\**" />
     <Compile Remove="HostService\**" />
+    <Compile Remove="Properties\PublishProfiles\**" />
     <Compile Remove="Util\**" />
     <Compile Remove="Value\**" />
     <EmbeddedResource Remove="Aop\**" />
@@ -43,6 +44,7 @@
     <EmbeddedResource Remove="DependencyExceptions\**" />
     <EmbeddedResource Remove="Dependency\**" />
     <EmbeddedResource Remove="HostService\**" />
+    <EmbeddedResource Remove="Properties\PublishProfiles\**" />
     <EmbeddedResource Remove="Util\**" />
     <EmbeddedResource Remove="Value\**" />
     <None Remove="Aop\**" />
@@ -62,6 +64,7 @@
     <None Remove="DependencyExceptions\**" />
     <None Remove="Dependency\**" />
     <None Remove="HostService\**" />
+    <None Remove="Properties\PublishProfiles\**" />
     <None Remove="Util\**" />
     <None Remove="Value\**" />
   </ItemGroup>

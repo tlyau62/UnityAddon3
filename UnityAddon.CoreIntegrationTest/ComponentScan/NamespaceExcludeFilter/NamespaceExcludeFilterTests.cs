@@ -41,19 +41,21 @@ namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter
         [Fact]
         public void NamespaceFilterOnB()
         {
-            var containerBuilder = new ContainerBuilder();
+            var host = Host.CreateDefaultBuilder()
+                .UseServiceProviderFactory(new UnityAddonServiceProviderFactory())
+                .ConfigureContainer<ContainerBuilder>(builder =>
+                {
+                    builder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
+                    {
+                        config.AddFromComponentScanner(
+                            config => config.IncludeFilters.Add(ComponentScannerFilter.CreateNamepsaceFilter("UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.B")),
+                            GetType().Assembly,
+                            GetType().Namespace);
+                    }));
+                })
+                .Build();
 
-            containerBuilder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
-            {
-                config.AddFromComponentScanner(
-                    config => config.IncludeFilters.Add(ComponentScannerFilter.CreateNamepsaceFilter("UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.B")),
-                    GetType().Assembly,
-                    GetType().Namespace);
-            }));
-
-            var sp = containerBuilder.Build();
-
-            sp.BuildUp(this);
+            host.Services.BuildUp(this);
 
             Assert.IsType<ServiceB>(Service);
         }
@@ -61,19 +63,21 @@ namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter
         [Fact]
         public void NamespaceFilterOnA()
         {
-            var containerBuilder = new ContainerBuilder();
+            var host = Host.CreateDefaultBuilder()
+                .UseServiceProviderFactory(new UnityAddonServiceProviderFactory())
+                .ConfigureContainer<ContainerBuilder>(builder =>
+                {
+                    builder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
+                    {
+                        config.AddFromComponentScanner(
+                            config => config.IncludeFilters.Add(ComponentScannerFilter.CreateNamepsaceFilter("UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.A")),
+                            GetType().Assembly,
+                            GetType().Namespace);
+                    }));
+                })
+                .Build();
 
-            containerBuilder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
-            {
-                config.AddFromComponentScanner(
-                    config => config.IncludeFilters.Add(ComponentScannerFilter.CreateNamepsaceFilter("UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.A")),
-                    GetType().Assembly,
-                    GetType().Namespace);
-            }));
-
-            var sp = containerBuilder.Build();
-
-            sp.BuildUp(this);
+            host.Services.BuildUp(this);
 
             Assert.IsType<ServiceA>(Service);
         }
