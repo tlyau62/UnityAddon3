@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,15 +31,15 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoSuch
     }
 
     [Trait("DependencyExceptions", "NoSuchBeanDefinition")]
-    public class NoSuchBeanDefinitionExceptionTests : UnityAddonDefaultTest
+    public class NoSuchBeanDefinitionExceptionTests : DefaultTest
     {
         [Dependency]
-        public IUnityContainer UnityContainer { get; set; }
+        public IServiceProvider Sp { get; set; }
 
         [Fact]
         public void PropertyFill_NoSuchBeanDefinition_ExceptionThrown()
         {
-            var ex = Assert.Throws<BeanCreationException>(() => UnityContainer.Resolve<PropService>());
+            var ex = Assert.Throws<NoSuchBeanDefinitionException>(() => Sp.GetRequiredService<PropService>());
 
             Assert.Equal($"Property B in {typeof(PropService).FullName} required a bean of type '{typeof(IB).FullName}' that could not be found.", ex.Message);
         }
@@ -46,7 +47,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoSuch
         [Fact]
         public void ParamterFill_NoSuchBeanDefinition_ExceptionThrown()
         {
-            var ex = Assert.Throws<BeanCreationException>(() => UnityContainer.Resolve<CtorService>());
+            var ex = Assert.Throws<NoSuchBeanDefinitionException>(() => Sp.GetRequiredService<CtorService>());
 
             Assert.Equal($"Parameter 0 of Constructor in {typeof(CtorService).FullName} required a bean of type '{typeof(IB).FullName}' that could not be found.", ex.Message);
         }

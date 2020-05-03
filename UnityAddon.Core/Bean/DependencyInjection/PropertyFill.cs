@@ -36,12 +36,19 @@ namespace UnityAddon.Core.Bean.DependencyInjection
                 return;
             }
 
-            var dep = DependencyResolver.Resolve(prop.PropertyType, prop.GetCustomAttributes(false).Cast<Attribute>(), sp);
-
-            // must add null check, else something will be wrong.
-            if (dep != null)
+            try
             {
-                prop.SetMethod.Invoke(obj, new[] { dep });
+                var dep = DependencyResolver.Resolve(prop.PropertyType, prop.GetCustomAttributes(false).Cast<Attribute>(), sp);
+
+                // must add null check, else something will be wrong.
+                if (dep != null)
+                {
+                    prop.SetMethod.Invoke(obj, new[] { dep });
+                }
+            }
+            catch (NoSuchBeanDefinitionException ex)
+            {
+                throw new NoSuchBeanDefinitionException($"Property {prop.Name} in {prop.DeclaringType} required a bean of type '{prop.PropertyType}' that could not be found.", ex);
             }
         }
 

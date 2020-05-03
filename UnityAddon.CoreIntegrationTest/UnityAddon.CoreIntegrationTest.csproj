@@ -62,6 +62,7 @@
     <Compile Include="DependencyExceptions\CircularDependency\Loop\LoopTests.cs" />
     <Compile Include="DependencyExceptions\CircularDependency\OptionalDependency\OptionalDependencyTests.cs" />
     <Compile Include="DependencyExceptions\CircularDependency\SelfLoop\SelfLoopTests.cs" />
+    <Compile Include="DependencyExceptions\NoSuchBeanDefinitionException\NoSuchBeanDefinitionExceptionTests.cs" />
   </ItemGroup>
 
   <ItemGroup>

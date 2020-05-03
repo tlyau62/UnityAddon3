@@ -17,5 +17,9 @@ namespace UnityAddon.Core.Exceptions
         public NoSuchBeanDefinitionException(string message) : base(message)
         {
         }
+
+        public NoSuchBeanDefinitionException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
     }
 }

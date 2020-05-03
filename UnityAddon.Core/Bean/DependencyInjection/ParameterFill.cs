@@ -30,12 +30,21 @@ namespace UnityAddon.Core.Bean.DependencyInjection
         {
             var attrs = param.GetCustomAttributes(false).Cast<Attribute>();
 
-            if (attrs.Count() == 0)
+            try
             {
-                return sp.GetRequiredService(param.ParameterType);
-            }
+                if (attrs.Count() == 0)
+                {
+                    return sp.GetRequiredService(param.ParameterType);
+                }
 
-            return DependencyResolver.Resolve(param.ParameterType, attrs, sp);
+                return DependencyResolver.Resolve(param.ParameterType, attrs, sp);
+            }
+            catch (NoSuchBeanDefinitionException ex)
+            {
+                throw new NoSuchBeanDefinitionException(
+                    $"Parameter {param.Position} of Constructor in {param.Member} required a bean of type '{param.ParameterType}' that could not be found.",
+                    ex);
+            }
         }
 
         public bool CanResolve(ParameterInfo param)

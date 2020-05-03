@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity;
 using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.BeanDefinition;
+using UnityAddon.Core.Exceptions;
 
 namespace UnityAddon.Core
 {
@@ -100,7 +101,7 @@ namespace UnityAddon.Core
         {
             if (!CanResolve(serviceType, name))
             {
-                throw new InvalidOperationException("Service not register");
+                throw new NoSuchBeanDefinitionException($"Type {serviceType} with name ({name}) cannot be found.");
             }
 
             return GetService(serviceType, name);
