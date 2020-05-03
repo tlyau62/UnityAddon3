@@ -54,7 +54,6 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.ComplexDAG
         public N7(N4 n4) { }
     }
 
-    [Trait("DependencyExceptions", "CircularDependency/ComplexDAG")]
     public class ComplexDAGTests : DefaultTest
     {
         [Dependency]

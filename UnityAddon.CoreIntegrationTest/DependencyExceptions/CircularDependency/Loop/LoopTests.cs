@@ -27,7 +27,6 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.Loop
         public B(IA a) { }
     }
 
-    [Trait("DependencyExceptions", "CircularDependency/Loop")]
     public class SelfLoopTests : DefaultTest
     {
         [Dependency]
