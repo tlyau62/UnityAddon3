@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using UnityAddon.Core.BeanDefinition;
 
@@ -7,14 +8,18 @@ namespace UnityAddon.Core.Util.ComponentScanning
 {
     public static class ComponentScannerBeanDefinitionCollectionExt
     {
-        public static IBeanDefinitionCollection AddFromComponentScanner(this IBeanDefinitionCollection beanDefinitions, Func<ComponentScanner, IBeanDefinitionCollection> func, ComponentScannerOption option)
+        public static IBeanDefinitionCollection AddFromComponentScanner(this IBeanDefinitionCollection beanDefinitions, Assembly assembly, params string[] namespaces)
         {
-            return beanDefinitions.AddFromExisting(func(new ComponentScanner(option)));
+            return beanDefinitions.AddFromComponentScanner(c => { }, assembly, namespaces);
         }
 
-        public static IBeanDefinitionCollection AddFromComponentScanner(this IBeanDefinitionCollection beanDefinitions, Func<ComponentScanner, IBeanDefinitionCollection> func)
+        public static IBeanDefinitionCollection AddFromComponentScanner(this IBeanDefinitionCollection beanDefinitions, Action<ComponentScannerOption> config, Assembly assembly, params string[] namespaces)
         {
-            return beanDefinitions.AddFromComponentScanner(func, new ComponentScannerOption());
+            var opt = new ComponentScannerOption();
+
+            config(opt);
+
+            return beanDefinitions.AddFromExisting(new ComponentScanner(opt).ScanAssembly(assembly, namespaces));
         }
     }
 }

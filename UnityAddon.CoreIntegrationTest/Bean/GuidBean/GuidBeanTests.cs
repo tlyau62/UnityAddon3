@@ -16,6 +16,7 @@ using System.Linq;
 using System.Reflection;
 using Unity.Lifetime;
 using UnityAddon.Core.Util.ComponentScanning;
+using UnityAddon.Core.Bean;
 
 namespace UnityAddon.CoreIntegrationTest.Bean.GuidBean
 {

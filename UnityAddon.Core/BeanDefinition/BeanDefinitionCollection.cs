@@ -11,22 +11,25 @@ namespace UnityAddon.Core.BeanDefinition
 {
     public interface IBeanDefinitionCollection : IList<IBeanDefinition>
     {
-        public IBeanDefinitionCollection AddComponent(Type type);
+        IBeanDefinitionCollection AddComponent(Type type);
 
-        public IBeanDefinitionCollection AddFromService(Func<IServiceProvider, IBeanDefinitionCollection> action);
+        //IBeanDefinitionCollection AddFromService(Func<IServiceProvider, IBeanDefinitionCollection> action);
 
-        public IBeanDefinitionCollection AddFromExisting(IBeanDefinitionCollection beanDefCollection);
+        IBeanDefinitionCollection AddFromExisting(IBeanDefinitionCollection beanDefCollection);
+
+        IBeanDefinitionCollection AddFromServiceCollection(Action<IServiceCollection> servicesCallback);
+
+        IBeanDefinitionCollection AddFromServiceCollection(IServiceCollection services);
     }
 
     public class BeanDefinitionCollection : List<IBeanDefinition>, IBeanDefinitionCollection
     {
-        public IBeanDefinitionCollection AddFromService(Func<IServiceProvider, IBeanDefinitionCollection> action)
-        {
-            throw new NotImplementedException();
-            //Add(new FactoryBeanDefinition<IBeanDefinitionCollection>((sp, t, n) => action(sp)));
+        //public IBeanDefinitionCollection AddFromService(Func<IServiceProvider, IBeanDefinitionCollection> action)
+        //{
+        //    Add(new FactoryBeanDefinition<IBeanDefinitionCollection>((sp, t, n) => action(sp)));
 
-            //return this;
-        }
+        //    return this;
+        //}
 
         public IBeanDefinitionCollection AddComponent(Type type)
         {
@@ -35,7 +38,18 @@ namespace UnityAddon.Core.BeanDefinition
             return this;
         }
 
-        public IBeanDefinitionCollection MergeServiceCollection(IServiceCollection services)
+        public IBeanDefinitionCollection AddFromServiceCollection(Action<IServiceCollection> servicesCallback)
+        {
+            var services = new ServiceCollection();
+
+            servicesCallback(services);
+
+            AddFromServiceCollection(services);
+
+            return this;
+        }
+
+        public IBeanDefinitionCollection AddFromServiceCollection(IServiceCollection services)
         {
             foreach (var d in services)
             {

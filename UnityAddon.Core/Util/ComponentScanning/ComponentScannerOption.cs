@@ -9,27 +9,19 @@ namespace UnityAddon.Core.Util.ComponentScanning
 {
     public class ComponentScannerOption
     {
-        private readonly IList<IComponentScannerStrategy> _scannerStrategies = new List<IComponentScannerStrategy>();
+        public IList<IComponentScannerStrategy> ScannerStrategies { get; private set; } = new List<IComponentScannerStrategy>();
 
-        public IEnumerable<IComponentScannerStrategy> ScannerStrategies => _scannerStrategies.OrderBy(stg => Ordered.GetOrder(stg.GetType())).ToArray();
+        public IList<Func<Type, bool>> IncludeFilters { get; private set; } = new List<Func<Type, bool>>();
+
+        public IList<Func<Type, bool>> ExcludeFilters { get; private set; } = new List<Func<Type, bool>>();
 
         public ComponentScannerOption(bool useDefaultStrategy = true)
         {
             if (useDefaultStrategy)
             {
-                AddComponentScannerStrategy<DefaultComponentScannerStrategy>();
-                AddComponentScannerStrategy<ConfigurationScannerStrategy>();
+                ScannerStrategies.Add(new DefaultComponentScannerStrategy());
+                ScannerStrategies.Add(new ConfigurationScannerStrategy());
             }
-        }
-
-        public void AddComponentScannerStrategy<T>() where T : IComponentScannerStrategy
-        {
-            _scannerStrategies.Add(Activator.CreateInstance<T>());
-        }
-
-        public void AddComponentScannerStrategy(IComponentScannerStrategy stg)
-        {
-            _scannerStrategies.Add(stg);
         }
     }
 }

@@ -76,12 +76,9 @@ namespace UnityAddon.Core
     {
         private readonly IUnityContainer _container;
 
-        private readonly IBeanDefinitionContainer _beanDefContainer;
-
         public UnityAddonServiceProvider(IUnityContainer container)
         {
             _container = container;
-            _beanDefContainer = container.Resolve<IBeanDefinitionContainer>();
         }
 
         public object GetService(Type serviceType)
@@ -126,8 +123,10 @@ namespace UnityAddon.Core
 
         public bool IsRegistered(Type serviceType, string name)
         {
-            return _beanDefContainer.HasBeanDefinition(serviceType, name) || serviceType.IsGenericType &&
-                _beanDefContainer.HasBeanDefinition(serviceType.GetGenericTypeDefinition(), name);
+            var beanDefContainer = _container.Resolve<IBeanDefinitionContainer>();
+
+            return beanDefContainer.HasBeanDefinition(serviceType, name) || serviceType.IsGenericType &&
+                beanDefContainer.HasBeanDefinition(serviceType.GetGenericTypeDefinition(), name);
         }
 
         public object BuildUp(object service)
