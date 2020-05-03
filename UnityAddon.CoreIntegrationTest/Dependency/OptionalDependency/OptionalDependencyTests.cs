@@ -33,26 +33,25 @@ namespace UnityAddon.CoreTest.Dependency.OptionalDependency
         public ITest Test { get; set; }
     }
 
-    [Trait("Dependency", "OptionalDependency")]
-    public class OptionalDependencyTests : UnityAddonDefaultTest
+    public class OptionalDependencyTests : DefaultTest
     {
         [Dependency]
         public Service Service { get; set; }
 
         [Fact]
-        public void PropertyFill_ResolveRegisteredOptionalDependency_BeanResolved()
+        public void OptionalDependency()
         {
             Assert.NotNull(Service.Helper);
         }
 
         [Fact]
-        public void PropertyFill_ResolveUnregisteredOptionalDependency_NullResolved()
+        public void OptionalDependencyOnClass_BeanNotFound()
         {
             Assert.Null(Service.CustHelper);
         }
 
         [Fact]
-        public void PropertyFill_ResolveUnregisteredOptionalInterfaceDependency_NullResolved()
+        public void OptionalDependencyOnInterface_BeanNotFound()
         {
             Assert.Null(Service.Test);
         }

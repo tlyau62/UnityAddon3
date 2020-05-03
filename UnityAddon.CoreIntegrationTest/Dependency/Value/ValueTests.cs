@@ -7,8 +7,10 @@ using Unity;
 using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Bean;
 using UnityAddon.Core.Value;
 using Xunit;
+using UnityAddon.Core.Util.ComponentScanning;
 
 namespace UnityAddon.CoreTest.Dependency.Value
 {
@@ -31,9 +33,9 @@ namespace UnityAddon.CoreTest.Dependency.Value
         public Service Service { get; set; }
 
         [Fact]
-        public void ValueProvider_ResolveValue_ValueInjected()
+        public void Value()
         {
-            Host.CreateDefaultBuilder()
+            var host = Host.CreateDefaultBuilder()
                .RegisterUA()
                .ConfigureAppConfiguration(config =>
                {
@@ -42,9 +44,16 @@ namespace UnityAddon.CoreTest.Dependency.Value
                         {"serviceType", "Write"},
                     });
                })
-               .ScanComponentsUA(GetType().Namespace)
-               .BuildUA()
-               .BuildTestUA(this);
+               .ConfigureContainer<ContainerBuilder>(builder =>
+               {
+                   builder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
+                   {
+                       config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace);
+                   }));
+               })
+               .Build();
+
+            host.Services.BuildUp(this);
 
             Assert.Equal(ServiceType.Write, Service.Type);
         }

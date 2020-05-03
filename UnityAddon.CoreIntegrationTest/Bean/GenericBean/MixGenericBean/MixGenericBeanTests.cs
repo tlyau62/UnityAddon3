@@ -27,8 +27,7 @@ namespace UnityAddon.CoreTest.Dependency.GenericDependency
         public IService<string> StringService { get; set; }
     }
 
-    [Trait("Dependency", "GenericDependency")]
-    public class GenericDependencyTests : UnityAddonDefaultTest
+    public class MixGenericBeanTests : DefaultTest
     {
         [Dependency]
         public IService<int> IntService { get; set; }
@@ -40,10 +39,10 @@ namespace UnityAddon.CoreTest.Dependency.GenericDependency
         public MainService MainService { get; set; }
 
         [Dependency]
-        public IUnityContainer UnityContainer { get; set; }
+        public IServiceProvider Sp { get; set; }
 
         [Fact]
-        public void BuildStrategy_DependencyOnGenericTypeBean_BeanInjected()
+        public void GenericTypeBean()
         {
             Assert.Same(IntService, MainService.IntService);
             Assert.Same(StringService, MainService.StringService);
@@ -53,13 +52,13 @@ namespace UnityAddon.CoreTest.Dependency.GenericDependency
         }
 
         [Fact]
-        public void BuildStrategy_CheckOnGenericTypeBeanIsRegistered_TrueReturned()
+        public void GenericTypeBean_IsRegistered()
         {
-            Assert.True(UnityContainer.IsRegisteredUA<IntService>());
-            Assert.True(UnityContainer.IsRegisteredUA<IService<int>>());
-            Assert.True(UnityContainer.IsRegisteredUA<IService<string>>());
-            Assert.True(UnityContainer.IsRegisteredUA<IService<double>>());
-            Assert.True(UnityContainer.IsRegisteredUA(typeof(IService<>)));
+            Assert.True(Sp.IsRegistered<IntService>());
+            Assert.True(Sp.IsRegistered<IService<int>>());
+            Assert.True(Sp.IsRegistered<IService<string>>());
+            Assert.True(Sp.IsRegistered<IService<double>>());
+            Assert.True(Sp.IsRegistered(typeof(IService<>)));
         }
     }
 

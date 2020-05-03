@@ -11,19 +11,13 @@
     <Compile Remove="BeanPostConstruct\**" />
     <Compile Remove="BeanPostProcessor\**" />
     <Compile Remove="BeanUnregister\**" />
-    <Compile Remove="Bean\GenericBean\**" />
     <Compile Remove="Bean\InterfaceBean\**" />
     <Compile Remove="Bean\NonGenericBean\**" />
-    <Compile Remove="Bean\PrimaryBean\**" />
-    <Compile Remove="Bean\PrimitiveBean\**" />
     <Compile Remove="Bean\ProfileBean\**" />
-    <Compile Remove="Bean\QualifiedBean\**" />
     <Compile Remove="Bean\SingletonBean\**" />
-    <Compile Remove="Bean\TransientBean\**" />
-    <Compile Remove="Configuration\**" />
+    <Compile Remove="Configuration\EnumBeanDefinition\**" />
     <Compile Remove="DependencyExceptions\**" />
-    <Compile Remove="Dependency\**" />
-    <Compile Remove="HostService\**" />
+    <Compile Remove="Dependency\Custom\**" />
     <Compile Remove="Properties\PublishProfiles\**" />
     <Compile Remove="Util\**" />
     <Compile Remove="Value\**" />
@@ -31,19 +25,13 @@
     <EmbeddedResource Remove="BeanPostConstruct\**" />
     <EmbeddedResource Remove="BeanPostProcessor\**" />
     <EmbeddedResource Remove="BeanUnregister\**" />
-    <EmbeddedResource Remove="Bean\GenericBean\**" />
     <EmbeddedResource Remove="Bean\InterfaceBean\**" />
     <EmbeddedResource Remove="Bean\NonGenericBean\**" />
-    <EmbeddedResource Remove="Bean\PrimaryBean\**" />
-    <EmbeddedResource Remove="Bean\PrimitiveBean\**" />
     <EmbeddedResource Remove="Bean\ProfileBean\**" />
-    <EmbeddedResource Remove="Bean\QualifiedBean\**" />
     <EmbeddedResource Remove="Bean\SingletonBean\**" />
-    <EmbeddedResource Remove="Bean\TransientBean\**" />
-    <EmbeddedResource Remove="Configuration\**" />
+    <EmbeddedResource Remove="Configuration\EnumBeanDefinition\**" />
     <EmbeddedResource Remove="DependencyExceptions\**" />
-    <EmbeddedResource Remove="Dependency\**" />
-    <EmbeddedResource Remove="HostService\**" />
+    <EmbeddedResource Remove="Dependency\Custom\**" />
     <EmbeddedResource Remove="Properties\PublishProfiles\**" />
     <EmbeddedResource Remove="Util\**" />
     <EmbeddedResource Remove="Value\**" />
@@ -51,22 +39,20 @@
     <None Remove="BeanPostConstruct\**" />
     <None Remove="BeanPostProcessor\**" />
     <None Remove="BeanUnregister\**" />
-    <None Remove="Bean\GenericBean\**" />
     <None Remove="Bean\InterfaceBean\**" />
     <None Remove="Bean\NonGenericBean\**" />
-    <None Remove="Bean\PrimaryBean\**" />
-    <None Remove="Bean\PrimitiveBean\**" />
     <None Remove="Bean\ProfileBean\**" />
-    <None Remove="Bean\QualifiedBean\**" />
     <None Remove="Bean\SingletonBean\**" />
-    <None Remove="Bean\TransientBean\**" />
-    <None Remove="Configuration\**" />
+    <None Remove="Configuration\EnumBeanDefinition\**" />
     <None Remove="DependencyExceptions\**" />
-    <None Remove="Dependency\**" />
-    <None Remove="HostService\**" />
+    <None Remove="Dependency\Custom\**" />
     <None Remove="Properties\PublishProfiles\**" />
     <None Remove="Util\**" />
     <None Remove="Value\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Bean\NonGenericBean\NonGenericBeanTests.cs" />
   </ItemGroup>
 
   <ItemGroup>
