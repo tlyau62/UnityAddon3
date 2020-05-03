@@ -42,7 +42,7 @@ namespace UnityAddon.Core.Bean
             wrapEntry.PreProcess += c =>
             {
                 entry.PreProcess(c);
-                wrapEntry.ConfigureBeanDefinitions(c => entry.ConfigureBeanDefinitions(c));
+                entry.ConfigureBeanDefinitions(wrapEntry.BeanDefinitionCollection);
             };
             wrapEntry.PostProcess += c => entry.PostProcess(c);
 

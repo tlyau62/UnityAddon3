@@ -5,10 +5,12 @@ using System.Text;
 using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Bean;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.BeanDefinition.Candidate;
 using UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.B;
 using Xunit;
+using UnityAddon.Core.Util.ComponentScanning;
 
 namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.A
 {
@@ -39,15 +41,19 @@ namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter
         [Fact]
         public void BeanDefinitionRegistry_ComponentScanNamespaceExcludeFilter_TargetNamespaceExluced()
         {
-            new HostBuilder()
-                .RegisterUA()
-                .ScanComponentsUA(GetType().Namespace)
-                .ConfigureUA<BeanDefintionCandidateSelectorBuilder>(config =>
-                {
-                    config.AddExcludeFilter(new NamespaceFilter("UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.A"));
-                })
-                .BuildUA()
-                .BuildTestUA(this);
+            var containerBuilder = new ContainerBuilder();
+
+            containerBuilder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
+            {
+                config.AddFromComponentScanner(
+                    config => config.IncludeFilters.Add(t => t.Namespace == "UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.B"),
+                    GetType().Assembly,
+                    GetType().Namespace);
+            }));
+
+            var sp = containerBuilder.Build();
+
+            sp.BuildUp(this);
 
             Assert.IsType<ServiceB>(Service);
         }

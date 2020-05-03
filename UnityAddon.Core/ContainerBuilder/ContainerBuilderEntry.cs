@@ -28,7 +28,7 @@ namespace UnityAddon.Core.Bean
 
         public ContainerBuilderEntry ConfigureBeanDefinitions(Action<IBeanDefinitionCollection> config)
         {
-            config(BeanDefinitionCollection);
+            PreProcess += c => config(BeanDefinitionCollection);
 
             return this;
         }

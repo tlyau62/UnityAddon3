@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Unity;
+using UnityAddon.Core.Bean;
 using UnityAddon.Core.Util.ComponentScanning;
 
 namespace UnityAddon.Core
@@ -12,14 +14,16 @@ namespace UnityAddon.Core
     {
         public DefaultTest(params string[] namespaces)
         {
-            var f = new UnityAddonServiceProviderFactory();
-            var defCol = f.CreateBuilder();
+            var containerBuilder = new ContainerBuilder();
 
-            defCol.AddFromComponentScanner(cs => cs.ScanAssembly(GetType().Assembly, namespaces.Length == 0 ? new[] { GetType().Namespace } : namespaces));
+            containerBuilder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
+            {
+                config.AddFromComponentScanner(GetType().Assembly, namespaces.Union(new[] { GetType().Namespace }).ToArray());
+            }));
 
-            var a = f.CreateServiceProvider(defCol);
+            var sp = containerBuilder.Build();
 
-            a.BuildUp(this);
+            sp.BuildUp(this);
         }
     }
 }

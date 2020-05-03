@@ -20,7 +20,6 @@
     <Compile Remove="Bean\QualifiedBean\**" />
     <Compile Remove="Bean\SingletonBean\**" />
     <Compile Remove="Bean\TransientBean\**" />
-    <Compile Remove="ComponentScan\**" />
     <Compile Remove="Configuration\**" />
     <Compile Remove="DependencyExceptions\**" />
     <Compile Remove="Dependency\**" />
@@ -40,7 +39,6 @@
     <EmbeddedResource Remove="Bean\QualifiedBean\**" />
     <EmbeddedResource Remove="Bean\SingletonBean\**" />
     <EmbeddedResource Remove="Bean\TransientBean\**" />
-    <EmbeddedResource Remove="ComponentScan\**" />
     <EmbeddedResource Remove="Configuration\**" />
     <EmbeddedResource Remove="DependencyExceptions\**" />
     <EmbeddedResource Remove="Dependency\**" />
@@ -60,17 +58,12 @@
     <None Remove="Bean\QualifiedBean\**" />
     <None Remove="Bean\SingletonBean\**" />
     <None Remove="Bean\TransientBean\**" />
-    <None Remove="ComponentScan\**" />
     <None Remove="Configuration\**" />
     <None Remove="DependencyExceptions\**" />
     <None Remove="Dependency\**" />
     <None Remove="HostService\**" />
     <None Remove="Util\**" />
     <None Remove="Value\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="DefaultTest.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -44,7 +44,7 @@ namespace UnityAddon.CoreIntegrationTest.Bean.GuidBean
     {
     }
 
-    public class GuidBeanTests
+    public class GuidBeanTests : DefaultTest
     {
         [Dependency]
         public GeneralService GeneralService { get; set; }
@@ -58,19 +58,6 @@ namespace UnityAddon.CoreIntegrationTest.Bean.GuidBean
         [Fact]
         public void GuidBean()
         {
-            var beanLoader = new ContainerBuilder();
-
-            beanLoader.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
-            {
-                config.AddComponent<GeneralService>();
-                config.AddComponent<PrintService>();
-                config.AddComponent<WriteService>();
-            }));
-
-            var sp = beanLoader.Build();
-
-            sp.BuildUp(this);
-
             Assert.Same(GeneralService.PrintService, PrintService);
             Assert.Same(GeneralService.WriteService, WriteService);
         }

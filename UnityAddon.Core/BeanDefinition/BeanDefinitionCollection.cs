@@ -13,7 +13,7 @@ namespace UnityAddon.Core.BeanDefinition
     {
         IBeanDefinitionCollection AddComponent(Type type);
 
-        IBeanDefinitionCollection AddFromService(Func<IServiceProvider, IBeanDefinitionCollection> action);
+        //IBeanDefinitionCollection AddFromService(Func<IServiceProvider, IBeanDefinitionCollection> action);
 
         IBeanDefinitionCollection AddFromExisting(IBeanDefinitionCollection beanDefCollection);
 
@@ -24,12 +24,12 @@ namespace UnityAddon.Core.BeanDefinition
 
     public class BeanDefinitionCollection : List<IBeanDefinition>, IBeanDefinitionCollection
     {
-        public IBeanDefinitionCollection AddFromService(Func<IServiceProvider, IBeanDefinitionCollection> action)
-        {
-            Add(new FactoryBeanDefinition<IBeanDefinitionCollection>((sp, t, n) => action(sp)));
+        //public IBeanDefinitionCollection AddFromService(Func<IServiceProvider, IBeanDefinitionCollection> action)
+        //{
+        //    Add(new FactoryBeanDefinition<IBeanDefinitionCollection>((sp, t, n) => action(sp)));
 
-            return this;
-        }
+        //    return this;
+        //}
 
         public IBeanDefinitionCollection AddComponent(Type type)
         {
