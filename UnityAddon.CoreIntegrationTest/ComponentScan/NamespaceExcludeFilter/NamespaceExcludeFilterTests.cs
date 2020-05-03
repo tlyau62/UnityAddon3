@@ -11,6 +11,7 @@ using UnityAddon.Core.BeanDefinition.Candidate;
 using UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.B;
 using Xunit;
 using UnityAddon.Core.Util.ComponentScanning;
+using UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.A;
 
 namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.A
 {
@@ -32,21 +33,20 @@ namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter
 {
     public interface ISerivce { }
 
-    [Trait("ComponentScan", "NamespaceExclude")]
     public class NamespaceFilterTests
     {
         [Dependency]
         public ISerivce Service { get; set; }
 
         [Fact]
-        public void BeanDefinitionRegistry_ComponentScanNamespaceExcludeFilter_TargetNamespaceExluced()
+        public void NamespaceFilterOnB()
         {
             var containerBuilder = new ContainerBuilder();
 
             containerBuilder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
             {
                 config.AddFromComponentScanner(
-                    config => config.IncludeFilters.Add(t => t.Namespace == "UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.B"),
+                    config => config.IncludeFilters.Add(ComponentScannerFilter.CreateNamepsaceFilter("UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.B")),
                     GetType().Assembly,
                     GetType().Namespace);
             }));
@@ -56,6 +56,26 @@ namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter
             sp.BuildUp(this);
 
             Assert.IsType<ServiceB>(Service);
+        }
+
+        [Fact]
+        public void NamespaceFilterOnA()
+        {
+            var containerBuilder = new ContainerBuilder();
+
+            containerBuilder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
+            {
+                config.AddFromComponentScanner(
+                    config => config.IncludeFilters.Add(ComponentScannerFilter.CreateNamepsaceFilter("UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.A")),
+                    GetType().Assembly,
+                    GetType().Namespace);
+            }));
+
+            var sp = containerBuilder.Build();
+
+            sp.BuildUp(this);
+
+            Assert.IsType<ServiceA>(Service);
         }
     }
 }
