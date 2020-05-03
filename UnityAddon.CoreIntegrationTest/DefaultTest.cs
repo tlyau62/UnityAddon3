@@ -14,16 +14,18 @@ namespace UnityAddon.Core
     {
         public DefaultTest(params string[] namespaces)
         {
-            var containerBuilder = new ContainerBuilder();
+            var host = Host.CreateDefaultBuilder()
+                .UseServiceProviderFactory(new UnityAddonServiceProviderFactory())
+                .ConfigureContainer<ContainerBuilder>(builder =>
+                {
+                    builder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
+                    {
+                        config.AddFromComponentScanner(GetType().Assembly, namespaces.Union(new[] { GetType().Namespace }).ToArray());
+                    }));
+                })
+                .Build();
 
-            containerBuilder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
-            {
-                config.AddFromComponentScanner(GetType().Assembly, namespaces.Union(new[] { GetType().Namespace }).ToArray());
-            }));
-
-            var sp = containerBuilder.Build();
-
-            sp.BuildUp(this);
+            host.Services.BuildUp(this);
         }
     }
 }
