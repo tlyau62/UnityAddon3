@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Unity;
@@ -62,11 +63,10 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.NonProxy
         }
     }
 
-    [Trait("BeanPostConstruct", "NonProxyBean")]
-    public class NonProxyBeanTests : UnityAddonDefaultTest
+    public class NonProxyBeanTests : DefaultTest
     {
         [Dependency]
-        public IUnityContainer UnityContainer { get; set; }
+        public IServiceProvider Sp { get; set; }
 
         [Theory]
         [InlineData(0, 1, 2)]
@@ -75,9 +75,9 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.NonProxy
         [InlineData(1, 2, 0)]
         [InlineData(2, 1, 0)]
         [InlineData(2, 0, 1)]
-        public void BuildStrategy_PostConstructNonProxyBean_BeanPostConstructed(int orderA, int orderB, int orderC)
+        public void NonProxyBean(int orderA, int orderB, int orderC)
         {
-            var stringStore = UnityContainer.Resolve<StringStore>();
+            var stringStore = Sp.GetRequiredService<StringStore>();
             var resolveOrder = new Type[3];
 
             resolveOrder[orderA] = typeof(ServiceA);
@@ -86,7 +86,7 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.NonProxy
 
             foreach (var t in resolveOrder)
             {
-                UnityContainer.Resolve(t);
+                Sp.GetRequiredService(t);
             }
 
             Assert.Equal("ABC", stringStore.TestString);

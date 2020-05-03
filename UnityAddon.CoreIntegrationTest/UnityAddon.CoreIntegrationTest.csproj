@@ -52,6 +52,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="BeanPostConstruct\AsyncResolve\AsyncResolveTests.cs" />
+    <Compile Include="BeanPostConstruct\NonProxyBean\NonProxyBeanTests.cs" />
     <Compile Include="Bean\NonGenericBean\NonGenericBeanTests.cs" />
   </ItemGroup>
 

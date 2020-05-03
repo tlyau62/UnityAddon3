@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +24,7 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.AsyncResolve
     public class AsyncService : IAsyncService
     {
         [Dependency]
-        public IUnityContainer UnityContainer { get; set; }
+        public IServiceProvider Sp { get; set; }
 
         [PostConstruct]
         public void Init()
@@ -32,22 +33,21 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.AsyncResolve
             {
                 for (var i = 0; i < 100; i++)
                 {
-                    UnityContainer.Resolve<AsyncRepoB>();
+                    Sp.GetRequiredService<AsyncRepoB>();
                 }
             });
 
             for (var i = 0; i < 100; i++)
             {
-                UnityContainer.Resolve<AsyncRepoA>();
+                Sp.GetRequiredService<AsyncRepoA>();
             }
         }
     }
 
-    [Trait("BeanPostConstruct", "AsyncResolve")]
-    public class AsyncResolveTests : UnityAddonDefaultTest
+    public class AsyncResolveTests : DefaultTest
     {
         [Dependency]
-        public IUnityContainer UnityContainer { get; set; }
+        public IServiceProvider Sp { get; set; }
 
         /// <summary>
         /// Sequential
@@ -67,13 +67,13 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.AsyncResolve
         /// it will cause stack empty exception.
         /// </summary>
         [Theory]
-        [InlineData(1)]
         [InlineData(10)]
-        public void BeanDependencyValidatorStrategy_AsyncResolveBean_AllBeanResolved(int loop)
+        [InlineData(100)]
+        public void AsyncResolve(int loop)
         {
             for (var i = 0; i < loop; i++)
             {
-                UnityContainer.Resolve<IAsyncService>();
+                Sp.GetRequiredService<IAsyncService>();
             }
         }
     }
