@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -53,16 +54,23 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.ComplexLoo
         public M7(M4 m4) { }
     }
 
-    [Trait("DependencyExceptions", "CircularDependency/ComplexLoop")]
-    public class ComplexLoopTests : UnityAddonDefaultTest
+    public class ComplexLoopTests : DefaultTest
     {
         [Dependency]
-        public IHost Host { get; set; }
+        public IServiceProvider Sp { get; set; }
 
         [Fact]
-        public void BeanDependencyValidatorStrategy_ResolveComplexLoopDependency_ExceptionThrown()
+        public void ComplexLoop()
         {
-            Assert.Throws<CircularDependencyException>(() => Host.PreInstantiateSingleton());
+            Assert.Throws<CircularDependencyException>(() =>
+            {
+                var types = new[] { typeof(M1), typeof(M2), typeof(M3), typeof(M4), typeof(M5), typeof(M6), typeof(M7) };
+
+                foreach (var type in types)
+                {
+                    Sp.GetRequiredService(type);
+                }
+            });
         }
     }
 }

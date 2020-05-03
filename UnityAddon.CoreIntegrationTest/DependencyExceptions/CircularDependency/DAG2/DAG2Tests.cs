@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -28,16 +29,17 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.DAG2
     {
     }
 
-    [Trait("DependencyExceptions", "CircularDependency/DAG2")]
-    public class DAG2Tests : UnityAddonDefaultTest
+    public class DAG2Tests : DefaultTest
     {
         [Dependency]
-        public IHost Host { get; set; }
+        public IServiceProvider Sp { get; set; }
 
         [Fact]
-        public void BeanDependencyValidatorStrategy_ResolveDAG2Dependency_NoExceptionThrown()
+        public void DAG2()
         {
-            Host.PreInstantiateSingleton();
+            Sp.GetRequiredService<G>();
+            Sp.GetRequiredService<H>();
+            Sp.GetRequiredService<I>();
         }
     }
 }

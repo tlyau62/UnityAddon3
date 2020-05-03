@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -37,16 +38,20 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.OptionalDe
     {
     }
 
-    [Trait("DependencyExceptions", "CircularDependency/OptionalDependency")]
-    public class OptionalDependencyTests : UnityAddonDefaultTest
+    public class OptionalDependencyTests : DefaultTest
     {
         [Dependency]
-        public IHost Host { get; set; }
+        public IServiceProvider Sp { get; set; }
 
         [Fact]
-        public void BeanDependencyValidatorStrategy_ResolveOptionalDependency_NoExceptionThrown()
+        public void OptionalDependency()
         {
-            Host.PreInstantiateSingleton();
+            var types = new[] { typeof(A), typeof(D) };
+
+            foreach (var type in types)
+            {
+                Sp.GetRequiredService(type);
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,16 +18,15 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.SelfLoop
         public A(A a) { }
     }
 
-    [Trait("DependencyExceptions", "CircularDependency/SelfLoop")]
-    public class SelfLoopTests : UnityAddonDefaultTest
+    public class SelfLoopTests : DefaultTest
     {
         [Dependency]
-        public IHost Host { get; set; }
+        public IServiceProvider Sp { get; set; }
 
         [Fact]
-        public void BeanDependencyValidatorStrategy_ResolveSelfLoopDependency_ExceptionThrown()
+        public void SelfLoop()
         {
-            Assert.Throws<CircularDependencyException>(() => Host.PreInstantiateSingleton());
+            Assert.Throws<CircularDependencyException>(() => Sp.GetRequiredService<A>());
         }
     }
 }

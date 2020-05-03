@@ -55,6 +55,13 @@
     <Compile Include="BeanPostConstruct\AsyncResolve\AsyncResolveTests.cs" />
     <Compile Include="BeanPostConstruct\NonProxyBean\NonProxyBeanTests.cs" />
     <Compile Include="Bean\NonGenericBean\NonGenericBeanTests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\ComplexDAG\ComplexDAGTests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\ComplexLoop\ComplexLoopTests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\DAG2\DAG2Tests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\DAG\DAGTests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\Loop\LoopTests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\OptionalDependency\OptionalDependencyTests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\SelfLoop\SelfLoopTests.cs" />
   </ItemGroup>
 
   <ItemGroup>

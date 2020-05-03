@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -54,15 +55,20 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.ComplexDAG
     }
 
     [Trait("DependencyExceptions", "CircularDependency/ComplexDAG")]
-    public class ComplexDAGTests : UnityAddonDefaultTest
+    public class ComplexDAGTests : DefaultTest
     {
         [Dependency]
-        public IHost Host { get; set; }
+        public IServiceProvider Sp { get; set; }
 
         [Fact]
-        public void BeanDependencyValidatorStrategy_ResolveComplexDAGDependency_NoExceptionThrown()
+        public void ComplexDAG()
         {
-            Host.PreInstantiateSingleton();
+            var types = new[] { typeof(N1), typeof(N2), typeof(N3), typeof(N4), typeof(N5), typeof(N6), typeof(N7) };
+
+            foreach (var type in types)
+            {
+                Sp.GetRequiredService(type);
+            }
         }
     }
 }
