@@ -9,7 +9,6 @@ using Unity.Lifetime;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.BeanBuildStrategies;
 using UnityAddon.Core.BeanDefinition;
-using UnityAddon.Core.Component;
 
 namespace UnityAddon.Core
 {

@@ -1,0 +1,79 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Aop\**" />
+    <Compile Remove="BeanPostConstruct\**" />
+    <Compile Remove="BeanPostProcessor\**" />
+    <Compile Remove="BeanUnregister\**" />
+    <Compile Remove="Bean\InterfaceBean\**" />
+    <Compile Remove="Bean\NonGenericBean\**" />
+    <Compile Remove="Bean\ProfileBean\**" />
+    <Compile Remove="Bean\SingletonBean\**" />
+    <Compile Remove="Configuration\EnumBeanDefinition\**" />
+    <Compile Remove="DependencyExceptions\**" />
+    <Compile Remove="Dependency\Custom\**" />
+    <Compile Remove="Properties\PublishProfiles\**" />
+    <Compile Remove="Util\**" />
+    <Compile Remove="Value\**" />
+    <EmbeddedResource Remove="Aop\**" />
+    <EmbeddedResource Remove="BeanPostConstruct\**" />
+    <EmbeddedResource Remove="BeanPostProcessor\**" />
+    <EmbeddedResource Remove="BeanUnregister\**" />
+    <EmbeddedResource Remove="Bean\InterfaceBean\**" />
+    <EmbeddedResource Remove="Bean\NonGenericBean\**" />
+    <EmbeddedResource Remove="Bean\ProfileBean\**" />
+    <EmbeddedResource Remove="Bean\SingletonBean\**" />
+    <EmbeddedResource Remove="Configuration\EnumBeanDefinition\**" />
+    <EmbeddedResource Remove="DependencyExceptions\**" />
+    <EmbeddedResource Remove="Dependency\Custom\**" />
+    <EmbeddedResource Remove="Properties\PublishProfiles\**" />
+    <EmbeddedResource Remove="Util\**" />
+    <EmbeddedResource Remove="Value\**" />
+    <None Remove="Aop\**" />
+    <None Remove="BeanPostConstruct\**" />
+    <None Remove="BeanPostProcessor\**" />
+    <None Remove="BeanUnregister\**" />
+    <None Remove="Bean\InterfaceBean\**" />
+    <None Remove="Bean\NonGenericBean\**" />
+    <None Remove="Bean\ProfileBean\**" />
+    <None Remove="Bean\SingletonBean\**" />
+    <None Remove="Configuration\EnumBeanDefinition\**" />
+    <None Remove="DependencyExceptions\**" />
+    <None Remove="Dependency\Custom\**" />
+    <None Remove="Properties\PublishProfiles\**" />
+    <None Remove="Util\**" />
+    <None Remove="Value\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="BeanPostConstruct\AsyncResolve\AsyncResolveTests.cs" />
+    <Compile Include="BeanPostConstruct\NonProxyBean\NonProxyBeanTests.cs" />
+    <Compile Include="Bean\NonGenericBean\NonGenericBeanTests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\ComplexDAG\ComplexDAGTests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\ComplexLoop\ComplexLoopTests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\DAG2\DAG2Tests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\DAG\DAGTests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\Loop\LoopTests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\OptionalDependency\OptionalDependencyTests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\SelfLoop\SelfLoopTests.cs" />
+    <Compile Include="DependencyExceptions\NoSuchBeanDefinitionException\NoSuchBeanDefinitionExceptionTests.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="coverlet.collector" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UnityAddon.Core\UnityAddon.Core.csproj" />
+  </ItemGroup>
+
+</Project>

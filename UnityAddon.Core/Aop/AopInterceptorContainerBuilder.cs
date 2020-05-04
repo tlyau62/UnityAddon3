@@ -7,6 +7,7 @@ using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace UnityAddon.Core.Aop
 {
@@ -19,12 +20,12 @@ namespace UnityAddon.Core.Aop
             _interceptorMap = new Dictionary<Type, IList<Type>>();
         }
 
-        public AopInterceptorContainer Build(IUnityContainer container)
+        public AopInterceptorContainer Build(IServiceProvider sp)
         {
             return new AopInterceptorContainer(_interceptorMap
                 .ToDictionary(
                     e => e.Key,
-                    e => e.Value.Select(t => (IInterceptor)container.Resolve(t))));
+                    e => e.Value.Select(t => (IInterceptor)sp.GetRequiredService(t))));
         }
 
         public AopInterceptorContainerBuilder AddAopIntercetor<TAopAttribute, TInterceptor>()

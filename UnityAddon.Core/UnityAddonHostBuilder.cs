@@ -18,12 +18,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Unity.Microsoft.DependencyInjection;
 using UnityAddon.Core.BeanBuildStrategies;
 using System.Reflection;
-using UnityAddon.Core.DependencyInjection;
 using UnityAddon.Core.BeanDefinition;
 using Castle.DynamicProxy;
 using UnityAddon.Core.Thread;
 using UnityAddon.Core.Attributes;
-using UnityAddon.Core.Component;
 using UnityAddon.Core.Aop;
 using Unity.Strategies;
 using Unity.Builder;
@@ -34,118 +32,29 @@ namespace UnityAddon.Core
     {
         private static readonly string IS_NEW_CONTAINER = "__IS_NEW_CONTAINER";
 
-        public static IHostBuilder RegisterUA(this IHostBuilder hostBuilder, IUnityContainer container = null)
+        public static IHostBuilder RegisterUA(this IHostBuilder hostBuilder, IUnityContainer container)
         {
-            hostBuilder.Properties[IS_NEW_CONTAINER] = container == null;
-
-            container ??= new UnityContainer();
-
-            container
-                .RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager())
-                .RegisterType<DependencyResolver, DependencyResolver>(new ContainerControlledLifetimeManager())
-                .RegisterType<IThreadLocalFactory<Stack<IInvocation>>, ThreadLocalFactory<Stack<IInvocation>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<IInvocation>>(() => new Stack<IInvocation>())))
-                .RegisterType<IThreadLocalFactory<Stack<ResolveStackEntry>>, ThreadLocalFactory<Stack<ResolveStackEntry>>>(new ContainerControlledLifetimeManager(), new InjectionConstructor(new Func<Stack<ResolveStackEntry>>(() => new Stack<ResolveStackEntry>())))
-                .AddNewExtension<BeanBuildStrategyExtension>();
-
-            return hostBuilder.UseUnityServiceProvider(container)
-                .ConfigureContainer<IUnityContainer>(c =>
-                {
-                    c.RegisterInstanceUA<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>(new List<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>());
-                })
-                .ScanComponentsUA("UnityAddon.Core")
-                .MergeFromServiceCollectionUA();
+            return hostBuilder.UseServiceProviderFactory(new UnityAddonServiceProviderFactory(container));
         }
 
-        public static IHostBuilder ScanComponentsUA(this IHostBuilder hostBuilder, Assembly assembly, params string[] namespaces)
+        public static IHostBuilder RegisterUA(this IHostBuilder hostBuilder)
         {
-            return hostBuilder.ConfigureContainer<IUnityContainer>((s, c) =>
-            {
-                var callbacks = c.ResolveUA<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>();
-
-                callbacks.Add(cs => cs.ScanComponents(assembly, namespaces));
-            });
+            return hostBuilder.UseServiceProviderFactory(new UnityAddonServiceProviderFactory());
         }
 
-        public static IHostBuilder ScanComponentsUA(this IHostBuilder hostBuilder, params string[] namespaces)
-        {
-            return hostBuilder.ScanComponentsUA(Assembly.GetCallingAssembly(), namespaces);
-        }
+        //public static IHostBuilder ConfigureUA<ConfigT>(this IHostBuilder hostBuilder, Action<ConfigT> config)
+        //{
+        //    return hostBuilder.ConfigureContainer<IUnityContainer>((s, c) =>
+        //    {
+        //        var sp = c.Resolve<IServiceProvider>();
 
-        private static IHostBuilder MergeFromServiceCollectionUA(this IHostBuilder hostBuilder)
-        {
-            IServiceCollection serviceCollection = new ServiceCollection();
+        //        if (!sp.IsRegistered<ConfigT>())
+        //        {
+        //            c.RegisterTypeUA<ConfigT, ConfigT>(new ContainerControlledLifetimeManager());
+        //        }
 
-            return hostBuilder
-                .ConfigureServices((c, s) =>
-                {
-                    serviceCollection = s;
-                })
-                .ConfigureContainer<IUnityContainer>((s, c) =>
-                {
-                    var callbacks = c.ResolveUA<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>();
-
-                    callbacks.Add(cs => cs.ScanComponents(serviceCollection));
-                });
-        }
-
-        public static IHostBuilder ConfigureUA<ConfigT>(this IHostBuilder hostBuilder, Action<ConfigT> config)
-        {
-            return hostBuilder.ConfigureContainer<IUnityContainer>((s, c) =>
-            {
-                if (!c.IsRegisteredUA<ConfigT>())
-                {
-                    c.RegisterTypeUA<ConfigT, ConfigT>(new ContainerControlledLifetimeManager());
-                }
-
-                config(c.ResolveUA<ConfigT>());
-            });
-        }
-
-        public static IHost BuildUA(this IHostBuilder hostBuilder)
-        {
-            var host = hostBuilder.Build();
-            var hostContainer = host.Services.GetService<IUnityContainer>();
-            var config = hostContainer.Resolve<IConfiguration>();
-            var beanDefFilters = hostContainer
-                .Resolve<BeanDefintionCandidateSelectorBuilder>().Build(config);
-            var compScanner = hostContainer.Resolve<ComponentScannerBuilder>().Build(hostContainer);
-            var compScannedDefs = hostContainer.ResolveUA<IList<Func<ComponentScanner, IEnumerable<IBeanDefinition>>>>().SelectMany(cb => cb(compScanner));
-            var beanDefCollection = compScannedDefs.Where(d => !d.FromComponentScanning || beanDefFilters.Filter(d));
-            var configParser = new ConfigurationParser();
-
-            beanDefCollection = beanDefCollection.Union(configParser.Parse(beanDefCollection));
-
-            hostContainer
-                .Resolve<IBeanDefinitionContainer>()
-                .RegisterBeanDefinitions(beanDefCollection);
-
-            hostContainer.RegisterInstanceUA(hostContainer
-                .Resolve<AopInterceptorContainerBuilder>().Build(hostContainer));
-            hostContainer.AddNewExtension<AopBuildStrategyExtension>();
-
-            hostContainer
-                .ResolveUA<BeanFactory>()
-                .CreateFactory(beanDefCollection, hostContainer);
-
-            foreach (var defCollection in hostContainer.ResolveAllUA<IBeanDefinitionCollection>())
-            {
-                hostContainer
-                    .Resolve<IBeanDefinitionContainer>()
-                    .RegisterBeanDefinitions(defCollection);
-
-                hostContainer
-                    .ResolveUA<BeanFactory>()
-                    .CreateFactory(defCollection, hostContainer);
-            }
-
-            if ((bool)hostBuilder.Properties[IS_NEW_CONTAINER])
-            {
-                hostContainer
-                    .Resolve<IHostApplicationLifetime>()
-                    .ApplicationStopped.Register(() => hostContainer.Dispose());
-            }
-
-            return host;
-        }
+        //        config(c.ResolveUA<ConfigT>());
+        //    });
+        //}
     }
 }

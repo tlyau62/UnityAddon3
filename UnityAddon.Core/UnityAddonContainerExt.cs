@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using Unity;
 using Unity.Injection;
@@ -73,9 +75,21 @@ namespace UnityAddon.Core
             container.UnregisterUA(typeof(T), name);
         }
 
-        public static IEnumerable<T> ResolveAllUA<T>(this IUnityContainer container)
+        public static IEnumerable<object> ResolveAllUA(this IUnityContainer container, Type type)
         {
-            return container.ResolveAllUA(typeof(T)).Cast<T>();
+            var resolveAll = typeof(UnityAddonContainer)
+                .GetMethod("ResolveAllUA", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                .MakeGenericMethod(type);
+
+            try
+            {
+                return (IEnumerable<object>)resolveAll.Invoke(null, new object[] { container });
+            }
+            catch (TargetInvocationException ex)
+            {
+                ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
+                throw;
+            }
         }
     }
 }
