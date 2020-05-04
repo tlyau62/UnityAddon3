@@ -3,6 +3,7 @@ using System;
 using Unity;
 using UnityAddon;
 using UnityAddon.Core;
+using UnityAddon.Core.Exceptions;
 using UnityAddon.CoreTest.Bean.Mocks.ConstructorResolver;
 using Xunit;
 
@@ -13,6 +14,8 @@ namespace UnityAddon.CoreTest.Bean.Mocks.ConstructorResolver
     public interface IB { }
 
     public interface IC { }
+
+    public interface ID { }
 
     public class A : IA { }
 
@@ -39,6 +42,13 @@ namespace UnityAddon.CoreTest.Bean.Mocks.ConstructorResolver
             Choice = 2;
         }
     }
+
+    public class FailService
+    {
+        public FailService(ID d)
+        {
+        }
+    }
 }
 
 namespace UnityAddon.CoreTest.Bean
@@ -54,7 +64,7 @@ namespace UnityAddon.CoreTest.Bean
             serCol.AddSingleton<Service>();
 
             var sp = serCol.BuildServiceProvider();
-            var factory = new UnityAddonServiceProviderFactory();
+            var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
             var usp = factory.CreateServiceProvider(defCol);
 
@@ -72,7 +82,7 @@ namespace UnityAddon.CoreTest.Bean
             serCol.AddSingleton<IA, A>();
 
             var sp = serCol.BuildServiceProvider();
-            var factory = new UnityAddonServiceProviderFactory();
+            var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
             var usp = factory.CreateServiceProvider(defCol);
 
@@ -91,7 +101,7 @@ namespace UnityAddon.CoreTest.Bean
             serCol.AddSingleton<IB, B>();
 
             var sp = serCol.BuildServiceProvider();
-            var factory = new UnityAddonServiceProviderFactory();
+            var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
             var usp = factory.CreateServiceProvider(defCol);
 
@@ -110,7 +120,7 @@ namespace UnityAddon.CoreTest.Bean
             serCol.AddSingleton<IC, C>();
 
             var sp = serCol.BuildServiceProvider();
-            var factory = new UnityAddonServiceProviderFactory();
+            var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
             var usp = factory.CreateServiceProvider(defCol);
 
@@ -128,13 +138,29 @@ namespace UnityAddon.CoreTest.Bean
             serCol.AddSingleton<IB, B>();
             serCol.AddSingleton<IC, C>();
 
-            var sp = serCol.BuildServiceProvider();
-            var factory = new UnityAddonServiceProviderFactory();
+            var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
             var usp = factory.CreateServiceProvider(defCol);
 
-            Assert.Throws<InvalidOperationException>(() => sp.GetRequiredService<Service>().Choice);
-            Assert.Throws<InvalidOperationException>(() => usp.GetRequiredService<Service>().Choice);
+            var ex = Assert.Throws<BeanCreationException>(() => usp.GetRequiredService<Service>().Choice);
+
+            Assert.Equal("Ambiguous constructors are found\r\n- Void .ctor(UnityAddon.CoreTest.Bean.Mocks.ConstructorResolver.IA, UnityAddon.CoreTest.Bean.Mocks.ConstructorResolver.IB)\r\n- Void .ctor(UnityAddon.CoreTest.Bean.Mocks.ConstructorResolver.IA, UnityAddon.CoreTest.Bean.Mocks.ConstructorResolver.IC)", ex.Message);
+        }
+
+        [Fact]
+        public void NoSatisfiedCtor()
+        {
+            var serCol = new ServiceCollection();
+
+            serCol.AddSingleton<FailService>();
+
+            var factory = new ServiceProviderFactory();
+            var defCol = factory.CreateBuilder(serCol);
+            var usp = factory.CreateServiceProvider(defCol);
+
+            var ex = Assert.Throws<BeanCreationException>(() => usp.GetRequiredService<FailService>());
+
+            Assert.Equal("Fail to satisfy any of these constructors\r\n- Void .ctor(UnityAddon.CoreTest.Bean.Mocks.ConstructorResolver.ID)", ex.Message);
         }
     }
 }
