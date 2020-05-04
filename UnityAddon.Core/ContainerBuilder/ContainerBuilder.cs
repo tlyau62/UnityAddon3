@@ -25,7 +25,7 @@ namespace UnityAddon.Core.Bean
         {
             _container = container;
 
-            Add(new MainEntry());
+            Add(new MainEntry(this));
             Add(new ConstructEntry());
             Add(new ResolveEntry());
         }
@@ -49,7 +49,7 @@ namespace UnityAddon.Core.Bean
             _entries.Add(wrapEntry);
         }
 
-        public IServiceProvider Build()
+        public void Refresh()
         {
             while (_entries.Count > 0)
             {
@@ -57,6 +57,11 @@ namespace UnityAddon.Core.Bean
 
                 Register(min, min.Order);
             }
+        }
+
+        public IServiceProvider Build()
+        {
+            Refresh();
 
             return new ServiceProvider(_container);
         }

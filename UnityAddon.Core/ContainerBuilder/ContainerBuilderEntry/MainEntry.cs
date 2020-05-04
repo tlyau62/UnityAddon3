@@ -13,6 +13,13 @@ namespace UnityAddon.Core.Bean
 
         private IServiceProvider _sp;
 
+        private ContainerBuilder _containerBuilder;
+
+        public MainEntry(ContainerBuilder containerBuilder)
+        {
+            _containerBuilder = containerBuilder;
+        }
+
         public ContainerBuilderEntryOrder Order => ContainerBuilderEntryOrder.Intern;
 
         public bool PreInstantiate => true;
@@ -25,6 +32,7 @@ namespace UnityAddon.Core.Bean
                     .AddSingleton(_sp)
                     .AddSingleton((IServiceScopeFactory)_sp)
                     .AddSingleton((IServiceScope)_sp)
+                    .AddSingleton(_containerBuilder)
                     .AddSingleton(_definitionContainer);
             });
         }
