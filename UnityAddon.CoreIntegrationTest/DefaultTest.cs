@@ -20,6 +20,7 @@ namespace UnityAddon.Core
                 {
                     builder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
                     {
+                        config.AddComponent(typeof(ServicePostRegistry));
                         config.AddFromComponentScanner(GetType().Assembly, namespaces.Union(new[] { GetType().Namespace }).ToArray());
                     }));
                 })

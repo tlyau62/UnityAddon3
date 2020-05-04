@@ -53,6 +53,8 @@ namespace UnityAddon.Core.Bean
                     .RegisterFactory<IServiceScopeFactory>(c => c.Resolve<ServiceProvider>())
                     .RegisterFactory<IServiceScope>(c => c.Resolve<ServiceProvider>())
                     .Resolve<IServiceProvider>();
+
+            container.RegisterInstance(_containerBuilder);
         }
     }
 }

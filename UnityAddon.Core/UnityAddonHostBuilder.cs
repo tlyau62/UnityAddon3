@@ -28,7 +28,7 @@ using Unity.Builder;
 
 namespace UnityAddon.Core
 {
-    public static class HostBuilder
+    public static class UnityAddonHostBuilder
     {
         private static readonly string IS_NEW_CONTAINER = "__IS_NEW_CONTAINER";
 

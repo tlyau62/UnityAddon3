@@ -74,7 +74,7 @@ namespace UnityAddon.Core.Bean
 
             foreach (var beanDef in loadEntry.BeanDefinitionCollection)
             {
-                if (beanDef.Type == typeof(ContainerBuilder))
+                if (beanDef.Type == typeof(ContainerBuilderEntry))
                 {
                     child.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(c.Resolve<IServiceProvider>(), t, n), (IFactoryLifetimeManager)beanDef.Scope);
                 }
