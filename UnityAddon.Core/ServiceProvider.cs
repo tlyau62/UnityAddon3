@@ -73,11 +73,11 @@ namespace UnityAddon.Core
     }
 
     // Support name interface
-    public class UnityAddonServiceProvider : IServiceProvider, IDisposable, ISupportRequiredService, IServiceScopeFactory, IServiceScope, IUnityServiceProvider, ISupportNamedService
+    public class ServiceProvider : IServiceProvider, IDisposable, ISupportRequiredService, IServiceScopeFactory, IServiceScope, IUnityServiceProvider, ISupportNamedService
     {
         private readonly IUnityContainer _container;
 
-        public UnityAddonServiceProvider(IUnityContainer container)
+        public ServiceProvider(IUnityContainer container)
         {
             _container = container;
         }
@@ -101,7 +101,7 @@ namespace UnityAddon.Core
         {
             if (!CanResolve(serviceType, name))
             {
-                throw new NoSuchBeanDefinitionException($"Type {serviceType} with name ({name}) cannot be found.");
+                throw new NoSuchBeanDefinitionException($"Type {serviceType} with name \"{name}\" cannot be found.");
             }
 
             return GetService(serviceType, name);
@@ -114,7 +114,7 @@ namespace UnityAddon.Core
 
         public IServiceScope CreateScope()
         {
-            return new UnityAddonServiceProvider(_container.CreateChildContainer());
+            return new ServiceProvider(_container.CreateChildContainer());
         }
 
         public bool CanResolve(Type serviceType, string name)

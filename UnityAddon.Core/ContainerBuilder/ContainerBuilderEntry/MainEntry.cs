@@ -40,10 +40,10 @@ namespace UnityAddon.Core.Bean
                 .RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager())
                 .Resolve<IBeanDefinitionContainer>();
 
-            _sp = container.RegisterType<UnityAddonServiceProvider>(new ContainerControlledLifetimeManager())
-                    .RegisterFactory<IServiceProvider>(c => c.Resolve<UnityAddonServiceProvider>())
-                    .RegisterFactory<IServiceScopeFactory>(c => c.Resolve<UnityAddonServiceProvider>())
-                    .RegisterFactory<IServiceScope>(c => c.Resolve<UnityAddonServiceProvider>())
+            _sp = container.RegisterType<ServiceProvider>(new ContainerControlledLifetimeManager())
+                    .RegisterFactory<IServiceProvider>(c => c.Resolve<ServiceProvider>())
+                    .RegisterFactory<IServiceScopeFactory>(c => c.Resolve<ServiceProvider>())
+                    .RegisterFactory<IServiceScope>(c => c.Resolve<ServiceProvider>())
                     .Resolve<IServiceProvider>();
         }
     }

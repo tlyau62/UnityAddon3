@@ -28,18 +28,18 @@ using Unity.Builder;
 
 namespace UnityAddon.Core
 {
-    public static class UnityAddonHostBuilder
+    public static class HostBuilder
     {
         private static readonly string IS_NEW_CONTAINER = "__IS_NEW_CONTAINER";
 
         public static IHostBuilder RegisterUA(this IHostBuilder hostBuilder, IUnityContainer container)
         {
-            return hostBuilder.UseServiceProviderFactory(new UnityAddonServiceProviderFactory(container));
+            return hostBuilder.UseServiceProviderFactory(new ServiceProviderFactory(container));
         }
 
         public static IHostBuilder RegisterUA(this IHostBuilder hostBuilder)
         {
-            return hostBuilder.UseServiceProviderFactory(new UnityAddonServiceProviderFactory());
+            return hostBuilder.UseServiceProviderFactory(new ServiceProviderFactory());
         }
 
         //public static IHostBuilder ConfigureUA<ConfigT>(this IHostBuilder hostBuilder, Action<ConfigT> config)

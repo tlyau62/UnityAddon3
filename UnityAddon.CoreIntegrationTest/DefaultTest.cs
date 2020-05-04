@@ -15,7 +15,7 @@ namespace UnityAddon.Core
         public DefaultTest(params string[] namespaces)
         {
             var host = Host.CreateDefaultBuilder()
-                .UseServiceProviderFactory(new UnityAddonServiceProviderFactory())
+                .UseServiceProviderFactory(new ServiceProviderFactory())
                 .ConfigureContainer<ContainerBuilder>(builder =>
                 {
                     builder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>

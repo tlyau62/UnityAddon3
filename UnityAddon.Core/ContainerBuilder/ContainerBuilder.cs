@@ -58,7 +58,7 @@ namespace UnityAddon.Core.Bean
                 Register(min, min.Order);
             }
 
-            return new UnityAddonServiceProvider(_container);
+            return new ServiceProvider(_container);
         }
 
         private void Register(ContainerBuilderEntry loadEntry, ContainerBuilderEntryOrder curOrder)
