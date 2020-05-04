@@ -25,7 +25,7 @@ namespace UnityAddon.Core.Bean
         {
             _container = container;
 
-            Add(new MainEntry());
+            Add(new MainEntry(this));
             Add(new ConstructEntry());
             Add(new ResolveEntry());
         }
@@ -49,7 +49,7 @@ namespace UnityAddon.Core.Bean
             _entries.Add(wrapEntry);
         }
 
-        public IServiceProvider Build()
+        public void Refresh()
         {
             while (_entries.Count > 0)
             {
@@ -57,8 +57,13 @@ namespace UnityAddon.Core.Bean
 
                 Register(min, min.Order);
             }
+        }
 
-            return new UnityAddonServiceProvider(_container);
+        public IServiceProvider Build()
+        {
+            Refresh();
+
+            return new ServiceProvider(_container);
         }
 
         private void Register(ContainerBuilderEntry loadEntry, ContainerBuilderEntryOrder curOrder)
@@ -69,7 +74,7 @@ namespace UnityAddon.Core.Bean
 
             foreach (var beanDef in loadEntry.BeanDefinitionCollection)
             {
-                if (beanDef.Type == typeof(ContainerBuilder))
+                if (beanDef.Type == typeof(ContainerBuilderEntry))
                 {
                     child.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(c.Resolve<IServiceProvider>(), t, n), (IFactoryLifetimeManager)beanDef.Scope);
                 }

@@ -34,12 +34,12 @@ namespace UnityAddon.Core
 
         public static IHostBuilder RegisterUA(this IHostBuilder hostBuilder, IUnityContainer container)
         {
-            return hostBuilder.UseServiceProviderFactory(new UnityAddonServiceProviderFactory(container));
+            return hostBuilder.UseServiceProviderFactory(new ServiceProviderFactory(container));
         }
 
         public static IHostBuilder RegisterUA(this IHostBuilder hostBuilder)
         {
-            return hostBuilder.UseServiceProviderFactory(new UnityAddonServiceProviderFactory());
+            return hostBuilder.UseServiceProviderFactory(new ServiceProviderFactory());
         }
 
         //public static IHostBuilder ConfigureUA<ConfigT>(this IHostBuilder hostBuilder, Action<ConfigT> config)

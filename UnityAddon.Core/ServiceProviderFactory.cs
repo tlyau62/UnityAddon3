@@ -19,18 +19,18 @@ using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core
 {
-    public class UnityAddonServiceProviderFactory : IServiceProviderFactory<ContainerBuilder>
+    public class ServiceProviderFactory : IServiceProviderFactory<ContainerBuilder>
     {
         private readonly ContainerBuilder _beanLoader;
 
         private bool _isNewContainer = false;
 
-        public UnityAddonServiceProviderFactory() : this(new UnityContainer())
+        public ServiceProviderFactory() : this(new UnityContainer())
         {
             _isNewContainer = true;
         }
 
-        public UnityAddonServiceProviderFactory(IUnityContainer container)
+        public ServiceProviderFactory(IUnityContainer container)
         {
             _beanLoader = new ContainerBuilder(container);
         }

@@ -2,49 +2,26 @@
 using System.Collections.Generic;
 using System.Text;
 using Unity.Lifetime;
+using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.Core.BeanDefinition.GeneralBean
 {
-    public class FactoryBeanDefinition<T> : IBeanDefinition
+    public class FactoryBeanDefinition : AbstractGeneralBeanDefintion
     {
-        private readonly Func<IServiceProvider, Type, string, T> _factory;
-
         private readonly string _uuid = Guid.NewGuid().ToString();
 
-        public FactoryBeanDefinition(Func<IServiceProvider, Type, string, T> factory)
+        public FactoryBeanDefinition(Type type, Func<IServiceProvider, Type, string, object> factory, string name, ScopeType scopeType) : base(type, name, scopeType)
         {
-            _factory = factory;
+            Factory = factory;
         }
 
-        public FactoryBeanDefinition(Func<IServiceProvider, Type, string, T> factory, LifetimeManager scope)
+        public override string Name => $"factory-{Type.Name}-{_uuid}";
+
+        public Func<IServiceProvider, Type, string, object> Factory { get; private set; }
+
+        public override object Constructor(IServiceProvider serviceProvider, Type type, string name)
         {
-            _factory = factory;
-            _scope = scope;
-        }
-
-        public Type Type => typeof(T);
-
-        public string Name => $"factory-{_uuid}";
-
-        private LifetimeManager _scope;
-
-        public LifetimeManager Scope => _scope ??= new ContainerControlledLifetimeManager();
-
-        public Type[] AutoWiredTypes => new[] { Type };
-
-        public string[] Qualifiers => new string[0];
-
-        public string[] Profiles => new string[0];
-
-        public bool IsPrimary => false;
-
-        public string Namespace => Type.Namespace;
-
-        public bool FromComponentScanning { get; set; } = false;
-
-        public object Constructor(IServiceProvider serviceProvider, Type type, string name)
-        {
-            return _factory(serviceProvider, type, name);
+            return Factory(serviceProvider, type, name);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace UnityAddon.CoreTest.Util
         {
             IBeanDefinitionCollection defCol = new BeanDefinitionCollection();
 
-            defCol.AddFromComponentScanner(cs => cs.ScanAssembly(GetType().Assembly, GetType().Namespace));
+            defCol.AddFromComponentScanner(GetType().Assembly, GetType().Namespace);
 
             Assert.NotNull(defCol.Where(def => def.Type == typeof(Service)).Single());
             Assert.NotNull(defCol.Where(def => def.Type == typeof(Config)).Single());

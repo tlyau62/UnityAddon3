@@ -42,7 +42,7 @@ namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter
         public void NamespaceFilterOnB()
         {
             var host = Host.CreateDefaultBuilder()
-                .UseServiceProviderFactory(new UnityAddonServiceProviderFactory())
+                .UseServiceProviderFactory(new ServiceProviderFactory())
                 .ConfigureContainer<ContainerBuilder>(builder =>
                 {
                     builder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
@@ -64,7 +64,7 @@ namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter
         public void NamespaceFilterOnA()
         {
             var host = Host.CreateDefaultBuilder()
-                .UseServiceProviderFactory(new UnityAddonServiceProviderFactory())
+                .UseServiceProviderFactory(new ServiceProviderFactory())
                 .ConfigureContainer<ContainerBuilder>(builder =>
                 {
                     builder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>

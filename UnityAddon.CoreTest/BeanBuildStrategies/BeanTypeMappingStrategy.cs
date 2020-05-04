@@ -37,7 +37,7 @@ namespace UnityAddon.CoreTest
 
             serCol.AddSingleton<IConcrete, Concrete>();
 
-            var factory = new UnityAddonServiceProviderFactory();
+            var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
             var usp = factory.CreateServiceProvider(defCol);
 
@@ -51,7 +51,7 @@ namespace UnityAddon.CoreTest
 
             serCol.AddSingleton<IGeneric<int>, ConcreteGeneric>();
 
-            var factory = new UnityAddonServiceProviderFactory();
+            var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
             var usp = factory.CreateServiceProvider(defCol);
 
@@ -65,7 +65,7 @@ namespace UnityAddon.CoreTest
 
             serCol.AddSingleton(typeof(IGeneric<>), typeof(Generic<>));
 
-            var factory = new UnityAddonServiceProviderFactory();
+            var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
             var usp = factory.CreateServiceProvider(defCol);
 
@@ -81,7 +81,7 @@ namespace UnityAddon.CoreTest
             serCol.AddSingleton<IEnum, E1>();
             serCol.AddSingleton<IEnum, E2>();
 
-            var factory = new UnityAddonServiceProviderFactory();
+            var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
             var usp = factory.CreateServiceProvider(defCol);
 
@@ -94,7 +94,7 @@ namespace UnityAddon.CoreTest
         {
             var serCol = new ServiceCollection();
 
-            var factory = new UnityAddonServiceProviderFactory();
+            var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
             var usp = factory.CreateServiceProvider(defCol);
 
@@ -107,7 +107,7 @@ namespace UnityAddon.CoreTest
         {
             var serCol = new ServiceCollection();
 
-            var factory = new UnityAddonServiceProviderFactory();
+            var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
             var usp = factory.CreateServiceProvider(defCol);
 

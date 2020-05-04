@@ -5,6 +5,7 @@ using System.Text;
 using Unity;
 using UnityAddon;
 using UnityAddon.Core;
+using UnityAddon.Core.Exceptions;
 using UnityAddon.CoreTest.Mocks.UnityAddonServiceProvider;
 using Xunit;
 
@@ -43,7 +44,7 @@ namespace UnityAddon.CoreTest
 
             serCol.AddSingleton<IA, A>();
 
-            var factory = new UnityAddonServiceProviderFactory();
+            var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
             var usp = factory.CreateServiceProvider(defCol);
 
@@ -58,7 +59,7 @@ namespace UnityAddon.CoreTest
             serCol.AddSingleton<IA, A>();
             serCol.AddSingleton<IA, A2>();
 
-            var factory = new UnityAddonServiceProviderFactory();
+            var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
             var usp = factory.CreateServiceProvider(defCol);
             var serAs = new IA[] { usp.GetService<IA>("A"), usp.GetService<IA>("A2") };
@@ -72,11 +73,11 @@ namespace UnityAddon.CoreTest
         {
             var serCol = new ServiceCollection();
 
-            var factory = new UnityAddonServiceProviderFactory();
+            var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
             var usp = factory.CreateServiceProvider(defCol);
 
-            Assert.Throws<InvalidOperationException>(() => usp.GetRequiredService<IA>());
+            Assert.Throws<NoSuchBeanDefinitionException>(() => usp.GetRequiredService<IA>());
         }
 
         [Fact]
@@ -86,7 +87,7 @@ namespace UnityAddon.CoreTest
 
             serCol.AddScoped<IA, A>();
 
-            var factory = new UnityAddonServiceProviderFactory();
+            var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
             var usp = factory.CreateServiceProvider(defCol);
 
@@ -123,7 +124,7 @@ namespace UnityAddon.CoreTest
 
             serCol.AddSingleton<IA, A>();
 
-            var factory = new UnityAddonServiceProviderFactory();
+            var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
             var usp = factory.CreateServiceProvider(defCol);
 
@@ -140,7 +141,7 @@ namespace UnityAddon.CoreTest
 
             serCol.AddSingleton<IA, A>();
 
-            var factory = new UnityAddonServiceProviderFactory();
+            var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
             var usp = factory.CreateServiceProvider(defCol);
 
