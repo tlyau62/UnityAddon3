@@ -22,13 +22,13 @@ namespace UnityAddon.Core.Bean
 
         public IBeanDefinitionCollection BeanDefinitionCollection { get; } = new BeanDefinitionCollection();
 
-        public Action<IUnityContainer> PreProcess { get; set; } = container => { };
+        public Action<IUnityContainer, IUnityContainer> PreProcess { get; set; } = (container, configContainer) => { };
 
-        public Action<IUnityContainer> PostProcess { get; set; } = container => { };
+        public Action<IUnityContainer, IUnityContainer> PostProcess { get; set; } = (container, configContainer) => { };
 
         public ContainerBuilderEntry ConfigureBeanDefinitions(Action<IBeanDefinitionCollection> config)
         {
-            PreProcess += c => config(BeanDefinitionCollection);
+            PreProcess += (container, configContainer) => config(BeanDefinitionCollection);
 
             return this;
         }

@@ -45,7 +45,7 @@ namespace UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter
                 .UseServiceProviderFactory(new ServiceProviderFactory())
                 .ConfigureContainer<ContainerBuilder>(builder =>
                 {
-                    builder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
+                    builder.AddContextEntry(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
                     {
                         config.AddFromComponentScanner(
                             config => config.IncludeFilters.Add(ComponentScannerFilter.CreateNamepsaceFilter("UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.B")),
@@ -67,7 +67,7 @@ namespace UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter
                 .UseServiceProviderFactory(new ServiceProviderFactory())
                 .ConfigureContainer<ContainerBuilder>(builder =>
                 {
-                    builder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
+                    builder.AddContextEntry(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
                     {
                         config.AddFromComponentScanner(
                             config => config.IncludeFilters.Add(ComponentScannerFilter.CreateNamepsaceFilter("UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.A")),

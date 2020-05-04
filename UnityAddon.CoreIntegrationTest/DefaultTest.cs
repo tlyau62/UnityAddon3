@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +19,10 @@ namespace UnityAddon.Core
                 .UseServiceProviderFactory(new ServiceProviderFactory())
                 .ConfigureContainer<ContainerBuilder>(builder =>
                 {
-                    builder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
+                    builder.AddContextEntry(entry =>
                     {
-                        config.AddFromComponentScanner(GetType().Assembly, namespaces.Union(new[] { GetType().Namespace }).ToArray());
-                    }));
+                        entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, namespaces.Union(new[] { GetType().Namespace }).ToArray()));
+                    });
                 })
                 .Build();
 

@@ -44,7 +44,7 @@ namespace UnityAddon.Core
                 defs.AddFromServiceCollection(services);
             });
 
-            _beanLoader.Add(beanAppEntry);
+            _beanLoader.AddContextEntry(beanAppEntry);
 
             return _beanLoader;
         }

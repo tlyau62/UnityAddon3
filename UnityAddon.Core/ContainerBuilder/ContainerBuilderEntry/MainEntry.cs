@@ -37,12 +37,11 @@ namespace UnityAddon.Core.Bean
             });
         }
 
-        public void PostProcess(IUnityContainer container)
+        public void PostProcess(IUnityContainer container, IUnityContainer configContainer)
         {
-            container.AddNewExtension<BeanBuildStrategyExtension>();
         }
 
-        public void PreProcess(IUnityContainer container)
+        public void PreProcess(IUnityContainer container, IUnityContainer configContainer)
         {
             _definitionContainer = container
                 .RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager())

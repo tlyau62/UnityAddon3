@@ -7,7 +7,8 @@ using Unity;
 using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
-using UnityAddon.Core.DependencyInjection;
+using UnityAddon.Core.Bean;
+using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.Value;
 using Xunit;
 
@@ -26,25 +27,35 @@ namespace UnityAddon.CoreTest.Dependency.Custom
         public string CustomProp { get; set; }
     }
 
-    [Trait("Dependency", "Custom")]
     public class CustomTests
     {
         [Dependency]
         public Service Service { get; set; }
 
         [Fact]
-        public void DependencyResolverBuilder_ResolveCustomValue_CustomValueInjected()
+        public void Custom()
         {
-            Host.CreateDefaultBuilder()
+            var host = Host.CreateDefaultBuilder()
                .RegisterUA()
-               .ConfigureUA<DependencyResolver>(config =>
+               .ConfigureContainer<ContainerBuilder>(builder =>
                {
-                   config.AddResolveStrategy<CustomAttribute>((type, attr, container)
-                       => attr.Descriptor + "TestString");
+                   builder.AddContextEntry(config =>
+                   {
+                       config.ConfigureBeanDefinitions(defs =>
+                       {
+                           defs.AddComponent(typeof(Service));
+                       });
+                   });
+
+                   builder.ConfigureContext<DependencyResolverOption>(config =>
+                   {
+                       config.AddResolveStrategy<CustomAttribute>((type, attr, container)
+                           => attr.Descriptor + "TestString");
+                   });
                })
-               .ScanComponentsUA(GetType().Namespace)
-               .BuildUA()
-               .BuildTestUA(this);
+               .Build();
+
+            host.Services.BuildUp(this);
 
             Assert.Equal("My_TestString", Service.CustomProp);
         }

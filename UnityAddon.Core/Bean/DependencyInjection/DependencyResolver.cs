@@ -18,34 +18,9 @@ namespace UnityAddon.Core.Bean.DependencyInjection
         private static readonly MethodInfo InvokeStrategyMethod = typeof(DependencyResolver)
             .GetMethod(nameof(InvokeStrategy), BindingFlags.NonPublic | BindingFlags.Instance);
 
-        public DependencyResolver()
+        public DependencyResolver(DependencyResolverOption resolverOption)
         {
-            _resolveStrategies = new Dictionary<Type, object>();
-
-            AddInternalResolveStrategies();
-        }
-
-        protected void AddInternalResolveStrategies()
-        {
-            AddResolveStrategy<DependencyAttribute>((type, attr, sp) =>
-            {
-                return sp.GetRequiredService(type, attr.Name);
-            });
-
-            AddResolveStrategy<OptionalDependencyAttribute>((type, attr, sp) =>
-            {
-                return sp.GetService(type, attr.Name);
-            });
-
-            AddResolveStrategy<ValueAttribute>((type, attr, sp) =>
-            {
-                return sp.GetRequiredService<ValueProvider>().GetValue(type, attr.Value);
-            });
-        }
-
-        public void AddResolveStrategy<TAttribute>(Func<Type, TAttribute, IServiceProvider, object> strategy) where TAttribute : Attribute
-        {
-            _resolveStrategies[typeof(TAttribute)] = strategy;
+            _resolveStrategies = resolverOption.ResolveStrategies;
         }
 
         public object Resolve(Type resolveType, IEnumerable<Attribute> attributes, IServiceProvider sp)

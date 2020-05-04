@@ -9,9 +9,9 @@ namespace UnityAddon.Core.Bean
 
         bool PreInstantiate { get; }
 
-        void PreProcess(IUnityContainer container);
+        void PreProcess(IUnityContainer container, IUnityContainer configContainer);
 
-        void PostProcess(IUnityContainer container);
+        void PostProcess(IUnityContainer container, IUnityContainer configContainer);
 
         void ConfigureBeanDefinitions(IBeanDefinitionCollection collection);
     }

@@ -19,40 +19,61 @@ namespace UnityAddon.Core.Bean
 
         private readonly IUnityContainer _container;
 
-        public ContainerBuilder() : this(new UnityContainer()) { }
+        private readonly IUnityContainer _configContainer = new UnityContainer();
 
         public ContainerBuilder(IUnityContainer container)
         {
             _container = container;
 
-            Add(new MainEntry(this));
-            Add(new ConstructEntry());
-            Add(new ResolveEntry());
+            AddContextEntry(new MainEntry(this));
+            AddContextEntry(new ConstructEntry());
+            AddContextEntry(new ResolveEntry());
 
             // post register
-            Add(new ContainerBuilderEntry(ContainerBuilderEntryOrder.Intern, false).ConfigureBeanDefinitions(config =>
+            AddContextEntry(new ContainerBuilderEntry(ContainerBuilderEntryOrder.Intern, false).ConfigureBeanDefinitions(config =>
             {
                 config.AddComponent(typeof(ServicePostRegistry));
             }));
         }
 
-        public void Add(ContainerBuilderEntry entry)
+        public void AddContextEntry(Action<ContainerBuilderEntry> entryConfig)
+        {
+            AddContextEntry(ContainerBuilderEntryOrder.App, false, entryConfig);
+        }
+
+        public void AddContextEntry(ContainerBuilderEntryOrder order, bool preInstantiate, Action<ContainerBuilderEntry> entryConfig)
+        {
+            var entry = new ContainerBuilderEntry(order, preInstantiate);
+
+            entryConfig(entry);
+
+            _entries.Add(entry);
+        }
+
+        public void AddContextEntry(ContainerBuilderEntry entry)
         {
             _entries.Add(entry);
         }
 
-        public void Add(IContainerBuilderEntry entry)
+        public void AddContextEntry(IContainerBuilderEntry entry)
         {
             var wrapEntry = new ContainerBuilderEntry(entry.Order, entry.PreInstantiate);
 
-            wrapEntry.PreProcess += c =>
+            wrapEntry.PreProcess += (container, configContainer) =>
             {
-                entry.PreProcess(c);
+                entry.PreProcess(container, configContainer);
                 entry.ConfigureBeanDefinitions(wrapEntry.BeanDefinitionCollection);
             };
-            wrapEntry.PostProcess += c => entry.PostProcess(c);
+            wrapEntry.PostProcess += (container, configContainer) => entry.PostProcess(container, configContainer);
 
             _entries.Add(wrapEntry);
+        }
+
+        public void ConfigureContext<TConfig>(Action<TConfig> config)
+        {
+            _configContainer.RegisterType<TConfig>(new ContainerControlledLifetimeManager());
+
+            config(_configContainer.Resolve<TConfig>());
         }
 
         public void Refresh()
@@ -76,7 +97,7 @@ namespace UnityAddon.Core.Bean
         {
             var child = _container.CreateChildContainer();
 
-            loadEntry.PreProcess(_container);
+            loadEntry.PreProcess(_container, _configContainer);
 
             foreach (var beanDef in loadEntry.BeanDefinitionCollection)
             {
@@ -102,7 +123,7 @@ namespace UnityAddon.Core.Bean
                 }
             }
 
-            loadEntry.PostProcess(_container);
+            loadEntry.PostProcess(_container, _configContainer);
 
             foreach (var entry in child.ResolveAll<ContainerBuilderEntry>())
             {

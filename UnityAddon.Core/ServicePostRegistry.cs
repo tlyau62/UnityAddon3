@@ -41,7 +41,7 @@ namespace UnityAddon.Core
                 config.Add(beanDefinition);
             });
 
-            ContainerBuilder.Add(entry);
+            ContainerBuilder.AddContextEntry(entry);
 
             ContainerBuilder.Refresh();
         }

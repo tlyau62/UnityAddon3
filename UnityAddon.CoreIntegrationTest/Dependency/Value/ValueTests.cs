@@ -46,7 +46,7 @@ namespace UnityAddon.CoreTest.Dependency.Value
                })
                .ConfigureContainer<ContainerBuilder>(builder =>
                {
-                   builder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
+                   builder.AddContextEntry(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
                    {
                        config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace);
                    }));
