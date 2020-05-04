@@ -30,14 +30,13 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoSuch
         }
     }
 
-    [Trait("DependencyExceptions", "NoSuchBeanDefinition")]
     public class NoSuchBeanDefinitionExceptionTests : DefaultTest
     {
         [Dependency]
         public IServiceProvider Sp { get; set; }
 
         [Fact]
-        public void PropertyFill_NoSuchBeanDefinition_ExceptionThrown()
+        public void Properties()
         {
             var ex = Assert.Throws<NoSuchBeanDefinitionException>(() => Sp.GetRequiredService<PropService>());
 
@@ -45,11 +44,11 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoSuch
         }
 
         [Fact]
-        public void ParamterFill_NoSuchBeanDefinition_ExceptionThrown()
+        public void Paramters()
         {
-            var ex = Assert.Throws<NoSuchBeanDefinitionException>(() => Sp.GetRequiredService<CtorService>());
+            var ex = Assert.Throws<BeanCreationException>(() => Sp.GetRequiredService<CtorService>());
 
-            Assert.Equal($"Parameter 0 of Constructor in {typeof(CtorService).FullName} required a bean of type '{typeof(IB).FullName}' that could not be found.", ex.Message);
+            Assert.Equal($"Fail to satisfy any of these constructors\r\n- {typeof(CtorService).GetConstructors().First()}", ex.Message);
         }
     }
 
