@@ -28,6 +28,12 @@ namespace UnityAddon.Core.Bean
             Add(new MainEntry(this));
             Add(new ConstructEntry());
             Add(new ResolveEntry());
+
+            // post register
+            Add(new ContainerBuilderEntry(ContainerBuilderEntryOrder.Intern, false).ConfigureBeanDefinitions(config =>
+            {
+                config.AddComponent(typeof(ServicePostRegistry));
+            }));
         }
 
         public void Add(ContainerBuilderEntry entry)
