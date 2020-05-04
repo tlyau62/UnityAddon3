@@ -4,13 +4,25 @@ using System.Collections.Generic;
 using System.Text;
 using Unity;
 using UnityAddon.Core;
+using UnityAddon.Core.Exceptions;
 using Xunit;
 
-namespace UnityAddon.CoreIntegrationTest.BeanRegister
+namespace UnityAddon.CoreIntegrationTest.BeanRegistry.PostRegister
 {
-    public interface IService { }
+    public interface IService
+    {
+        bool Disposed { get; set; }
+    }
 
-    public class Service : IService { }
+    public class Service : IService, IDisposable
+    {
+        public bool Disposed { get; set; } = false;
+
+        public void Dispose()
+        {
+            Disposed = true;
+        }
+    }
 
     public class PostRegisterTests : DefaultTest
     {
@@ -87,6 +99,22 @@ namespace UnityAddon.CoreIntegrationTest.BeanRegister
 
             Assert.True(Sp.IsRegistered<IService>("testqua"));
             Assert.False(Sp.IsRegistered<IService>("notexist"));
+        }
+
+        [Fact]
+        public void Unregister()
+        {
+            ServicePostRegistry.AddSingleton(typeof(IService), typeof(Service), null);
+
+            var service = Sp.GetRequiredService<IService>();
+
+            Assert.True(Sp.IsRegistered<IService>());
+            Assert.False(service.Disposed);
+
+            ServicePostRegistry.Unregister(typeof(IService), null);
+
+            Assert.False(Sp.IsRegistered<IService>());
+            Assert.True(service.Disposed);
         }
     }
 }

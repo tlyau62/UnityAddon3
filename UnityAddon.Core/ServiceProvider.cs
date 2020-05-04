@@ -10,6 +10,8 @@ namespace UnityAddon.Core
 {
     public interface IUnityServiceProvider
     {
+        IUnityContainer UnityContainer { get; }
+
         bool CanResolve(Type serviceType, string name);
 
         bool IsRegistered(Type serviceType, string name);
@@ -75,12 +77,12 @@ namespace UnityAddon.Core
     // Support name interface
     public class ServiceProvider : IServiceProvider, IDisposable, ISupportRequiredService, IServiceScopeFactory, IServiceScope, IUnityServiceProvider, ISupportNamedService
     {
-        private readonly IUnityContainer _container;
-
         public ServiceProvider(IUnityContainer container)
         {
-            _container = container;
+            UnityContainer = container;
         }
+
+        public IUnityContainer UnityContainer { get; private set; }
 
         public object GetService(Type serviceType)
         {
@@ -89,7 +91,7 @@ namespace UnityAddon.Core
 
         public object GetService(Type serviceType, string name)
         {
-            return _container.Resolve(serviceType, name);
+            return UnityContainer.Resolve(serviceType, name);
         }
 
         public object GetRequiredService(Type serviceType)
@@ -109,12 +111,12 @@ namespace UnityAddon.Core
 
         public void Dispose()
         {
-            _container.Dispose();
+            UnityContainer.Dispose();
         }
 
         public IServiceScope CreateScope()
         {
-            return new ServiceProvider(_container.CreateChildContainer());
+            return new ServiceProvider(UnityContainer.CreateChildContainer());
         }
 
         public bool CanResolve(Type serviceType, string name)
@@ -124,7 +126,7 @@ namespace UnityAddon.Core
 
         public bool IsRegistered(Type serviceType, string name)
         {
-            var beanDefContainer = _container.Resolve<IBeanDefinitionContainer>();
+            var beanDefContainer = UnityContainer.Resolve<IBeanDefinitionContainer>();
 
             return beanDefContainer.HasBeanDefinition(serviceType, name) || serviceType.IsGenericType &&
                 beanDefContainer.HasBeanDefinition(serviceType.GetGenericTypeDefinition(), name);
@@ -132,7 +134,7 @@ namespace UnityAddon.Core
 
         public object BuildUp(object service)
         {
-            return _container.Resolve<PropertyFill>().FillAllProperties(service, this);
+            return UnityContainer.Resolve<PropertyFill>().FillAllProperties(service, this);
         }
 
         IServiceProvider IServiceScope.ServiceProvider => this;

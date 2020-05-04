@@ -1,12 +1,15 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Unity;
+using Unity.Lifetime;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.BeanDefinition.GeneralBean;
+using UnityAddon.Core.Exceptions;
 
 namespace UnityAddon.Core
 {
@@ -18,12 +21,16 @@ namespace UnityAddon.Core
         void AddSingleton(Type type, Func<IServiceProvider, Type, string, object> factory, string name);
         void AddTransient(Type type, Type implType, string name);
         void AddTransient(Type type, Func<IServiceProvider, Type, string, object> factory, string name);
+        void Unregister(Type type, string name);
     }
 
     public class ServicePostRegistry : IServicePostRegistry
     {
         [Dependency]
         public ContainerBuilder ContainerBuilder { get; set; }
+
+        [Dependency]
+        public IServiceProvider Sp { get; set; }
 
         public void Add(IBeanDefinition beanDefinition)
         {
@@ -63,5 +70,40 @@ namespace UnityAddon.Core
         {
             Add(new FactoryBeanDefinition(type, factory, name, ScopeType.Transient));
         }
+
+        public void Unregister(Type type, string name)
+        {
+            var container = ((IUnityServiceProvider)Sp).UnityContainer;
+            var beanDefContainer = Sp.GetRequiredService<IBeanDefinitionContainer>();
+            var bean = Sp.GetRequiredService(type, name);
+            var beanDef = beanDefContainer.RemoveBeanDefinition(type, name);
+            var matchedList = container.Registrations.Where(p => p.RegisteredType == beanDef.Type && p.Name == beanDef.Name);
+
+            foreach (var registration in matchedList)
+            {
+                registration.LifetimeManager.RemoveValue();
+
+                container.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) =>
+                {
+                    throw new NoSuchBeanDefinitionException($"Type {beanDef.Type} with name '{beanDef.Name}' is unregistered.");
+                }, (IFactoryLifetimeManager)Activator.CreateInstance(registration.LifetimeManager.GetType()));
+            }
+        }
+
+        //public void Unregister(Type type, string name)
+        //{
+        //    var beanDefContainer = Sp.GetRequiredService<IBeanDefinitionContainer>();
+        //    var beanDef = beanDefContainer.RemoveBeanDefinition(type, name);
+
+        //    if (beanDef.Scope is ContainerControlledLifetimeManager)
+        //    {
+        //        var bean = Sp.GetRequiredService(type, name);
+
+        //        if (bean is IDisposable disposable)
+        //        {
+        //            disposable.Dispose();
+        //        }
+        //    }
+        //}
     }
 }

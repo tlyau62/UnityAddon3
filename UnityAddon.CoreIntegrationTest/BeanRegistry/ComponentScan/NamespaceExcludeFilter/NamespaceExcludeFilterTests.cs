@@ -8,12 +8,12 @@ using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.BeanDefinition.Candidate;
-using UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.B;
 using Xunit;
 using UnityAddon.Core.Util.ComponentScanning;
-using UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.A;
+using UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.B;
+using UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.A;
 
-namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.A
+namespace UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.A
 {
     [Component]
     public class ServiceA : ISerivce
@@ -21,7 +21,7 @@ namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.A
     }
 }
 
-namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.B
+namespace UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.B
 {
     [Component]
     public class ServiceB : ISerivce
@@ -29,7 +29,7 @@ namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.B
     }
 }
 
-namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter
+namespace UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter
 {
     public interface ISerivce { }
 
@@ -48,7 +48,7 @@ namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter
                     builder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
                     {
                         config.AddFromComponentScanner(
-                            config => config.IncludeFilters.Add(ComponentScannerFilter.CreateNamepsaceFilter("UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.B")),
+                            config => config.IncludeFilters.Add(ComponentScannerFilter.CreateNamepsaceFilter("UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.B")),
                             GetType().Assembly,
                             GetType().Namespace);
                     }));
@@ -70,7 +70,7 @@ namespace UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter
                     builder.Add(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
                     {
                         config.AddFromComponentScanner(
-                            config => config.IncludeFilters.Add(ComponentScannerFilter.CreateNamepsaceFilter("UnityAddon.CoreTest.ComponentScan.NamespaceExcludeFilter.A")),
+                            config => config.IncludeFilters.Add(ComponentScannerFilter.CreateNamepsaceFilter("UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.A")),
                             GetType().Assembly,
                             GetType().Namespace);
                     }));
