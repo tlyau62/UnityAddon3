@@ -5,6 +5,7 @@ using System.Text;
 using Unity;
 using UnityAddon;
 using UnityAddon.Core;
+using UnityAddon.Core.Exceptions;
 using UnityAddon.CoreTest.Mocks.UnityAddonServiceProvider;
 using Xunit;
 
@@ -76,7 +77,7 @@ namespace UnityAddon.CoreTest
             var defCol = factory.CreateBuilder(serCol);
             var usp = factory.CreateServiceProvider(defCol);
 
-            Assert.Throws<InvalidOperationException>(() => usp.GetRequiredService<IA>());
+            Assert.Throws<NoSuchBeanDefinitionException>(() => usp.GetRequiredService<IA>());
         }
 
         [Fact]
