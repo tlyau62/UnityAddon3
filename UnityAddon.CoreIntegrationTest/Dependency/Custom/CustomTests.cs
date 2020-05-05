@@ -9,6 +9,7 @@ using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.Bean.DependencyInjection;
+using UnityAddon.Core.Bootstrap;
 using UnityAddon.Core.Value;
 using Xunit;
 

@@ -32,10 +32,10 @@ namespace UnityAddon.Core.Bean.DependencyInjection
                 return sp.GetService(type, attr.Name);
             });
 
-            AddResolveStrategy<ValueAttribute>((type, attr, sp) =>
-            {
-                return sp.GetRequiredService<ValueProvider>().GetValue(type, attr.Value);
-            });
+            //AddResolveStrategy<ValueAttribute>((type, attr, sp) =>
+            //{
+            //    return sp.GetRequiredService<ValueProvider>().GetValue(type, attr.Value);
+            //});
         }
 
         public void AddResolveStrategy<TAttribute>(Func<Type, TAttribute, IServiceProvider, object> strategy) where TAttribute : Attribute

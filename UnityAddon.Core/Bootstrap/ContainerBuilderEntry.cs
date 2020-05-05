@@ -2,7 +2,7 @@
 using Unity;
 using UnityAddon.Core.BeanDefinition;
 
-namespace UnityAddon.Core.Bean
+namespace UnityAddon.Core.Bootstrap
 {
     public class ContainerBuilderEntry
     {
@@ -22,13 +22,13 @@ namespace UnityAddon.Core.Bean
 
         public IBeanDefinitionCollection BeanDefinitionCollection { get; } = new BeanDefinitionCollection();
 
-        public Action<IUnityContainer, IUnityContainer> PreProcess { get; set; } = (container, configContainer) => { };
+        public Action<IUnityContainer> PreProcess { get; set; } = (container) => { };
 
-        public Action<IUnityContainer, IUnityContainer> PostProcess { get; set; } = (container, configContainer) => { };
+        public Action<IUnityContainer> PostProcess { get; set; } = (container) => { };
 
         public ContainerBuilderEntry ConfigureBeanDefinitions(Action<IBeanDefinitionCollection> config)
         {
-            PreProcess += (container, configContainer) => config(BeanDefinitionCollection);
+            PreProcess += (container) => config(BeanDefinitionCollection);
 
             return this;
         }

@@ -9,6 +9,7 @@ using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.BeanDefinition.GeneralBean;
+using UnityAddon.Core.Bootstrap;
 using UnityAddon.Core.Exceptions;
 
 namespace UnityAddon.Core

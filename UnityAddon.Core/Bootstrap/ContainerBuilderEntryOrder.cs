@@ -1,4 +1,4 @@
-﻿namespace UnityAddon.Core.Bean
+﻿namespace UnityAddon.Core.Bootstrap
 {
     public enum ContainerBuilderEntryOrder
     {

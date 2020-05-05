@@ -3,9 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Unity;
+using UnityAddon.Core.Attributes;
 using UnityAddon.Core.BeanDefinition.GeneralBean;
 using UnityAddon.Core.BeanDefinition.MemberBean;
 using UnityAddon.Core.BeanDefinition.ServiceBean;
+using Unity.Lifetime;
 
 namespace UnityAddon.Core.BeanDefinition
 {
@@ -20,6 +22,8 @@ namespace UnityAddon.Core.BeanDefinition
         IBeanDefinitionCollection AddFromServiceCollection(Action<IServiceCollection> servicesCallback);
 
         IBeanDefinitionCollection AddFromServiceCollection(IServiceCollection services);
+
+        IBeanDefinitionCollection AddFromUnityContainer(IUnityContainer unityContainer);
     }
 
     public class BeanDefinitionCollection : List<IBeanDefinition>, IBeanDefinitionCollection
@@ -81,6 +85,21 @@ namespace UnityAddon.Core.BeanDefinition
         public IBeanDefinitionCollection AddFromExisting(IBeanDefinitionCollection beanDefCollection)
         {
             AddRange(beanDefCollection);
+
+            return this;
+        }
+
+        public IBeanDefinitionCollection AddFromUnityContainer(IUnityContainer unityContainer)
+        {
+            foreach (var reg in unityContainer.Registrations)
+            {
+                if (reg.RegisteredType == typeof(IUnityContainer))
+                {
+                    continue;
+                }
+
+                Add(new FactoryBeanDefinition(reg.RegisteredType, (sp, t, n) => unityContainer.Resolve(t, reg.Name), reg.Name, ScopeType.Transient));
+            }
 
             return this;
         }

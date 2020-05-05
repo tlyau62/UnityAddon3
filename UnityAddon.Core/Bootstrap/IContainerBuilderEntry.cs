@@ -1,7 +1,7 @@
 ﻿using Unity;
 using UnityAddon.Core.BeanDefinition;
 
-namespace UnityAddon.Core.Bean
+namespace UnityAddon.Core.Bootstrap
 {
     public interface IContainerBuilderEntry
     {
@@ -9,9 +9,9 @@ namespace UnityAddon.Core.Bean
 
         bool PreInstantiate { get; }
 
-        void PreProcess(IUnityContainer container, IUnityContainer configContainer);
+        void PreProcess(IUnityContainer container);
 
-        void PostProcess(IUnityContainer container, IUnityContainer configContainer);
+        void PostProcess(IUnityContainer container);
 
         void ConfigureBeanDefinitions(IBeanDefinitionCollection collection);
     }

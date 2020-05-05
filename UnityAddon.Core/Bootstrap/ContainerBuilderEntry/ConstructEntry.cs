@@ -41,12 +41,12 @@ namespace UnityAddon.Core.Bean
             });
         }
 
-        void IContainerBuilderEntry.PostProcess(IUnityContainer container, IUnityContainer configContainer)
+        void IContainerBuilderEntry.PostProcess(IUnityContainer container)
         {
             container.AddNewExtension<BeanBuildStrategyExtension>();
         }
 
-        void IContainerBuilderEntry.PreProcess(IUnityContainer container, IUnityContainer configContainer)
+        void IContainerBuilderEntry.PreProcess(IUnityContainer container)
         {
             container.RegisterType<ProxyGenerator>(new ContainerControlledLifetimeManager())
                 .RegisterType<ConstructorResolver>(new ContainerControlledLifetimeManager())

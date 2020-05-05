@@ -11,6 +11,7 @@ using UnityAddon.Core.Bean;
 using UnityAddon.Core.Value;
 using Xunit;
 using UnityAddon.Core.Util.ComponentScanning;
+using UnityAddon.Core.Bootstrap;
 
 namespace UnityAddon.CoreTest.Dependency.Value
 {

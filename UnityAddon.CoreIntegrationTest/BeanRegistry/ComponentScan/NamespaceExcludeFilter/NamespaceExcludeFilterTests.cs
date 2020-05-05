@@ -12,6 +12,7 @@ using Xunit;
 using UnityAddon.Core.Util.ComponentScanning;
 using UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.B;
 using UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.A;
+using UnityAddon.Core.Bootstrap;
 
 namespace UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.A
 {

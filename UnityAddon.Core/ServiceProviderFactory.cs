@@ -14,6 +14,7 @@ using UnityAddon.Core.Bean;
 using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.BeanBuildStrategies;
 using UnityAddon.Core.BeanDefinition;
+using UnityAddon.Core.Bootstrap;
 using UnityAddon.Core.Thread;
 using UnityAddon.Core.Value;
 
