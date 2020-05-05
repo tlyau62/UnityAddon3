@@ -11,7 +11,7 @@ using UnityAddon.Core.Bean;
 using UnityAddon.Core.Value;
 using Xunit;
 using UnityAddon.Core.Util.ComponentScanning;
-using UnityAddon.Core.Bootstrap;
+using UnityAddon.Core.Context;
 
 namespace UnityAddon.CoreTest.Dependency.Value
 {
@@ -45,9 +45,9 @@ namespace UnityAddon.CoreTest.Dependency.Value
                         {"serviceType", "Write"},
                     });
                })
-               .ConfigureContainer<ContainerBuilder>(builder =>
+               .ConfigureContainer<ApplicationContext>(builder =>
                {
-                   builder.AddContextEntry(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
+                   builder.AddContextEntry(ctx => ctx.ConfigureBeanDefinitions(config =>
                    {
                        config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace);
                    }));

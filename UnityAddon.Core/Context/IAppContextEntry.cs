@@ -1,11 +1,11 @@
 ﻿using Unity;
 using UnityAddon.Core.BeanDefinition;
 
-namespace UnityAddon.Core.Bootstrap
+namespace UnityAddon.Core.Context
 {
-    public interface IContainerBuilderEntry
+    public interface IAppContainerBuilderEntry
     {
-        ContainerBuilderEntryOrder Order { get; }
+        ApplicationContextEntryOrder Order { get; }
 
         bool PreInstantiate { get; }
 

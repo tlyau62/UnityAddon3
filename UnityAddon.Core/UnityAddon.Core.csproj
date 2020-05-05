@@ -11,15 +11,15 @@
 
   <ItemGroup>
     <Compile Remove="BeanPostprocessor\**" />
-    <Compile Remove="Bootstrap\ContainerBuilderEntry\**" />
+    <Compile Remove="Context\ContainerBuilderEntry\**" />
     <Compile Remove="Exceptions\**" />
     <Compile Remove="Thread\**" />
     <EmbeddedResource Remove="BeanPostprocessor\**" />
-    <EmbeddedResource Remove="Bootstrap\ContainerBuilderEntry\**" />
+    <EmbeddedResource Remove="Context\ContainerBuilderEntry\**" />
     <EmbeddedResource Remove="Exceptions\**" />
     <EmbeddedResource Remove="Thread\**" />
     <None Remove="BeanPostprocessor\**" />
-    <None Remove="Bootstrap\ContainerBuilderEntry\**" />
+    <None Remove="Context\ContainerBuilderEntry\**" />
     <None Remove="Exceptions\**" />
     <None Remove="Thread\**" />
   </ItemGroup>

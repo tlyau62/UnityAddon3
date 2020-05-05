@@ -2,21 +2,21 @@
 using Unity;
 using UnityAddon.Core.BeanDefinition;
 
-namespace UnityAddon.Core.Bootstrap
+namespace UnityAddon.Core.Context
 {
-    public class ContainerBuilderEntry
+    public class ApplicationContextEntry
     {
-        public ContainerBuilderEntry()
+        public ApplicationContextEntry()
         {
         }
 
-        public ContainerBuilderEntry(ContainerBuilderEntryOrder order, bool preInstantiate)
+        public ApplicationContextEntry(ApplicationContextEntryOrder order, bool preInstantiate)
         {
             Order = order;
             PreInstantiate = preInstantiate;
         }
 
-        public ContainerBuilderEntryOrder Order { get; set; } = ContainerBuilderEntryOrder.App;
+        public ApplicationContextEntryOrder Order { get; set; } = ApplicationContextEntryOrder.App;
 
         public bool PreInstantiate { get; set; } = false;
 
@@ -26,14 +26,14 @@ namespace UnityAddon.Core.Bootstrap
 
         public Action<IUnityContainer> PostProcess { get; set; } = (container) => { };
 
-        public ContainerBuilderEntry ConfigureBeanDefinitions(Action<IBeanDefinitionCollection> config)
+        public ApplicationContextEntry ConfigureBeanDefinitions(Action<IBeanDefinitionCollection> config)
         {
             PreProcess += (container) => config(BeanDefinitionCollection);
 
             return this;
         }
 
-        public ContainerBuilderEntry ConfigureBeanDefinitions(Action<IServiceProvider, IBeanDefinitionCollection> config)
+        public ApplicationContextEntry ConfigureBeanDefinitions(Action<IServiceProvider, IBeanDefinitionCollection> config)
         {
             //config(container. BeanDefinitionCollection);
 

@@ -9,7 +9,7 @@ using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.BeanDefinition.GeneralBean;
-using UnityAddon.Core.Bootstrap;
+using UnityAddon.Core.Context;
 using UnityAddon.Core.Exceptions;
 
 namespace UnityAddon.Core
@@ -28,23 +28,23 @@ namespace UnityAddon.Core
     public class ServicePostRegistry : IServicePostRegistry
     {
         [Dependency]
-        public ContainerBuilder ContainerBuilder { get; set; }
+        public ApplicationContext AppContext { get; set; }
 
         [Dependency]
         public IServiceProvider Sp { get; set; }
 
         public void Add(IBeanDefinition beanDefinition)
         {
-            var entry = new ContainerBuilderEntry(ContainerBuilderEntryOrder.App, false);
+            var entry = new ApplicationContextEntry(ApplicationContextEntryOrder.App, false);
 
             entry.ConfigureBeanDefinitions(config =>
             {
                 config.Add(beanDefinition);
             });
 
-            ContainerBuilder.AddContextEntry(entry);
+            AppContext.AddContextEntry(entry);
 
-            ContainerBuilder.Refresh();
+            AppContext.Refresh();
         }
 
         public void AddSingleton(Type type, Type implType, string name)

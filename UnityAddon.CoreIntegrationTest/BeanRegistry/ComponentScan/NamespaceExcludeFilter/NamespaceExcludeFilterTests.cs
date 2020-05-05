@@ -12,7 +12,7 @@ using Xunit;
 using UnityAddon.Core.Util.ComponentScanning;
 using UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.B;
 using UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.A;
-using UnityAddon.Core.Bootstrap;
+using UnityAddon.Core.Context;
 
 namespace UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.A
 {
@@ -44,15 +44,18 @@ namespace UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter
         {
             var host = Host.CreateDefaultBuilder()
                 .UseServiceProviderFactory(new ServiceProviderFactory())
-                .ConfigureContainer<ContainerBuilder>(builder =>
+                .ConfigureContainer<ApplicationContext>(builder =>
                 {
-                    builder.AddContextEntry(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
+                    builder.AddContextEntry(ctx =>
                     {
-                        config.AddFromComponentScanner(
-                            config => config.IncludeFilters.Add(ComponentScannerFilter.CreateNamepsaceFilter("UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.B")),
-                            GetType().Assembly,
-                            GetType().Namespace);
-                    }));
+                        ctx.ConfigureBeanDefinitions(config =>
+                        {
+                            config.AddFromComponentScanner(
+                                config => config.IncludeFilters.Add(ComponentScannerFilter.CreateNamepsaceFilter("UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.B")),
+                                GetType().Assembly,
+                                GetType().Namespace);
+                        });
+                    });
                 })
                 .Build();
 
@@ -66,15 +69,18 @@ namespace UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter
         {
             var host = Host.CreateDefaultBuilder()
                 .UseServiceProviderFactory(new ServiceProviderFactory())
-                .ConfigureContainer<ContainerBuilder>(builder =>
+                .ConfigureContainer<ApplicationContext>(builder =>
                 {
-                    builder.AddContextEntry(new ContainerBuilderEntry().ConfigureBeanDefinitions(config =>
+                    builder.AddContextEntry(ctx =>
                     {
-                        config.AddFromComponentScanner(
-                            config => config.IncludeFilters.Add(ComponentScannerFilter.CreateNamepsaceFilter("UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.A")),
-                            GetType().Assembly,
-                            GetType().Namespace);
-                    }));
+                        ctx.ConfigureBeanDefinitions(config =>
+                        {
+                            config.AddFromComponentScanner(
+                                config => config.IncludeFilters.Add(ComponentScannerFilter.CreateNamepsaceFilter("UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.A")),
+                                GetType().Assembly,
+                                GetType().Namespace);
+                        });
+                    });
                 })
                 .Build();
 

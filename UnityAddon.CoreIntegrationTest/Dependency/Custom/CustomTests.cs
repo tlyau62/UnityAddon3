@@ -9,7 +9,7 @@ using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.Bean.DependencyInjection;
-using UnityAddon.Core.Bootstrap;
+using UnityAddon.Core.Context;
 using UnityAddon.Core.Value;
 using Xunit;
 
@@ -38,7 +38,7 @@ namespace UnityAddon.CoreTest.Dependency.Custom
         {
             var host = Host.CreateDefaultBuilder()
                .RegisterUA()
-               .ConfigureContainer<ContainerBuilder>(builder =>
+               .ConfigureContainer<ApplicationContext>(builder =>
                {
                    builder.AddContextEntry(config =>
                    {

@@ -12,15 +12,15 @@ using UnityAddon.Core.BeanBuildStrategies;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.Value;
 
-namespace UnityAddon.Core.Bootstrap
+namespace UnityAddon.Core.Context
 {
-    public class BootstrapContainerBuilder
+    public class CoreContext
     {
         private readonly IUnityContainer _container = new UnityContainer();
 
         private readonly IUnityContainer _appContainer;
 
-        public BootstrapContainerBuilder(IUnityContainer appContainer)
+        public CoreContext(IUnityContainer appContainer)
         {
             _appContainer = appContainer;
         }
@@ -40,11 +40,12 @@ namespace UnityAddon.Core.Bootstrap
             _container
                 .RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
 
-            _container
+            var sp = _container
                 .RegisterType<ServiceProvider>(new ContainerControlledLifetimeManager(), new InjectionConstructor(_appContainer))
-                .RegisterFactory<IServiceProvider>(c => _container.Resolve<ServiceProvider>(), new ContainerControlledLifetimeManager())
-                .RegisterFactory<IServiceScopeFactory>(c => _container.Resolve<ServiceProvider>(), new ContainerControlledLifetimeManager())
-                .RegisterFactory<IServiceScope>(c => _container.Resolve<ServiceProvider>(), new ContainerControlledLifetimeManager());
+                .Resolve<ServiceProvider>();
+            _container.RegisterInstance<IServiceProvider>(sp, new ContainerControlledLifetimeManager())
+                .RegisterInstance<IServiceScopeFactory>(sp, new ContainerControlledLifetimeManager())
+                .RegisterInstance<IServiceScope>(sp, new ContainerControlledLifetimeManager());
 
             _container
                 .RegisterType<ProxyGenerator>(new ContainerControlledLifetimeManager())

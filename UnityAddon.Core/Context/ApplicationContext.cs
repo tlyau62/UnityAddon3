@@ -11,47 +11,46 @@ using UnityAddon.Core.BeanBuildStrategies;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.Thread;
 
-namespace UnityAddon.Core.Bootstrap
+namespace UnityAddon.Core.Context
 {
-
-    public class ContainerBuilder
+    public class ApplicationContext
     {
-        private readonly IntervalHeap<ContainerBuilderEntry> _entries = new IntervalHeap<ContainerBuilderEntry>(Comparer<ContainerBuilderEntry>.Create((a, b) => a.Order - b.Order));
+        private readonly IntervalHeap<ApplicationContextEntry> _entries = new IntervalHeap<ApplicationContextEntry>(Comparer<ApplicationContextEntry>.Create((a, b) => a.Order - b.Order));
 
         private readonly IUnityContainer _appContainer;
 
-        private readonly BootstrapContainerBuilder _coreContainerBuilder;
+        private readonly CoreContext _coreContainerBuilder;
 
         private IUnityContainer _coreContainer;
 
-        public ContainerBuilder(IUnityContainer appContainer)
+        public ApplicationContext(IUnityContainer appContainer)
         {
             _appContainer = appContainer;
-            _coreContainerBuilder = new BootstrapContainerBuilder(appContainer);
+            _coreContainerBuilder = new CoreContext(appContainer);
         }
 
-        public void AddContextEntry(Action<ContainerBuilderEntry> entryConfig)
+        public void AddContextEntry(Action<ApplicationContextEntry> entryConfig)
         {
-            AddContextEntry(ContainerBuilderEntryOrder.App, false, entryConfig);
+            AddContextEntry(ApplicationContextEntryOrder.App, false, entryConfig);
         }
 
-        public void AddContextEntry(ContainerBuilderEntryOrder order, bool preInstantiate, Action<ContainerBuilderEntry> entryConfig)
+        public void AddContextEntry(ApplicationContextEntryOrder order, bool preInstantiate, Action<ApplicationContextEntry> entryConfig)
         {
-            var entry = new ContainerBuilderEntry(order, preInstantiate);
+            var entry = new ApplicationContextEntry(order, preInstantiate);
 
             entryConfig(entry);
 
             _entries.Add(entry);
         }
 
-        public void AddContextEntry(ContainerBuilderEntry entry)
+        public void AddContextEntry(ApplicationContextEntry entry)
         {
             _entries.Add(entry);
         }
 
-        public void AddContextEntry(IContainerBuilderEntry entry)
+        public void AddContextEntry(IAppContainerBuilderEntry entry)
         {
-            var wrapEntry = new ContainerBuilderEntry(entry.Order, entry.PreInstantiate);
+            var wrapEntry = new ApplicationContextEntry(entry.Order, entry.PreInstantiate);
 
             wrapEntry.PreProcess += (container) =>
             {
@@ -84,7 +83,7 @@ namespace UnityAddon.Core.Bootstrap
 
             _appContainer.AddExtension(_coreContainer.Resolve<BeanBuildStrategyExtension>());
 
-            AddContextEntry(ContainerBuilderEntryOrder.Intern, false, entry =>
+            AddContextEntry(ApplicationContextEntryOrder.Intern, false, entry =>
             {
                 entry.ConfigureBeanDefinitions(defs => defs.AddFromUnityContainer(_coreContainer));
             });
@@ -98,7 +97,7 @@ namespace UnityAddon.Core.Bootstrap
             return _coreContainer.Resolve<IServiceProvider>();
         }
 
-        private void Register(ContainerBuilderEntry loadEntry, ContainerBuilderEntryOrder curOrder)
+        private void Register(ApplicationContextEntry loadEntry, ApplicationContextEntryOrder curOrder)
         {
             var child = _appContainer.CreateChildContainer();
 
@@ -106,7 +105,7 @@ namespace UnityAddon.Core.Bootstrap
 
             foreach (var beanDef in loadEntry.BeanDefinitionCollection)
             {
-                if (beanDef.Type == typeof(ContainerBuilderEntry))
+                if (beanDef.Type == typeof(ApplicationContextEntry))
                 {
                     child.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(_coreContainer.Resolve<IServiceProvider>(), t, n), (IFactoryLifetimeManager)beanDef.Scope);
                 }
@@ -121,7 +120,7 @@ namespace UnityAddon.Core.Bootstrap
             {
                 foreach (var beanDef in loadEntry.BeanDefinitionCollection)
                 {
-                    if (beanDef.Type != typeof(ContainerBuilderEntry))
+                    if (beanDef.Type != typeof(ApplicationContextEntry))
                     {
                         _appContainer.Resolve(beanDef.Type, beanDef.Name);
                     }
@@ -130,7 +129,7 @@ namespace UnityAddon.Core.Bootstrap
 
             loadEntry.PostProcess(_appContainer);
 
-            foreach (var entry in child.ResolveAll<ContainerBuilderEntry>())
+            foreach (var entry in child.ResolveAll<ApplicationContextEntry>())
             {
                 if (entry.Order <= curOrder)
                 {

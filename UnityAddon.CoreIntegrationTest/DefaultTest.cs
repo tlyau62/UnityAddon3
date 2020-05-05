@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using Unity;
 using UnityAddon.Core.Bean;
-using UnityAddon.Core.Bootstrap;
+using UnityAddon.Core.Context;
 using UnityAddon.Core.Util.ComponentScanning;
 
 namespace UnityAddon.Core
@@ -18,7 +18,7 @@ namespace UnityAddon.Core
         {
             var host = Host.CreateDefaultBuilder()
                 .UseServiceProviderFactory(new ServiceProviderFactory())
-                .ConfigureContainer<ContainerBuilder>(builder =>
+                .ConfigureContainer<ApplicationContext>(builder =>
                 {
                     builder.AddContextEntry(entry =>
                     {

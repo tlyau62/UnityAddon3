@@ -14,15 +14,15 @@ using UnityAddon.Core.Bean;
 using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.BeanBuildStrategies;
 using UnityAddon.Core.BeanDefinition;
-using UnityAddon.Core.Bootstrap;
+using UnityAddon.Core.Context;
 using UnityAddon.Core.Thread;
 using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core
 {
-    public class ServiceProviderFactory : IServiceProviderFactory<ContainerBuilder>
+    public class ServiceProviderFactory : IServiceProviderFactory<ApplicationContext>
     {
-        private readonly ContainerBuilder _beanLoader;
+        private readonly ApplicationContext _beanLoader;
 
         private bool _isNewContainer = false;
 
@@ -33,12 +33,12 @@ namespace UnityAddon.Core
 
         public ServiceProviderFactory(IUnityContainer container)
         {
-            _beanLoader = new ContainerBuilder(container);
+            _beanLoader = new ApplicationContext(container);
         }
 
-        public ContainerBuilder CreateBuilder(IServiceCollection services = null)
+        public ApplicationContext CreateBuilder(IServiceCollection services = null)
         {
-            var beanAppEntry = new ContainerBuilderEntry(ContainerBuilderEntryOrder.NetAsp, false);
+            var beanAppEntry = new ApplicationContextEntry(ApplicationContextEntryOrder.NetAsp, false);
 
             beanAppEntry.ConfigureBeanDefinitions(defs =>
             {
@@ -50,7 +50,7 @@ namespace UnityAddon.Core
             return _beanLoader;
         }
 
-        public IServiceProvider CreateServiceProvider(ContainerBuilder beanDefCol)
+        public IServiceProvider CreateServiceProvider(ApplicationContext beanDefCol)
         {
             return _beanLoader.Build();
 
