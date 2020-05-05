@@ -5,11 +5,12 @@ using System.Text;
 using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Aop;
+using UnityAddon.Core.Context;
 using Xunit;
+using UnityAddon.Core.Util.ComponentScanning;
 
 namespace UnityAddon.CoreTest.Aop.GenericMethodAttributeInterceptor
 {
-    [Trait("Aop", "MethodAttributeInterceptor")]
     public class GenericMethodAttributeInterceptorTests
     {
         [Dependency]
@@ -22,17 +23,21 @@ namespace UnityAddon.CoreTest.Aop.GenericMethodAttributeInterceptor
         {
             var host = new HostBuilder()
                 .RegisterUA()
-                .ScanComponentsUA(GetType().Namespace)
-                .ConfigureUA<AopInterceptorContainerBuilder>(config =>
+                .ConfigureContainer<ApplicationContext>(ctx =>
                 {
-                    config.AddAopIntercetor<IncInterceptor>();
+                    ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace)));
+                    ctx.ConfigureContext<AopInterceptorContainerOption>(option =>
+                    {
+                        option.AddAopIntercetor<IncInterceptor>();
+                    });
                 })
-                .BuildUA()
-                .BuildTestUA(this);
+                .Build();
+
+            host.Services.BuildUp(this);
         }
 
         [Fact]
-        public void BeanInterceptionStrategy_GenericMethodInterceptors_InterceptorsAndTargetMethodAreExecuted()
+        public void GenericMethodAttributeInterceptor()
         {
             Service.Inc("abc");
 

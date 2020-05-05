@@ -8,6 +8,9 @@ using Unity;
 using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Aop;
+using UnityAddon.Core.Context;
+using UnityAddon.Core.Util.ComponentScanning;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Assert = Xunit.Assert;
 
@@ -23,20 +26,24 @@ namespace UnityAddon.CoreTest.Aop.MethodAttributeInterceptor
         public Counter Counter { get; set; }
 
         [Dependency]
-        public IUnityContainer Container { get; set; }
+        public IServiceProvider Sp { get; set; }
 
         public MethodAttributeInterceptorTests()
         {
             var host = new HostBuilder()
                 .RegisterUA()
-                .ScanComponentsUA(GetType().Namespace)
-                .ConfigureUA<AopInterceptorContainerBuilder>(config =>
+                .ConfigureContainer<ApplicationContext>(ctx =>
                 {
-                    config.AddAopIntercetor<IncInterceptor>();
-                    config.AddAopIntercetor<MulInterceptor>();
+                    ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace)));
+                    ctx.ConfigureContext<AopInterceptorContainerOption>(option =>
+                    {
+                        option.AddAopIntercetor<IncInterceptor>();
+                        option.AddAopIntercetor<MulInterceptor>();
+                    });
                 })
-                .BuildUA()
-                .BuildTestUA(this);
+                .Build();
+
+            host.Services.BuildUp(this);
         }
 
         [Fact]
@@ -66,14 +73,14 @@ namespace UnityAddon.CoreTest.Aop.MethodAttributeInterceptor
         [Fact]
         public void BeanInterceptionStrategy_SingletonProxy_ReturnCachedProxy()
         {
-            Assert.Same(Service, Container.ResolveUA<IService>());
+            Assert.Same(Service, Sp.GetRequiredService<IService>());
         }
 
         [Fact]
         public void BeanInterceptionStrategy_ProxyOfDifferentInterfaces_ProxyStateIsConsistent()
         {
-            var s1 = Container.ResolveUA<ISetDep>();
-            var s2 = Container.ResolveUA<ISetDep2>();
+            var s1 = Sp.GetRequiredService<ISetDep>();
+            var s2 = Sp.GetRequiredService<ISetDep2>();
 
             Assert.Same(s1, s2);
         }
