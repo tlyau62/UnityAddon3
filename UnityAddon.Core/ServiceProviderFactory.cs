@@ -10,10 +10,12 @@ using Unity;
 using Unity.Injection;
 using Unity.Lifetime;
 using UnityAddon.Core.Aop;
+using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.BeanBuildStrategies;
 using UnityAddon.Core.BeanDefinition;
+using UnityAddon.Core.BeanDefinition.GeneralBean;
 using UnityAddon.Core.Context;
 using UnityAddon.Core.Thread;
 using UnityAddon.Core.Value;
@@ -22,7 +24,7 @@ namespace UnityAddon.Core
 {
     public class ServiceProviderFactory : IServiceProviderFactory<ApplicationContext>
     {
-        private readonly ApplicationContext _beanLoader;
+        private readonly IUnityContainer _container;
 
         private bool _isNewContainer = false;
 
@@ -33,26 +35,39 @@ namespace UnityAddon.Core
 
         public ServiceProviderFactory(IUnityContainer container)
         {
-            _beanLoader = new ApplicationContext(container);
+            _container = container;
         }
 
         public ApplicationContext CreateBuilder(IServiceCollection services = null)
         {
-            var beanAppEntry = new ApplicationContextEntry(ApplicationContextEntryOrder.NetAsp, false);
+            var appCtx = new ApplicationContext(_container);
 
-            beanAppEntry.ConfigureBeanDefinitions(defs =>
+            appCtx.AddContextEntry(ApplicationContextEntryOrder.NetAsp, false,
+                entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromServiceCollection(services)));
+
+            // add value resolve logic
+            appCtx.AddContextEntry(ApplicationContextEntryOrder.App - 1, false, entry =>
             {
-                defs.AddFromServiceCollection(services);
+                entry.ConfigureBeanDefinitions(defs =>
+                {
+                    defs.Add(new TypeBeanDefintion(typeof(ValueProvider), typeof(ValueProvider), null, ScopeType.Singleton));
+                    defs.Add(new TypeBeanDefintion(typeof(ConfigBracketParser), typeof(ConfigBracketParser), null, ScopeType.Singleton));
+                });
+                entry.PostProcess += c => appCtx.ConfigureContext<DependencyResolverOption>(config =>
+                {
+                    config.AddResolveStrategy<ValueAttribute>((type, attr, sp) =>
+                    {
+                        return sp.GetRequiredService<ValueProvider>().GetValue(type, attr.Value);
+                    });
+                });
             });
 
-            _beanLoader.AddContextEntry(beanAppEntry);
-
-            return _beanLoader;
+            return appCtx;
         }
 
-        public IServiceProvider CreateServiceProvider(ApplicationContext beanDefCol)
+        public IServiceProvider CreateServiceProvider(ApplicationContext appCtx)
         {
-            return _beanLoader.Build();
+            return appCtx.Build();
 
             //var beanDefFilters = _sp.GetRequiredService<BeanDefintionCandidateSelector>();
             //var beanDefCollection = compScannedDefs.Where(d => !d.FromComponentScanning || beanDefFilters.Filter(d));

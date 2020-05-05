@@ -18,11 +18,11 @@ namespace UnityAddon.Core.Context
     {
         private readonly IUnityContainer _container = new UnityContainer();
 
-        private readonly IUnityContainer _appContainer;
+        private readonly ApplicationContext _applicationContext;
 
-        public CoreContext(IUnityContainer appContainer)
+        public CoreContext(ApplicationContext applicationContext)
         {
-            _appContainer = appContainer;
+            _applicationContext = applicationContext;
         }
 
         public void Configure<TConfig>(Action<TConfig> config)
@@ -40,8 +40,11 @@ namespace UnityAddon.Core.Context
             _container
                 .RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
 
+            _container
+                .RegisterInstance(_applicationContext, new ContainerControlledLifetimeManager());
+
             var sp = _container
-                .RegisterType<ServiceProvider>(new ContainerControlledLifetimeManager(), new InjectionConstructor(_appContainer))
+                .RegisterType<ServiceProvider>(new ContainerControlledLifetimeManager(), new InjectionConstructor(_applicationContext.AppContainer))
                 .Resolve<ServiceProvider>();
             _container.RegisterInstance<IServiceProvider>(sp, new ContainerControlledLifetimeManager())
                 .RegisterInstance<IServiceScopeFactory>(sp, new ContainerControlledLifetimeManager())
@@ -56,12 +59,10 @@ namespace UnityAddon.Core.Context
                 .RegisterType<BeanFactory>(new ContainerControlledLifetimeManager());
 
             _container
-                .RegisterType<ValueProvider>(new ContainerControlledLifetimeManager())
-                .RegisterType<ConfigBracketParser>(new ContainerControlledLifetimeManager())
                 .RegisterType<BeanMethodInterceptor>(new ContainerControlledLifetimeManager());
 
             _container
-                .RegisterType<ServicePostRegistry>(new ContainerControlledLifetimeManager());
+                .RegisterType<IServicePostRegistry, ServicePostRegistry>(new ContainerControlledLifetimeManager());
 
             _container
                 .RegisterType<BeanBuildStrategyExtension>(new ContainerControlledLifetimeManager());

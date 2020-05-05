@@ -26,8 +26,10 @@ namespace UnityAddon.Core.Context
         public ApplicationContext(IUnityContainer appContainer)
         {
             _appContainer = appContainer;
-            _coreContainerBuilder = new CoreContext(appContainer);
+            _coreContainerBuilder = new CoreContext(this);
         }
+
+        public IUnityContainer AppContainer => _appContainer;
 
         public void AddContextEntry(Action<ApplicationContextEntry> entryConfig)
         {
@@ -89,10 +91,6 @@ namespace UnityAddon.Core.Context
             });
 
             Refresh();
-
-            var a = _coreContainer.Resolve<IBeanDefinitionContainer>() == _coreContainer.Resolve<IBeanDefinitionContainer>();
-
-            var z = _appContainer.Resolve<IBeanDefinitionContainer>();
 
             return _coreContainer.Resolve<IServiceProvider>();
         }
