@@ -128,7 +128,6 @@ namespace UnityAddon.Core.Context
         private void Register(ApplicationContextEntry loadEntry, ApplicationContextEntryOrder curOrder)
         {
             var sp = _coreContainer.Resolve<IServiceProvider>();
-            var child = AppContainer.CreateChildContainer();
 
             loadEntry.PreProcess(AppContainer);
 
@@ -139,43 +138,33 @@ namespace UnityAddon.Core.Context
                     continue;
                 }
 
-                if (beanDef.Type == typeof(ApplicationContextEntry))
-                {
-                    child.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(_coreContainer.Resolve<IServiceProvider>(), t, n), (IFactoryLifetimeManager)beanDef.Scope);
-                }
-                else
-                {
-                    _coreContainer.Resolve<IBeanDefinitionContainer>().RegisterBeanDefinition(beanDef);
-                    AppContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(_coreContainer.Resolve<IServiceProvider>(), t, n), (IFactoryLifetimeManager)beanDef.Scope);
-                }
+                _coreContainer.Resolve<IBeanDefinitionContainer>().RegisterBeanDefinition(beanDef);
+                AppContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(sp, t, n), (IFactoryLifetimeManager)beanDef.Scope);
             }
+
+            if (loadEntry.BeanDefinitionCollection.Any(def => def.Type == typeof(IBeanDefinitionCollection)))
+            {
+                AddContextEntry(ApplicationContextEntryOrder.BeanMethod, false, entry =>
+                {
+                    entry.ConfigureBeanDefinitions(defCol =>
+                    {
+                        foreach (var beanDef in loadEntry.BeanDefinitionCollection.Where(def => def.Type == typeof(IBeanDefinitionCollection)))
+                        {
+                            defCol.AddFromExisting(sp.GetRequiredService<IBeanDefinitionCollection>(beanDef.Name));
+                        }
+                    });
+                });
+            }
+
+            loadEntry.PostProcess(AppContainer);
 
             if (loadEntry.PreInstantiate)
             {
                 foreach (var beanDef in loadEntry.BeanDefinitionCollection)
                 {
-                    if (beanDef.Type != typeof(ApplicationContextEntry))
-                    {
-                        AppContainer.Resolve(beanDef.Type, beanDef.Name);
-                    }
+                    AppContainer.Resolve(beanDef.Type, beanDef.Name);
                 }
             }
-
-            loadEntry.PostProcess(AppContainer);
-
-            foreach (var entry in child.ResolveAll<ApplicationContextEntry>())
-            {
-                if (entry.Order <= curOrder)
-                {
-                    Register(entry, curOrder);
-                }
-                else
-                {
-                    _entries.Add(entry);
-                }
-            }
-
-            child.Dispose();
         }
     }
 }

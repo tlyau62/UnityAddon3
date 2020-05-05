@@ -5,6 +5,7 @@ using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.BeanDefinition;
+using UnityAddon.Core.BeanDefinition.GeneralBean;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Configuration.EnumBeanDefinition
@@ -17,7 +18,7 @@ namespace UnityAddon.CoreTest.Configuration.EnumBeanDefinition
         {
             var defs = new BeanDefinitionCollection();
 
-            defs.Add(new SimpleFactoryBeanDefinition(typeof(string), (c, t, s) => "test"));
+            defs.Add(new InstanceBeanDefintion(typeof(string), "test", null, ScopeType.Singleton));
 
             return defs;
         }
@@ -29,7 +30,7 @@ namespace UnityAddon.CoreTest.Configuration.EnumBeanDefinition
         public string TestString { get; set; }
 
         [Fact]
-        public void SimpleFactoryBeanDefinition_EnumBeanDefinition_BeanDefitionRegistered()
+        public void EnumBeanDefinition()
         {
             Assert.Equal("test", TestString);
         }
