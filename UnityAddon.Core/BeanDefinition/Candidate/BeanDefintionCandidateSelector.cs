@@ -16,16 +16,16 @@ namespace UnityAddon.Core.BeanDefinition
     /// </summary>
     public class BeanDefintionCandidateSelector
     {
-        public IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
 
-        private IEnumerable<IBeanDefinitionCandidateFilter> _includeFilters;
+        private readonly IEnumerable<IBeanDefinitionCandidateFilter> _includeFilters;
 
-        private IEnumerable<IBeanDefinitionCandidateFilter> _excludeFilters;
+        private readonly IEnumerable<IBeanDefinitionCandidateFilter> _excludeFilters;
 
-        public BeanDefintionCandidateSelector(IEnumerable<IBeanDefinitionCandidateFilter> includeFilters, IEnumerable<IBeanDefinitionCandidateFilter> excludeFilters, IConfiguration configuration)
+        public BeanDefintionCandidateSelector(BeanDefintionCandidateSelectorOption option, IConfiguration configuration)
         {
-            _includeFilters = includeFilters;
-            _excludeFilters = excludeFilters;
+            _includeFilters = option.IncludeFilters;
+            _excludeFilters = option.ExcludeFilters;
             _configuration = configuration;
         }
 

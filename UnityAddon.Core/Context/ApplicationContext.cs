@@ -1,4 +1,5 @@
 ﻿using C5;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,9 +8,13 @@ using System.Linq;
 using System.Text;
 using Unity;
 using Unity.Lifetime;
+using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.BeanBuildStrategies;
 using UnityAddon.Core.BeanDefinition;
+using UnityAddon.Core.BeanDefinition.GeneralBean;
 using UnityAddon.Core.Thread;
+using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core.Context
 {
@@ -17,19 +22,17 @@ namespace UnityAddon.Core.Context
     {
         private readonly IntervalHeap<ApplicationContextEntry> _entries = new IntervalHeap<ApplicationContextEntry>(Comparer<ApplicationContextEntry>.Create((a, b) => a.Order - b.Order));
 
-        private readonly IUnityContainer _appContainer;
-
         private readonly CoreContext _coreContainerBuilder;
 
         private IUnityContainer _coreContainer;
 
         public ApplicationContext(IUnityContainer appContainer)
         {
-            _appContainer = appContainer;
             _coreContainerBuilder = new CoreContext(this);
+            AppContainer = appContainer;
         }
 
-        public IUnityContainer AppContainer => _appContainer;
+        public IUnityContainer AppContainer { get; }
 
         public void AddContextEntry(Action<ApplicationContextEntry> entryConfig)
         {
@@ -83,11 +86,38 @@ namespace UnityAddon.Core.Context
         {
             _coreContainer = _coreContainerBuilder.Build();
 
-            _appContainer.AddExtension(_coreContainer.Resolve<BeanBuildStrategyExtension>());
+            AppContainer.AddExtension(_coreContainer.Resolve<BeanBuildStrategyExtension>());
 
             AddContextEntry(ApplicationContextEntryOrder.Intern, false, entry =>
             {
                 entry.ConfigureBeanDefinitions(defs => defs.AddFromUnityContainer(_coreContainer));
+            });
+
+            // add value resolve logic
+            AddContextEntry(ApplicationContextEntryOrder.NetAsp + 1, false, entry =>
+            {
+                entry.ConfigureBeanDefinitions(defs =>
+                {
+                    defs.Add(new TypeBeanDefintion(typeof(ValueProvider), typeof(ValueProvider), null, ScopeType.Singleton));
+                    defs.Add(new TypeBeanDefintion(typeof(ConfigBracketParser), typeof(ConfigBracketParser), null, ScopeType.Singleton));
+                });
+
+                entry.PostProcess += c => ConfigureContext<DependencyResolverOption>(config =>
+                {
+                    config.AddResolveStrategy<ValueAttribute>((type, attr, sp) =>
+                    {
+                        return sp.GetRequiredService<ValueProvider>().GetValue(type, attr.Value);
+                    });
+                });
+            });
+
+            // beandefintion candidate selector
+            AddContextEntry(ApplicationContextEntryOrder.NetAsp + 1, false, entry =>
+            {
+                entry.ConfigureBeanDefinitions(defs =>
+                {
+                    defs.Add(new TypeBeanDefintion(typeof(BeanDefintionCandidateSelector), typeof(BeanDefintionCandidateSelector), null, ScopeType.Singleton));
+                });
             });
 
             Refresh();
@@ -97,12 +127,18 @@ namespace UnityAddon.Core.Context
 
         private void Register(ApplicationContextEntry loadEntry, ApplicationContextEntryOrder curOrder)
         {
-            var child = _appContainer.CreateChildContainer();
+            var sp = _coreContainer.Resolve<IServiceProvider>();
+            var child = AppContainer.CreateChildContainer();
 
-            loadEntry.PreProcess(_appContainer);
+            loadEntry.PreProcess(AppContainer);
 
             foreach (var beanDef in loadEntry.BeanDefinitionCollection)
             {
+                if (!(sp.GetService<BeanDefintionCandidateSelector>()?.Filter(beanDef) ?? true))
+                {
+                    continue;
+                }
+
                 if (beanDef.Type == typeof(ApplicationContextEntry))
                 {
                     child.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(_coreContainer.Resolve<IServiceProvider>(), t, n), (IFactoryLifetimeManager)beanDef.Scope);
@@ -110,7 +146,7 @@ namespace UnityAddon.Core.Context
                 else
                 {
                     _coreContainer.Resolve<IBeanDefinitionContainer>().RegisterBeanDefinition(beanDef);
-                    _appContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(_coreContainer.Resolve<IServiceProvider>(), t, n), (IFactoryLifetimeManager)beanDef.Scope);
+                    AppContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(_coreContainer.Resolve<IServiceProvider>(), t, n), (IFactoryLifetimeManager)beanDef.Scope);
                 }
             }
 
@@ -120,12 +156,12 @@ namespace UnityAddon.Core.Context
                 {
                     if (beanDef.Type != typeof(ApplicationContextEntry))
                     {
-                        _appContainer.Resolve(beanDef.Type, beanDef.Name);
+                        AppContainer.Resolve(beanDef.Type, beanDef.Name);
                     }
                 }
             }
 
-            loadEntry.PostProcess(_appContainer);
+            loadEntry.PostProcess(AppContainer);
 
             foreach (var entry in child.ResolveAll<ApplicationContextEntry>())
             {

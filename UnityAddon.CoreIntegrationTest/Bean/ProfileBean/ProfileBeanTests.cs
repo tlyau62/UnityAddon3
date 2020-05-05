@@ -7,6 +7,8 @@ using Unity;
 using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Context;
+using UnityAddon.Core.Util.ComponentScanning;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Dependency.Bean.ProfileBean
@@ -27,22 +29,17 @@ namespace UnityAddon.CoreTest.Dependency.Bean.ProfileBean
     {
     }
 
-    [Trait("Bean", "ProfileBean")]
     public class ProfileBeanTests
     {
         [Dependency]
         public IService Service { get; set; }
 
-        public ProfileBeanTests()
-        {
-        }
-
         [Theory]
         [InlineData("prod", typeof(ProdService))]
         [InlineData("dev", typeof(DevService))]
-        public void BuildStrategy_DependencyOnProfileBean_BeanInjected(string activeProfile, Type resolveType)
+        public void ProfileBean(string activeProfile, Type resolveType)
         {
-            Host.CreateDefaultBuilder()
+            var host = Host.CreateDefaultBuilder()
                .RegisterUA()
                .ConfigureAppConfiguration(config =>
                {
@@ -51,9 +48,16 @@ namespace UnityAddon.CoreTest.Dependency.Bean.ProfileBean
                         {"profiles:active", activeProfile},
                     });
                })
-               .ScanComponentsUA(GetType().Namespace)
-               .BuildUA()
-               .BuildTestUA(this);
+               .ConfigureContainer<ApplicationContext>(ctx =>
+               {
+                   ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs =>
+                   {
+                       defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace);
+                   }));
+               })
+               .Build();
+
+            host.Services.BuildUp(this);
 
             Assert.IsType(resolveType, Service);
         }

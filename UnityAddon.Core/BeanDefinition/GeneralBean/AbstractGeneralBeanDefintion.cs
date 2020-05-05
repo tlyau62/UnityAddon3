@@ -16,7 +16,11 @@ namespace UnityAddon.Core.BeanDefinition.GeneralBean
         {
             _scopedType = scopeType;
             Type = type;
-            Qualifiers = new[] { name };
+
+            if (name != null)
+            {
+                Qualifiers = new[] { name };
+            }
         }
 
         public Type Type { get; set; } = typeof(object);

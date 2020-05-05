@@ -58,6 +58,12 @@ namespace UnityAddon.Core.Context
                 .RegisterType<DependencyResolver>(new ContainerControlledLifetimeManager())
                 .RegisterType<BeanFactory>(new ContainerControlledLifetimeManager());
 
+            if (!_container.IsRegistered<DependencyResolverOption>())
+            {
+                // use default option
+                _container.RegisterType<DependencyResolverOption>(new ContainerControlledLifetimeManager());
+            }
+
             _container
                 .RegisterType<BeanMethodInterceptor>(new ContainerControlledLifetimeManager());
 
@@ -66,6 +72,12 @@ namespace UnityAddon.Core.Context
 
             _container
                 .RegisterType<BeanBuildStrategyExtension>(new ContainerControlledLifetimeManager());
+
+            if (!_container.IsRegistered<BeanDefintionCandidateSelectorOption>())
+            {
+                // use default option
+                _container.RegisterType<BeanDefintionCandidateSelectorOption>(new ContainerControlledLifetimeManager());
+            }
 
             return _container;
         }

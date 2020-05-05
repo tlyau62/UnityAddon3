@@ -45,23 +45,6 @@ namespace UnityAddon.Core
             appCtx.AddContextEntry(ApplicationContextEntryOrder.NetAsp, false,
                 entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromServiceCollection(services)));
 
-            // add value resolve logic
-            appCtx.AddContextEntry(ApplicationContextEntryOrder.App - 1, false, entry =>
-            {
-                entry.ConfigureBeanDefinitions(defs =>
-                {
-                    defs.Add(new TypeBeanDefintion(typeof(ValueProvider), typeof(ValueProvider), null, ScopeType.Singleton));
-                    defs.Add(new TypeBeanDefintion(typeof(ConfigBracketParser), typeof(ConfigBracketParser), null, ScopeType.Singleton));
-                });
-                entry.PostProcess += c => appCtx.ConfigureContext<DependencyResolverOption>(config =>
-                {
-                    config.AddResolveStrategy<ValueAttribute>((type, attr, sp) =>
-                    {
-                        return sp.GetRequiredService<ValueProvider>().GetValue(type, attr.Value);
-                    });
-                });
-            });
-
             return appCtx;
         }
 
