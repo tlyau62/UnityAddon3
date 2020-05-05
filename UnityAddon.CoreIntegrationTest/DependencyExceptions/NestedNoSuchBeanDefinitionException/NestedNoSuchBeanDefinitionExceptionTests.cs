@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,16 +33,15 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NestedNoSuchBeanDefinitionExc
         public ICommonService CommonService { get; set; }
     }
 
-    [Trait("DependencyExceptions", "NoSuchBeanDefinition")]
-    public class NestedNoSuchBeanDefinitionExceptionTests : UnityAddonDefaultTest
+    public class NestedNoSuchBeanDefinitionExceptionTests : DefaultTest
     {
         [Dependency]
-        public IUnityContainer UnityContainer { get; set; }
+        public IServiceProvider Sp { get; set; }
 
         [Fact]
-        public void PropertyFill_NestedNoSuchBeanDefinition_ExceptionThrown()
+        public void NestedNoSuchBeanDefinitionException()
         {
-            var ex = Assert.Throws<BeanCreationException>(() => UnityContainer.Resolve<IService>());
+            var ex = Assert.Throws<NoSuchBeanDefinitionException>(() => Sp.GetRequiredService<IService>());
 
             Assert.Equal($"Property Root in {typeof(CommonService).FullName} required a bean of type '{typeof(IRoot).FullName}' that could not be found.", ex.Message);
         }

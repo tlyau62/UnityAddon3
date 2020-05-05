@@ -48,7 +48,14 @@ namespace UnityAddon.Core.Bean.DependencyInjection
             }
             catch (NoSuchBeanDefinitionException ex)
             {
-                throw new NoSuchBeanDefinitionException($"Property {prop.Name} in {prop.DeclaringType} required a bean of type '{prop.PropertyType}' that could not be found.", ex);
+                if (ex.InnerException == null)
+                {
+                    throw new NoSuchBeanDefinitionException($"Property {prop.Name} in {prop.DeclaringType} required a bean of type '{prop.PropertyType}' that could not be found.", ex);
+                }
+                else
+                {
+                    throw;
+                }
             }
         }
 
