@@ -106,7 +106,7 @@ namespace UnityAddon.Core.Context
             });
 
             // add value resolve logic
-            AddContextEntry(ApplicationContextEntryOrder.NetAsp + 1, false, entry =>
+            AddContextEntry(ApplicationContextEntryOrder.AppPreConfig, false, entry =>
             {
                 entry.ConfigureBeanDefinitions(defs =>
                 {
@@ -124,7 +124,7 @@ namespace UnityAddon.Core.Context
             });
 
             // beandefintion candidate selector
-            AddContextEntry(ApplicationContextEntryOrder.NetAsp + 1, false, entry =>
+            AddContextEntry(ApplicationContextEntryOrder.AppPreConfig, false, entry =>
             {
                 entry.ConfigureBeanDefinitions(defs =>
                 {
@@ -133,7 +133,7 @@ namespace UnityAddon.Core.Context
             });
 
             // aop
-            AddContextEntry(ApplicationContextEntryOrder.AppPreConfig, false, entry =>
+            AddContextEntry(ApplicationContextEntryOrder.AppPreConfig + 1, false, entry =>
             {
                 entry.ConfigureBeanDefinitions(defs =>
                 {
