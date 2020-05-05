@@ -1,4 +1,5 @@
 ﻿using Castle.DynamicProxy;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,6 +8,8 @@ using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Context;
+using UnityAddon.Core.Util.ComponentScanning;
 using Xunit;
 
 namespace UnityAddon.CoreTest.BeanPostConstruct.ProxyBean
@@ -17,7 +20,8 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.ProxyBean
     }
 
     [Component]
-    public class IncInterceptor : IAttributeInterceptor<IncAttribute>
+    [AopAttribute(typeof(IncAttribute))]
+    public class IncInterceptor : IInterceptor
     {
         [Dependency]
         public Counter Counter { get; set; }
@@ -53,18 +57,32 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.ProxyBean
         }
     }
 
-    [Trait("BeanPostConstruct", "ProxyBean")]
     public class ProxyBeanTests
     {
+        [Dependency]
+        public IService Service { get; set; }
+
+        [Dependency]
+        public Counter Counter { get; set; }
+
         [Fact]
-        public void BuildStrategy_PostConstructProxyBean_BeanPostConstructed()
+        public void ProxyBean()
         {
-            var container = new UnityContainer();
-            var appContext = new ApplicationContext(container, GetType().Namespace);
+            var host = Host.CreateDefaultBuilder()
+                .RegisterUA()
+                .ConfigureContainer<ApplicationContext>(ctx =>
+                {
+                    ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace)));
+                    ctx.ConfigureContext<AopInterceptorContainerOption>(option =>
+                    {
+                        option.AddAopIntercetor<IncInterceptor>();
+                    });
+                })
+                .Build();
 
-            appContext.Resolve<IService>();
+            host.Services.BuildUp(this);
 
-            Assert.Equal(1, appContext.Resolve<Counter>().Count);
+            Assert.Equal(1, Counter.Count);
         }
     }
 }

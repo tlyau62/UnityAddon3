@@ -45,6 +45,7 @@
     <Compile Include="Aop\MethodAttributeInterceptor\MethodAttributeInterceptorTests.cs" />
     <Compile Include="BeanPostConstruct\AsyncResolve\AsyncResolveTests.cs" />
     <Compile Include="BeanPostConstruct\NonProxyBean\NonProxyBeanTests.cs" />
+    <Compile Include="BeanPostConstruct\ProxyBean\ProxyBeanTests.cs" />
     <Compile Include="Bean\NonGenericBean\NonGenericBeanTests.cs" />
     <Compile Include="DependencyExceptions\CircularDependency\ComplexDAG\ComplexDAGTests.cs" />
     <Compile Include="DependencyExceptions\CircularDependency\ComplexLoop\ComplexLoopTests.cs" />

@@ -22,7 +22,7 @@ namespace UnityAddon.Core.BeanDefinition
 
         private readonly IEnumerable<IBeanDefinitionCandidateFilter> _excludeFilters;
 
-        public BeanDefintionCandidateSelector(BeanDefintionCandidateSelectorOption option, IConfiguration configuration)
+        public BeanDefintionCandidateSelector(BeanDefintionCandidateSelectorOption option, [OptionalDependency]IConfiguration configuration)
         {
             _includeFilters = option.IncludeFilters;
             _excludeFilters = option.ExcludeFilters;
@@ -36,6 +36,11 @@ namespace UnityAddon.Core.BeanDefinition
 
         public bool Filter(IBeanDefinition definition)
         {
+            if (_configuration == null)
+            {
+                return true;
+            }
+
             if (_excludeFilters.Any(f => f.IsMatch(definition, _configuration)))
             {
                 return false;
