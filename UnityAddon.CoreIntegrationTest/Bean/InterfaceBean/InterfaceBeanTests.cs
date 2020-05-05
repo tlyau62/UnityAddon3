@@ -7,6 +7,8 @@ using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Context;
+using UnityAddon.Core.Util.ComponentScanning;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Bean.InterfaceBean
@@ -40,7 +42,6 @@ namespace UnityAddon.CoreTest.Bean.InterfaceBean
         public string Log = "";
     }
 
-    [Trait("Bean", "GuidBean")]
     public class InterfaceBeanTests
     {
         [Dependency]
@@ -51,19 +52,23 @@ namespace UnityAddon.CoreTest.Bean.InterfaceBean
 
         public InterfaceBeanTests()
         {
-            Host.CreateDefaultBuilder()
+            var host = Host.CreateDefaultBuilder()
                 .RegisterUA()
-                .ScanComponentsUA(GetType().Namespace)
-                .ConfigureUA<AopInterceptorContainerBuilder>(c =>
+                .ConfigureContainer<ApplicationContext>(ctx =>
                 {
-                    c.AddAopIntercetor<NoImplInterceptor>();
+                    ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace)));
+                    ctx.ConfigureContext<AopInterceptorContainerOption>(option =>
+                    {
+                        option.AddAopIntercetor<NoImplInterceptor>();
+                    });
                 })
-                .BuildUA()
-                .BuildTestUA(this);
+                .Build();
+
+            host.Services.BuildUp(this);
         }
 
         [Fact]
-        public void BeanFactory_CreateInterfaceBean_InterfaceBeanCreated()
+        public void InterfaceBean()
         {
             NoImplService.Test();
 

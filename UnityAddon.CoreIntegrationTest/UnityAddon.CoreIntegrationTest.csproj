@@ -10,7 +10,6 @@
     <Compile Remove="Aop\**" />
     <Compile Remove="BeanPostConstruct\**" />
     <Compile Remove="BeanPostProcessor\**" />
-    <Compile Remove="Bean\InterfaceBean\**" />
     <Compile Remove="Bean\NonGenericBean\**" />
     <Compile Remove="DependencyExceptions\**" />
     <Compile Remove="Properties\PublishProfiles\**" />
@@ -19,7 +18,6 @@
     <EmbeddedResource Remove="Aop\**" />
     <EmbeddedResource Remove="BeanPostConstruct\**" />
     <EmbeddedResource Remove="BeanPostProcessor\**" />
-    <EmbeddedResource Remove="Bean\InterfaceBean\**" />
     <EmbeddedResource Remove="Bean\NonGenericBean\**" />
     <EmbeddedResource Remove="DependencyExceptions\**" />
     <EmbeddedResource Remove="Properties\PublishProfiles\**" />
@@ -28,7 +26,6 @@
     <None Remove="Aop\**" />
     <None Remove="BeanPostConstruct\**" />
     <None Remove="BeanPostProcessor\**" />
-    <None Remove="Bean\InterfaceBean\**" />
     <None Remove="Bean\NonGenericBean\**" />
     <None Remove="DependencyExceptions\**" />
     <None Remove="Properties\PublishProfiles\**" />
