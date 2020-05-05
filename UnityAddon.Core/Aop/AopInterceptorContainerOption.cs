@@ -11,24 +11,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace UnityAddon.Core.Aop
 {
-    public class AopInterceptorContainerBuilder
+    public class AopInterceptorContainerOption
     {
-        private readonly IDictionary<Type, IList<Type>> _interceptorMap; // (attrtype, interceptor type)
+        public IDictionary<Type, IList<Type>> InterceptorMap { get; } // (attrtype, interceptor type)
 
-        public AopInterceptorContainerBuilder()
+        public AopInterceptorContainerOption()
         {
-            _interceptorMap = new Dictionary<Type, IList<Type>>();
+            InterceptorMap = new Dictionary<Type, IList<Type>>();
         }
 
-        public AopInterceptorContainer Build(IServiceProvider sp)
-        {
-            return new AopInterceptorContainer(_interceptorMap
-                .ToDictionary(
-                    e => e.Key,
-                    e => e.Value.Select(t => (IInterceptor)sp.GetRequiredService(t))));
-        }
-
-        public AopInterceptorContainerBuilder AddAopIntercetor<TAopAttribute, TInterceptor>()
+        public AopInterceptorContainerOption AddAopIntercetor<TAopAttribute, TInterceptor>()
             where TAopAttribute : Attribute
             where TInterceptor : IInterceptor
         {
@@ -37,7 +29,7 @@ namespace UnityAddon.Core.Aop
             return this;
         }
 
-        public AopInterceptorContainerBuilder AddAopIntercetor<TInterceptor>()
+        public AopInterceptorContainerOption AddAopIntercetor<TInterceptor>()
             where TInterceptor : IInterceptor
         {
             var aopAttributes = typeof(TInterceptor).GetAllAttributes<AopAttributeAttribute>();
@@ -55,13 +47,13 @@ namespace UnityAddon.Core.Aop
 
         private void AddAopIntercetor(Type attrType, Type interceptorType)
         {
-            if (_interceptorMap.ContainsKey(attrType))
+            if (InterceptorMap.ContainsKey(attrType))
             {
-                _interceptorMap[attrType].Add(interceptorType);
+                InterceptorMap[attrType].Add(interceptorType);
             }
             else
             {
-                _interceptorMap[attrType] = new List<Type>() { interceptorType };
+                InterceptorMap[attrType] = new List<Type>() { interceptorType };
             }
         }
 

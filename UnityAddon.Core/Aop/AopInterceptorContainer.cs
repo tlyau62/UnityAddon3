@@ -8,7 +8,10 @@ using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.BeanDefinition;
+using UnityAddon.Core.BeanDefinition.GeneralBean;
+using UnityAddon.Core.Context;
 using UnityAddon.Core.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace UnityAddon.Core.Aop
 {
@@ -17,11 +20,44 @@ namespace UnityAddon.Core.Aop
     /// </summary>
     public class AopInterceptorContainer
     {
-        private readonly IDictionary<Type, IEnumerable<IInterceptor>> _interceptorMap;
+        [Dependency]
+        public AopInterceptorContainerOption AopInterceptorContainerOption { get; set; }
 
-        public AopInterceptorContainer(IDictionary<Type, IEnumerable<IInterceptor>> interceptorMap)
+        [Dependency]
+        public ApplicationContext ApplicationContext { get; set; }
+
+        [Dependency]
+        public IServiceProvider Sp { get; set; }
+
+        private IDictionary<Type, IEnumerable<IInterceptor>> _interceptorMap;
+
+        private bool _isInit = false;
+
+        public void Init()
         {
-            _interceptorMap = interceptorMap;
+            if (_isInit)
+            {
+                throw new InvalidOperationException("Can only initialized once");
+            }
+
+            ApplicationContext.AddContextEntry(entry =>
+            {
+                entry.ConfigureBeanDefinitions(defs =>
+                {
+                    foreach (var type in AopInterceptorContainerOption.InterceptorMap.Values.SelectMany(v => v))
+                    {
+                        defs.Add(new TypeBeanDefintion(type, type, null, ScopeType.Singleton));
+                    }
+                });
+            });
+
+            ApplicationContext.Refresh();
+
+            _interceptorMap = AopInterceptorContainerOption.InterceptorMap.ToDictionary(
+                e => e.Key,
+                e => e.Value.Select(t => (IInterceptor)Sp.GetRequiredService(t)));
+
+            _isInit = true;
         }
 
         /// <summary>
@@ -29,6 +65,11 @@ namespace UnityAddon.Core.Aop
         /// </summary>
         public IDictionary<Type, IEnumerable<IInterceptor>> FindInterceptors(AttributeTargets interceptorType)
         {
+            if (!_isInit)
+            {
+                throw new InvalidOperationException("AopInterceptorContainer is not initialized");
+            }
+
             return _interceptorMap.Where(entry => IsAttributeTargetMatch(interceptorType, entry.Key.GetAttribute<AttributeUsageAttribute>().ValidOn))
                 .ToDictionary(dict => dict.Key, dict => dict.Value);
         }

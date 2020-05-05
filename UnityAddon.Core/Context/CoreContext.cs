@@ -6,6 +6,7 @@ using System.Text;
 using Unity;
 using Unity.Injection;
 using Unity.Lifetime;
+using UnityAddon.Core.Aop;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.BeanBuildStrategies;
@@ -77,6 +78,11 @@ namespace UnityAddon.Core.Context
             {
                 // use default option
                 _container.RegisterType<BeanDefintionCandidateSelectorOption>(new ContainerControlledLifetimeManager());
+            }
+
+            if (!_container.IsRegistered<AopInterceptorContainerOption>())
+            {
+                _container.RegisterType<AopInterceptorContainerOption>(new ContainerControlledLifetimeManager());
             }
 
             return _container;

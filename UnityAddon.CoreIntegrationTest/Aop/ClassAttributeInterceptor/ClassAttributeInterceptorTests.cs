@@ -8,7 +8,10 @@ using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Context;
 using Xunit;
+using UnityAddon.Core.Util.ComponentScanning;
+using UnityAddon.Core.BeanDefinition.GeneralBean;
 
 namespace UnityAddon.CoreTest.Aop.ClassAttributeInterceptor
 {
@@ -60,7 +63,6 @@ namespace UnityAddon.CoreTest.Aop.ClassAttributeInterceptor
         }
     }
 
-    [Trait("Aop", "ClassAttributeInterceptor")]
     public class ClassAttributeInterceptorTests
     {
         [Dependency]
@@ -73,17 +75,21 @@ namespace UnityAddon.CoreTest.Aop.ClassAttributeInterceptor
         {
             var host = new HostBuilder()
                 .RegisterUA()
-                .ScanComponentsUA(GetType().Namespace)
-                .ConfigureUA<AopInterceptorContainerBuilder>(config =>
+                .ConfigureContainer<ApplicationContext>(ctx =>
                 {
-                    config.AddAopIntercetor<IncInterceptor>();
+                    ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace)));
+                    ctx.ConfigureContext<AopInterceptorContainerOption>(option =>
+                    {
+                        option.AddAopIntercetor<IncInterceptor>();
+                    });
                 })
-                .BuildUA()
-                .BuildTestUA(this);
+                .Build();
+
+            host.Services.BuildUp(this);
         }
 
         [Fact]
-        public void BeanAopStrategy_ClassAttributeInterceptor_IncIntercepted()
+        public void ClassAttributeInterceptor()
         {
             Service.Mul2();
             Service.Mul5();

@@ -21,7 +21,7 @@ namespace UnityAddon.Hangfire
                         return c.ResolveUA(t, t.Name);
                     })
                 )
-                .ConfigureUA<AopInterceptorContainerBuilder>(c =>
+                .ConfigureUA<AopInterceptorContainerOption>(c =>
                 {
                     c.AddAopIntercetor<HangfireProxyInterceptor>();
                 })

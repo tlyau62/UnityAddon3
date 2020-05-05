@@ -4,7 +4,9 @@
     {
         Intern = 0,
         NetAsp = 100,
-        App = 200,
-        BeanMethod = 300
+        AppPreConfig = 200,
+        App = 300,
+        AppPostConfig = 400,
+        BeanMethod = 500
     }
 }

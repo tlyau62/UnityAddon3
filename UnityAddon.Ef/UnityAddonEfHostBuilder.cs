@@ -17,7 +17,7 @@ namespace UnityAddon.Ef
         {
             return hostBuilder
                 .ScanComponentsUA(Assembly.GetExecutingAssembly(), "UnityAddon.Ef")
-                .ConfigureUA<AopInterceptorContainerBuilder>(config =>
+                .ConfigureUA<AopInterceptorContainerOption>(config =>
                 {
                     config
                         .AddAopIntercetor<RequireDbContextInterceptor>()

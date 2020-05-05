@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using Unity;
 using Unity.Lifetime;
+using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.BeanBuildStrategies;
@@ -25,6 +26,8 @@ namespace UnityAddon.Core.Context
         private readonly CoreContext _coreContainerBuilder;
 
         private IUnityContainer _coreContainer;
+
+        private bool _isRefreshing = false;
 
         public ApplicationContext(IUnityContainer appContainer)
         {
@@ -74,12 +77,21 @@ namespace UnityAddon.Core.Context
 
         public void Refresh()
         {
+            if (_isRefreshing)
+            {
+                return;
+            }
+
+            _isRefreshing = true;
+
             while (_entries.Count > 0)
             {
                 var min = _entries.DeleteMin();
 
                 Register(min, min.Order);
             }
+
+            _isRefreshing = false;
         }
 
         public IServiceProvider Build()
@@ -118,6 +130,26 @@ namespace UnityAddon.Core.Context
                 {
                     defs.Add(new TypeBeanDefintion(typeof(BeanDefintionCandidateSelector), typeof(BeanDefintionCandidateSelector), null, ScopeType.Singleton));
                 });
+            });
+
+            // aop
+            AddContextEntry(ApplicationContextEntryOrder.AppPreConfig, false, entry =>
+            {
+                entry.ConfigureBeanDefinitions(defs =>
+                {
+                    defs.Add(new TypeBeanDefintion(typeof(AopInterceptorContainer), typeof(AopInterceptorContainer), null, ScopeType.Singleton));
+                    defs.Add(new TypeBeanDefintion(typeof(AopBuildStrategyExtension), typeof(AopBuildStrategyExtension), null, ScopeType.Singleton));
+                    defs.Add(new TypeBeanDefintion(typeof(AopMethodBootstrapInterceptor), typeof(AopMethodBootstrapInterceptor), null, ScopeType.Singleton));
+                    defs.Add(new TypeBeanDefintion(typeof(InterfaceProxyFactory), typeof(InterfaceProxyFactory), null, ScopeType.Singleton));
+                    defs.Add(new TypeBeanDefintion(typeof(BeanAopStrategy), typeof(BeanAopStrategy), null, ScopeType.Singleton));
+                });
+
+                entry.PostProcess += c => c.AddExtension(c.Resolve<AopBuildStrategyExtension>());
+            });
+
+            AddContextEntry(ApplicationContextEntryOrder.AppPostConfig, false, entry =>
+            {
+                entry.PreProcess += c => c.Resolve<AopInterceptorContainer>().Init();
             });
 
             Refresh();
