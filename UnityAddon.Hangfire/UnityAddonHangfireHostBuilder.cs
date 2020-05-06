@@ -5,8 +5,9 @@ using System.Reflection;
 using System.Text;
 using UnityAddon.Core;
 using UnityAddon.Core.Aop;
-using UnityAddon.Core.Component;
-using UnityAddon.Core.DependencyInjection;
+using UnityAddon.Core.Bean.DependencyInjection;
+using UnityAddon.Core.Context;
+using UnityAddon.Core.Util.ComponentScanning;
 
 namespace UnityAddon.Hangfire
 {
@@ -15,17 +16,21 @@ namespace UnityAddon.Hangfire
         public static IHostBuilder EnableUnityAddonHangfire(this IHostBuilder hostBuilder)
         {
             return hostBuilder
-                .ConfigureUA<DependencyResolver>(c =>
-                    c.AddResolveStrategy<HangfireProxyAttribute>((t, n, c) =>
-                    {
-                        return c.ResolveUA(t, t.Name);
-                    })
-                )
-                .ConfigureUA<AopInterceptorContainerOption>(c =>
+                .ConfigureContainer<ApplicationContext>(ctx =>
                 {
-                    c.AddAopIntercetor<HangfireProxyInterceptor>();
-                })
-                .ScanComponentsUA(Assembly.GetExecutingAssembly(), "UnityAddon.Hangfire");
+                    ctx.ConfigureContext<DependencyResolverOption>(option =>
+                    {
+                        option.AddResolveStrategy<HangfireProxyAttribute>((t, n, sp) =>
+                        {
+                            return sp.GetRequiredService(t, t.Name);
+                        });
+                    });
+                    ctx.ConfigureContext<AopInterceptorContainerOption>(option =>
+                    {
+                        option.AddAopIntercetor<HangfireProxyInterceptor>();
+                    });
+                    ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(config => config.AddFromComponentScanner(Assembly.GetExecutingAssembly(), "UnityAddon.Hangfire")));
+                });
         }
     }
 }
