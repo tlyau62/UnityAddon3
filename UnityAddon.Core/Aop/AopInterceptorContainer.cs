@@ -12,6 +12,7 @@ using UnityAddon.Core.BeanDefinition.GeneralBean;
 using UnityAddon.Core.Context;
 using UnityAddon.Core.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using UnityAddon.Core.Bean.Config;
 
 namespace UnityAddon.Core.Aop
 {
@@ -21,7 +22,7 @@ namespace UnityAddon.Core.Aop
     public class AopInterceptorContainer
     {
         [Dependency]
-        public AopInterceptorContainerOption AopInterceptorContainerOption { get; set; }
+        public IConfigs<AopInterceptorContainerOption> AopInterceptorContainerOption { get; set; }
 
         [Dependency]
         public ApplicationContext ApplicationContext { get; set; }
@@ -44,7 +45,7 @@ namespace UnityAddon.Core.Aop
             {
                 entry.ConfigureBeanDefinitions(defs =>
                 {
-                    foreach (var type in AopInterceptorContainerOption.InterceptorMap.Values.SelectMany(v => v))
+                    foreach (var type in AopInterceptorContainerOption.Value.InterceptorMap.Values.SelectMany(v => v))
                     {
                         defs.Add(new TypeBeanDefintion(type, type, null, ScopeType.Singleton));
                     }
@@ -53,7 +54,7 @@ namespace UnityAddon.Core.Aop
 
             ApplicationContext.Refresh();
 
-            _interceptorMap = AopInterceptorContainerOption.InterceptorMap.ToDictionary(
+            _interceptorMap = AopInterceptorContainerOption.Value.InterceptorMap.ToDictionary(
                 e => e.Key,
                 e => e.Value.Select(t => (IInterceptor)Sp.GetRequiredService(t)));
 

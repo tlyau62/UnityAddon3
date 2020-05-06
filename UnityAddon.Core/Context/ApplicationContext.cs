@@ -10,6 +10,7 @@ using Unity;
 using Unity.Lifetime;
 using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Bean.Config;
 using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.BeanBuildStrategies;
 using UnityAddon.Core.BeanDefinition;
@@ -31,8 +32,8 @@ namespace UnityAddon.Core.Context
 
         public ApplicationContext(IUnityContainer appContainer)
         {
-            _coreContainerBuilder = new CoreContext(this);
             AppContainer = appContainer;
+            _coreContainerBuilder = new CoreContext(this);
         }
 
         public IUnityContainer AppContainer { get; }
@@ -70,7 +71,7 @@ namespace UnityAddon.Core.Context
             _entries.Add(wrapEntry);
         }
 
-        public void ConfigureContext<TConfig>(Action<TConfig> config)
+        public void ConfigureContext<TConfig>(Action<TConfig> config) where TConfig : class, new()
         {
             _coreContainerBuilder.Configure(config);
         }

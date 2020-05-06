@@ -6,6 +6,7 @@ using System.Runtime.ExceptionServices;
 using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Bean.Config;
 using UnityAddon.Core.Exceptions;
 using UnityAddon.Core.Value;
 
@@ -18,9 +19,9 @@ namespace UnityAddon.Core.Bean.DependencyInjection
         private static readonly MethodInfo InvokeStrategyMethod = typeof(DependencyResolver)
             .GetMethod(nameof(InvokeStrategy), BindingFlags.NonPublic | BindingFlags.Instance);
 
-        public DependencyResolver(DependencyResolverOption resolverOption)
+        public DependencyResolver(IConfigs<DependencyResolverOption> resolverOption)
         {
-            _resolveStrategies = resolverOption.ResolveStrategies;
+            _resolveStrategies = resolverOption.Value.ResolveStrategies;
         }
 
         public object Resolve(Type resolveType, IEnumerable<Attribute> attributes, IServiceProvider sp)

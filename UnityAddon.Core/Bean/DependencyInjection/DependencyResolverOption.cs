@@ -12,7 +12,11 @@ namespace UnityAddon.Core.Bean.DependencyInjection
     {
         public IDictionary<Type, object> ResolveStrategies { get; } = new Dictionary<Type, object>();
 
-        public DependencyResolverOption(bool useDefault = true)
+        public DependencyResolverOption() : this(true)
+        {
+        }
+
+        public DependencyResolverOption(bool useDefault)
         {
             if (useDefault)
             {

@@ -8,6 +8,7 @@ using Unity.Injection;
 using Unity.Lifetime;
 using UnityAddon.Core.Aop;
 using UnityAddon.Core.Bean;
+using UnityAddon.Core.Bean.Config;
 using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.BeanBuildStrategies;
 using UnityAddon.Core.BeanDefinition;
@@ -24,19 +25,11 @@ namespace UnityAddon.Core.Context
         public CoreContext(ApplicationContext applicationContext)
         {
             _applicationContext = applicationContext;
+
+            Setup();
         }
 
-        public void Configure<TConfig>(Action<TConfig> config)
-        {
-            if (!_container.IsRegistered<TConfig>())
-            {
-                _container.RegisterType<TConfig>(new ContainerControlledLifetimeManager());
-            }
-
-            config(_container.Resolve<TConfig>());
-        }
-
-        public IUnityContainer Build()
+        public void Setup()
         {
             _container
                 .RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
@@ -59,12 +52,6 @@ namespace UnityAddon.Core.Context
                 .RegisterType<DependencyResolver>(new ContainerControlledLifetimeManager())
                 .RegisterType<BeanFactory>(new ContainerControlledLifetimeManager());
 
-            if (!_container.IsRegistered<DependencyResolverOption>())
-            {
-                // use default option
-                _container.RegisterType<DependencyResolverOption>(new ContainerControlledLifetimeManager());
-            }
-
             _container
                 .RegisterType<BeanMethodInterceptor>(new ContainerControlledLifetimeManager());
 
@@ -74,17 +61,17 @@ namespace UnityAddon.Core.Context
             _container
                 .RegisterType<BeanBuildStrategyExtension>(new ContainerControlledLifetimeManager());
 
-            if (!_container.IsRegistered<BeanDefintionCandidateSelectorOption>())
-            {
-                // use default option
-                _container.RegisterType<BeanDefintionCandidateSelectorOption>(new ContainerControlledLifetimeManager());
-            }
+            _container
+                .RegisterType(typeof(IConfigs<>), typeof(Configs<>), new ContainerControlledLifetimeManager());
+        }
 
-            if (!_container.IsRegistered<AopInterceptorContainerOption>())
-            {
-                _container.RegisterType<AopInterceptorContainerOption>(new ContainerControlledLifetimeManager());
-            }
+        public void Configure<TConfig>(Action<TConfig> config) where TConfig : class, new()
+        {
+            config(_container.Resolve<IConfigs<TConfig>>().Value);
+        }
 
+        public IUnityContainer Build()
+        {
             return _container;
         }
     }

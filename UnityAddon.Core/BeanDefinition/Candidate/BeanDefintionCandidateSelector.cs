@@ -6,6 +6,7 @@ using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
+using UnityAddon.Core.Bean.Config;
 using UnityAddon.Core.BeanDefinition;
 
 namespace UnityAddon.Core.BeanDefinition
@@ -22,10 +23,10 @@ namespace UnityAddon.Core.BeanDefinition
 
         private readonly IEnumerable<IBeanDefinitionCandidateFilter> _excludeFilters;
 
-        public BeanDefintionCandidateSelector(BeanDefintionCandidateSelectorOption option, [OptionalDependency]IConfiguration configuration)
+        public BeanDefintionCandidateSelector(IConfigs<BeanDefintionCandidateSelectorOption> option, [OptionalDependency]IConfiguration configuration)
         {
-            _includeFilters = option.IncludeFilters;
-            _excludeFilters = option.ExcludeFilters;
+            _includeFilters = option.Value.IncludeFilters;
+            _excludeFilters = option.Value.ExcludeFilters;
             _configuration = configuration;
         }
 
