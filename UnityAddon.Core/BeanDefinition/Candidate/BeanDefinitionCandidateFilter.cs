@@ -9,8 +9,4 @@ namespace UnityAddon.Core.BeanDefinition
     {
         public bool IsMatch(IBeanDefinition beanDefinition, IConfiguration configuration);
     }
-
-    //public class BeanDefinitionCandidateConfig : IBeanDefinitionCandidateConfig
-    //{
-    //}
 }

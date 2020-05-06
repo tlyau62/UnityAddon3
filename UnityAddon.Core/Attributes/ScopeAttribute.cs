@@ -15,10 +15,11 @@ namespace UnityAddon.Core.Attributes
     {
         private static Dictionary<ScopeType, Type> scopeMap = new Dictionary<ScopeType, Type>()
         {
-            {ScopeType.Transient, typeof(TransientLifetimeManager)},
-            {ScopeType.ContainerControlled, typeof(ContainerControlledLifetimeManager)}
+            {ScopeType.Transient, typeof(ContainerControlledTransientManager)},
+            {ScopeType.Singleton, typeof(ContainerControlledLifetimeManager)},
+            {ScopeType.Scoped, typeof(HierarchicalLifetimeManager) }
         };
-        public Type Value { get; set; }
+        public Type Value { get; private set; }
 
         public ScopeAttribute(ScopeType scopeType)
         {
@@ -29,6 +30,7 @@ namespace UnityAddon.Core.Attributes
     public enum ScopeType
     {
         Transient,
-        ContainerControlled
+        Singleton,
+        Scoped
     }
 }

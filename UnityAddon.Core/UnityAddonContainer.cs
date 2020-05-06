@@ -45,7 +45,10 @@ namespace UnityAddon.Core
         {
             if (!container.IsRegisteredUA(type, name))
             {
-                throw new NoSuchBeanDefinitionException($"Type {type} with name '{name}' is not registered.");
+                if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(IEnumerable<>) || !container.IsRegisteredUA(type.GetGenericArguments()[0], name))
+                {
+                    throw new NoSuchBeanDefinitionException($"Type {type} with name '{name}' is not registered.");
+                }
             }
 
             return container.ResolveOptionalUA(type, name);
@@ -55,7 +58,14 @@ namespace UnityAddon.Core
         {
             if (!container.IsRegisteredUA(type, name))
             {
-                return null;
+                if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(IEnumerable<>) || !container.IsRegisteredUA(type.GetGenericArguments()[0], name))
+                {
+                    return null;
+                }
+                else
+                {
+                    return container.ResolveAllUA(type.GetGenericArguments()[0]);
+                }
             }
 
             object bean = container.Resolve(type, name);
@@ -92,11 +102,12 @@ namespace UnityAddon.Core
             return container;
         }
 
-        public static IEnumerable<object> ResolveAllUA(this IUnityContainer container, Type type)
+        public static IEnumerable<T> ResolveAllUA<T>(this IUnityContainer container)
         {
             return container.Resolve<IBeanDefinitionContainer>()
-                .GetAllBeanDefinitions(type)
-                .Select(def => container.ResolveUA(def.BeanType, def.BeanName));
+                .GetAllBeanDefinitions(typeof(T))
+                .Select(def => (T)container.ResolveUA(def.Type, def.Name))
+                .ToList();
         }
 
         public static void UnregisterUA(this IUnityContainer container, Type type, string name = null)
@@ -105,15 +116,15 @@ namespace UnityAddon.Core
             var bean = container.ResolveUA(type, name); // ensure the bean exists
             var beanDef = beanDefContainer.RemoveBeanDefinition(type, name);
 
-            var matchedList = container.Registrations.Where(p => p.RegisteredType == beanDef.BeanType && p.Name == beanDef.BeanName);
+            var matchedList = container.Registrations.Where(p => p.RegisteredType == beanDef.Type && p.Name == beanDef.Name);
 
             foreach (var registration in matchedList)
             {
                 registration.LifetimeManager.RemoveValue();
 
-                container.RegisterFactory(beanDef.BeanType, beanDef.BeanName, (c, t, n) =>
+                container.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) =>
                 {
-                    throw new NoSuchBeanDefinitionException($"Type {beanDef.BeanType} with name '{beanDef.BeanName}' is unregistered.");
+                    throw new NoSuchBeanDefinitionException($"Type {beanDef.Type} with name '{beanDef.Name}' is unregistered.");
                 }, (IFactoryLifetimeManager)Activator.CreateInstance(registration.LifetimeManager.GetType()));
             }
         }

@@ -10,6 +10,8 @@ using System.Text;
 using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Context;
+using UnityAddon.Core.Util.ComponentScanning;
 using UnityAddon.Ef;
 using UnityAddon.Ef.Transaction;
 using UnityAddon.Hangfire;
@@ -80,11 +82,12 @@ namespace UnityAddon.HangfireTest.HangfireComponentScannerStrategy
         {
             new HostBuilder()
                 .RegisterUA()
-                .ScanComponentsUA(GetType().Namespace, "UnityAddon.HangfireTest.Common")
+                .ConfigureContainer<ApplicationContext>(ctx => ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.HangfireTest.Common"))))
                 .EnableUnityAddonEf()
                 .EnableUnityAddonHangfire()
-                .BuildUA()
-                .BuildTestUA(this);
+                .Build()
+                .Services
+                .BuildUp(this);
         }
 
         [Fact]

@@ -6,6 +6,7 @@ using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
+using UnityAddon.Core.Bean.Config;
 using UnityAddon.Core.BeanDefinition;
 
 namespace UnityAddon.Core.BeanDefinition
@@ -16,16 +17,16 @@ namespace UnityAddon.Core.BeanDefinition
     /// </summary>
     public class BeanDefintionCandidateSelector
     {
-        public IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
 
-        private IEnumerable<IBeanDefinitionCandidateFilter> _includeFilters;
+        private readonly IEnumerable<IBeanDefinitionCandidateFilter> _includeFilters;
 
-        private IEnumerable<IBeanDefinitionCandidateFilter> _excludeFilters;
+        private readonly IEnumerable<IBeanDefinitionCandidateFilter> _excludeFilters;
 
-        public BeanDefintionCandidateSelector(IEnumerable<IBeanDefinitionCandidateFilter> includeFilters, IEnumerable<IBeanDefinitionCandidateFilter> excludeFilters, IConfiguration configuration)
+        public BeanDefintionCandidateSelector(IConfigs<BeanDefintionCandidateSelectorOption> option, [OptionalDependency]IConfiguration configuration)
         {
-            _includeFilters = includeFilters;
-            _excludeFilters = excludeFilters;
+            _includeFilters = option.Value.IncludeFilters;
+            _excludeFilters = option.Value.ExcludeFilters;
             _configuration = configuration;
         }
 
@@ -36,6 +37,11 @@ namespace UnityAddon.Core.BeanDefinition
 
         public bool Filter(IBeanDefinition definition)
         {
+            if (_configuration == null)
+            {
+                return true;
+            }
+
             if (_excludeFilters.Any(f => f.IsMatch(definition, _configuration)))
             {
                 return false;

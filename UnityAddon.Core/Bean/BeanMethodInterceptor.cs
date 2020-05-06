@@ -1,10 +1,12 @@
 ﻿using Castle.DynamicProxy;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.BeanDefinition;
+using UnityAddon.Core.BeanDefinition.MemberBean;
 using UnityAddon.Core.Reflection;
 using UnityAddon.Core.Thread;
 
@@ -19,23 +21,18 @@ namespace UnityAddon.Core.Bean
         [Dependency]
         public IBeanDefinitionContainer DefContainer { get; set; }
 
-        [Dependency]
-        public IThreadLocalFactory<Stack<IInvocation>> InvocationStackFactory { get; set; }
+        public IServiceProvider _serviceProvider { get; set; }
 
-        public IUnityContainer _container { get; set; }
+        private readonly object _lockObj = new object();
 
-        public BeanMethodInterceptor(IUnityContainer container)
+        public BeanMethodInterceptor(IServiceProvider serviceProvider)
         {
-            _container = container;
+            _serviceProvider = serviceProvider;
         }
 
         public void Intercept(IInvocation invocation)
         {
             var method = invocation.Method;
-            var tempBeanDef = new MethodBeanDefinition(method);
-            var beanName = tempBeanDef.BeanName;
-            var factoryName = tempBeanDef.FactoryName;
-            var beanType = tempBeanDef.BeanType;
 
             if (!method.HasAttribute<BeanAttribute>())
             {
@@ -43,23 +40,24 @@ namespace UnityAddon.Core.Bean
             }
             else
             {
-                var beanDef = DefContainer.GetBeanDefinition(beanType, beanName);
+                var beanDef = (MemberMethodBeanDefinition)DefContainer.GetBeanDefinition(method.ReturnType, method.Name);
 
-                var hasStack = InvocationStackFactory.Exist();
-                var stack = hasStack ? InvocationStackFactory.Get() : InvocationStackFactory.Set();
-
-                stack.Push(invocation);
-
-                invocation.ReturnValue = _container.ResolveUA(beanDef.BeanType, factoryName);
-
-                stack.Pop();
-
-                if (!hasStack)
+                if (beanDef.Invocation != null)
                 {
-                    InvocationStackFactory.Delete();
+                    throw new InvalidOperationException("Someting wrong.");
+                }
+
+                lock (_lockObj)
+                {
+                    // ensure no other thread can access to this invocation field until this resolution is finished.
+                    // may cause deadlock if circular dep happens, but detected by BeanDependencyValidatorStrategy.
+                    beanDef.Invocation = invocation;
+
+                    invocation.ReturnValue = _serviceProvider.GetRequiredService<MethodFactoryValue>(beanDef.Name + "-factory").Value;
+
+                    beanDef.Invocation = null;
                 }
             }
-
         }
     }
 }

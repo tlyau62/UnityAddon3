@@ -1,0 +1,72 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Aop\**" />
+    <Compile Remove="BeanPostConstruct\**" />
+    <Compile Remove="BeanPostProcessor\**" />
+    <Compile Remove="Bean\NonGenericBean\**" />
+    <Compile Remove="DependencyExceptions\**" />
+    <Compile Remove="Properties\PublishProfiles\**" />
+    <Compile Remove="Util\**" />
+    <Compile Remove="Value\**" />
+    <EmbeddedResource Remove="Aop\**" />
+    <EmbeddedResource Remove="BeanPostConstruct\**" />
+    <EmbeddedResource Remove="BeanPostProcessor\**" />
+    <EmbeddedResource Remove="Bean\NonGenericBean\**" />
+    <EmbeddedResource Remove="DependencyExceptions\**" />
+    <EmbeddedResource Remove="Properties\PublishProfiles\**" />
+    <EmbeddedResource Remove="Util\**" />
+    <EmbeddedResource Remove="Value\**" />
+    <None Remove="Aop\**" />
+    <None Remove="BeanPostConstruct\**" />
+    <None Remove="BeanPostProcessor\**" />
+    <None Remove="Bean\NonGenericBean\**" />
+    <None Remove="DependencyExceptions\**" />
+    <None Remove="Properties\PublishProfiles\**" />
+    <None Remove="Util\**" />
+    <None Remove="Value\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Aop\ClassAttributeInterceptor\ClassAttributeInterceptorTests.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\Attributes.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\Components.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\GenericMethodAttributeInterceptorTests.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\Interceptors.cs" />
+    <Compile Include="Aop\MethodAttributeInterceptor\Attributes.cs" />
+    <Compile Include="Aop\MethodAttributeInterceptor\Components.cs" />
+    <Compile Include="Aop\MethodAttributeInterceptor\Interceptors.cs" />
+    <Compile Include="Aop\MethodAttributeInterceptor\MethodAttributeInterceptorTests.cs" />
+    <Compile Include="BeanPostConstruct\AsyncResolve\AsyncResolveTests.cs" />
+    <Compile Include="BeanPostConstruct\NonProxyBean\NonProxyBeanTests.cs" />
+    <Compile Include="BeanPostConstruct\ProxyBean\ProxyBeanTests.cs" />
+    <Compile Include="Bean\NonGenericBean\NonGenericBeanTests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\ComplexDAG\ComplexDAGTests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\ComplexLoop\ComplexLoopTests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\DAG2\DAG2Tests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\DAG\DAGTests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\Loop\LoopTests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\OptionalDependency\OptionalDependencyTests.cs" />
+    <Compile Include="DependencyExceptions\CircularDependency\SelfLoop\SelfLoopTests.cs" />
+    <Compile Include="DependencyExceptions\NestedNoSuchBeanDefinitionException\NestedNoSuchBeanDefinitionExceptionTests.cs" />
+    <Compile Include="DependencyExceptions\NoSuchBeanDefinitionException\NoSuchBeanDefinitionExceptionTests.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="coverlet.collector" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UnityAddon.Core\UnityAddon.Core.csproj" />
+  </ItemGroup>
+
+</Project>

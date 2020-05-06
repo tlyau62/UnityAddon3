@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,21 +10,12 @@ using Unity.Lifetime;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.BeanBuildStrategies;
 using UnityAddon.Core.BeanDefinition;
-using UnityAddon.Core.Component;
+using UnityAddon.Core.Context;
 
 namespace UnityAddon.Core
 {
     public static class UnityAddonHost
     {
-        public static IHost BuildTestUA(this IHost host, object testobject)
-        {
-            var container = host.Services.GetService(typeof(IUnityContainer)) as IUnityContainer;
-
-            container.BuildUp(testobject.GetType(), testobject);
-
-            return host;
-        }
-
         /// <summary>
         /// Instantiate singleton bean recursively.
         /// Some bean may do bean registration at postconstruct,
@@ -34,7 +26,8 @@ namespace UnityAddon.Core
         /// </summary>
         public static IHost PreInstantiateSingleton(this IHost host)
         {
-            var container = host.Services.GetService(typeof(IUnityContainer)) as IUnityContainer;
+            var container = host.Services.GetRequiredService<ApplicationContext>().AppContainer;
+            var sp = new ServiceProvider(container);
             var currentRegs = container.Registrations.Count();
 
             foreach (var reg in container.Registrations)
@@ -46,7 +39,7 @@ namespace UnityAddon.Core
 
                 if (!reg.RegisteredType.IsGenericType || !reg.RegisteredType.ContainsGenericParameters)
                 {
-                    container.ResolveAllUA(reg.RegisteredType).ToList();
+                    sp.GetRequiredService(reg.RegisteredType, reg.Name);
                 }
             }
 

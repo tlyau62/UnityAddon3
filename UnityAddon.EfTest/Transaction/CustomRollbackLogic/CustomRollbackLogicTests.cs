@@ -7,10 +7,13 @@ using System.Text;
 using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Context;
 using UnityAddon.Ef;
 using UnityAddon.Ef.Transaction;
 using UnityAddon.EfTest.Common;
+using UnityAddon.Core.Util.ComponentScanning;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
 {
@@ -21,29 +24,33 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
         public IDbContextFactory<TestDbContext> DbContextFactory { get; set; }
 
         [Dependency]
-        public IRepo Repo;
+        public IRepo Repo { get; set; }
 
         private DbSet<Item> _items => (DbContextFactory.IsOpen() ? DbContextFactory.Get() : DbContextFactory.Open()).Items;
 
         public CustomRollbackLogicTests()
         {
-            new HostBuilder()
+            var host = new HostBuilder()
                    .RegisterUA()
-                   .ScanComponentsUA(GetType().Namespace, "UnityAddon.EfTest.Common")
-                   .ConfigureUA<DbContextTemplateBuilder>(c =>
+                   .ConfigureContainer<ApplicationContext>(ctx =>
                    {
-                       // rollback depends on GenericResult<T> any type T
-                       c.RegisterRollbackLogic(typeof(GenericResult<>), returnValue => !((dynamic)returnValue).IsSuccess);
+                       ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.EfTest.Common")));
+                       ctx.ConfigureContext<DbContextTemplateOption>(option =>
+                       {
+                           // rollback depends on GenericResult<T> any type T
+                           option.RegisterRollbackLogic(typeof(GenericResult<>), returnValue => !((dynamic)returnValue).IsSuccess);
 
-                       // rollback depends on Result
-                       c.RegisterRollbackLogic<Result>(returnValue => !((TestResult)returnValue).IsSuccess);
+                           // rollback depends on Result
+                           option.RegisterRollbackLogic<Result>(returnValue => !((TestResult)returnValue).IsSuccess);
 
-                       // rollback depends on ConcreteGenericResult<string> only
-                       c.RegisterRollbackLogic<ConcreteGenericResult<string>>(returnValue => !returnValue.IsSuccess);
+                           // rollback depends on ConcreteGenericResult<string> only
+                           option.RegisterRollbackLogic<ConcreteGenericResult<string>>(returnValue => !returnValue.IsSuccess);
+                       });
                    })
                    .EnableUnityAddonEf()
-                   .BuildUA()
-                   .BuildTestUA(this);
+                   .Build()
+                   .Services
+                   .BuildUp(this);
 
             DbSetupUtility.CreateDb(DbContextFactory);
         }
