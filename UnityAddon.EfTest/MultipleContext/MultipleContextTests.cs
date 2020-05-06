@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using System.Text;
 using Unity;
 using UnityAddon.Core;
+using UnityAddon.Core.Context;
 using UnityAddon.Ef;
 using UnityAddon.EfTest.Common;
+using UnityAddon.Core.Util.ComponentScanning;
 using Xunit;
 
 namespace UnityAddon.EfTest.MultipleContext
@@ -27,10 +29,14 @@ namespace UnityAddon.EfTest.MultipleContext
         {
             new HostBuilder()
                 .RegisterUA()
-                .ScanComponentsUA(GetType().Namespace, "UnityAddon.EfTest.Common")
+                .ConfigureContainer<ApplicationContext>(ctx =>
+                {
+                    ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.EfTest.Common")));
+                })
                 .EnableUnityAddonEf()
-                .BuildUA()
-                .BuildTestUA(this);
+                .Build()
+                .Services
+                .BuildUp(this);
 
             DbSetupUtility.CreateDb(DbContextFactory);
             DbSetupUtility.CreateDb(DbContextFactory2);

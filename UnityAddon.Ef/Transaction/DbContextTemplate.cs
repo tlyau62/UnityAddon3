@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Reflection;
 using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Bean.Config;
 using UnityAddon.Core.Reflection;
 
 namespace UnityAddon.Ef.Transaction
@@ -24,24 +26,29 @@ namespace UnityAddon.Ef.Transaction
     /// Used by client to deal with any db context.
     /// </summary>
     /// <typeparam name="TDbContext"></typeparam>
+    [Component]
     public class DbContextTemplate : IDbContextTemplate
     {
-        private static MethodInfo LogicInvokerMethod = typeof(DbContextTemplate).GetMethod(nameof(LogicInvoker), BindingFlags.NonPublic | BindingFlags.Instance);
+        private static readonly MethodInfo LogicInvokerMethod = typeof(DbContextTemplate).GetMethod(nameof(LogicInvoker), BindingFlags.NonPublic | BindingFlags.Instance);
 
         private IDictionary<Type, List<object>> _rollbackLogics;
 
-        private IUnityContainer _container;
+        [Dependency]
+        public IConfigs<DbContextTemplateOption> DbCtxTemplateOption { get; set; }
 
-        private TransactionInterceptorManager _txItrManager;
+        [Dependency]
+        public IServiceProvider Sp { get; set; }
 
-        private ITransactionCallbacks _txCallbacks;
+        [Dependency]
+        public TransactionInterceptorManager TxInterceptorManager { get; set; }
 
-        public DbContextTemplate(IDictionary<Type, List<object>> rollbackLogics, IUnityContainer container, TransactionInterceptorManager txItrManager, ITransactionCallbacks txCallbacks)
+        [Dependency]
+        public ITransactionCallbacks TxCallbacks { get; set; }
+
+        [PostConstruct]
+        public void Init()
         {
-            _rollbackLogics = rollbackLogics;
-            _container = container;
-            _txItrManager = txItrManager;
-            _txCallbacks = txCallbacks;
+            _rollbackLogics = DbCtxTemplateOption.Value.RollbackLogics;
         }
 
         public TTxResult ExecuteQuery<TDbContext, TTxResult>(Func<TDbContext, TTxResult> query, string noModifyMsg) where TDbContext : DbContext
@@ -66,7 +73,7 @@ namespace UnityAddon.Ef.Transaction
                 }
 
                 var tx = ctx.Database.BeginTransaction();
-                _txItrManager.ExecuteBeginCallbacks();
+                TxInterceptorManager.ExecuteBeginCallbacks();
 
                 try
                 {
@@ -75,13 +82,13 @@ namespace UnityAddon.Ef.Transaction
                     if (TestRollback(result))
                     {
                         tx.Rollback();
-                        _txItrManager.ExecuteRollbackCallbacks();
+                        TxInterceptorManager.ExecuteRollbackCallbacks();
                     }
                     else
                     {
                         ctx.SaveChanges();
                         tx.Commit();
-                        _txItrManager.ExecuteCommitCallbacks();
+                        TxInterceptorManager.ExecuteCommitCallbacks();
                     }
 
                     return result;
@@ -89,7 +96,7 @@ namespace UnityAddon.Ef.Transaction
                 catch (Exception)
                 {
                     tx.Rollback();
-                    _txItrManager.ExecuteRollbackCallbacks();
+                    TxInterceptorManager.ExecuteRollbackCallbacks();
                     throw;
                 }
                 finally
@@ -101,12 +108,12 @@ namespace UnityAddon.Ef.Transaction
 
         public IDbContextFactory<TDbContext> GetDbContextFactory<TDbContext>() where TDbContext : DbContext
         {
-            return _container.ResolveUA<IDbContextFactory<TDbContext>>();
+            return Sp.GetRequiredService<IDbContextFactory<TDbContext>>();
         }
 
         public TDbContext GetDbContext<TDbContext>() where TDbContext : DbContext
         {
-            return _container.ResolveUA<IDbContextFactory<TDbContext>>().Get();
+            return Sp.GetRequiredService<IDbContextFactory<TDbContext>>().Get();
         }
 
         public DbSet<TEntity> GetEntity<TDbContext, TEntity>() where TDbContext : DbContext where TEntity : class
@@ -189,7 +196,7 @@ namespace UnityAddon.Ef.Transaction
 
         public void RegisterTransactionCallback(Action callback)
         {
-            _txCallbacks.OnCommit(callback);
+            TxCallbacks.OnCommit(callback);
         }
     }
 }

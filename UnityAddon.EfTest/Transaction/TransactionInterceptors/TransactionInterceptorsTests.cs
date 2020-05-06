@@ -5,9 +5,11 @@ using System.Text;
 using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Context;
 using UnityAddon.Ef;
 using UnityAddon.Ef.Transaction;
 using UnityAddon.EfTest.Common;
+using UnityAddon.Core.Util.ComponentScanning;
 using Xunit;
 
 namespace UnityAddon.EfTest.Transaction.TransactionInterceptors
@@ -54,14 +56,18 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptors
         {
             new HostBuilder()
                 .RegisterUA()
-                .ScanComponentsUA(GetType().Namespace, "UnityAddon.EfTest.Common")
-                .ConfigureUA<DbContextTemplateBuilder>(c =>
+                .ConfigureContainer<ApplicationContext>(ctx =>
                 {
-                    c.AddTransactionInterceptor<TestTxInterceptor>();
+                    ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.EfTest.Common")));
+                    ctx.ConfigureContext<DbContextTemplateOption>(option =>
+                    {
+                        option.AddTransactionInterceptor<TestTxInterceptor>();
+                    });
                 })
                 .EnableUnityAddonEf()
-                .BuildUA()
-                .BuildTestUA(this);
+                .Build()
+                .Services
+                .BuildUp(this);
 
             DbSetupUtility.CreateDb(DbContextFactory);
         }

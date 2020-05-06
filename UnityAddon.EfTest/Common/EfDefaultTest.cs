@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Text;
 using Unity;
 using UnityAddon.Core;
+using UnityAddon.Core.Context;
+using UnityAddon.Core.Util.ComponentScanning;
 using UnityAddon.Ef;
 
 namespace UnityAddon.EfTest.Common
@@ -18,10 +20,14 @@ namespace UnityAddon.EfTest.Common
         {
             new HostBuilder()
                 .RegisterUA()
-                .ScanComponentsUA(GetType().Namespace, "UnityAddon.EfTest.Common")
+                .ConfigureContainer<ApplicationContext>(ctx =>
+                {
+                    ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.EfTest.Common")));
+                })
                 .EnableUnityAddonEf()
-                .BuildUA()
-                .BuildTestUA(this);
+                .Build()
+                .Services
+                .BuildUp(this);
 
             DbSetupUtility.CreateDb(DbContextFactory);
         }

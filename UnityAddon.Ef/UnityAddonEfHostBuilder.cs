@@ -27,12 +27,7 @@ namespace UnityAddon.Ef
                             .AddAopIntercetor<RequireDbContextInterceptor>()
                             .AddAopIntercetor<RepositoryInterceptor>();
                     });
-                })
-                .ConfigureContainer<IUnityContainer>(container =>
-                {
-                    container.RegisterFactoryUA((c, t, n) => c.Resolve<DbContextTemplateBuilder>().Build(c));
                 });
         }
-
     }
 }

@@ -1,20 +1,40 @@
-﻿using Serilog;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Unity;
+using UnityAddon.Core;
+using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Bean.Config;
 
 namespace UnityAddon.Ef.Transaction
 {
+    [Component]
     public class TransactionInterceptorManager
     {
-        private readonly IEnumerable<ITransactionInterceptor> _txInterceptors;
-
         private readonly ILogger _logger = Log.ForContext<TransactionInterceptorManager>();
 
-        public TransactionInterceptorManager(IEnumerable<ITransactionInterceptor> txInterceptors)
+        private IEnumerable<ITransactionInterceptor> _txInterceptors;
+
+        [Dependency]
+        public IConfigs<DbContextTemplateOption> DbCtxTemplateOption { get; set; }
+
+        [Dependency]
+        public IServiceProvider Sp { get; set; }
+
+        [Dependency]
+        public IServicePostRegistry PostRegistry { get; set; }
+
+        [PostConstruct]
+        public void Init()
         {
-            _txInterceptors = txInterceptors;
+            foreach (var itctType in DbCtxTemplateOption.Value.TxInterceptors)
+            {
+                PostRegistry.AddSingleton(typeof(ITransactionInterceptor), itctType, null);
+            }
+
+            _txInterceptors = Sp.GetServices<ITransactionInterceptor>();
         }
 
         public void ExecuteBeginCallbacks()

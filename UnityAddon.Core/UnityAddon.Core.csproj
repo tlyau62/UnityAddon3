@@ -39,6 +39,7 @@
     <Compile Include="Exceptions\BeanCreationException.cs" />
     <Compile Include="Exceptions\CircularDependencyException.cs" />
     <Compile Include="Exceptions\NoSuchBeanDefinitionException.cs" />
+    <Compile Include="Thread\AsyncLocalFactory.cs" />
     <Compile Include="Thread\ThreadLocalFactory.cs" />
   </ItemGroup>
 

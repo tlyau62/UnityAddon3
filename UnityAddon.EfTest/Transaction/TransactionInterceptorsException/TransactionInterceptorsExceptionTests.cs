@@ -5,9 +5,11 @@ using System.Text;
 using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Context;
 using UnityAddon.Ef;
 using UnityAddon.Ef.Transaction;
 using UnityAddon.EfTest.Common;
+using UnityAddon.Core.Util.ComponentScanning;
 using Xunit;
 
 namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
@@ -77,23 +79,29 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
         {
             new HostBuilder()
                    .RegisterUA()
-                   .ScanComponentsUA(GetType().Namespace, "UnityAddon.EfTest.Common")
-                   .ConfigureUA<DbContextTemplateBuilder>(c =>
+                   .ConfigureContainer<ApplicationContext>(ctx =>
                    {
-                       if (normalOrder < exOrder)
+                       ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.EfTest.Common")));
+                       ctx.ConfigureContext<DbContextTemplateOption>(option =>
                        {
-                           c.AddTransactionInterceptor<TestTxInterceptor>();
-                           c.AddTransactionInterceptor<TestTxExceptionInterceptor>();
-                       }
-                       else
-                       {
-                           c.AddTransactionInterceptor<TestTxExceptionInterceptor>();
-                           c.AddTransactionInterceptor<TestTxInterceptor>();
-                       }
+                           option.AddTransactionInterceptor<TestTxInterceptor>();
+
+                           if (normalOrder < exOrder)
+                           {
+                               option.AddTransactionInterceptor<TestTxInterceptor>();
+                               option.AddTransactionInterceptor<TestTxExceptionInterceptor>();
+                           }
+                           else
+                           {
+                               option.AddTransactionInterceptor<TestTxExceptionInterceptor>();
+                               option.AddTransactionInterceptor<TestTxInterceptor>();
+                           }
+                       });
                    })
                    .EnableUnityAddonEf()
-                   .BuildUA()
-                   .BuildTestUA(this);
+                   .Build()
+                   .Services
+                   .BuildUp(this);
         }
 
         [Theory]

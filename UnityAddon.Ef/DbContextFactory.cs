@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,14 +46,14 @@ namespace UnityAddon.Ef
     public class DbContextFactory<T> : IDbContextFactory<T> where T : DbContext
     {
         [Dependency]
-        public IUnityContainer Container { get; set; }
+        public IServiceProvider Sp { get; set; }
 
         private AsyncLocalFactory<T> _asyncLocalFactory;
 
         [PostConstruct]
         public void Init()
         {
-            _asyncLocalFactory = new AsyncLocalFactory<T>(() => Container.ResolveUA<T>());
+            _asyncLocalFactory = new AsyncLocalFactory<T>(() => Sp.GetRequiredService<T>());
         }
 
         public T Get()
