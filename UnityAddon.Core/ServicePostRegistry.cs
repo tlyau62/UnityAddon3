@@ -90,21 +90,38 @@ namespace UnityAddon.Core
                 }, (IFactoryLifetimeManager)Activator.CreateInstance(registration.LifetimeManager.GetType()));
             }
         }
+    }
 
-        //public void Unregister(Type type, string name)
-        //{
-        //    var beanDefContainer = Sp.GetRequiredService<IBeanDefinitionContainer>();
-        //    var beanDef = beanDefContainer.RemoveBeanDefinition(type, name);
+    public static class ServicePostRegistryExt
+    {
+        public static void AddSingleton<TMap, TImpl>(this IServicePostRegistry servicePostRegistry, string name = null)
+        {
+            servicePostRegistry.AddSingleton(typeof(TMap), typeof(TImpl), name);
+        }
 
-        //    if (beanDef.Scope is ContainerControlledLifetimeManager)
-        //    {
-        //        var bean = Sp.GetRequiredService(type, name);
+        public static void AddSingleton<TMap>(this IServicePostRegistry servicePostRegistry, TMap instance, string name = null)
+        {
+            servicePostRegistry.AddSingleton(typeof(TMap), instance, name);
+        }
 
-        //        if (bean is IDisposable disposable)
-        //        {
-        //            disposable.Dispose();
-        //        }
-        //    }
-        //}
+        public static void AddSingleton<TMap>(this IServicePostRegistry servicePostRegistry, Func<IServiceProvider, Type, string, TMap> factory, string name = null)
+        {
+            servicePostRegistry.AddSingleton(typeof(TMap), (sp, t, n) => factory(sp, t, n), name);
+        }
+
+        public static void AddTransient<TMap, TImpl>(this IServicePostRegistry servicePostRegistry, string name = null)
+        {
+            servicePostRegistry.AddTransient(typeof(TMap), typeof(TImpl), name);
+        }
+
+        public static void AddTransient<TMap>(this IServicePostRegistry servicePostRegistry, Func<IServiceProvider, Type, string, TMap> factory, string name = null)
+        {
+            servicePostRegistry.AddTransient(typeof(TMap), (sp, t, n) => factory(sp, t, n), name);
+        }
+
+        public static void Unregister<TMap>(this IServicePostRegistry servicePostRegistry, string name = null)
+        {
+            servicePostRegistry.Unregister(typeof(TMap), name);
+        }
     }
 }
