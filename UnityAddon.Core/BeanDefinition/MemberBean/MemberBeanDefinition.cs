@@ -68,7 +68,7 @@ namespace UnityAddon.Core.BeanDefinition.MemberBean
             }
         }
 
-        public string[] Profiles => Member.GetAttribute<ProfileAttribute>()?.Values ?? new string[0];
+        public virtual string[] Profiles => Member.GetAttribute<ProfileAttribute>()?.Values ?? new string[0];
 
         public bool IsPrimary => Member.HasAttribute<PrimaryAttribute>();
 
