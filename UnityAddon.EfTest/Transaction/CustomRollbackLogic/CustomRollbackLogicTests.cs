@@ -13,6 +13,7 @@ using UnityAddon.Ef.Transaction;
 using UnityAddon.EfTest.Common;
 using UnityAddon.Core.Util.ComponentScanning;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
 {
@@ -23,13 +24,13 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
         public IDbContextFactory<TestDbContext> DbContextFactory { get; set; }
 
         [Dependency]
-        public IRepo Repo;
+        public IRepo Repo { get; set; }
 
         private DbSet<Item> _items => (DbContextFactory.IsOpen() ? DbContextFactory.Get() : DbContextFactory.Open()).Items;
 
         public CustomRollbackLogicTests()
         {
-            new HostBuilder()
+            var host = new HostBuilder()
                    .RegisterUA()
                    .ConfigureContainer<ApplicationContext>(ctx =>
                    {
