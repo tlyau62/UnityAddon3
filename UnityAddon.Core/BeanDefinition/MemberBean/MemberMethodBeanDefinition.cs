@@ -30,6 +30,8 @@ namespace UnityAddon.Core.BeanDefinition.MemberBean
 
         public override string[] Qualifiers => base.Qualifiers.Union(new[] { Method.Name }).ToArray();
 
+        public override string[] Profiles => base.Profiles.Union(ConfigType.GetAttribute<ProfileAttribute>()?.Values ?? new string[0]).ToArray();
+
         public override object Constructor(IServiceProvider serviceProvider, Type type, string name)
         {
             var config = serviceProvider.GetRequiredService(ConfigType);
