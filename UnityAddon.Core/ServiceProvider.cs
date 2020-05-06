@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Unity;
 using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.BeanDefinition;
@@ -16,7 +17,9 @@ namespace UnityAddon.Core
 
         bool IsRegistered(Type serviceType, string name);
 
-        object BuildUp(object service);
+        object BuildUp(Type type, object service);
+
+        IEnumerable<string> GetBeanNames(Type serviceType);
     }
 
     public interface ISupportNamedService
@@ -68,9 +71,19 @@ namespace UnityAddon.Core
             return sp.IsRegistered(typeof(T), name);
         }
 
-        public static object BuildUp(this IServiceProvider sp, object service)
+        public static T BuildUp<T>(this IServiceProvider sp, T service)
         {
-            return ((IUnityServiceProvider)sp).BuildUp(service);
+            return (T)((IUnityServiceProvider)sp).BuildUp(typeof(T), service);
+        }
+
+        public static object BuildUp(this IServiceProvider sp, Type type, object service)
+        {
+            return ((IUnityServiceProvider)sp).BuildUp(type, service);
+        }
+
+        public static IEnumerable<string> GetBeanNames<T>(this IServiceProvider sp)
+        {
+            return ((IUnityServiceProvider)sp).GetBeanNames(typeof(T));
         }
     }
 
@@ -132,9 +145,17 @@ namespace UnityAddon.Core
                 beanDefContainer.HasBeanDefinition(serviceType.GetGenericTypeDefinition(), name);
         }
 
-        public object BuildUp(object service)
+        public object BuildUp(Type type, object service)
         {
-            return UnityContainer.Resolve<PropertyFill>().FillAllProperties(service, this);
+            return UnityContainer.Resolve<PropertyFill>().FillAllProperties(type, service, this);
+        }
+
+        public IEnumerable<string> GetBeanNames(Type serviceType)
+        {
+            return UnityContainer.Resolve<IBeanDefinitionContainer>()
+                .GetAllBeanDefinitions(serviceType)
+                .Select(def => def.Name)
+                .ToArray();
         }
 
         IServiceProvider IServiceScope.ServiceProvider => this;
