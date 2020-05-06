@@ -8,8 +8,12 @@ using System.Text;
 using Unity;
 using Unity.Lifetime;
 using UnityAddon.Core;
+using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.BeanDefinition;
-using UnityAddon.Core.DependencyInjection;
+using UnityAddon.Core.Context;
+using Microsoft.Extensions.DependencyInjection;
+using UnityAddon.Core.BeanDefinition.GeneralBean;
+using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.Moq
 {
@@ -18,56 +22,45 @@ namespace UnityAddon.Moq
         public static IHostBuilder EnableUnityAddonMoq(this IHostBuilder hostBuilder, object testcase, bool partial)
         {
             return hostBuilder
-                .ConfigureUA<IUnityContainer>(container =>
+                .ConfigureContainer<ApplicationContext>(ctx =>
                 {
-                    testcase.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                        .Select(p => new { p.PropertyType, Attribute = p.GetCustomAttribute<MockAttribute>() })
-                        .Where(p => p.Attribute != null)
-                        .ToList()
-                        .ForEach(p =>
+                    ctx.ConfigureContext<DependencyResolverOption>(option =>
+                    {
+                        option.AddResolveStrategy<MockAttribute>((type, attr, sp) => sp.GetRequiredService(type));
+                        option.AddResolveStrategy<TestSubjectAttribute>((type, attr, sp) => sp.GetRequiredService(type));
+
+                        if (partial)
                         {
-                            if (!(p.PropertyType.IsConstructedGenericType && p.PropertyType.GetGenericTypeDefinition().Equals(typeof(Mock<>))))
-                                throw new ArgumentException("property type must be Mock<>");
+                            option.AddResolveStrategy<DependencyAttribute>((type, attr, sp) => sp.GetService(type, attr.Name));
+                        }
+                    });
 
-                            container.RegisterFactoryUA(p.PropertyType, null, (container, type, name) => Activator.CreateInstance(type),
-                                new ContainerControlledLifetimeManager());
+                    ctx.AddContextEntry(entry =>
+                    {
+                        testcase.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                            .Select(p => new { p.PropertyType, Attribute = p.GetCustomAttribute<MockAttribute>() })
+                            .Where(p => p.Attribute != null)
+                            .ToList()
+                            .ForEach(p =>
+                            {
+                                if (!(p.PropertyType.IsConstructedGenericType && p.PropertyType.GetGenericTypeDefinition().Equals(typeof(Mock<>))))
+                                    throw new ArgumentException("property type must be Mock<>");
 
-                            container.RegisterFactoryUA(p.PropertyType.GetGenericArguments()[0], p.Attribute.Name,
-                                (container, type, name) =>
+                                entry.ConfigureBeanDefinitions(defs =>
                                 {
-                                    dynamic mock = container.ResolveUA(p.PropertyType);
-                                    return mock.Object;
-                                },
-                                new ContainerControlledLifetimeManager());
-                        });
+                                    defs.Add(new FactoryBeanDefinition(p.PropertyType, (sp, type, name) => Activator.CreateInstance(type), null, ScopeType.Singleton));
+                                    defs.Add(new FactoryBeanDefinition(p.PropertyType.GetGenericArguments()[0], (sp, type, name) => ((dynamic)sp.GetRequiredService(p.PropertyType)).Object, null, ScopeType.Singleton));
+                                });
+                            });
 
-                    testcase.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                        .Where(p => p.GetCustomAttribute<TestSubjectAttribute>() != null)
-                        .ToList()
-                        .ForEach(p =>
-                        {
-                            container.RegisterTypeUA(null, p.PropertyType, p.PropertyType, new ContainerControlledLifetimeManager());
-                        });
-                })
-                .ConfigureUA<DependencyResolver>(c =>
-                {
-                    c.AddResolveStrategy<MockAttribute>((type, attr, c) =>
-                    {
-                        return c.ResolveUA(type);
+                        testcase.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                            .Where(p => p.GetCustomAttribute<TestSubjectAttribute>() != null)
+                            .ToList()
+                            .ForEach(p =>
+                            {
+                                entry.ConfigureBeanDefinitions(defs => defs.Add(new TypeBeanDefintion(p.PropertyType, p.PropertyType, null, ScopeType.Singleton)));
+                            });
                     });
-
-                    c.AddResolveStrategy<TestSubjectAttribute>((type, attr, c) =>
-                    {
-                        return c.ResolveUA(type);
-                    });
-
-                    if (partial)
-                    {
-                        c.AddResolveStrategy<DependencyAttribute>((type, attr, c) =>
-                        {
-                            return c.ResolveOptionalUA(type, attr.Name);
-                        });
-                    }
                 });
         }
     }

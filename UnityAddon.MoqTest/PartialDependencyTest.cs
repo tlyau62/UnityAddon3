@@ -5,6 +5,7 @@ using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Moq;
+using UnityAddon.MoqTest.Moq;
 using Xunit;
 
 namespace UnityAddon.MoqTest.PartialDependency

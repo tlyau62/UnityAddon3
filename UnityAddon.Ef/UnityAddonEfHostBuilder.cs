@@ -8,6 +8,8 @@ using UnityAddon.Core;
 using UnityAddon.Core.Aop;
 using UnityAddon.Ef.Transaction;
 using Unity.Lifetime;
+using UnityAddon.Core.Context;
+using UnityAddon.Core.Util.ComponentScanning;
 
 namespace UnityAddon.Ef
 {
@@ -16,18 +18,18 @@ namespace UnityAddon.Ef
         public static IHostBuilder EnableUnityAddonEf(this IHostBuilder hostBuilder)
         {
             return hostBuilder
-                .ScanComponentsUA(Assembly.GetExecutingAssembly(), "UnityAddon.Ef")
-                .ConfigureUA<AopInterceptorContainerOption>(config =>
+                .ConfigureContainer<ApplicationContext>(appCtx =>
                 {
-                    config
-                        .AddAopIntercetor<RequireDbContextInterceptor>()
-                        .AddAopIntercetor<RepositoryInterceptor>();
+                    appCtx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(Assembly.GetExecutingAssembly(), "UnityAddon.Ef")));
+                    appCtx.ConfigureContext<AopInterceptorContainerOption>(config =>
+                    {
+                        config
+                            .AddAopIntercetor<RequireDbContextInterceptor>()
+                            .AddAopIntercetor<RepositoryInterceptor>();
+                    });
                 })
                 .ConfigureContainer<IUnityContainer>(container =>
                 {
-                    container.RegisterTypeUA<TransactionCallbacks, TransactionCallbacks>(new ContainerControlledLifetimeManager())
-                     .RegisterInstanceUA<ITransactionCallbacks>(container.ResolveUA<TransactionCallbacks>());
-
                     container.RegisterFactoryUA((c, t, n) => c.Resolve<DbContextTemplateBuilder>().Build(c));
                 });
         }

@@ -5,9 +5,9 @@ using System.Reflection;
 using System.Text;
 using Unity;
 using UnityAddon.Core;
-using UnityAddon.Core.DependencyInjection;
+using UnityAddon.Moq;
 
-namespace UnityAddon.Moq
+namespace UnityAddon.MoqTest.Moq
 {
     public abstract class AbstractUnityAddonMoqTest
     {
@@ -20,10 +20,9 @@ namespace UnityAddon.Moq
             var host = new HostBuilder()
                 .RegisterUA()
                 .EnableUnityAddonMoq(this, partial)
-                .BuildUA();
+                .Build();
 
-            var container = host.Services.GetService(typeof(IUnityContainer)) as IUnityContainer;
-            container.BuildUp(this.GetType(), this);
+            host.Services.BuildUp(this);
         }
     }
 }
