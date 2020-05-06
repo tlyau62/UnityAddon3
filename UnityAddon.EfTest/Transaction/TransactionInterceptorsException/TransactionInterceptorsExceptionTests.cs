@@ -84,8 +84,6 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
                        ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.EfTest.Common")));
                        ctx.ConfigureContext<DbContextTemplateOption>(option =>
                        {
-                           option.AddTransactionInterceptor<TestTxInterceptor>();
-
                            if (normalOrder < exOrder)
                            {
                                option.AddTransactionInterceptor<TestTxInterceptor>();
