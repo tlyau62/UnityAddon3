@@ -40,12 +40,7 @@ namespace UnityAddon.Core.Context
 
         public void AddContextEntry(Action<ApplicationContextEntry> entryConfig)
         {
-            AddContextEntry(ApplicationContextEntryOrder.App, false, entryConfig);
-        }
-
-        public void AddContextEntry(ApplicationContextEntryOrder order, bool preInstantiate, Action<ApplicationContextEntry> entryConfig)
-        {
-            var entry = new ApplicationContextEntry(order, preInstantiate);
+            var entry = new ApplicationContextEntry();
 
             entryConfig(entry);
 
@@ -101,14 +96,16 @@ namespace UnityAddon.Core.Context
 
             AppContainer.AddExtension(_coreContainer.Resolve<BeanBuildStrategyExtension>());
 
-            AddContextEntry(ApplicationContextEntryOrder.Intern, false, entry =>
+            AddContextEntry(entry =>
             {
+                entry.Order = ApplicationContextEntryOrder.Intern;
                 entry.ConfigureBeanDefinitions(defs => defs.AddFromUnityContainer(_coreContainer));
             });
 
             // add value resolve logic
-            AddContextEntry(ApplicationContextEntryOrder.AppPreConfig, false, entry =>
+            AddContextEntry(entry =>
             {
+                entry.Order = ApplicationContextEntryOrder.AppPreConfig;
                 entry.ConfigureBeanDefinitions(defs =>
                 {
                     defs.Add(new TypeBeanDefintion(typeof(ValueProvider), typeof(ValueProvider), null, ScopeType.Singleton));
@@ -125,8 +122,9 @@ namespace UnityAddon.Core.Context
             });
 
             // beandefintion candidate selector
-            AddContextEntry(ApplicationContextEntryOrder.AppPreConfig, false, entry =>
+            AddContextEntry(entry =>
             {
+                entry.Order = ApplicationContextEntryOrder.AppPreConfig;
                 entry.ConfigureBeanDefinitions(defs =>
                 {
                     defs.Add(new TypeBeanDefintion(typeof(BeanDefintionCandidateSelector), typeof(BeanDefintionCandidateSelector), null, ScopeType.Singleton));
@@ -134,8 +132,9 @@ namespace UnityAddon.Core.Context
             });
 
             // aop
-            AddContextEntry(ApplicationContextEntryOrder.AppPreConfig + 1, false, entry =>
+            AddContextEntry(entry =>
             {
+                entry.Order = ApplicationContextEntryOrder.AppPreConfig + 1;
                 entry.ConfigureBeanDefinitions(defs =>
                 {
                     defs.Add(new TypeBeanDefintion(typeof(AopInterceptorContainer), typeof(AopInterceptorContainer), null, ScopeType.Singleton));
@@ -148,8 +147,9 @@ namespace UnityAddon.Core.Context
                 entry.PostProcess += c => c.AddExtension(c.Resolve<AopBuildStrategyExtension>());
             });
 
-            AddContextEntry(ApplicationContextEntryOrder.AppPostConfig, false, entry =>
+            AddContextEntry(entry =>
             {
+                entry.Order = ApplicationContextEntryOrder.AppPostConfig;
                 entry.PreProcess += c => c.Resolve<AopInterceptorContainer>().Init();
             });
 
@@ -177,8 +177,9 @@ namespace UnityAddon.Core.Context
 
             if (loadEntry.BeanDefinitionCollection.Any(def => def.Type == typeof(IBeanDefinitionCollection)))
             {
-                AddContextEntry(ApplicationContextEntryOrder.BeanMethod, false, entry =>
+                AddContextEntry(entry =>
                 {
+                    entry.Order = ApplicationContextEntryOrder.BeanMethod;
                     entry.ConfigureBeanDefinitions(defCol =>
                     {
                         foreach (var beanDef in loadEntry.BeanDefinitionCollection.Where(def => def.Type == typeof(IBeanDefinitionCollection)))
