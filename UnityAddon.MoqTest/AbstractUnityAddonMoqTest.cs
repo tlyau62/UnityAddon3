@@ -22,7 +22,7 @@ namespace UnityAddon.MoqTest.Moq
                 .EnableUnityAddonMoq(this, partial)
                 .Build();
 
-            host.Services.BuildUp(this);
+            host.Services.BuildUp(GetType(), this);
         }
     }
 }

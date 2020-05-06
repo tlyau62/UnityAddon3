@@ -22,14 +22,8 @@ namespace UnityAddon.Core.BeanDefinition.MemberBean
 
         public override object Constructor(IServiceProvider serviceProvider, Type type, string name)
         {
-            var proxyGenerator = serviceProvider.GetRequiredService<ProxyGenerator>();
-            var paramFill = serviceProvider.GetRequiredService<ParameterFill>();
-            var ctorResolver = serviceProvider.GetRequiredService<ConstructorResolver>();
-
-            return proxyGenerator.CreateClassProxy(
-                type,
-                paramFill.FillAllParamaters(ctorResolver.ChooseConstuctor(type, serviceProvider), serviceProvider),
-                serviceProvider.GetRequiredService<BeanMethodInterceptor>());
+            return serviceProvider.GetRequiredService<BeanFactory>()
+                .ConstructClassProxy(type, new IInterceptor[] { serviceProvider.GetRequiredService<BeanMethodInterceptor>() }, serviceProvider);
         }
     }
 }

@@ -19,9 +19,9 @@ namespace UnityAddon.Core.Bean.DependencyInjection
         [Dependency]
         public DependencyResolver DependencyResolver { get; set; }
 
-        public object FillAllProperties(object obj, IServiceProvider sp)
+        public object FillAllProperties(Type type, object obj, IServiceProvider sp)
         {
-            foreach (var prop in SelectAllProperties(obj.GetType()))
+            foreach (var prop in SelectAllProperties(type))
             {
                 InjectDependency(prop, obj, sp);
             }

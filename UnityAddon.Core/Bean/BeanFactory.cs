@@ -48,14 +48,26 @@ namespace UnityAddon.Core.Bean
             var ctor = CtorResolver.ChooseConstuctor(type, sp);
             var bean = ctor.Invoke(ParameterFill.FillAllParamaters(ctor, sp).ToArray());
 
-            PropertyFill.FillAllProperties(bean, sp);
+            PropertyFill.FillAllProperties(type, bean, sp);
 
-            return PostConstruct(bean);
+            return PostConstruct(type, bean);
         }
 
-        public object PostConstruct(object bean)
+        public object ConstructClassProxy(Type type, IEnumerable<IInterceptor> interceptors, IServiceProvider sp)
         {
-            var postConstructors = MethodSelector.GetAllMethodsByAttribute<PostConstructAttribute>(bean.GetType()); // context.Existing.GetType()
+            var proxyBean = ProxyGenerator.CreateClassProxy(
+                type,
+                ParameterFill.FillAllParamaters(CtorResolver.ChooseConstuctor(type, sp), sp),
+                interceptors.ToArray());
+
+            PropertyFill.FillAllProperties(type, proxyBean, sp);
+
+            return PostConstruct(type, proxyBean);
+        }
+
+        public object PostConstruct(Type type, object bean)
+        {
+            var postConstructors = MethodSelector.GetAllMethodsByAttribute<PostConstructAttribute>(type); // context.Existing.GetType()
 
             foreach (var pc in postConstructors)
             {

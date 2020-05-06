@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Unity;
@@ -15,45 +16,45 @@ namespace UnityAddon.CoreTest.Configuration.DependencyInjection
     [Component]
     public class PropertyHelper { }
 
-    public class Service
+    [Configuration]
+    public class Config
     {
         [Dependency]
         public PropertyHelper PropertyHelper { get; set; }
 
+        [Dependency]
+        public IServiceProvider ServiceProvider { get; set; }
+
         public CtorHelper CtorHelper { get; set; }
 
-        public Service(CtorHelper ctorHelper)
+        [Bean]
+        public virtual int CreateService(CtorHelper ctorHelper)
         {
             CtorHelper = ctorHelper;
-        }
-    }
 
-    [Configuration]
-    public class Config
-    {
-        [Bean]
-        public virtual Service CreateService(CtorHelper ctorHelper)
-        {
-            return new Service(ctorHelper);
+            return 10;
         }
     }
 
     public class DependencyInjectionTests : DefaultTest
     {
         [Dependency]
-        public Service Service { get; set; }
-
-        [Dependency]
         public CtorHelper CtorHelper { get; set; }
 
         [Dependency]
         public PropertyHelper PropertyHelper { get; set; }
 
+        [Dependency]
+        public Config Config { get; set; }
+
+        [Dependency]
+        public int TriggerConfigBean { get; set; }
+
         [Fact]
         public void DependencyInjection()
         {
-            Assert.Same(CtorHelper, Service.CtorHelper);
-            Assert.Null(Service.PropertyHelper);
+            Assert.Same(CtorHelper, Config.CtorHelper);
+            Assert.Same(PropertyHelper, Config.PropertyHelper);
         }
     }
 }

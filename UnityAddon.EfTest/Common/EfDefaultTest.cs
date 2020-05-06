@@ -27,7 +27,7 @@ namespace UnityAddon.EfTest.Common
                 .EnableUnityAddonEf()
                 .Build()
                 .Services
-                .BuildUp(this);
+                .BuildUp(GetType(), this);
 
             DbSetupUtility.CreateDb(DbContextFactory);
         }

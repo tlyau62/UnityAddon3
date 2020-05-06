@@ -27,7 +27,7 @@ namespace UnityAddon.Core
                 })
                 .Build();
 
-            host.Services.BuildUp(this);
+            host.Services.BuildUp(GetType(), this);
         }
     }
 }
