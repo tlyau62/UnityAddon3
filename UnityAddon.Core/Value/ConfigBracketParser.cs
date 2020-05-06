@@ -15,18 +15,13 @@ namespace UnityAddon.Core.Value
     [Component]
     public class ConfigBracketParser : AbstrackBracketParser
     {
-        [OptionalDependency]
+        [Dependency]
         public IConfiguration Config { get; set; }
 
         private static readonly Regex DefaultValue = new Regex("^([^:\n]*)(:([^:\n]*))?$", RegexOptions.Compiled);
 
         protected override string Process(string intermediateResult)
         {
-            if (Config == null)
-            {
-                return "not configured";
-            }
-
             if (!DefaultValue.IsMatch(intermediateResult))
             {
                 throw new FormatException();
