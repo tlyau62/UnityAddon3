@@ -39,7 +39,7 @@ namespace UnityAddon.Core
 
                 if (!reg.RegisteredType.IsGenericType || !reg.RegisteredType.ContainsGenericParameters)
                 {
-                    sp.GetServices(reg.RegisteredType).ToList();
+                    sp.GetRequiredService(reg.RegisteredType, reg.Name);
                 }
             }
 
