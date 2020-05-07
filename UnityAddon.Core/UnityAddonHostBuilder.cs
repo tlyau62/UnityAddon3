@@ -30,8 +30,6 @@ namespace UnityAddon.Core
 {
     public static class UnityAddonHostBuilder
     {
-        private static readonly string IS_NEW_CONTAINER = "__IS_NEW_CONTAINER";
-
         public static IHostBuilder RegisterUA(this IHostBuilder hostBuilder, IUnityContainer container)
         {
             return hostBuilder.UseServiceProviderFactory(new ServiceProviderFactory(container));

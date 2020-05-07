@@ -32,37 +32,37 @@ namespace UnityAddon.Core.Context
         public void Setup()
         {
             _container
-                .RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new ContainerControlledLifetimeManager());
+                .RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new SingletonLifetimeManager());
 
             _container
-                .RegisterInstance(_applicationContext, new ContainerControlledLifetimeManager());
+                .RegisterInstance(_applicationContext, new SingletonLifetimeManager());
 
             var sp = _container
-                .RegisterType<ServiceProvider>(new ContainerControlledLifetimeManager(), new InjectionConstructor(_applicationContext.AppContainer))
+                .RegisterType<ServiceProvider>(new SingletonLifetimeManager(), new InjectionConstructor(_applicationContext.AppContainer))
                 .Resolve<ServiceProvider>();
-            _container.RegisterInstance<IServiceProvider>(sp, new ContainerControlledLifetimeManager())
-                .RegisterInstance<IServiceScopeFactory>(sp, new ContainerControlledLifetimeManager())
-                .RegisterInstance<IServiceScope>(sp, new ContainerControlledLifetimeManager());
+            _container.RegisterInstance<IServiceProvider>(sp, new SingletonLifetimeManager())
+                .RegisterInstance<IServiceScopeFactory>(sp, new SingletonLifetimeManager())
+                .RegisterInstance<IServiceScope>(sp, new SingletonLifetimeManager());
 
             _container
-                .RegisterType<ProxyGenerator>(new ContainerControlledLifetimeManager())
-                .RegisterType<ConstructorResolver>(new ContainerControlledLifetimeManager())
-                .RegisterType<ParameterFill>(new ContainerControlledLifetimeManager())
-                .RegisterType<PropertyFill>(new ContainerControlledLifetimeManager())
-                .RegisterType<DependencyResolver>(new ContainerControlledLifetimeManager())
-                .RegisterType<BeanFactory>(new ContainerControlledLifetimeManager());
+                .RegisterType<ProxyGenerator>(new SingletonLifetimeManager())
+                .RegisterType<ConstructorResolver>(new SingletonLifetimeManager())
+                .RegisterType<ParameterFill>(new SingletonLifetimeManager())
+                .RegisterType<PropertyFill>(new SingletonLifetimeManager())
+                .RegisterType<DependencyResolver>(new SingletonLifetimeManager())
+                .RegisterType<BeanFactory>(new SingletonLifetimeManager());
 
             _container
-                .RegisterType<BeanMethodInterceptor>(new ContainerControlledLifetimeManager());
+                .RegisterType<BeanMethodInterceptor>(new SingletonLifetimeManager());
 
             _container
-                .RegisterType<IServicePostRegistry, ServicePostRegistry>(new ContainerControlledLifetimeManager());
+                .RegisterType<IServicePostRegistry, ServicePostRegistry>(new SingletonLifetimeManager());
 
             _container
-                .RegisterType<BeanBuildStrategyExtension>(new ContainerControlledLifetimeManager());
+                .RegisterType<BeanBuildStrategyExtension>(new SingletonLifetimeManager());
 
             _container
-                .RegisterType(typeof(IConfigs<>), typeof(Configs<>), new ContainerControlledLifetimeManager());
+                .RegisterType(typeof(IConfigs<>), typeof(Configs<>), new SingletonLifetimeManager());
         }
 
         public void Configure<TConfig>(Action<TConfig> config) where TConfig : class, new()

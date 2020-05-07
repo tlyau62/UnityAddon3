@@ -3,6 +3,7 @@ using Unity.Lifetime;
 using Unity;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
+using Unity.Microsoft.DependencyInjection.Lifetime;
 
 namespace UnityAddon.Core.BeanDefinition.ServiceBean
 {
@@ -29,7 +30,7 @@ namespace UnityAddon.Core.BeanDefinition.ServiceBean
                     }
                     else if (Descriptor.Lifetime == ServiceLifetime.Singleton)
                     {
-                        _scope = Activator.CreateInstance<ContainerControlledLifetimeManager>();
+                        _scope = Activator.CreateInstance<SingletonLifetimeManager>();
                     }
                     else if (Descriptor.Lifetime == ServiceLifetime.Transient)
                     {

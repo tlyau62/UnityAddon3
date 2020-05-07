@@ -16,7 +16,7 @@ namespace UnityAddon.Core.Attributes
         private static Dictionary<ScopeType, Type> scopeMap = new Dictionary<ScopeType, Type>()
         {
             {ScopeType.Transient, typeof(ContainerControlledTransientManager)},
-            {ScopeType.Singleton, typeof(ContainerControlledLifetimeManager)},
+            {ScopeType.Singleton, typeof(SingletonLifetimeManager)},
             {ScopeType.Scoped, typeof(HierarchicalLifetimeManager) }
         };
         public Type Value { get; private set; }

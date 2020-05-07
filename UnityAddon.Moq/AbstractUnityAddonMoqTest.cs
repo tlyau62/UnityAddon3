@@ -7,7 +7,7 @@ using Unity;
 using UnityAddon.Core;
 using UnityAddon.Moq;
 
-namespace UnityAddon.MoqTest.Moq
+namespace UnityAddon.Moq
 {
     public abstract class AbstractUnityAddonMoqTest
     {

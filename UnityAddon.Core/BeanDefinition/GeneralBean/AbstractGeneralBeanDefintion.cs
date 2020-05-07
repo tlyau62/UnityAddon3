@@ -39,7 +39,7 @@ namespace UnityAddon.Core.BeanDefinition.GeneralBean
                     }
                     else if (_scopedType == ScopeType.Singleton)
                     {
-                        _scope = Activator.CreateInstance<ContainerControlledLifetimeManager>();
+                        _scope = Activator.CreateInstance<SingletonLifetimeManager>();
                     }
                     else if (_scopedType == ScopeType.Transient)
                     {

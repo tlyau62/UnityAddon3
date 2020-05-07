@@ -15,6 +15,9 @@ namespace UnityAddon.Core.BeanBuildStrategies
     public class BeanBuildStrategyExtension : UnityContainerExtension
     {
         [Dependency]
+        public BeanSingletonStrategy BeanSingletonStrategy { get; set; }
+
+        [Dependency]
         public BeanTypeMappingStrategy BeanTypeMappingStrategy { get; set; }
 
         [Dependency]
@@ -36,6 +39,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
         /// </summary>
         protected override void Initialize()
         {
+            Context.Strategies.Add(BeanSingletonStrategy, UnityBuildStage.Setup); // 0
             Context.Strategies.Add(BeanTypeMappingStrategy, UnityBuildStage.TypeMapping); // 1
             Context.Strategies.Add(BeanDependencyValidatorStrategy, UnityBuildStage.PreCreation); // 2
             //Context.Strategies.Add(BeanPostProcessorStrategy, UnityBuildStage.PostInitialization); // 6
