@@ -19,7 +19,7 @@ namespace UnityAddon.CoreTest.Bean.PrimaryBean
     [Primary]
     public class ServiceB : IService { }
 
-    public class PrimaryBeanTests : DefaultTest
+    public class PrimaryBeanTests : UnityAddonComponentScanTest
     {
         [Dependency]
         public IService PrimaryB { get; set; }

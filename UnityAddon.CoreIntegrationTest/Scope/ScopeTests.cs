@@ -14,7 +14,7 @@ namespace UnityAddon.CoreIntegrationTest.Scope
     [Component]
     public class Service { }
 
-    public class ScopeTests : DefaultTest
+    public class ScopeTests : UnityAddonComponentScanTest
     {
         [Dependency]
         public IServiceProvider Sp { get; set; }

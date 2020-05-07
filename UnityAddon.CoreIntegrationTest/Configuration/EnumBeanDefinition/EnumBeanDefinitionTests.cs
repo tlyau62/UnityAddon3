@@ -24,7 +24,7 @@ namespace UnityAddon.CoreTest.Configuration.EnumBeanDefinition
         }
     }
 
-    public class EnumBeanDefinitionTests : DefaultTest
+    public class EnumBeanDefinitionTests : UnityAddonComponentScanTest
     {
         [Dependency]
         public string TestString { get; set; }

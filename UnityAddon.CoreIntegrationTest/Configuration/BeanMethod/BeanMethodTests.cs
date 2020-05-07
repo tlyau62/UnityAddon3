@@ -43,7 +43,7 @@ namespace UnityAddon.CoreTest.Configuration.BeanMethod
         }
     }
 
-    public class BeanMethodTests : DefaultTest
+    public class BeanMethodTests : UnityAddonComponentScanTest
     {
         [Dependency]
         public IService ServiceA { get; set; }

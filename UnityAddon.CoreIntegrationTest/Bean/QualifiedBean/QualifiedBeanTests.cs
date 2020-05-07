@@ -51,7 +51,7 @@ namespace UnityAddon.CoreTest.Bean.QualifiedBean
     {
     }
 
-    public class QualifiedBeanTests : DefaultTest
+    public class QualifiedBeanTests : UnityAddonComponentScanTest
     {
         [Dependency("CommonA")]
         public ICommon A { get; set; }

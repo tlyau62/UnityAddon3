@@ -13,7 +13,7 @@ namespace UnityAddon.CoreTest.BeanBuildStrategies
     [Component]
     public class Service { }
 
-    public class BeanSingletonStrategyTests : UnityAddonTest
+    public class BeanSingletonStrategyTests : UnityAddonComponentScanTest
     {
         [Dependency]
         public IServiceProvider Sp { get; set; }
