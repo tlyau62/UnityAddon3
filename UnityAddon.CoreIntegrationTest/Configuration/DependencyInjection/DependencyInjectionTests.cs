@@ -36,7 +36,7 @@ namespace UnityAddon.CoreTest.Configuration.DependencyInjection
         }
     }
 
-    public class DependencyInjectionTests : DefaultTest
+    public class DependencyInjectionTests : UnityAddonComponentScanTest
     {
         [Dependency]
         public CtorHelper CtorHelper { get; set; }

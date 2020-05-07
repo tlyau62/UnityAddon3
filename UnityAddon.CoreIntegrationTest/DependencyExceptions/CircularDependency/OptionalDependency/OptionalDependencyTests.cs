@@ -38,7 +38,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.OptionalDe
     {
     }
 
-    public class OptionalDependencyTests : DefaultTest
+    public class OptionalDependencyTests : UnityAddonComponentScanTest
     {
         [Dependency]
         public IServiceProvider Sp { get; set; }
