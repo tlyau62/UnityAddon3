@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,15 +37,15 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoUniq
     }
 
     [Trait("DependencyExceptions", "NoUniqueBeanDefinition")]
-    public class NoUniqueBeanDefinitionExceptionTests : UnityAddonDefaultTest
+    public class NoUniqueBeanDefinitionExceptionTests : UnityAddonComponentScanTest
     {
         [Dependency]
-        public IUnityContainer UnityContainer { get; set; }
+        public IServiceProvider Sp { get; set; }
 
         [Fact]
         public void PropertyFill_NoUniqueBeanDefinition_ExceptionThrown()
         {
-            var ex = Assert.Throws<BeanCreationException>(() => UnityContainer.Resolve<PropService>());
+            var ex = Assert.Throws<BeanCreationException>(() => Sp.GetRequiredService<PropService>());
 
             Assert.Equal($"Property B in {typeof(PropService).FullName} required a single bean, but 2 were found:\r\n" +
                 $"- {typeof(B1).Name}: defined in namespace [{typeof(B1).Namespace}]\r\n" +
@@ -54,7 +55,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoUniq
         [Fact]
         public void ParameterFill_NoUniqueBeanDefinition_ExceptionThrown()
         {
-            var ex = Assert.Throws<BeanCreationException>(() => UnityContainer.Resolve<CtorService>());
+            var ex = Assert.Throws<BeanCreationException>(() => Sp.GetRequiredService<CtorService>());
 
             Assert.Equal($"Parameter 0 of Constructor in {typeof(CtorService).FullName} required a single bean, but 2 were found:\r\n" +
                 $"- {typeof(B1).Name}: defined in namespace [{typeof(B1).Namespace}]\r\n" +

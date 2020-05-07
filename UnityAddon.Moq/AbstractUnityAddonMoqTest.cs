@@ -9,20 +9,22 @@ using UnityAddon.Moq;
 
 namespace UnityAddon.Moq
 {
-    public abstract class AbstractUnityAddonMoqTest
+    public abstract class AbstractUnityAddonMoqTest : UnityAddonTest
     {
         public AbstractUnityAddonMoqTest() : this(false)
         {
         }
 
-        public AbstractUnityAddonMoqTest(bool partial)
+        public AbstractUnityAddonMoqTest(bool partial) : base(Config(partial))
         {
-            var host = new HostBuilder()
-                .RegisterUA()
-                .EnableUnityAddonMoq(this, partial)
-                .Build();
+        }
 
-            host.Services.BuildUp(GetType(), this);
+        private static Action<IHostBuilder, UnityAddonTest> Config(bool partial)
+        {
+            return (builder, test) =>
+            {
+                builder.EnableUnityAddonMoq(test, partial);
+            };
         }
     }
 }
