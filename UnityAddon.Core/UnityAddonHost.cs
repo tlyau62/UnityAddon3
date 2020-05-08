@@ -32,7 +32,7 @@ namespace UnityAddon.Core
 
             foreach (var reg in container.Registrations)
             {
-                if (!(reg.LifetimeManager is ContainerControlledLifetimeManager))
+                if (!(reg.LifetimeManager is ContainerControlledLifetimeManager || reg.LifetimeManager is SingletonLifetimeManager))
                 {
                     continue;
                 }
