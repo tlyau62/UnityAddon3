@@ -29,6 +29,7 @@ namespace UnityAddon.Core.Attributes
 
     public enum ScopeType
     {
+        None,
         Transient,
         Singleton,
         Scoped

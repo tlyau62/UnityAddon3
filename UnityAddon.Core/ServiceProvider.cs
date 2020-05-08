@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -126,7 +127,9 @@ namespace UnityAddon.Core
 
         public void Dispose()
         {
-            // UnityContainer.Dispose();
+            IDisposable disposable = UnityContainer;
+            UnityContainer = null;
+            disposable?.Dispose();
         }
 
         public IServiceScope CreateScope()

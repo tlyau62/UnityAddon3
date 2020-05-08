@@ -98,7 +98,26 @@ namespace UnityAddon.Core.BeanDefinition
                     continue;
                 }
 
-                Add(new FactoryBeanDefinition(reg.RegisteredType, (sp, t, n) => unityContainer.Resolve(t, reg.Name), reg.Name, ScopeType.Transient));
+                var scope = ScopeType.None;
+
+                if (reg.LifetimeManager is ContainerControlledLifetimeManager)
+                {
+                    scope = ScopeType.Singleton;
+                }
+                else if (reg.LifetimeManager is ContainerControlledTransientManager)
+                {
+                    scope = ScopeType.Transient;
+                }
+                else if (reg.LifetimeManager is HierarchicalLifetimeManager)
+                {
+                    scope = ScopeType.Scoped;
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+
+                Add(new FactoryBeanDefinition(reg.RegisteredType, (sp, t, n) => unityContainer.Resolve(t, reg.Name), reg.Name, scope));
             }
 
             return this;
