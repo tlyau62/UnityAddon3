@@ -172,7 +172,7 @@ namespace UnityAddon.Core.Context
                 }
 
                 _coreContainer.Resolve<IBeanDefinitionContainer>().RegisterBeanDefinition(beanDef);
-                AppContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(sp, t, n), (IFactoryLifetimeManager)beanDef.Scope);
+                AppContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(new ServiceProvider(c), t, n), (IFactoryLifetimeManager)beanDef.Scope);
             }
 
             if (loadEntry.BeanDefinitionCollection.Any(def => def.Type == typeof(IBeanDefinitionCollection)))

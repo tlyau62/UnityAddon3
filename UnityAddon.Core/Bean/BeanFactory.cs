@@ -38,6 +38,9 @@ namespace UnityAddon.Core.Bean
         [Dependency]
         public PropertyFill PropertyFill { get; set; }
 
+        [Dependency]
+        public IServiceProvider Sp { get; set; }
+
         public object Construct(Type type, IServiceProvider sp)
         {
             if (type.IsInterface)

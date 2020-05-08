@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -90,6 +91,8 @@ namespace UnityAddon.Core
     // Support name interface
     public class ServiceProvider : IServiceProvider, IDisposable, ISupportRequiredService, IServiceScopeFactory, IServiceScope, IUnityServiceProvider, ISupportNamedService
     {
+        private string _uuid = Guid.NewGuid().ToString();
+
         public ServiceProvider(IUnityContainer container)
         {
             UnityContainer = container;
@@ -124,7 +127,9 @@ namespace UnityAddon.Core
 
         public void Dispose()
         {
-            UnityContainer.Dispose();
+            IDisposable disposable = UnityContainer;
+            UnityContainer = null;
+            disposable?.Dispose();
         }
 
         public IServiceScope CreateScope()
@@ -156,6 +161,11 @@ namespace UnityAddon.Core
                 .GetAllBeanDefinitions(serviceType)
                 .Select(def => def.Name)
                 .ToArray();
+        }
+
+        public override string ToString()
+        {
+            return _uuid;
         }
 
         IServiceProvider IServiceScope.ServiceProvider => this;

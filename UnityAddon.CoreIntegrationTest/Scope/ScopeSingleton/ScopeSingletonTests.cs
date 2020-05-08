@@ -9,12 +9,12 @@ using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using Xunit;
 
-namespace UnityAddon.CoreIntegrationTest.Scope
+namespace UnityAddon.CoreIntegrationTest.ScopeSingleton
 {
     [Component]
     public class Service { }
 
-    public class ScopeTests : UnityAddonComponentScanTest
+    public class ScopeSingletonTests : UnityAddonComponentScanTest
     {
         [Dependency]
         public IServiceProvider Sp { get; set; }

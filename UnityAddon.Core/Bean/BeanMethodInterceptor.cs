@@ -42,13 +42,13 @@ namespace UnityAddon.Core.Bean
             {
                 var beanDef = (MemberMethodBeanDefinition)DefContainer.GetBeanDefinition(method.ReturnType, method.Name);
 
-                if (beanDef.Invocation != null)
-                {
-                    throw new InvalidOperationException("Someting wrong.");
-                }
-
                 lock (_lockObj)
                 {
+                    if (beanDef.Invocation != null)
+                    {
+                        throw new InvalidOperationException("Invocation must be null.");
+                    }
+
                     // ensure no other thread can access to this invocation field until this resolution is finished.
                     // may cause deadlock if circular dep happens, but detected by BeanDependencyValidatorStrategy.
                     beanDef.Invocation = invocation;
