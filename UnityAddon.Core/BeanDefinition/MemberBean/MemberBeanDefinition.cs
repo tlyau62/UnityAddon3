@@ -38,7 +38,7 @@ namespace UnityAddon.Core.BeanDefinition.MemberBean
                 }
 
                 var scopeAttr = Member.GetAttribute<ScopeAttribute>();
-                var scope = scopeAttr != null ? scopeAttr.Value : typeof(ContainerControlledLifetimeManager);
+                var scope = scopeAttr != null ? scopeAttr.Value : typeof(SingletonLifetimeManager);
 
                 return _scope = (LifetimeManager)Activator.CreateInstance(scope);
             }

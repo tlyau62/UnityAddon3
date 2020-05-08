@@ -100,7 +100,7 @@ namespace UnityAddon.Core.BeanDefinition
 
                 var scope = ScopeType.None;
 
-                if (reg.LifetimeManager is ContainerControlledLifetimeManager)
+                if (reg.LifetimeManager is ContainerControlledLifetimeManager || reg.LifetimeManager is SingletonLifetimeManager)
                 {
                     scope = ScopeType.Singleton;
                 }
