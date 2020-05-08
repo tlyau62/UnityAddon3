@@ -46,7 +46,7 @@ namespace UnityAddon.Core.Bean
                 {
                     if (beanDef.Invocation != null)
                     {
-                        throw new InvalidOperationException("Someting wrong.");
+                        throw new InvalidOperationException("Invocation must be null.");
                     }
 
                     // ensure no other thread can access to this invocation field until this resolution is finished.
