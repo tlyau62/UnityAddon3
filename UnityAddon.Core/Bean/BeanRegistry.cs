@@ -15,20 +15,37 @@ namespace UnityAddon.Core.Bean
     public interface IBeanRegistry
     {
         void Add(IBeanDefinition beanDefinition);
+
         void AddSingleton(Type type, Type implType, string name);
-        void AddSingleton<TMap, TImpl>(string name = null);
+
+        void AddSingleton<TMap, TImpl>(string name = null) where TImpl : class, new();
+
         void AddSingleton(Type type, object instance, string name);
+
         void AddSingleton<TMap>(TMap instance, string name = null);
+
         void AddSingleton(Type type, Func<IServiceProvider, Type, string, object> factory, string name);
+
         void AddSingleton<TMap>(Func<IServiceProvider, Type, string, TMap> factory, string name = null);
+
         void AddTransient(Type type, Type implType, string name);
-        void AddTransient<TMap, TImpl>(string name = null);
+
+        void AddTransient<TMap, TImpl>(string name = null) where TImpl : class, new();
+
         void AddTransient(Type type, Func<IServiceProvider, Type, string, object> factory, string name);
+
         void AddTransient<TMap>(Func<IServiceProvider, Type, string, TMap> factory, string name = null);
+
+        void AddComponent<TImpl>() where TImpl : class, new();
+
         void AddComponent(Type type);
+
         void AddFromExisting(IBeanDefinitionCollection beanDefCollection);
+
         void AddFromServiceCollection(Action<IServiceCollection> servicesCallback);
+
         void AddFromServiceCollection(IServiceCollection services);
+
         void AddFromUnityContainer(IUnityContainer unityContainer);
     }
 
@@ -41,7 +58,7 @@ namespace UnityAddon.Core.Bean
             Add(new TypeBeanDefintion(type, implType, name, ScopeType.Singleton));
         }
 
-        public void AddSingleton<TMap, TImpl>(string name = null)
+        public void AddSingleton<TMap, TImpl>(string name) where TImpl : class, new()
         {
             AddSingleton(typeof(TMap), typeof(TImpl), name);
         }
@@ -51,7 +68,7 @@ namespace UnityAddon.Core.Bean
             Add(new InstanceBeanDefintion(type, instance, name, ScopeType.Singleton));
         }
 
-        public void AddSingleton<TMap>(TMap instance, string name = null)
+        public void AddSingleton<TMap>(TMap instance, string name)
         {
             AddSingleton(typeof(TMap), instance, name);
         }
@@ -61,7 +78,7 @@ namespace UnityAddon.Core.Bean
             Add(new FactoryBeanDefinition(type, factory, name, ScopeType.Singleton));
         }
 
-        public void AddSingleton<TMap>(Func<IServiceProvider, Type, string, TMap> factory, string name = null)
+        public void AddSingleton<TMap>(Func<IServiceProvider, Type, string, TMap> factory, string name)
         {
             AddSingleton(typeof(TMap), (sp, t, n) => factory(sp, t, n), name);
         }
@@ -71,7 +88,7 @@ namespace UnityAddon.Core.Bean
             Add(new TypeBeanDefintion(type, implType, name, ScopeType.Transient));
         }
 
-        public void AddTransient<TMap, TImpl>(string name = null)
+        public void AddTransient<TMap, TImpl>(string name) where TImpl : class, new()
         {
             AddTransient(typeof(TMap), typeof(TImpl), name);
         }
@@ -81,7 +98,7 @@ namespace UnityAddon.Core.Bean
             Add(new FactoryBeanDefinition(type, factory, name, ScopeType.Transient));
         }
 
-        public void AddTransient<TMap>(Func<IServiceProvider, Type, string, TMap> factory, string name = null)
+        public void AddTransient<TMap>(Func<IServiceProvider, Type, string, TMap> factory, string name)
         {
             AddTransient(typeof(TMap), (sp, t, n) => factory(sp, t, n), name);
         }
@@ -167,9 +184,9 @@ namespace UnityAddon.Core.Bean
             }
         }
 
-        public void AddComponent<T>()
+        public void AddComponent<TImpl>() where TImpl : class, new()
         {
-            AddComponent(typeof(T));
+            AddComponent(typeof(TImpl));
         }
     }
 }
