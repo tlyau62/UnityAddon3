@@ -38,9 +38,11 @@ namespace UnityAddon.Core.Context
                 .RegisterInstance(_applicationContext, new SingletonLifetimeManager());
 
             var sp = _container
-                .RegisterType<ServiceProvider>(new SingletonLifetimeManager(), new InjectionConstructor(_applicationContext.AppContainer))
-                .Resolve<ServiceProvider>();
-            _container.RegisterInstance<IServiceProvider>(sp, new SingletonLifetimeManager())
+                .RegisterType<UnityAddonSP>(new SingletonLifetimeManager(), new InjectionConstructor(_applicationContext.AppContainer))
+                .Resolve<UnityAddonSP>();
+            _container
+                .RegisterInstance<IUnityAddonSP>(sp, new SingletonLifetimeManager())
+                .RegisterInstance<IServiceProvider>(sp, new SingletonLifetimeManager())
                 .RegisterInstance<IServiceScopeFactory>(sp, new SingletonLifetimeManager())
                 .RegisterInstance<IServiceScope>(sp, new SingletonLifetimeManager());
 

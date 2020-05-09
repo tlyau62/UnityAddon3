@@ -27,7 +27,7 @@ namespace UnityAddon.Core
         public static IHost PreInstantiateSingleton(this IHost host)
         {
             var container = host.Services.GetRequiredService<ApplicationContext>().AppContainer;
-            var sp = new ServiceProvider(container);
+            var sp = new UnityAddonSP(container);
             var currentRegs = container.Registrations.Count();
 
             foreach (var reg in container.Registrations)

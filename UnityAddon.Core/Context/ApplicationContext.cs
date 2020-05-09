@@ -90,7 +90,7 @@ namespace UnityAddon.Core.Context
             _isRefreshing = false;
         }
 
-        public IServiceProvider Build()
+        public IUnityAddonSP Build()
         {
             _coreContainer = _coreContainerBuilder.Build();
 
@@ -155,12 +155,12 @@ namespace UnityAddon.Core.Context
 
             Refresh();
 
-            return _coreContainer.Resolve<IServiceProvider>();
+            return _coreContainer.Resolve<IUnityAddonSP>();
         }
 
         private void Register(ApplicationContextEntry loadEntry, ApplicationContextEntryOrder curOrder)
         {
-            var sp = _coreContainer.Resolve<IServiceProvider>();
+            var sp = _coreContainer.Resolve<IUnityAddonSP>();
 
             loadEntry.PreProcess(AppContainer);
 
@@ -172,7 +172,7 @@ namespace UnityAddon.Core.Context
                 }
 
                 _coreContainer.Resolve<IBeanDefinitionContainer>().RegisterBeanDefinition(beanDef);
-                AppContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(new ServiceProvider(c), t, n), (IFactoryLifetimeManager)beanDef.Scope);
+                AppContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(new UnityAddonSP(c), t, n), (IFactoryLifetimeManager)beanDef.Scope);
             }
 
             if (loadEntry.BeanDefinitionCollection.Any(def => def.Type == typeof(IBeanDefinitionCollection)))

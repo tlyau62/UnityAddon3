@@ -22,7 +22,7 @@ namespace UnityAddon.Core.BeanDefinition.MemberBean
 
         public override string[] Qualifiers => base.Qualifiers.Union(new[] { Type.Name }).ToArray();
 
-        public override object Constructor(IServiceProvider serviceProvider, Type type, string name)
+        public override object Constructor(IUnityAddonSP serviceProvider, Type type, string name)
         {
             return serviceProvider.GetRequiredService<BeanFactory>()
                 .Construct(type, serviceProvider);

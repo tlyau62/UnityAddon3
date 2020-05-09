@@ -32,14 +32,5 @@ namespace UnityAddon.Core.Context
 
             return this;
         }
-
-        public ApplicationContextEntry ConfigureBeanDefinitions(Action<IServiceProvider, IBeanDefinitionCollection> config)
-        {
-            //config(container. BeanDefinitionCollection);
-
-            throw new NotImplementedException();
-
-            // return this;
-        }
     }
 }

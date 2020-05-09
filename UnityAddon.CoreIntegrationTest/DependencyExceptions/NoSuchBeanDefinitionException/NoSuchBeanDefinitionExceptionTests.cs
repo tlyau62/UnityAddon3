@@ -33,7 +33,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoSuch
     public class NoSuchBeanDefinitionExceptionTests : UnityAddonComponentScanTest
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         [Fact]
         public void Properties()

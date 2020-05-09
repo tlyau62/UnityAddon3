@@ -37,7 +37,7 @@ namespace UnityAddon.Core.Bean.DependencyInjection
             });
         }
 
-        public void AddResolveStrategy<TAttribute>(Func<Type, TAttribute, IServiceProvider, object> strategy) where TAttribute : Attribute
+        public void AddResolveStrategy<TAttribute>(Func<Type, TAttribute, IUnityAddonSP, object> strategy) where TAttribute : Attribute
         {
             ResolveStrategies[typeof(TAttribute)] = strategy;
         }

@@ -25,7 +25,7 @@ namespace UnityAddon.Core
         public ApplicationContext AppContext { get; set; }
 
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         public override void Add(IBeanDefinition beanDefinition)
         {
@@ -43,7 +43,7 @@ namespace UnityAddon.Core
 
         public void Unregister(Type type, string name)
         {
-            var container = ((IUnityServiceProvider)Sp).UnityContainer;
+            var container = Sp.UnityContainer;
             var beanDefContainer = Sp.GetRequiredService<IBeanDefinitionContainer>();
             var bean = Sp.GetRequiredService(type, name);
             var beanDef = beanDefContainer.RemoveBeanDefinition(type, name);

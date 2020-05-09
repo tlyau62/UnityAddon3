@@ -21,7 +21,7 @@ namespace UnityAddon.Core.BeanDefinition.GeneralBean
 
         public Type ImplType { get; set; } = typeof(object);
 
-        public override object Constructor(IServiceProvider serviceProvider, Type type, string name)
+        public override object Constructor(IUnityAddonSP serviceProvider, Type type, string name)
         {
             var impl = ImplType.IsGenericType && ImplType.ContainsGenericParameters ?
                 ImplType.MakeGenericType(type.GetGenericArguments()) : ImplType;

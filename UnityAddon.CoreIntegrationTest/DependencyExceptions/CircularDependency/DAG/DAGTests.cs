@@ -33,7 +33,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.DAG
     public class DAGTests : UnityAddonComponentScanTest
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         [Fact]
         public void BeanDependencyValidatorStrategy_ResolveDAGDependency_NoExceptionThrown()

@@ -21,12 +21,12 @@ namespace UnityAddon.Core.Bean.DependencyInjection
         [Dependency]
         public DependencyResolver DependencyResolver { get; set; }
 
-        public object[] FillAllParamaters(MethodBase method, IServiceProvider sp)
+        public object[] FillAllParamaters(MethodBase method, IUnityAddonSP sp)
         {
             return method.GetParameters().Select(param => GetDependency(param, sp)).ToArray();
         }
 
-        public object GetDependency(ParameterInfo param, IServiceProvider sp)
+        public object GetDependency(ParameterInfo param, IUnityAddonSP sp)
         {
             var attrs = param.GetCustomAttributes(false).Cast<Attribute>();
 

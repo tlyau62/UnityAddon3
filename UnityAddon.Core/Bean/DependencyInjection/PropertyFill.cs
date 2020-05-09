@@ -19,7 +19,7 @@ namespace UnityAddon.Core.Bean.DependencyInjection
         [Dependency]
         public DependencyResolver DependencyResolver { get; set; }
 
-        public object FillAllProperties(Type type, object obj, IServiceProvider sp)
+        public object FillAllProperties(Type type, object obj, IUnityAddonSP sp)
         {
             foreach (var prop in SelectAllProperties(type))
             {
@@ -29,7 +29,7 @@ namespace UnityAddon.Core.Bean.DependencyInjection
             return obj;
         }
 
-        public void InjectDependency(PropertyInfo prop, object obj, IServiceProvider sp)
+        public void InjectDependency(PropertyInfo prop, object obj, IUnityAddonSP sp)
         {
             if (prop.SetMethod == null)
             {

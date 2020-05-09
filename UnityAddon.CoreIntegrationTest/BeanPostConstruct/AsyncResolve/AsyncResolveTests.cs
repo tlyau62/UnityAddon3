@@ -24,7 +24,7 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.AsyncResolve
     public class AsyncService : IAsyncService
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         [PostConstruct]
         public void Init()
@@ -47,7 +47,7 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.AsyncResolve
     public class AsyncResolveTests : UnityAddonComponentScanTest
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         /// <summary>
         /// Sequential

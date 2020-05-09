@@ -15,7 +15,7 @@ namespace UnityAddon.Ef.Transaction
     public class RequireDbContextHandler
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         public void InvokeContextHandler(Type dataSource, IInvocation invocation, bool transactional)
         {

@@ -54,7 +54,7 @@ namespace UnityAddon.CoreTest.Dependency.Value
                })
                .Build();
 
-            host.Services.BuildUp(this);
+            ((IUnityAddonSP)host.Services).BuildUp(this);
 
             Assert.Equal(ServiceType.Write, Service.Type);
         }

@@ -59,7 +59,7 @@ namespace UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter
                 })
                 .Build();
 
-            host.Services.BuildUp(this);
+            ((IUnityAddonSP)host.Services).BuildUp(this);
 
             Assert.IsType<ServiceB>(Service);
         }
@@ -84,7 +84,7 @@ namespace UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter
                 })
                 .Build();
 
-            host.Services.BuildUp(this);
+            ((IUnityAddonSP)host.Services).BuildUp(this);
 
             Assert.IsType<ServiceA>(Service);
         }

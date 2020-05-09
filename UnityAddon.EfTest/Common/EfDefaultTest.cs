@@ -18,7 +18,7 @@ namespace UnityAddon.EfTest.Common
 
         public EfDefaultTest()
         {
-            new HostBuilder()
+            ((IUnityAddonSP)new HostBuilder()
                 .RegisterUA()
                 .ConfigureContainer<ApplicationContext>(ctx =>
                 {
@@ -26,7 +26,7 @@ namespace UnityAddon.EfTest.Common
                 })
                 .EnableUnityAddonEf()
                 .Build()
-                .Services
+                .Services)
                 .BuildUp(GetType(), this);
 
             DbSetupUtility.CreateDb(DbContextFactory);

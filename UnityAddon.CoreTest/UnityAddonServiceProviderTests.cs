@@ -61,7 +61,7 @@ namespace UnityAddon.CoreTest
 
             var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
-            var usp = factory.CreateServiceProvider(defCol);
+            var usp = (IUnityAddonSP)factory.CreateServiceProvider(defCol);
             var serAs = new IA[] { usp.GetService<IA>("A"), usp.GetService<IA>("A2") };
 
             Assert.Equal(usp.GetServices<IA>(), serAs);
@@ -126,7 +126,7 @@ namespace UnityAddon.CoreTest
 
             var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
-            var usp = factory.CreateServiceProvider(defCol);
+            var usp = (IUnityAddonSP)factory.CreateServiceProvider(defCol);
 
             Assert.True(usp.IsRegistered(typeof(IA)));
             Assert.True(usp.IsRegistered(typeof(IA), "A"));
@@ -143,7 +143,7 @@ namespace UnityAddon.CoreTest
 
             var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
-            var usp = factory.CreateServiceProvider(defCol);
+            var usp = (IUnityAddonSP)factory.CreateServiceProvider(defCol);
 
             Assert.True(usp.CanResolve(typeof(IA)));
             Assert.True(usp.CanResolve(typeof(IEnumerable<IA>)));

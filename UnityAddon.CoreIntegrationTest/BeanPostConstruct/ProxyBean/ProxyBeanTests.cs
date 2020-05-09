@@ -80,7 +80,7 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.ProxyBean
                 })
                 .Build();
 
-            host.Services.BuildUp(this);
+            ((IUnityAddonSP)host.Services).BuildUp(this);
 
             Assert.Equal(1, Counter.Count);
         }

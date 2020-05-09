@@ -39,7 +39,7 @@ public abstract class UnityAddonTest
         hostBuilderConfigs.Aggregate((acc, config) => acc + config)(hostBuilder, this);
         var host = hostBuilder.Build();
 
-        host.Services.BuildUp(GetType(), this);
+        ((IUnityAddonSP)host.Services).BuildUp(GetType(), this);
     }
 }
 

@@ -22,7 +22,7 @@ namespace UnityAddon.Core.BeanDefinition.MemberBean
 
         public override Type Type => typeof(MethodFactoryValue);
 
-        public override object Constructor(IServiceProvider serviceProvider, Type type, string name)
+        public override object Constructor(IUnityAddonSP serviceProvider, Type type, string name)
         {
             var invocation = _parentBeanDef.Invocation;
 

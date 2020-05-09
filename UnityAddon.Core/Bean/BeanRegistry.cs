@@ -24,17 +24,17 @@ namespace UnityAddon.Core.Bean
 
         void AddSingleton<TMap>(TMap instance, string name = null);
 
-        void AddSingleton(Type type, Func<IServiceProvider, Type, string, object> factory, string name);
+        void AddSingleton(Type type, Func<IUnityAddonSP, Type, string, object> factory, string name);
 
-        void AddSingleton<TMap>(Func<IServiceProvider, Type, string, TMap> factory, string name = null);
+        void AddSingleton<TMap>(Func<IUnityAddonSP, Type, string, TMap> factory, string name = null);
 
         void AddTransient(Type type, Type implType, string name);
 
         void AddTransient<TMap, TImpl>(string name = null) where TImpl : class, new();
 
-        void AddTransient(Type type, Func<IServiceProvider, Type, string, object> factory, string name);
+        void AddTransient(Type type, Func<IUnityAddonSP, Type, string, object> factory, string name);
 
-        void AddTransient<TMap>(Func<IServiceProvider, Type, string, TMap> factory, string name = null);
+        void AddTransient<TMap>(Func<IUnityAddonSP, Type, string, TMap> factory, string name = null);
 
         void AddComponent<TImpl>() where TImpl : class, new();
 
@@ -73,12 +73,12 @@ namespace UnityAddon.Core.Bean
             AddSingleton(typeof(TMap), instance, name);
         }
 
-        public void AddSingleton(Type type, Func<IServiceProvider, Type, string, object> factory, string name)
+        public void AddSingleton(Type type, Func<IUnityAddonSP, Type, string, object> factory, string name)
         {
             Add(new FactoryBeanDefinition(type, factory, name, ScopeType.Singleton));
         }
 
-        public void AddSingleton<TMap>(Func<IServiceProvider, Type, string, TMap> factory, string name)
+        public void AddSingleton<TMap>(Func<IUnityAddonSP, Type, string, TMap> factory, string name)
         {
             AddSingleton(typeof(TMap), (sp, t, n) => factory(sp, t, n), name);
         }
@@ -93,12 +93,12 @@ namespace UnityAddon.Core.Bean
             AddTransient(typeof(TMap), typeof(TImpl), name);
         }
 
-        public void AddTransient(Type type, Func<IServiceProvider, Type, string, object> factory, string name)
+        public void AddTransient(Type type, Func<IUnityAddonSP, Type, string, object> factory, string name)
         {
             Add(new FactoryBeanDefinition(type, factory, name, ScopeType.Transient));
         }
 
-        public void AddTransient<TMap>(Func<IServiceProvider, Type, string, TMap> factory, string name)
+        public void AddTransient<TMap>(Func<IUnityAddonSP, Type, string, TMap> factory, string name)
         {
             AddTransient(typeof(TMap), (sp, t, n) => factory(sp, t, n), name);
         }

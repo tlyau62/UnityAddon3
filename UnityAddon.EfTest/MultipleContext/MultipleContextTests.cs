@@ -27,16 +27,16 @@ namespace UnityAddon.EfTest.MultipleContext
 
         public MultipleContextTests()
         {
-            new HostBuilder()
+            var host = new HostBuilder()
                 .RegisterUA()
                 .ConfigureContainer<ApplicationContext>(ctx =>
                 {
                     ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.EfTest.Common")));
                 })
                 .EnableUnityAddonEf()
-                .Build()
-                .Services
-                .BuildUp(this);
+                .Build();
+
+            ((IUnityAddonSP)host.Services).BuildUp(this);
 
             DbSetupUtility.CreateDb(DbContextFactory);
             DbSetupUtility.CreateDb(DbContextFactory2);

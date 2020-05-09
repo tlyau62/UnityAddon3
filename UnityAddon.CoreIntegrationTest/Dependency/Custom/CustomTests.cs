@@ -56,7 +56,7 @@ namespace UnityAddon.CoreTest.Dependency.Custom
                })
                .Build();
 
-            host.Services.BuildUp(this);
+            ((IUnityAddonSP)host.Services).BuildUp(this);
 
             Assert.Equal("My_TestString", Service.CustomProp);
         }

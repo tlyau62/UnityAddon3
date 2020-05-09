@@ -21,7 +21,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.SelfLoop
     public class SelfLoopTests : UnityAddonComponentScanTest
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         [Fact]
         public void SelfLoop()

@@ -26,7 +26,7 @@ namespace UnityAddon.CoreTest.Aop.MethodAttributeInterceptor
         public Counter Counter { get; set; }
 
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         public MethodAttributeInterceptorTests()
         {
@@ -43,7 +43,7 @@ namespace UnityAddon.CoreTest.Aop.MethodAttributeInterceptor
                 })
                 .Build();
 
-            host.Services.BuildUp(this);
+            ((IUnityAddonSP)host.Services).BuildUp(this);
         }
 
         [Fact]

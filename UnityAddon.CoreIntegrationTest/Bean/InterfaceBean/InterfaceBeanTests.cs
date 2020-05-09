@@ -64,7 +64,7 @@ namespace UnityAddon.CoreTest.Bean.InterfaceBean
                 })
                 .Build();
 
-            host.Services.BuildUp(this);
+            ((IUnityAddonSP)host.Services).BuildUp(this);
         }
 
         [Fact]

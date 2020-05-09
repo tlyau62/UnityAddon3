@@ -77,7 +77,7 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
 
         private void TestBuilder(int normalOrder, int exOrder)
         {
-            new HostBuilder()
+            ((IUnityAddonSP)new HostBuilder()
                    .RegisterUA()
                    .ConfigureContainer<ApplicationContext>(ctx =>
                    {
@@ -98,7 +98,7 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
                    })
                    .EnableUnityAddonEf()
                    .Build()
-                   .Services
+                   .Services)
                    .BuildUp(this);
         }
 

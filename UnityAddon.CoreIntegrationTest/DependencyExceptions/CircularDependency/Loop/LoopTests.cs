@@ -30,7 +30,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.Loop
     public class SelfLoopTests : UnityAddonComponentScanTest
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         [Fact]
         public void BeanDependencyValidatorStrategy_ResolveLoopDependency_ExceptionThrown()

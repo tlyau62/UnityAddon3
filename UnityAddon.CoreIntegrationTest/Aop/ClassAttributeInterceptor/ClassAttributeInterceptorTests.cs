@@ -85,7 +85,7 @@ namespace UnityAddon.CoreTest.Aop.ClassAttributeInterceptor
                 })
                 .Build();
 
-            host.Services.BuildUp(this);
+            ((IUnityAddonSP)host.Services).BuildUp(this);
         }
 
         [Fact]

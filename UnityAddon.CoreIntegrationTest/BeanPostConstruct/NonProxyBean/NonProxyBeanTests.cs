@@ -66,7 +66,7 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.NonProxy
     public class NonProxyBeanTests : UnityAddonComponentScanTest
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         [Theory]
         [InlineData(0, 1, 2)]

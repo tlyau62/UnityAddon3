@@ -28,7 +28,7 @@ namespace UnityAddon.Core.Aop
         public ApplicationContext ApplicationContext { get; set; }
 
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         private IDictionary<Type, IEnumerable<IInterceptor>> _interceptorMap;
 

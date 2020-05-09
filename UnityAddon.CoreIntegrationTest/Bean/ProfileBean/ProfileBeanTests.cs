@@ -57,7 +57,7 @@ namespace UnityAddon.CoreTest.Dependency.Bean.ProfileBean
                })
                .Build();
 
-            host.Services.BuildUp(this);
+            ((IUnityAddonSP)host.Services).BuildUp(this);
 
             Assert.IsType(resolveType, Service);
         }

@@ -54,7 +54,7 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptors
 
         public TransactionInterceptorsTests()
         {
-            new HostBuilder()
+            ((IUnityAddonSP)new HostBuilder()
                 .RegisterUA()
                 .ConfigureContainer<ApplicationContext>(ctx =>
                 {
@@ -66,7 +66,7 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptors
                 })
                 .EnableUnityAddonEf()
                 .Build()
-                .Services
+                .Services)
                 .BuildUp(this);
 
             DbSetupUtility.CreateDb(DbContextFactory);

@@ -23,7 +23,7 @@ namespace UnityAddon.Core.BeanDefinition.ServiceBean
 
         public override string[] Qualifiers => new[] { Descriptor.ImplementationType.Name };
 
-        public override object Constructor(IServiceProvider serviceProvider, Type type, string name)
+        public override object Constructor(IUnityAddonSP serviceProvider, Type type, string name)
         {
             var impl = Descriptor.ImplementationType.IsGenericType && Descriptor.ImplementationType.ContainsGenericParameters ?
                 Descriptor.ImplementationType.MakeGenericType(type.GetGenericArguments()) :

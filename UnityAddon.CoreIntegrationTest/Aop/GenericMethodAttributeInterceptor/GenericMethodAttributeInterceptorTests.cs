@@ -33,7 +33,7 @@ namespace UnityAddon.CoreTest.Aop.GenericMethodAttributeInterceptor
                 })
                 .Build();
 
-            host.Services.BuildUp(this);
+            ((IUnityAddonSP)host.Services).BuildUp(this);
         }
 
         [Fact]

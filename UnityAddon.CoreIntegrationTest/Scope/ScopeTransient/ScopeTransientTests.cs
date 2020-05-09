@@ -15,7 +15,7 @@ namespace UnityAddon.CoreIntegrationTest.Scope.ScopeTransient
     public class ScopeTransientTests : UnityAddonComponentScanTest
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         [Fact]
         public void aspnet_Extensions_issues_1301()
@@ -97,12 +97,12 @@ namespace UnityAddon.CoreIntegrationTest.Scope.ScopeTransient
         [Component]
         public class Foo
         {
-            public Foo(IServiceProvider sp)
+            public Foo(IUnityAddonSP sp)
             {
                 ServiceProvider = sp;
             }
 
-            public IServiceProvider ServiceProvider { get; }
+            public IUnityAddonSP ServiceProvider { get; }
         }
 
         public interface ITransient

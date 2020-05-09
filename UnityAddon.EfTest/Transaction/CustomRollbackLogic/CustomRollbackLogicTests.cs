@@ -48,9 +48,9 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
                        });
                    })
                    .EnableUnityAddonEf()
-                   .Build()
-                   .Services
-                   .BuildUp(this);
+                   .Build();
+
+            ((IUnityAddonSP)host.Services).BuildUp(this);
 
             DbSetupUtility.CreateDb(DbContextFactory);
         }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Unity;
+using UnityAddon.Core;
 using Xunit;
 
 namespace UnityAddon.CoreIntegrationTest.Scope.CoreContextResolve
@@ -10,20 +11,20 @@ namespace UnityAddon.CoreIntegrationTest.Scope.CoreContextResolve
     public class CoreContextResolveTests : UnityAddonComponentScanTest
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         [Fact]
         public void CoreContextResolve()
         {
-            IServiceProvider sp = null;
+            IUnityAddonSP sp = null;
 
             using (var scope = Sp.CreateScope())
             {
-                sp = scope.ServiceProvider.GetRequiredService<IServiceProvider>();
+                sp = scope.ServiceProvider.GetRequiredService<IUnityAddonSP>();
                 // dispose scope should not dispose service provider
             }
 
-            Assert.NotNull(sp.GetRequiredService<IServiceProvider>());
+            Assert.NotNull(sp.GetRequiredService<IUnityAddonSP>());
         }
     }
 }

@@ -33,9 +33,9 @@ namespace UnityAddon.Core.Bean
         public PropertyFill PropertyFill { get; set; }
 
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
-        public object Construct(Type type, IServiceProvider sp)
+        public object Construct(Type type, IUnityAddonSP sp)
         {
             if (type.IsInterface)
             {
@@ -50,7 +50,7 @@ namespace UnityAddon.Core.Bean
             return PostConstruct(type, bean);
         }
 
-        public object ConstructClassProxy(Type type, IEnumerable<IInterceptor> interceptors, IServiceProvider sp)
+        public object ConstructClassProxy(Type type, IEnumerable<IInterceptor> interceptors, IUnityAddonSP sp)
         {
             var proxyBean = ProxyGenerator.CreateClassProxy(
                 type,

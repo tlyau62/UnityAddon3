@@ -27,7 +27,7 @@ namespace UnityAddon.CoreIntegrationTest.BeanRegistry.PostRegister
     public class PostRegisterTests : UnityAddonComponentScanTest
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         [Dependency]
         public IServicePostRegistry ServicePostRegistry { get; set; }

@@ -15,7 +15,7 @@ namespace UnityAddon.Core.Bean
         [Dependency]
         public ParameterFill ParameterFill { get; set; }
 
-        public ConstructorInfo ChooseConstuctor(Type type, IServiceProvider sp)
+        public ConstructorInfo ChooseConstuctor(Type type, IUnityAddonSP sp)
         {
             var ctors = type.GetConstructors()
                 .Where(ctor => ctor.GetParameters().All(p => sp.CanResolve(p.ParameterType) || ParameterFill.CanResolve(p)));
