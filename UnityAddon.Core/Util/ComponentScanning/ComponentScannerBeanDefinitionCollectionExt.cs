@@ -19,7 +19,9 @@ namespace UnityAddon.Core.Util.ComponentScanning
 
             config(opt);
 
-            return beanDefinitions.AddFromExisting(new ComponentScanner(opt).ScanAssembly(assembly, namespaces));
+            beanDefinitions.AddFromExisting(new ComponentScanner(opt).ScanAssembly(assembly, namespaces));
+
+            return beanDefinitions;
         }
     }
 }
