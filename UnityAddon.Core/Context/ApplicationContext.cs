@@ -24,19 +24,20 @@ namespace UnityAddon.Core.Context
     {
         private readonly IntervalHeap<ApplicationContextEntry> _entries = new IntervalHeap<ApplicationContextEntry>(Comparer<ApplicationContextEntry>.Create((a, b) => a.Order - b.Order));
 
-        private readonly CoreContext _coreContainerBuilder;
-
-        private IUnityContainer _coreContainer;
+        private readonly CoreContext _coreContext;
 
         private bool _isRefreshing = false;
 
         public ApplicationContext(IUnityContainer appContainer)
         {
-            AppContainer = appContainer;
-            _coreContainerBuilder = new CoreContext(this);
+            _coreContext = new CoreContext(this, appContainer);
         }
 
-        public IUnityContainer AppContainer { get; }
+        public IUnityContainer CoreContainer => _coreContext.Container;
+
+        public IUnityAddonSP ApplicationSP => CoreContainer.Resolve<IUnityAddonSP>();
+
+        public IBeanDefinitionContainer BeanDefinitionContainer => CoreContainer.Resolve<IBeanDefinitionContainer>();
 
         public void AddContextEntry(Action<ApplicationContextEntry> entryConfig)
         {
@@ -52,23 +53,69 @@ namespace UnityAddon.Core.Context
             _entries.Add(entry);
         }
 
-        public void AddContextEntry(IAppContainerBuilderEntry entry)
+        public void ConfigureBeans(Action<IBeanDefinitionCollection, IUnityAddonSP> config)
         {
-            var wrapEntry = new ApplicationContextEntry(entry.Order, entry.PreInstantiate);
-
-            wrapEntry.PreProcess += (container) =>
-            {
-                entry.PreProcess(container);
-                entry.ConfigureBeanDefinitions(wrapEntry.BeanDefinitionCollection);
-            };
-            wrapEntry.PostProcess += (container) => entry.PostProcess(container);
-
-            _entries.Add(wrapEntry);
+            ConfigureBeans(config, ApplicationContextEntryOrder.App);
         }
+
+        public void ConfigureBeans(Action<IBeanDefinitionCollection, IUnityAddonSP> config, ApplicationContextEntryOrder order)
+        {
+            AddContextEntry(entry =>
+            {
+                entry.Order = order;
+                entry.Process = sp =>
+                {
+                    var defCol = new BeanDefinitionCollection();
+
+                    config(defCol, ApplicationSP);
+
+                    foreach (var beanDef in defCol)
+                    {
+                        if (!(ApplicationSP.GetService<BeanDefintionCandidateSelector>()?.Filter(beanDef) ?? true))
+                        {
+                            continue;
+                        }
+
+                        BeanDefinitionContainer.RegisterBeanDefinition(beanDef);
+                        ApplicationSP.UnityContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(new UnityAddonSP(c), t, n), (IFactoryLifetimeManager)beanDef.Scope);
+                    }
+
+                    if (defCol.Any(def => def.Type == typeof(IBeanDefinitionCollection)))
+                    {
+                        ConfigureBeans((config, sp) =>
+                        {
+                            config.AddFromExisting(defCol
+                                .Where(def => def.Type == typeof(IBeanDefinitionCollection))
+                                .Cast<IBeanDefinitionCollection>()
+                                .Aggregate((acc, col) =>
+                                {
+                                    acc.AddFromExisting(col);
+                                    return acc;
+                                }));
+                        }, order);
+                    }
+                };
+
+            });
+        }
+
+        //public void AddContextEntry(IAppContainerBuilderEntry entry)
+        //{
+        //    var wrapEntry = new ApplicationContextEntry(entry.Order);
+
+        //    wrapEntry.PreProcess += (container) =>
+        //    {
+        //        entry.PreProcess(container);
+        //        entry.ConfigureBeanDefinitions(wrapEntry.BeanDefinitionCollection);
+        //    };
+        //    wrapEntry.PostProcess += (container) => entry.PostProcess(container);
+
+        //    _entries.Add(wrapEntry);
+        //}
 
         public void ConfigureContext<TConfig>(Action<TConfig> config) where TConfig : class, new()
         {
-            _coreContainerBuilder.Configure(config);
+            _coreContext.Configure(config);
         }
 
         public void Refresh()
@@ -84,7 +131,7 @@ namespace UnityAddon.Core.Context
             {
                 var min = _entries.DeleteMin();
 
-                Register(min, min.Order);
+                min.Process(ApplicationSP);
             }
 
             _isRefreshing = false;
@@ -92,113 +139,54 @@ namespace UnityAddon.Core.Context
 
         public IUnityAddonSP Build()
         {
-            _coreContainer = _coreContainerBuilder.Build();
+            ApplicationSP.UnityContainer.AddExtension(CoreContainer.Resolve<BeanBuildStrategyExtension>());
 
-            AppContainer.AddExtension(_coreContainer.Resolve<BeanBuildStrategyExtension>());
-
-            AddContextEntry(entry =>
-            {
-                entry.Order = ApplicationContextEntryOrder.Intern;
-                entry.ConfigureBeanDefinitions(defs => defs.AddFromUnityContainer(_coreContainer));
-            });
+            ConfigureBeans((config, sp) =>
+            config.AddFromUnityContainer(CoreContainer), ApplicationContextEntryOrder.Intern);
 
             // add value resolve logic
-            AddContextEntry(entry =>
+            ConfigureBeans((config, sp) =>
             {
-                entry.Order = ApplicationContextEntryOrder.AppPreConfig;
-                entry.ConfigureBeanDefinitions(defs =>
-                {
-                    defs.Add(new TypeBeanDefintion(typeof(ValueProvider), typeof(ValueProvider), null, ScopeType.Singleton));
-                    defs.Add(new TypeBeanDefintion(typeof(ConfigBracketParser), typeof(ConfigBracketParser), null, ScopeType.Singleton));
-                });
+                config.AddSingleton<ValueProvider, ValueProvider>();
+                config.AddSingleton<ConfigBracketParser, ConfigBracketParser>();
 
-                entry.PostProcess += c => ConfigureContext<DependencyResolverOption>(config =>
-                {
-                    config.AddResolveStrategy<ValueAttribute>((type, attr, sp) =>
-                    {
-                        return sp.GetRequiredService<ValueProvider>().GetValue(type, attr.Value);
-                    });
-                });
-            });
+                ConfigureContext<DependencyResolverOption>(config
+                    => config.AddResolveStrategy<ValueAttribute>((type, attr, sp)
+                        => sp.GetRequiredService<ValueProvider>().GetValue(type, attr.Value)));
+            }, ApplicationContextEntryOrder.AppPreConfig);
 
             // beandefintion candidate selector
-            AddContextEntry(entry =>
-            {
-                entry.Order = ApplicationContextEntryOrder.AppPreConfig;
-                entry.ConfigureBeanDefinitions(defs =>
-                {
-                    defs.Add(new TypeBeanDefintion(typeof(BeanDefintionCandidateSelector), typeof(BeanDefintionCandidateSelector), null, ScopeType.Singleton));
-                });
-            });
+            ConfigureBeans((config, sp) =>
+                config.AddSingleton<BeanDefintionCandidateSelector, BeanDefintionCandidateSelector>(), ApplicationContextEntryOrder.AppPreConfig);
 
             // aop
-            AddContextEntry(entry =>
+            ConfigureBeans((config, sp) =>
             {
-                entry.Order = ApplicationContextEntryOrder.AppPreConfig + 1;
-                entry.ConfigureBeanDefinitions(defs =>
-                {
-                    defs.Add(new TypeBeanDefintion(typeof(AopInterceptorContainer), typeof(AopInterceptorContainer), null, ScopeType.Singleton));
-                    defs.Add(new TypeBeanDefintion(typeof(AopBuildStrategyExtension), typeof(AopBuildStrategyExtension), null, ScopeType.Singleton));
-                    defs.Add(new TypeBeanDefintion(typeof(AopMethodBootstrapInterceptor), typeof(AopMethodBootstrapInterceptor), null, ScopeType.Singleton));
-                    defs.Add(new TypeBeanDefintion(typeof(InterfaceProxyFactory), typeof(InterfaceProxyFactory), null, ScopeType.Singleton));
-                    defs.Add(new TypeBeanDefintion(typeof(BeanAopStrategy), typeof(BeanAopStrategy), null, ScopeType.Singleton));
-                });
+                config.AddSingleton<AopInterceptorContainer, AopInterceptorContainer>();
+                config.AddSingleton<AopBuildStrategyExtension, AopBuildStrategyExtension>();
+                config.AddSingleton<AopMethodBootstrapInterceptor, AopMethodBootstrapInterceptor>();
+                config.AddSingleton<InterfaceProxyFactory, InterfaceProxyFactory>();
+                config.AddSingleton<BeanAopStrategy, BeanAopStrategy>();
+            }, ApplicationContextEntryOrder.AppPreConfig + 1);
 
-                entry.PostProcess += c => c.AddExtension(c.Resolve<AopBuildStrategyExtension>());
-            });
+            ConfigureBeans((config, sp) =>
+            {
+                sp.UnityContainer.AddExtension(sp.GetRequiredService<AopBuildStrategyExtension>());
+            }, ApplicationContextEntryOrder.AppPreConfig + 2);
 
             AddContextEntry(entry =>
             {
                 entry.Order = ApplicationContextEntryOrder.AppPostConfig;
-                entry.PreProcess += c => c.Resolve<AopInterceptorContainer>().Init();
+                entry.Process += sp =>
+                {
+                    sp.GetRequiredService<AopInterceptorContainer>().Init();
+                    return;
+                };
             });
 
             Refresh();
 
-            return _coreContainer.Resolve<IUnityAddonSP>();
-        }
-
-        private void Register(ApplicationContextEntry loadEntry, ApplicationContextEntryOrder curOrder)
-        {
-            var sp = _coreContainer.Resolve<IUnityAddonSP>();
-
-            loadEntry.PreProcess(AppContainer);
-
-            foreach (var beanDef in loadEntry.BeanDefinitionCollection)
-            {
-                if (!(sp.GetService<BeanDefintionCandidateSelector>()?.Filter(beanDef) ?? true))
-                {
-                    continue;
-                }
-
-                _coreContainer.Resolve<IBeanDefinitionContainer>().RegisterBeanDefinition(beanDef);
-                AppContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(new UnityAddonSP(c), t, n), (IFactoryLifetimeManager)beanDef.Scope);
-            }
-
-            if (loadEntry.BeanDefinitionCollection.Any(def => def.Type == typeof(IBeanDefinitionCollection)))
-            {
-                AddContextEntry(entry =>
-                {
-                    entry.Order = ApplicationContextEntryOrder.BeanMethod;
-                    entry.ConfigureBeanDefinitions(defCol =>
-                    {
-                        foreach (var beanDef in loadEntry.BeanDefinitionCollection.Where(def => def.Type == typeof(IBeanDefinitionCollection)))
-                        {
-                            defCol.AddFromExisting(sp.GetRequiredService<IBeanDefinitionCollection>(beanDef.Name));
-                        }
-                    });
-                });
-            }
-
-            loadEntry.PostProcess(AppContainer);
-
-            if (loadEntry.PreInstantiate)
-            {
-                foreach (var beanDef in loadEntry.BeanDefinitionCollection)
-                {
-                    AppContainer.Resolve(beanDef.Type, beanDef.Name);
-                }
-            }
+            return CoreContainer.Resolve<IUnityAddonSP>();
         }
     }
 }

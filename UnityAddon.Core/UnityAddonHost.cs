@@ -26,13 +26,13 @@ namespace UnityAddon.Core
         /// </summary>
         public static IHost PreInstantiateSingleton(this IHost host)
         {
-            var container = host.Services.GetRequiredService<ApplicationContext>().AppContainer;
+            var container = ((IUnityAddonSP)host.Services).UnityContainer;
             var sp = new UnityAddonSP(container);
             var currentRegs = container.Registrations.Count();
 
             foreach (var reg in container.Registrations)
             {
-                if (!(reg.LifetimeManager is ContainerControlledLifetimeManager || reg.LifetimeManager is SingletonLifetimeManager))
+                if (!(reg.LifetimeManager is ContainerControlledLifetimeManager))
                 {
                     continue;
                 }

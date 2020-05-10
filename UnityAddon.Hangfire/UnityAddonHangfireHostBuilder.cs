@@ -29,7 +29,7 @@ namespace UnityAddon.Hangfire
                     {
                         option.AddAopIntercetor<HangfireProxyInterceptor>();
                     });
-                    ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(config => config.AddFromComponentScanner(Assembly.GetExecutingAssembly(), "UnityAddon.Hangfire")));
+                    ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(Assembly.GetExecutingAssembly(), "UnityAddon.Hangfire"));
                 });
         }
     }

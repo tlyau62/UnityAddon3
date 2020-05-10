@@ -29,14 +29,7 @@ namespace UnityAddon.Core
 
         public override void Add(IBeanDefinition beanDefinition)
         {
-            var entry = new ApplicationContextEntry(ApplicationContextEntryOrder.App, false);
-
-            entry.ConfigureBeanDefinitions(config =>
-            {
-                config.Add(beanDefinition);
-            });
-
-            AppContext.AddContextEntry(entry);
+            AppContext.ConfigureBeans((config, sp) => config.Add(beanDefinition));
 
             AppContext.Refresh();
         }

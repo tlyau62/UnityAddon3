@@ -22,7 +22,7 @@ namespace UnityAddon.EfTest.Common
                 .RegisterUA()
                 .ConfigureContainer<ApplicationContext>(ctx =>
                 {
-                    ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.EfTest.Common")));
+                    ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.EfTest.Common"));
                 })
                 .EnableUnityAddonEf()
                 .Build()

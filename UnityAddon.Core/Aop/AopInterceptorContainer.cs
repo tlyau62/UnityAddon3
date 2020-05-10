@@ -25,7 +25,7 @@ namespace UnityAddon.Core.Aop
         public IConfigs<AopInterceptorContainerOption> AopInterceptorContainerOption { get; set; }
 
         [Dependency]
-        public ApplicationContext ApplicationContext { get; set; }
+        public IServicePostRegistry ServicePostRegistry { get; set; }
 
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
@@ -41,18 +41,10 @@ namespace UnityAddon.Core.Aop
                 throw new InvalidOperationException("Can only initialized once");
             }
 
-            ApplicationContext.AddContextEntry(entry =>
+            foreach (var type in AopInterceptorContainerOption.Value.InterceptorMap.Values.SelectMany(v => v))
             {
-                entry.ConfigureBeanDefinitions(defs =>
-                {
-                    foreach (var type in AopInterceptorContainerOption.Value.InterceptorMap.Values.SelectMany(v => v))
-                    {
-                        defs.Add(new TypeBeanDefintion(type, type, null, ScopeType.Singleton));
-                    }
-                });
-            });
-
-            ApplicationContext.Refresh();
+                ServicePostRegistry.AddSingleton(type, type);
+            }
 
             _interceptorMap = AopInterceptorContainerOption.Value.InterceptorMap.ToDictionary(
                 e => e.Key,
