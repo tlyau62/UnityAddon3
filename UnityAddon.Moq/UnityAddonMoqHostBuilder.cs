@@ -35,7 +35,7 @@ namespace UnityAddon.Moq
                         }
                     });
 
-                    ctx.AddContextEntry(entry =>
+                    ctx.ConfigureBeans((config, sp) =>
                     {
                         testcase.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                             .Select(p => new { p.PropertyType, Attribute = p.GetCustomAttribute<MockAttribute>() })
@@ -46,20 +46,14 @@ namespace UnityAddon.Moq
                                 if (!(p.PropertyType.IsConstructedGenericType && p.PropertyType.GetGenericTypeDefinition().Equals(typeof(Mock<>))))
                                     throw new ArgumentException("property type must be Mock<>");
 
-                                entry.ConfigureBeanDefinitions(defs =>
-                                {
-                                    defs.Add(new FactoryBeanDefinition(p.PropertyType, (sp, type, name) => Activator.CreateInstance(type), null, ScopeType.Singleton));
-                                    defs.Add(new FactoryBeanDefinition(p.PropertyType.GetGenericArguments()[0], (sp, type, name) => ((dynamic)sp.GetRequiredService(p.PropertyType)).Object, null, ScopeType.Singleton));
-                                });
+                                config.AddSingleton(p.PropertyType, (sp, type, name) => Activator.CreateInstance(type), null);
+                                config.AddSingleton(p.PropertyType.GetGenericArguments()[0], (sp, type, name) => ((dynamic)sp.GetRequiredService(p.PropertyType)).Object);
                             });
 
                         testcase.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                             .Where(p => p.GetCustomAttribute<TestSubjectAttribute>() != null)
                             .ToList()
-                            .ForEach(p =>
-                            {
-                                entry.ConfigureBeanDefinitions(defs => defs.Add(new TypeBeanDefintion(p.PropertyType, p.PropertyType, null, ScopeType.Singleton)));
-                            });
+                            .ForEach(p => config.AddSingleton(p.PropertyType, p.PropertyType));
                     });
                 });
         }

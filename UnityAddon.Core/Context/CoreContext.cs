@@ -18,35 +18,38 @@ namespace UnityAddon.Core.Context
 {
     public class CoreContext
     {
-        private readonly IUnityContainer _container = new UnityContainer();
-
         private readonly ApplicationContext _applicationContext;
 
-        public CoreContext(ApplicationContext applicationContext)
+        private readonly IUnityContainer _applicationContainer;
+
+        public CoreContext(ApplicationContext applicationContext, IUnityContainer applicationContainer)
         {
             _applicationContext = applicationContext;
+            _applicationContainer = applicationContainer;
 
             Setup();
         }
 
+        public IUnityContainer Container { get; } = new UnityContainer();
+
         public void Setup()
         {
-            _container
+            Container
                 .RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new SingletonLifetimeManager());
 
-            _container
+            Container
                 .RegisterInstance(_applicationContext, new SingletonLifetimeManager());
 
-            var sp = _container
-                .RegisterType<UnityAddonSP>(new SingletonLifetimeManager(), new InjectionConstructor(_applicationContext.AppContainer))
+            var sp = Container
+                .RegisterType<UnityAddonSP>(new SingletonLifetimeManager(), new InjectionConstructor(_applicationContainer))
                 .Resolve<UnityAddonSP>();
-            _container
+            Container
                 .RegisterInstance<IUnityAddonSP>(sp, new SingletonLifetimeManager())
                 .RegisterInstance<IServiceProvider>(sp, new SingletonLifetimeManager())
                 .RegisterInstance<IServiceScopeFactory>(sp, new SingletonLifetimeManager())
                 .RegisterInstance<IServiceScope>(sp, new SingletonLifetimeManager());
 
-            _container
+            Container
                 .RegisterType<ProxyGenerator>(new SingletonLifetimeManager())
                 .RegisterType<ConstructorResolver>(new SingletonLifetimeManager())
                 .RegisterType<ParameterFill>(new SingletonLifetimeManager())
@@ -54,27 +57,22 @@ namespace UnityAddon.Core.Context
                 .RegisterType<DependencyResolver>(new SingletonLifetimeManager())
                 .RegisterType<BeanFactory>(new SingletonLifetimeManager());
 
-            _container
+            Container
                 .RegisterType<BeanMethodInterceptor>(new SingletonLifetimeManager());
 
-            _container
+            Container
                 .RegisterType<IServicePostRegistry, ServicePostRegistry>(new SingletonLifetimeManager());
 
-            _container
+            Container
                 .RegisterType<BeanBuildStrategyExtension>(new SingletonLifetimeManager());
 
-            _container
+            Container
                 .RegisterType(typeof(IConfigs<>), typeof(Configs<>), new SingletonLifetimeManager());
         }
 
         public void Configure<TConfig>(Action<TConfig> config) where TConfig : class, new()
         {
-            config(_container.Resolve<IConfigs<TConfig>>().Value);
-        }
-
-        public IUnityContainer Build()
-        {
-            return _container;
+            config(Container.Resolve<IConfigs<TConfig>>().Value);
         }
     }
 }

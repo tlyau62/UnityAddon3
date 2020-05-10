@@ -38,17 +38,11 @@ namespace UnityAddon.CoreTest.Dependency.Custom
         {
             var host = Host.CreateDefaultBuilder()
                .RegisterUA()
-               .ConfigureContainer<ApplicationContext>(builder =>
+               .ConfigureContainer<ApplicationContext>(ctx =>
                {
-                   builder.AddContextEntry(config =>
-                   {
-                       config.ConfigureBeanDefinitions(defs =>
-                       {
-                           defs.AddComponent(typeof(Service));
-                       });
-                   });
+                   ctx.ConfigureBeans((config, sp) => config.AddComponent(typeof(Service)));
 
-                   builder.ConfigureContext<DependencyResolverOption>(config =>
+                   ctx.ConfigureContext<DependencyResolverOption>(config =>
                    {
                        config.AddResolveStrategy<CustomAttribute>((type, attr, container)
                            => attr.Descriptor + "TestString");

@@ -82,7 +82,7 @@ namespace UnityAddon.HangfireTest.HangfireComponentScannerStrategy
         {
             var host = new HostBuilder()
                 .RegisterUA()
-                .ConfigureContainer<ApplicationContext>(ctx => ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.HangfireTest.Common"))))
+                .ConfigureContainer<ApplicationContext>(ctx => ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.HangfireTest.Common")))
                 .EnableUnityAddonEf()
                 .EnableUnityAddonHangfire()
                 .Build();

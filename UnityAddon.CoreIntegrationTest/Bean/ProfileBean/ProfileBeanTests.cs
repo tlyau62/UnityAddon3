@@ -50,10 +50,7 @@ namespace UnityAddon.CoreTest.Dependency.Bean.ProfileBean
                })
                .ConfigureContainer<ApplicationContext>(ctx =>
                {
-                   ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs =>
-                   {
-                       defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace);
-                   }));
+                   ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace));
                })
                .Build();
 
