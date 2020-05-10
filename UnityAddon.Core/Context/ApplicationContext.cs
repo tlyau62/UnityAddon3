@@ -66,12 +66,13 @@ namespace UnityAddon.Core.Context
                 entry.Process = sp =>
                 {
                     var defCol = new BeanDefinitionCollection();
+                    var candidateSelector = ApplicationSP.GetService<BeanDefintionCandidateSelector>();
 
                     config(defCol, ApplicationSP);
 
                     foreach (var beanDef in defCol)
                     {
-                        if (!(ApplicationSP.GetService<BeanDefintionCandidateSelector>()?.Filter(beanDef) ?? true))
+                        if (!(candidateSelector?.Filter(beanDef) ?? true))
                         {
                             continue;
                         }
@@ -86,13 +87,13 @@ namespace UnityAddon.Core.Context
                         {
                             config.AddFromExisting(defCol
                                 .Where(def => def.Type == typeof(IBeanDefinitionCollection))
-                                .Cast<IBeanDefinitionCollection>()
+                                .SelectMany(def => ApplicationSP.GetServices<IBeanDefinitionCollection>())
                                 .Aggregate((acc, col) =>
                                 {
                                     acc.AddFromExisting(col);
                                     return acc;
                                 }));
-                        }, order);
+                        }, ApplicationContextEntryOrder.BeanMethod);
                     }
                 };
 
@@ -141,8 +142,7 @@ namespace UnityAddon.Core.Context
         {
             ApplicationSP.UnityContainer.AddExtension(CoreContainer.Resolve<BeanBuildStrategyExtension>());
 
-            ConfigureBeans((config, sp) =>
-            config.AddFromUnityContainer(CoreContainer), ApplicationContextEntryOrder.Intern);
+            ConfigureBeans((config, sp) => config.AddFromUnityContainer(CoreContainer), ApplicationContextEntryOrder.Intern);
 
             // add value resolve logic
             ConfigureBeans((config, sp) =>

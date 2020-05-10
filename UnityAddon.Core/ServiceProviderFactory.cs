@@ -39,7 +39,7 @@ namespace UnityAddon.Core
         {
             var appCtx = new ApplicationContext(_container);
 
-            appCtx.ConfigureBeans((config, sp) => config.AddFromServiceCollection(services));
+            appCtx.ConfigureBeans((config, sp) => config.AddFromServiceCollection(services), ApplicationContextEntryOrder.NetAsp);
 
             return appCtx;
         }
