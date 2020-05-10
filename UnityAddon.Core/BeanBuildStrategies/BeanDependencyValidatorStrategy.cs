@@ -31,15 +31,23 @@ namespace UnityAddon.Core.BeanBuildStrategies
             var stack = _stackFactory.Get();
             ResolveStackEntry entry;
 
-            while (stack.Peek().ResolveType != context.Type || stack.Peek().ResolveName != context.Name)
+            if (stack.Peek().ResolveType != context.Type || stack.Peek().ResolveName != context.Name)
             {
-                stack.Pop();
+                throw new InvalidOperationException("Removing wrong dependency.");
             }
+
             entry = stack.Pop();
 
-            if (entry != null && entry.IsBaseResolve)
+            if (entry.IsBaseResolve)
             {
-                _stackFactory.Delete();
+                if (stack.Count == 0)
+                {
+                    _stackFactory.Delete();
+                }
+                else
+                {
+                    throw new InvalidOperationException("Dependency stack should be empty.");
+                }
             }
 
             base.PostBuildUp(ref context);
@@ -57,17 +65,16 @@ namespace UnityAddon.Core.BeanBuildStrategies
             var type = context.Type;
 
             // check cirular dep
-            if (stack.Any(ent => ent.ResolveType == type && ent.ResolveName == name))
+            stack.Push(new ResolveStackEntry(type, name, !stackExist));
+
+            if (stack.Skip(1).Any(ent => ent.ResolveType == type && ent.ResolveName == name))
             {
-                stack.Push(new ResolveStackEntry(type, name));
                 var ex = new CircularDependencyException(string.Join("\r\n->", stack.Reverse().Select(t => $"type {t.ResolveType} (name: {t.ResolveName})").ToArray()));
 
                 _stackFactory.Delete();
 
                 throw ex;
             }
-
-            stack.Push(new ResolveStackEntry(type, name, !stackExist));
 
             base.PreBuildUp(ref context);
         }
