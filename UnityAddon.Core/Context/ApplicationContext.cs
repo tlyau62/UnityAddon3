@@ -40,6 +40,8 @@ namespace UnityAddon.Core.Context
 
         public IBeanDefinitionContainer BeanDefinitionContainer => CoreContainer.Resolve<IBeanDefinitionContainer>();
 
+        public ConfigurationRegistry ConfigurationRegistry => CoreContainer.Resolve<ConfigurationRegistry>();
+
         public void AddContextEntry(Action<ApplicationContextEntry> entryConfig)
         {
             var entry = new ApplicationContextEntry();
@@ -81,6 +83,8 @@ namespace UnityAddon.Core.Context
                         BeanDefinitionContainer.RegisterBeanDefinition(beanDef);
                         ApplicationSP.UnityContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(new UnityAddonSP(c), t, n), (IFactoryLifetimeManager)beanDef.Scope);
                     }
+
+                    ConfigurationRegistry.RegisterConfigurations();
 
                     if (defCol.Any(def => def.Type == typeof(IBeanDefinitionCollection)))
                     {
@@ -184,8 +188,6 @@ namespace UnityAddon.Core.Context
                     return;
                 };
             });
-
-            _coreContext.Container.Resolve<ConfigurationRegistry>().RegisterConfigurations();
 
             Refresh();
 

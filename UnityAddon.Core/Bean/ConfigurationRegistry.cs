@@ -19,17 +19,32 @@ namespace UnityAddon.Core.Bean
         [Dependency]
         public ApplicationContext AppContext { get; set; }
 
-        /// <summary>
-        /// should be called before appCtx is firstly refreshed 
-        /// </summary>
+        private readonly HashSet<IBeanDefinition> _parsedConfigs = new HashSet<IBeanDefinition>();
+
         public void RegisterConfigurations()
         {
-            AppContext.ConfigureBeans((config, sp) =>
-            {
-                var beanMethodDefs = BeanDefContainer.Registrations.Values
-                    .SelectMany(holder => holder.GetAll().Where(def => def is MemberConfigurationBeanDefinition))
-                    .SelectMany(configBeanDef => ParseBeanMethods(configBeanDef.Type));
+            var beanMethodDefs = BeanDefContainer.Registrations.Values
+                .SelectMany(holder => holder.GetAll().Where(def => def is MemberConfigurationBeanDefinition))
+                .Where(def =>
+                {
+                    if (_parsedConfigs.Contains(def))
+                    {
+                        return false;
+                    }
 
+                    _parsedConfigs.Add(def);
+
+                    return true;
+                })
+                .SelectMany(configBeanDef => ParseBeanMethods(configBeanDef.Type))
+                .ToArray();
+
+            if (beanMethodDefs.Length == 0)
+            {
+                return;
+            }
+
+            AppContext.ConfigureBeans((config, sp) => {
                 config.AddRange(beanMethodDefs);
             }, ApplicationContextEntryOrder.BeanMethod);
         }
