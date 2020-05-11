@@ -10,6 +10,7 @@ using Unity;
 using Unity.Lifetime;
 using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Bean;
 using UnityAddon.Core.Bean.Config;
 using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.BeanBuildStrategies;
@@ -183,6 +184,8 @@ namespace UnityAddon.Core.Context
                     return;
                 };
             });
+
+            _coreContext.Container.Resolve<ConfigurationRegistry>().RegisterConfigurations();
 
             Refresh();
 

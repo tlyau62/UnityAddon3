@@ -20,7 +20,6 @@ namespace UnityAddon.Core.Util.ComponentScanning
             if (useDefaultStrategy)
             {
                 ScannerStrategies.Add(new DefaultComponentScannerStrategy());
-                ScannerStrategies.Add(new ConfigurationScannerStrategy());
             }
         }
     }

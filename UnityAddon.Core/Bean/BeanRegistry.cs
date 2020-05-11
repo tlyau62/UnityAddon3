@@ -40,6 +40,10 @@ namespace UnityAddon.Core.Bean
 
         void AddComponent(Type type);
 
+        void AddConfiguration<TImpl>() where TImpl : class;
+
+        void AddConfiguration(Type type);
+
         void AddFromExisting(IEnumerable<IBeanDefinition> beanDefCollection);
 
         void AddFromServiceCollection(Action<IServiceCollection> servicesCallback);
@@ -187,6 +191,16 @@ namespace UnityAddon.Core.Bean
         public void AddComponent<TImpl>() where TImpl : class
         {
             AddComponent(typeof(TImpl));
+        }
+
+        public void AddConfiguration<TImpl>() where TImpl : class
+        {
+            AddConfiguration(typeof(TImpl));
+        }
+
+        public void AddConfiguration(Type type)
+        {
+            Add(new MemberConfigurationBeanDefinition(type));
         }
     }
 }
