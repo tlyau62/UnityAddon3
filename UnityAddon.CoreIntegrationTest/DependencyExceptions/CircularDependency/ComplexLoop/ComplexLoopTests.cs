@@ -57,7 +57,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.ComplexLoo
     public class ComplexLoopTests : UnityAddonComponentScanTest
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         [Fact]
         public void ComplexLoop()

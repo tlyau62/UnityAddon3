@@ -14,7 +14,7 @@ namespace UnityAddon.Core.BeanDefinition.ServiceBean
 
         public override string Name => $"service-factory-{Type.Name}-{_uuid}";
 
-        public override object Constructor(IServiceProvider serviceProvider, Type type, string name)
+        public override object Constructor(IUnityAddonSP serviceProvider, Type type, string name)
         {
             return Descriptor.ImplementationFactory(serviceProvider);
         }

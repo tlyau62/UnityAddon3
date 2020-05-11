@@ -16,7 +16,7 @@ namespace UnityAddon.CoreTest.BeanBuildStrategies
     public class BeanSingletonStrategyTests : UnityAddonComponentScanTest
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         [Fact]
         public void CreateScopeWithSingletonBean()

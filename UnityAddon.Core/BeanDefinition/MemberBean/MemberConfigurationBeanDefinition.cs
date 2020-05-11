@@ -20,7 +20,7 @@ namespace UnityAddon.Core.BeanDefinition.MemberBean
             }
         }
 
-        public override object Constructor(IServiceProvider serviceProvider, Type type, string name)
+        public override object Constructor(IUnityAddonSP serviceProvider, Type type, string name)
         {
             return serviceProvider.GetRequiredService<BeanFactory>()
                 .ConstructClassProxy(type, new IInterceptor[] { serviceProvider.GetRequiredService<BeanMethodInterceptor>() }, serviceProvider);

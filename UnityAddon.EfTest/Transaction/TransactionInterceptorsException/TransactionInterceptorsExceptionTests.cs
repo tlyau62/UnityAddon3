@@ -77,11 +77,11 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
 
         private void TestBuilder(int normalOrder, int exOrder)
         {
-            new HostBuilder()
+            ((IUnityAddonSP)new HostBuilder()
                    .RegisterUA()
                    .ConfigureContainer<ApplicationContext>(ctx =>
                    {
-                       ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.EfTest.Common")));
+                       ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.EfTest.Common"));
                        ctx.ConfigureContext<DbContextTemplateOption>(option =>
                        {
                            if (normalOrder < exOrder)
@@ -98,7 +98,7 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
                    })
                    .EnableUnityAddonEf()
                    .Build()
-                   .Services
+                   .Services)
                    .BuildUp(this);
         }
 

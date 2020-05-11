@@ -23,14 +23,14 @@ namespace UnityAddon.Core.BeanBuildStrategies
     public class BeanSingletonStrategy : BuilderStrategy
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         [Dependency]
         public IBeanDefinitionContainer BeanDefinitionContainer { get; set; }
 
         public override void PreBuildUp(ref BuilderContext context)
         {
-            var appContainer = ((IUnityServiceProvider)Sp).UnityContainer;
+            var appContainer = Sp.UnityContainer;
             IBeanDefinition beanDef = null;
 
             if (BeanDefinitionContainer.HasBeanDefinition(context.Type, context.Name))

@@ -54,11 +54,11 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptors
 
         public TransactionInterceptorsTests()
         {
-            new HostBuilder()
+            ((IUnityAddonSP)new HostBuilder()
                 .RegisterUA()
                 .ConfigureContainer<ApplicationContext>(ctx =>
                 {
-                    ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.EfTest.Common")));
+                    ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.EfTest.Common"));
                     ctx.ConfigureContext<DbContextTemplateOption>(option =>
                     {
                         option.AddTransactionInterceptor<TestTxInterceptor>();
@@ -66,7 +66,7 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptors
                 })
                 .EnableUnityAddonEf()
                 .Build()
-                .Services
+                .Services)
                 .BuildUp(this);
 
             DbSetupUtility.CreateDb(DbContextFactory);

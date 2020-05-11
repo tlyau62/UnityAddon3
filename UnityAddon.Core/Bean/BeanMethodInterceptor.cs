@@ -21,14 +21,10 @@ namespace UnityAddon.Core.Bean
         [Dependency]
         public IBeanDefinitionContainer DefContainer { get; set; }
 
-        public IServiceProvider _serviceProvider { get; set; }
+        [Dependency]
+        public IUnityAddonSP Sp { get; set; }
 
         private readonly object _lockObj = new object();
-
-        public BeanMethodInterceptor(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
 
         public void Intercept(IInvocation invocation)
         {
@@ -53,7 +49,7 @@ namespace UnityAddon.Core.Bean
                     // may cause deadlock if circular dep happens, but detected by BeanDependencyValidatorStrategy.
                     beanDef.Invocation = invocation;
 
-                    invocation.ReturnValue = _serviceProvider.GetRequiredService<MethodFactoryValue>(beanDef.Name + "-factory").Value;
+                    invocation.ReturnValue = Sp.GetRequiredService<MethodFactoryValue>(beanDef.Name + "-factory").Value;
 
                     beanDef.Invocation = null;
                 }

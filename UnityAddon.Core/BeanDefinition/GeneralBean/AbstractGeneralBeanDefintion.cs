@@ -67,6 +67,6 @@ namespace UnityAddon.Core.BeanDefinition.GeneralBean
 
         public bool FromComponentScanning { get; set; } = false;
 
-        public abstract object Constructor(IServiceProvider serviceProvider, Type type, string name);
+        public abstract object Constructor(IUnityAddonSP serviceProvider, Type type, string name);
     }
 }

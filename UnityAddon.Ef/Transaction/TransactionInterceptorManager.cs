@@ -21,7 +21,7 @@ namespace UnityAddon.Ef.Transaction
         public IConfigs<DbContextTemplateOption> DbCtxTemplateOption { get; set; }
 
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         [Dependency]
         public IServicePostRegistry PostRegistry { get; set; }

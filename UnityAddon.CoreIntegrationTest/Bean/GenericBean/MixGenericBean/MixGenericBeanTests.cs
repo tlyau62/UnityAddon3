@@ -39,7 +39,7 @@ namespace UnityAddon.CoreTest.Dependency.GenericDependency
         public MainService MainService { get; set; }
 
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         [Fact]
         public void GenericTypeBean()

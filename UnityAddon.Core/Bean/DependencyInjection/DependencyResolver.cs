@@ -24,7 +24,7 @@ namespace UnityAddon.Core.Bean.DependencyInjection
             _resolveStrategies = resolverOption.Value.ResolveStrategies;
         }
 
-        public object Resolve(Type resolveType, IEnumerable<Attribute> attributes, IServiceProvider sp)
+        public object Resolve(Type resolveType, IEnumerable<Attribute> attributes, IUnityAddonSP sp)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace UnityAddon.Core.Bean.DependencyInjection
             return _resolveStrategies.ContainsKey(attributeType);
         }
 
-        private object InvokeStrategy<TAttribute>(Func<Type, TAttribute, IServiceProvider, object> strategy, Type type, TAttribute attr, IServiceProvider sp)
+        private object InvokeStrategy<TAttribute>(Func<Type, TAttribute, IUnityAddonSP, object> strategy, Type type, TAttribute attr, IUnityAddonSP sp)
         {
             return strategy(type, attr, sp);
         }

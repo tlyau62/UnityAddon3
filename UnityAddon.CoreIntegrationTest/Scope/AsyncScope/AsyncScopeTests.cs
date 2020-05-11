@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Unity;
+using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using Xunit;
 
@@ -96,7 +97,7 @@ namespace UnityAddon.CoreIntegrationTest.Scope.AsyncScope
     public class AsyncScopeTests : UnityAddonComponentScanTest
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         private ConcurrentDictionary<Service, int> _serviceDict = new ConcurrentDictionary<Service, int>();
 

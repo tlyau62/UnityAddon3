@@ -46,7 +46,7 @@ namespace UnityAddon.Ef
     public class DbContextFactory<T> : IDbContextFactory<T> where T : DbContext
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         private AsyncLocalFactory<T> _asyncLocalFactory;
 

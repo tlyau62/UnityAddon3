@@ -72,7 +72,7 @@ namespace UnityAddon.Core.BeanDefinition.MemberBean
 
         public bool IsPrimary => Member.HasAttribute<PrimaryAttribute>();
 
-        public abstract object Constructor(IServiceProvider serviceProvider, Type type, string name);
+        public abstract object Constructor(IUnityAddonSP serviceProvider, Type type, string name);
 
         public abstract string Namespace { get; }
 

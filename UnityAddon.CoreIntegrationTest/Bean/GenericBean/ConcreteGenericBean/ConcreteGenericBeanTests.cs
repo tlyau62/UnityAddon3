@@ -19,7 +19,7 @@ namespace UnityAddon.CoreTest.Bean.GenericBean.ConcreteGenericBean
         public IService<int> Service { get; set; }
 
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         [Fact]
         public void ConcreteGenericBean()

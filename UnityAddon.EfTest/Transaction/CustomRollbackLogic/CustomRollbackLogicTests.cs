@@ -34,7 +34,7 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
                    .RegisterUA()
                    .ConfigureContainer<ApplicationContext>(ctx =>
                    {
-                       ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.EfTest.Common")));
+                       ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.EfTest.Common"));
                        ctx.ConfigureContext<DbContextTemplateOption>(option =>
                        {
                            // rollback depends on GenericResult<T> any type T
@@ -48,9 +48,9 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
                        });
                    })
                    .EnableUnityAddonEf()
-                   .Build()
-                   .Services
-                   .BuildUp(this);
+                   .Build();
+
+            ((IUnityAddonSP)host.Services).BuildUp(this);
 
             DbSetupUtility.CreateDb(DbContextFactory);
         }

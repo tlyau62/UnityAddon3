@@ -77,7 +77,7 @@ namespace UnityAddon.CoreTest.Aop.ClassAttributeInterceptor
                 .RegisterUA()
                 .ConfigureContainer<ApplicationContext>(ctx =>
                 {
-                    ctx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(GetType().Assembly, GetType().Namespace)));
+                    ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace));
                     ctx.ConfigureContext<AopInterceptorContainerOption>(option =>
                     {
                         option.AddAopIntercetor<IncInterceptor>();
@@ -85,7 +85,7 @@ namespace UnityAddon.CoreTest.Aop.ClassAttributeInterceptor
                 })
                 .Build();
 
-            host.Services.BuildUp(this);
+            ((IUnityAddonSP)host.Services).BuildUp(this);
         }
 
         [Fact]

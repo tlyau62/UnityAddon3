@@ -83,7 +83,7 @@ namespace UnityAddon.CoreTest
 
             var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
-            var usp = factory.CreateServiceProvider(defCol);
+            var usp = (IUnityAddonSP)factory.CreateServiceProvider(defCol);
 
             Assert.Equal(usp.GetService<IEnumerable<IEnum>>(), new IEnum[] { usp.GetService<IEnum>("E1"), usp.GetService<IEnum>("E2") });
             Assert.IsType<IEnum[]>(usp.GetService<IEnumerable<IEnum>>());

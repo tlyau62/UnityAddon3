@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Unity;
+using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using Xunit;
 
@@ -23,7 +24,7 @@ namespace UnityAddon.CoreTest.Bean
     public class BeanMethodInterceptorTests : UnityAddonComponentScanTest
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         [Theory]
         [InlineData(1)]

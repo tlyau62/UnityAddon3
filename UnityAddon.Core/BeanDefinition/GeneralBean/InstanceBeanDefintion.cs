@@ -19,7 +19,7 @@ namespace UnityAddon.Core.BeanDefinition.GeneralBean
 
         public object Instance { get; private set; }
 
-        public override object Constructor(IServiceProvider serviceProvider, Type type, string name)
+        public override object Constructor(IUnityAddonSP serviceProvider, Type type, string name)
         {
             return Instance;
         }

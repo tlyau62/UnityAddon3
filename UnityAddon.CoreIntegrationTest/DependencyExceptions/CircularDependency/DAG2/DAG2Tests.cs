@@ -32,7 +32,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.DAG2
     public class DAG2Tests : UnityAddonComponentScanTest
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         [Fact]
         public void DAG2()

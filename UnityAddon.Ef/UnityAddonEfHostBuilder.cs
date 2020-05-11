@@ -18,10 +18,10 @@ namespace UnityAddon.Ef
         public static IHostBuilder EnableUnityAddonEf(this IHostBuilder hostBuilder)
         {
             return hostBuilder
-                .ConfigureContainer<ApplicationContext>(appCtx =>
+                .ConfigureContainer<ApplicationContext>(ctx =>
                 {
-                    appCtx.AddContextEntry(entry => entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(Assembly.GetExecutingAssembly(), "UnityAddon.Ef")));
-                    appCtx.ConfigureContext<AopInterceptorContainerOption>(config =>
+                    ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(Assembly.GetExecutingAssembly(), "UnityAddon.Ef"));
+                    ctx.ConfigureContext<AopInterceptorContainerOption>(config =>
                     {
                         config
                             .AddAopIntercetor<RequireDbContextInterceptor>()

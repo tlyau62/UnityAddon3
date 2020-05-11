@@ -19,12 +19,9 @@ namespace UnityAddon.Core
         {
             return (builder, test) =>
             {
-                builder.ConfigureContainer<ApplicationContext>(builder =>
+                builder.ConfigureContainer<ApplicationContext>(ctx =>
                 {
-                    builder.AddContextEntry(entry =>
-                    {
-                        entry.ConfigureBeanDefinitions(defs => defs.AddFromComponentScanner(test.GetType().Assembly, namespaces.Length == 0 ? new[] { test.GetType().Namespace } : namespaces).ToArray());
-                    });
+                    ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(test.GetType().Assembly, namespaces.Length == 0 ? new[] { test.GetType().Namespace } : namespaces).ToArray());
                 });
             };
         }
@@ -39,7 +36,7 @@ public abstract class UnityAddonTest
         hostBuilderConfigs.Aggregate((acc, config) => acc + config)(hostBuilder, this);
         var host = hostBuilder.Build();
 
-        host.Services.BuildUp(GetType(), this);
+        ((IUnityAddonSP)host.Services).BuildUp(GetType(), this);
     }
 }
 

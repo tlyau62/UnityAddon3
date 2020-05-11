@@ -23,7 +23,7 @@ namespace UnityAddon.CoreTest.Configuration.DependencyInjection
         public PropertyHelper PropertyHelper { get; set; }
 
         [Dependency]
-        public IServiceProvider ServiceProvider { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         public CtorHelper CtorHelper { get; set; }
 

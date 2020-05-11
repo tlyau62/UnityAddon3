@@ -45,16 +45,13 @@ namespace UnityAddon.CoreTest.Dependency.Value
                         {"serviceType", "Write"},
                     });
                })
-               .ConfigureContainer<ApplicationContext>(builder =>
+               .ConfigureContainer<ApplicationContext>(ctx =>
                {
-                   builder.AddContextEntry(ctx => ctx.ConfigureBeanDefinitions(config =>
-                   {
-                       config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace);
-                   }));
+                   ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace));
                })
                .Build();
 
-            host.Services.BuildUp(this);
+            ((IUnityAddonSP)host.Services).BuildUp(this);
 
             Assert.Equal(ServiceType.Write, Service.Type);
         }

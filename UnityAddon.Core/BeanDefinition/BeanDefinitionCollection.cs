@@ -8,127 +8,79 @@ using UnityAddon.Core.BeanDefinition.GeneralBean;
 using UnityAddon.Core.BeanDefinition.MemberBean;
 using UnityAddon.Core.BeanDefinition.ServiceBean;
 using Unity.Lifetime;
+using UnityAddon.Core.Bean;
+using System.Collections;
 
 namespace UnityAddon.Core.BeanDefinition
 {
-    public interface IBeanDefinitionCollection : IList<IBeanDefinition>
+    public interface IBeanDefinitionCollection : IList<IBeanDefinition>, IBeanRegistry
     {
-        IBeanDefinitionCollection AddComponent(Type type);
-
-        //IBeanDefinitionCollection AddFromService(Func<IServiceProvider, IBeanDefinitionCollection> action);
-
-        IBeanDefinitionCollection AddFromExisting(IBeanDefinitionCollection beanDefCollection);
-
-        IBeanDefinitionCollection AddFromServiceCollection(Action<IServiceCollection> servicesCallback);
-
-        IBeanDefinitionCollection AddFromServiceCollection(IServiceCollection services);
-
-        IBeanDefinitionCollection AddFromUnityContainer(IUnityContainer unityContainer);
+        void AddRange(IEnumerable<IBeanDefinition> beanDefinitions);
     }
 
-    public class BeanDefinitionCollection : List<IBeanDefinition>, IBeanDefinitionCollection
+    public class BeanDefinitionCollection : BeanRegistry, IBeanDefinitionCollection
     {
-        //public IBeanDefinitionCollection AddFromService(Func<IServiceProvider, IBeanDefinitionCollection> action)
-        //{
-        //    Add(new FactoryBeanDefinition<IBeanDefinitionCollection>((sp, t, n) => action(sp)));
+        private readonly List<IBeanDefinition> _list = new List<IBeanDefinition>();
 
-        //    return this;
-        //}
+        public IBeanDefinition this[int index] { get => _list[index]; set => _list[index] = value; }
 
-        public IBeanDefinitionCollection AddComponent(Type type)
+        public int Count => _list.Count;
+
+        public bool IsReadOnly => false;
+
+        public override void Add(IBeanDefinition beanDefinition)
         {
-            Add(new MemberComponentBeanDefinition(type));
-
-            return this;
+            _list.Add(beanDefinition);
         }
 
-        public IBeanDefinitionCollection AddFromServiceCollection(Action<IServiceCollection> servicesCallback)
+        public void AddRange(IEnumerable<IBeanDefinition> beanDefinitions)
         {
-            var services = new ServiceCollection();
-
-            servicesCallback(services);
-
-            AddFromServiceCollection(services);
-
-            return this;
+            _list.AddRange(beanDefinitions);
         }
 
-        public IBeanDefinitionCollection AddFromServiceCollection(IServiceCollection services)
+        public void Clear()
         {
-            foreach (var d in services)
-            {
-                ServiceBeanDefinition beanDef = null;
-
-                if (d.ImplementationInstance != null)
-                {
-                    beanDef = new ServiceInstanceBeanDefinition(d);
-                }
-                else if (d.ImplementationFactory != null)
-                {
-                    beanDef = new ServiceFactoryBeanDefinition(d);
-                }
-                else if (d.ImplementationType != null)
-                {
-                    beanDef = new ServiceTypeBeanDefinition(d);
-                }
-                else
-                {
-                    throw new InvalidOperationException();
-                }
-
-                Add(beanDef);
-            }
-
-            return this;
+            _list.Clear();
         }
 
-        public IBeanDefinitionCollection AddFromExisting(IBeanDefinitionCollection beanDefCollection)
+        public bool Contains(IBeanDefinition item)
         {
-            AddRange(beanDefCollection);
-
-            return this;
+            return _list.Contains(item);
         }
 
-        public IBeanDefinitionCollection AddFromUnityContainer(IUnityContainer unityContainer)
+        public void CopyTo(IBeanDefinition[] array, int arrayIndex)
         {
-            foreach (var reg in unityContainer.Registrations)
-            {
-                if (reg.RegisteredType == typeof(IUnityContainer))
-                {
-                    continue;
-                }
-
-                var scope = ScopeType.None;
-
-                if (reg.LifetimeManager is ContainerControlledLifetimeManager || reg.LifetimeManager is SingletonLifetimeManager)
-                {
-                    scope = ScopeType.Singleton;
-                }
-                else if (reg.LifetimeManager is ContainerControlledTransientManager)
-                {
-                    scope = ScopeType.Transient;
-                }
-                else if (reg.LifetimeManager is HierarchicalLifetimeManager)
-                {
-                    scope = ScopeType.Scoped;
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
-
-                Add(new FactoryBeanDefinition(reg.RegisteredType, (sp, t, n) => unityContainer.Resolve(t, reg.Name), reg.Name, scope));
-            }
-
-            return this;
+            _list.CopyTo(array, arrayIndex);
         }
-    }
 
-    public static class BeanDefinitionCollectionExt
-    {
-        public static IBeanDefinitionCollection AddComponent<T>(this IBeanDefinitionCollection beanDefCollection)
+        public IEnumerator<IBeanDefinition> GetEnumerator()
         {
-            return beanDefCollection.AddComponent(typeof(T));
+            return _list.GetEnumerator();
+        }
+
+        public int IndexOf(IBeanDefinition item)
+        {
+            return _list.IndexOf(item);
+        }
+
+        public void Insert(int index, IBeanDefinition item)
+        {
+            _list.Insert(index, item);
+        }
+
+        public bool Remove(IBeanDefinition item)
+        {
+            return _list.Remove(item);
+        }
+
+        public void RemoveAt(int index)
+        {
+            _list.RemoveAt(index);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _list.GetEnumerator();
         }
     }
 }
