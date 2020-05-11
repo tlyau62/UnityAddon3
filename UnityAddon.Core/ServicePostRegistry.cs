@@ -16,7 +16,9 @@ namespace UnityAddon.Core
 {
     public interface IServicePostRegistry : IBeanRegistry
     {
-        void Unregister(Type type, string name);
+        void Unregister(Type type, string name = null);
+
+        void Unregister<T>(string name = null);
     }
 
     public class ServicePostRegistry : BeanRegistry, IServicePostRegistry
@@ -51,6 +53,11 @@ namespace UnityAddon.Core
                     throw new NoSuchBeanDefinitionException($"Type {beanDef.Type} with name '{beanDef.Name}' is unregistered.");
                 }, (IFactoryLifetimeManager)Activator.CreateInstance(registration.LifetimeManager.GetType()));
             }
+        }
+
+        public void Unregister<T>(string name)
+        {
+            Unregister(typeof(T), name);
         }
     }
 }
