@@ -68,6 +68,9 @@ namespace UnityAddon.Core.Context
 
             Container
                 .RegisterType(typeof(IConfigs<>), typeof(Configs<>), new SingletonLifetimeManager());
+
+            Container
+                .RegisterType<ConfigurationRegistry>(new SingletonLifetimeManager());
         }
 
         public void Configure<TConfig>(Action<TConfig> config) where TConfig : class, new()

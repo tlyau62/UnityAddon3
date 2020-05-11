@@ -14,6 +14,8 @@ namespace UnityAddon.Core.BeanDefinition
 {
     public interface IBeanDefinitionContainer
     {
+        IReadOnlyDictionary<Type, BeanDefinitionHolder> Registrations { get; }
+
         bool HasBeanDefinition(Type type, string name = null);
 
         IBeanDefinition GetBeanDefinition(Type type, string name = null);
@@ -34,18 +36,20 @@ namespace UnityAddon.Core.BeanDefinition
     /// </summary>
     public class BeanDefinitionContainer : IBeanDefinitionContainer
     {
-        private ConcurrentDictionary<Type, BeanDefinitionHolder> _container = new ConcurrentDictionary<Type, BeanDefinitionHolder>();
+        private readonly ConcurrentDictionary<Type, BeanDefinitionHolder> _registrations = new ConcurrentDictionary<Type, BeanDefinitionHolder>();
+
+        public IReadOnlyDictionary<Type, BeanDefinitionHolder> Registrations => _registrations;
 
         public IBeanDefinitionContainer RegisterBeanDefinition(IBeanDefinition beanDefinition)
         {
             foreach (var type in beanDefinition.AutoWiredTypes)
             {
-                if (!_container.ContainsKey(type))
+                if (!_registrations.ContainsKey(type))
                 {
-                    _container[type] = new BeanDefinitionHolder();
+                    _registrations[type] = new BeanDefinitionHolder();
                 }
 
-                _container[type].Add(beanDefinition);
+                _registrations[type].Add(beanDefinition);
             }
 
             return this;
@@ -53,12 +57,12 @@ namespace UnityAddon.Core.BeanDefinition
 
         public bool HasBeanDefinition(Type type, string name)
         {
-            if (!_container.ContainsKey(type))
+            if (!_registrations.ContainsKey(type))
             {
                 return false;
             }
 
-            return _container[type].Exist(name);
+            return _registrations[type].Exist(name);
         }
 
         /// <summary>
@@ -71,17 +75,17 @@ namespace UnityAddon.Core.BeanDefinition
                 throw new InvalidOperationException($"No such bean definition of type {type}.");
             }
 
-            return _container[type].Get(name);
+            return _registrations[type].Get(name);
         }
 
         public IEnumerable<IBeanDefinition> GetAllBeanDefinitions(Type type)
         {
-            if (!_container.ContainsKey(type))
+            if (!_registrations.ContainsKey(type))
             {
                 return new List<IBeanDefinition>();
             }
 
-            return _container[type].GetAll();
+            return _registrations[type].GetAll();
         }
 
         public IBeanDefinition RemoveBeanDefinition(Type type, string name = null)
@@ -90,7 +94,7 @@ namespace UnityAddon.Core.BeanDefinition
 
             foreach (var atype in beanDef.AutoWiredTypes)
             {
-                _container[atype].Remove(beanDef);
+                _registrations[atype].Remove(beanDef);
             }
 
             return beanDef;

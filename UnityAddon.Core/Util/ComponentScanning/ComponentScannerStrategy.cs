@@ -22,7 +22,18 @@ namespace UnityAddon.Core.Util.ComponentScanning
     {
         public IBeanDefinitionCollection Create(Type type)
         {
-            return new BeanDefinitionCollection() { new MemberComponentBeanDefinition(type) };
+            IBeanDefinitionCollection col = new BeanDefinitionCollection();
+
+            if (type.HasAttribute<ConfigurationAttribute>())
+            {
+                col.AddConfiguration(type);
+            }
+            else
+            {
+                col.AddComponent(type);
+            }
+
+            return col;
         }
 
         public bool IsMatch(Type type)
@@ -31,37 +42,4 @@ namespace UnityAddon.Core.Util.ComponentScanning
         }
     }
 
-    [Order(Ordered.LOWEST_PRECEDENCE - 1)]
-    public class ConfigurationScannerStrategy : IComponentScannerStrategy
-    {
-        public IBeanDefinitionCollection Create(Type type)
-        {
-            var defCol = new BeanDefinitionCollection() { new MemberConfigurationBeanDefinition(type) };
-
-            defCol.AddRange(Parse(type));
-
-            return defCol;
-        }
-
-        public IBeanDefinitionCollection Parse(Type config)
-        {
-            var defCol = new BeanDefinitionCollection();
-
-            defCol.AddRange(MethodSelector.GetAllMethodsByAttribute<BeanAttribute>(config)
-                .SelectMany(beanMethod =>
-                {
-                    var def = new MemberMethodBeanDefinition(beanMethod);
-
-                    return new[] { def, new MemberMethodFactoryBeanDefinition(def) };
-                })
-                .ToArray());
-
-            return defCol;
-        }
-
-        public bool IsMatch(Type type)
-        {
-            return type.HasAttribute<ConfigurationAttribute>();
-        }
-    }
 }
