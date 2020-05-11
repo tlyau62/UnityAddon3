@@ -10,6 +10,7 @@ using Unity;
 using Unity.Lifetime;
 using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Bean;
 using UnityAddon.Core.Bean.Config;
 using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.BeanBuildStrategies;
@@ -38,6 +39,8 @@ namespace UnityAddon.Core.Context
         public IUnityAddonSP ApplicationSP => CoreContainer.Resolve<IUnityAddonSP>();
 
         public IBeanDefinitionContainer BeanDefinitionContainer => CoreContainer.Resolve<IBeanDefinitionContainer>();
+
+        public ConfigurationRegistry ConfigurationRegistry => CoreContainer.Resolve<ConfigurationRegistry>();
 
         public void AddContextEntry(Action<ApplicationContextEntry> entryConfig)
         {
@@ -80,6 +83,8 @@ namespace UnityAddon.Core.Context
                         BeanDefinitionContainer.RegisterBeanDefinition(beanDef);
                         ApplicationSP.UnityContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(new UnityAddonSP(c), t, n), (IFactoryLifetimeManager)beanDef.Scope);
                     }
+
+                    ConfigurationRegistry.RegisterConfigurations();
 
                     if (defCol.Any(def => def.Type == typeof(IBeanDefinitionCollection)))
                     {

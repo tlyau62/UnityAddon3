@@ -45,4 +45,8 @@ public abstract class UnityAddonComponentScanTest : UnityAddonTest
     public UnityAddonComponentScanTest(params string[] namespaces) : base(UnityAddonTestFuncCollection.CreateComponentScan(namespaces))
     {
     }
+
+    public UnityAddonComponentScanTest(Action<IHostBuilder, UnityAddonTest>[] hostBuilderConfigs, params string[] namespaces) : base(hostBuilderConfigs.Union(new[] { UnityAddonTestFuncCollection.CreateComponentScan(namespaces) }).ToArray())
+    {
+    }
 }
