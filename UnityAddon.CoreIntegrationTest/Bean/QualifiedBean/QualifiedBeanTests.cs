@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using Unity;
 using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Configs;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Bean.QualifiedBean
@@ -51,7 +53,9 @@ namespace UnityAddon.CoreTest.Bean.QualifiedBean
     {
     }
 
-    public class QualifiedBeanTests : UnityAddonComponentScanTest
+    [ConfigArg("csconfig_testcase", typeof(QualifiedBeanTests))]
+    [Import(typeof(ComponentScanTestConfig))]
+    public class QualifiedBeanTests : UnityAddonTest
     {
         [Dependency("CommonA")]
         public ICommon A { get; set; }
