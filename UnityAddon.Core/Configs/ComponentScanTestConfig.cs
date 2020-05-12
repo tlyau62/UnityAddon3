@@ -13,11 +13,11 @@ namespace UnityAddon.Core.Configs
     public class ComponentScanTestConfig
     {
         [Bean]
-        public virtual IBeanDefinitionCollection ComponentScan([Dependency("csconfig_testcase")] Type testcase, [OptionalDependency("csconfig_namespaces")] string[] extranamespaces)
+        public virtual IBeanDefinitionCollection ComponentScan([Dependency("TestCase")] Type testcase, [Dependency("Namespaces")] string[] namespaces)
         {
             IBeanDefinitionCollection col = new BeanDefinitionCollection();
 
-            col.AddFromComponentScanner(testcase.Assembly, new[] { testcase.Namespace }.Union(extranamespaces).ToArray());
+            col.AddFromComponentScanner(testcase.Assembly, new[] { testcase.Namespace }.Union(namespaces).ToArray());
 
             return col;
         }

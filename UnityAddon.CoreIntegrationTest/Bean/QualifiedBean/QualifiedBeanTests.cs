@@ -53,8 +53,7 @@ namespace UnityAddon.CoreTest.Bean.QualifiedBean
     {
     }
 
-    [ConfigArg("csconfig_testcase", typeof(QualifiedBeanTests))]
-    [Import(typeof(ComponentScanTestConfig))]
+    [ComponentScan(typeof(QualifiedBeanTests), "UnityAddon.CoreTest.Bean.QualifiedBean")]
     public class QualifiedBeanTests : UnityAddonTest
     {
         [Dependency("CommonA")]

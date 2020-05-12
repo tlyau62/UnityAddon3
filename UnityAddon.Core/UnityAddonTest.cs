@@ -17,33 +17,46 @@ namespace UnityAddon.Core
 {
     public abstract class UnityAddonTest
     {
+        public const string CONFIG_PREFIX = "configType_";
+
+        public const string CONFIG_ARGS_PREFIX = "configArg_";
+
         public UnityAddonTest()
         {
-            var hostBuilder = Host.CreateDefaultBuilder().RegisterUA();
-            var configAttrs = GetType().GetAttributes<ImportAttribute>();
-            var configArgAttrs = GetType().GetAttributes<ConfigArgAttribute>();
-
-            hostBuilder
+            Host.CreateDefaultBuilder()
+                .RegisterUA()
                 .ConfigureContainer<ApplicationContext>(ctx =>
                 {
                     ctx.ConfigureBeans((config, sp) =>
                     {
-                        foreach (var configAttr in configAttrs)
-                        {
-                            foreach (var configT in configAttr.Configs)
-                            {
-                                config.AddConfiguration(configT);
-                            }
-                        }
+                        var attrs = GetType().GetAttributes<ConfigParamAttribute>();
 
-                        foreach (var argAttr in configArgAttrs)
+                        foreach (var attr in attrs)
                         {
-                            if (!argAttr.Type.IsAssignableFrom(argAttr.Value.GetType()))
+                            foreach (var arg in attr.Args)
                             {
-                                throw new InvalidOperationException("Type mismatch");
-                            }
+                                string key = arg[0] as string;
+                                object val = arg[1];
+                                Type type = arg[2] as Type;
 
-                            config.AddSingleton(argAttr.Type, argAttr.Value, argAttr.Key);
+                                if (key.StartsWith(CONFIG_PREFIX))
+                                {
+                                    config.AddConfiguration((Type)arg[1]);
+                                }
+                                else if (key.StartsWith(CONFIG_ARGS_PREFIX))
+                                {
+                                    if (!type.IsAssignableFrom(val.GetType()))
+                                    {
+                                        throw new InvalidOperationException("Type mismatch");
+                                    }
+
+                                    config.AddSingleton(type, val, new string(key.Skip(CONFIG_ARGS_PREFIX.Length).ToArray()));
+                                }
+                                else
+                                {
+                                    throw new NotImplementedException();
+                                }
+                            }
                         }
                     });
                 })
