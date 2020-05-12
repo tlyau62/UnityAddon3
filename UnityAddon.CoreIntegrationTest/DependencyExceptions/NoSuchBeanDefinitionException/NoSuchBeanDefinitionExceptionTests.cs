@@ -30,7 +30,8 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoSuch
         }
     }
 
-    public class NoSuchBeanDefinitionExceptionTests : UnityAddonComponentScanTest
+    [ComponentScan(typeof(NoSuchBeanDefinitionExceptionTests))]
+    public class NoSuchBeanDefinitionExceptionTests : UnityAddonTest
     {
         [Dependency]
         public IUnityAddonSP Sp { get; set; }

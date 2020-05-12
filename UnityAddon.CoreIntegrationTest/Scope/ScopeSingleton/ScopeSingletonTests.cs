@@ -14,7 +14,8 @@ namespace UnityAddon.CoreIntegrationTest.ScopeSingleton
     [Component]
     public class Service { }
 
-    public class ScopeSingletonTests : UnityAddonComponentScanTest
+    [ComponentScan(typeof(ScopeSingletonTests))]
+    public class ScopeSingletonTests : UnityAddonTest
     {
         [Dependency]
         public IUnityAddonSP Sp { get; set; }

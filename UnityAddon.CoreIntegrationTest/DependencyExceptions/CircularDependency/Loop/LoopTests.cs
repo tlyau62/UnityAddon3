@@ -27,7 +27,8 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.Loop
         public B(IA a) { }
     }
 
-    public class SelfLoopTests : UnityAddonComponentScanTest
+    [ComponentScan(typeof(SelfLoopTests))]
+    public class SelfLoopTests : UnityAddonTest
     {
         [Dependency]
         public IUnityAddonSP Sp { get; set; }

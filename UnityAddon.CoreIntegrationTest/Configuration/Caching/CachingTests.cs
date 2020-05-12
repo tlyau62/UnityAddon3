@@ -36,7 +36,8 @@ namespace UnityAddon.CoreTest.Configuration.Caching
         }
     }
 
-    public class CachingTests : UnityAddonComponentScanTest
+    [ComponentScan(typeof(CachingTests))]
+    public class CachingTests : UnityAddonTest
     {
         [Dependency]
         public Config Config { get; set; }

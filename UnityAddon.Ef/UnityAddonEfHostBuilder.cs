@@ -10,6 +10,7 @@ using UnityAddon.Ef.Transaction;
 using Unity.Lifetime;
 using UnityAddon.Core.Context;
 using UnityAddon.Core.Util.ComponentScanning;
+using UnityAddon.Core.Bean;
 
 namespace UnityAddon.Ef
 {

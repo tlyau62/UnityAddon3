@@ -6,7 +6,6 @@ using Unity;
 using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
-using UnityAddon.Core.Configs;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Bean.QualifiedBean
@@ -53,7 +52,7 @@ namespace UnityAddon.CoreTest.Bean.QualifiedBean
     {
     }
 
-    [ComponentScan(typeof(QualifiedBeanTests), "UnityAddon.CoreTest.Bean.QualifiedBean")]
+    [ComponentScan(typeof(QualifiedBeanTests))]
     public class QualifiedBeanTests : UnityAddonTest
     {
         [Dependency("CommonA")]

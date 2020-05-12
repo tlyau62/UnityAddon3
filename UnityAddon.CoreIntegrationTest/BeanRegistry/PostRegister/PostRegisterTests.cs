@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Unity;
 using UnityAddon.Core;
+using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
 using Xunit;
 
@@ -24,7 +25,8 @@ namespace UnityAddon.CoreIntegrationTest.BeanRegistry.PostRegister
         }
     }
 
-    public class PostRegisterTests : UnityAddonComponentScanTest
+    [ComponentScan(typeof(PostRegisterTests))]
+    public class PostRegisterTests : UnityAddonTest
     {
         [Dependency]
         public IUnityAddonSP Sp { get; set; }

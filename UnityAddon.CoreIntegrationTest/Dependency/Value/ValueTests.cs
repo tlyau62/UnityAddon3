@@ -12,6 +12,7 @@ using UnityAddon.Core.Value;
 using Xunit;
 using UnityAddon.Core.Util.ComponentScanning;
 using UnityAddon.Core.Context;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace UnityAddon.CoreTest.Dependency.Value
 {
@@ -27,17 +28,18 @@ namespace UnityAddon.CoreTest.Dependency.Value
         public ServiceType Type { get; set; }
     }
 
-    [Trait("Dependency", "Value")]
-    public class ValueTests
+    [ComponentScan(typeof(ValueTests))]
+    public class ValueTests : UnityAddonTest
     {
+        public ValueTests() : base(true) { }
+
         [Dependency]
         public Service Service { get; set; }
 
         [Fact]
         public void Value()
         {
-            var host = Host.CreateDefaultBuilder()
-               .RegisterUA()
+            HostBuilder
                .ConfigureAppConfiguration(config =>
                {
                    config.AddInMemoryCollection(new Dictionary<string, string>
@@ -45,13 +47,10 @@ namespace UnityAddon.CoreTest.Dependency.Value
                         {"serviceType", "Write"},
                     });
                })
-               .ConfigureContainer<ApplicationContext>(ctx =>
-               {
-                   ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace));
-               })
-               .Build();
-
-            ((IUnityAddonSP)host.Services).BuildUp(this);
+               .Build()
+               .Services
+               .GetRequiredService<IUnityAddonSP>()
+               .BuildUp(this);
 
             Assert.Equal(ServiceType.Write, Service.Type);
         }

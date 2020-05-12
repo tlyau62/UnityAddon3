@@ -33,7 +33,8 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NestedNoSuchBeanDefinitionExc
         public ICommonService CommonService { get; set; }
     }
 
-    public class NestedNoSuchBeanDefinitionExceptionTests : UnityAddonComponentScanTest
+    [ComponentScan(typeof(NestedNoSuchBeanDefinitionExceptionTests))]
+    public class NestedNoSuchBeanDefinitionExceptionTests : UnityAddonTest
     {
         [Dependency]
         public IUnityAddonSP Sp { get; set; }

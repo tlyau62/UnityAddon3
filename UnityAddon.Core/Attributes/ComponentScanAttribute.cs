@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using UnityAddon.Core.Configs;
+using UnityAddon.Core.Util.ComponentScanning;
 
 namespace UnityAddon.Core.Attributes
 {
@@ -13,9 +13,9 @@ namespace UnityAddon.Core.Attributes
     {
         public ComponentScanAttribute(Type testcase, params string[] namespaces)
         {
-            Args.Add(new object[] { UnityAddonTest.CONFIG_PREFIX + "ComponentScan", typeof(ComponentScanTestConfig), typeof(Type) });
-            Args.Add(new object[] { UnityAddonTest.CONFIG_ARGS_PREFIX + "TestCase", testcase, typeof(Type) });
-            Args.Add(new object[] { UnityAddonTest.CONFIG_ARGS_PREFIX + "Namespaces", namespaces, typeof(string[]) });
+            Args.Add(new object[] { UnityAddonTest.CONFIG_PREFIX + "ComponentScan", typeof(ComponentScanConfig), typeof(Type) });
+            Args.Add(new object[] { "TestCase", testcase, typeof(Type) });
+            Args.Add(new object[] { "Namespaces", namespaces, typeof(string[]) });
         }
     }
 }

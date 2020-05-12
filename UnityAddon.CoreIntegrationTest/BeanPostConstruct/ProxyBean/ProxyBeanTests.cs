@@ -1,4 +1,5 @@
 ﻿using Castle.DynamicProxy;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -57,8 +58,11 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.ProxyBean
         }
     }
 
-    public class ProxyBeanTests
+    [ComponentScan(typeof(ProxyBeanTests))]
+    public class ProxyBeanTests : UnityAddonTest
     {
+        public ProxyBeanTests() : base(true) { }
+
         [Dependency]
         public IService Service { get; set; }
 
@@ -68,19 +72,18 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.ProxyBean
         [Fact]
         public void ProxyBean()
         {
-            var host = Host.CreateDefaultBuilder()
-                .RegisterUA()
+            HostBuilder
                 .ConfigureContainer<ApplicationContext>(ctx =>
                 {
-                    ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace));
                     ctx.ConfigureContext<AopInterceptorContainerOption>(option =>
                     {
                         option.AddAopIntercetor<IncInterceptor>();
                     });
                 })
-                .Build();
-
-            ((IUnityAddonSP)host.Services).BuildUp(this);
+                .Build()
+                .Services
+                .GetRequiredService<IUnityAddonSP>()
+                .BuildUp(this);
 
             Assert.Equal(1, Counter.Count);
         }

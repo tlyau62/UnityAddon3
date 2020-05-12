@@ -94,7 +94,8 @@ namespace UnityAddon.CoreIntegrationTest.Scope.AsyncScope
         }
     }
 
-    public class AsyncScopeTests : UnityAddonComponentScanTest
+    [ComponentScan(typeof(AsyncScopeTests))]
+    public class AsyncScopeTests : UnityAddonTest
     {
         [Dependency]
         public IUnityAddonSP Sp { get; set; }

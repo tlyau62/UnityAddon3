@@ -13,6 +13,7 @@ using UnityAddon.Core.Util.ComponentScanning;
 using UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.B;
 using UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.A;
 using UnityAddon.Core.Context;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.A
 {
@@ -34,16 +35,17 @@ namespace UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter
 {
     public interface ISerivce { }
 
-    public class NamespaceFilterTests
+    public class NamespaceFilterTests : UnityAddonTest
     {
+        public NamespaceFilterTests() : base(true) { }
+
         [Dependency]
         public ISerivce Service { get; set; }
 
         [Fact]
         public void NamespaceFilterOnB()
         {
-            var host = Host.CreateDefaultBuilder()
-                .UseServiceProviderFactory(new ServiceProviderFactory())
+            HostBuilder
                 .ConfigureContainer<ApplicationContext>(ctx =>
                 {
                     ctx.ConfigureBeans((config, sp) =>
@@ -54,9 +56,10 @@ namespace UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter
                                 GetType().Namespace);
                     });
                 })
-                .Build();
-
-            ((IUnityAddonSP)host.Services).BuildUp(this);
+                .Build()
+                .Services
+                .GetRequiredService<IUnityAddonSP>()
+                .BuildUp(this);
 
             Assert.IsType<ServiceB>(Service);
         }
@@ -64,8 +67,7 @@ namespace UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter
         [Fact]
         public void NamespaceFilterOnA()
         {
-            var host = Host.CreateDefaultBuilder()
-                .UseServiceProviderFactory(new ServiceProviderFactory())
+            HostBuilder
                 .ConfigureContainer<ApplicationContext>(ctx =>
                 {
                     ctx.ConfigureBeans((config, sp) =>
@@ -76,9 +78,10 @@ namespace UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter
                                 GetType().Namespace);
                     });
                 })
-                .Build();
-
-            ((IUnityAddonSP)host.Services).BuildUp(this);
+                .Build()
+                .Services
+                .GetRequiredService<IUnityAddonSP>()
+                .BuildUp(this);
 
             Assert.IsType<ServiceA>(Service);
         }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using Unity;
 using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.Context;
 using UnityAddon.Core.Util.ComponentScanning;
 using Xunit;
@@ -29,8 +31,13 @@ namespace UnityAddon.CoreTest.Dependency.Bean.ProfileBean
     {
     }
 
-    public class ProfileBeanTests
+    [ComponentScan(typeof(ProfileBeanTests))]
+    public class ProfileBeanTests : UnityAddonTest
     {
+        public ProfileBeanTests() : base(true)
+        {
+        }
+
         [Dependency]
         public IService Service { get; set; }
 
@@ -39,22 +46,13 @@ namespace UnityAddon.CoreTest.Dependency.Bean.ProfileBean
         [InlineData("dev", typeof(DevService))]
         public void ProfileBean(string activeProfile, Type resolveType)
         {
-            var host = Host.CreateDefaultBuilder()
-               .RegisterUA()
-               .ConfigureAppConfiguration(config =>
-               {
-                   config.AddInMemoryCollection(new Dictionary<string, string>
+            HostBuilder.ConfigureAppConfiguration(config =>
+            {
+                config.AddInMemoryCollection(new Dictionary<string, string>
                     {
                         {"profiles:active", activeProfile},
                     });
-               })
-               .ConfigureContainer<ApplicationContext>(ctx =>
-               {
-                   ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace));
-               })
-               .Build();
-
-            ((IUnityAddonSP)host.Services).BuildUp(this);
+            }).Build().Services.GetRequiredService<IUnityAddonSP>().BuildUp(this);
 
             Assert.IsType(resolveType, Service);
         }

@@ -10,8 +10,16 @@ namespace UnityAddon.Core.Attributes
     /// arg[2] = value type
     /// </summary>
     [AttributeUsage(AttributeTargets.All)]
-    public abstract class ConfigArgAttribute : Attribute
+    public class ConfigArgAttribute : Attribute
     {
         public List<object[]> Args { get; protected set; } = new List<object[]>();
+
+        public ConfigArgAttribute(params object[] args)
+        {
+            if (args.Length > 0)
+            {
+                Args.Add(args);
+            }
+        }
     }
 }

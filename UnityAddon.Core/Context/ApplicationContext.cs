@@ -29,6 +29,8 @@ namespace UnityAddon.Core.Context
 
         private bool _isRefreshing = false;
 
+        private System.Collections.Generic.HashSet<IBeanDefinitionCollection> HashSet { get; set; } = new System.Collections.Generic.HashSet<IBeanDefinitionCollection>();
+
         public ApplicationContext(IUnityContainer appContainer)
         {
             _coreContext = new CoreContext(this, appContainer);
@@ -82,24 +84,17 @@ namespace UnityAddon.Core.Context
 
                         BeanDefinitionContainer.RegisterBeanDefinition(beanDef);
                         ApplicationSP.UnityContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(new UnityAddonSP(c), t, n), (IFactoryLifetimeManager)beanDef.Scope);
-                    }
 
-                    ConfigurationRegistry.RegisterConfigurations();
-
-                    if (defCol.Any(def => def.Type == typeof(IBeanDefinitionCollection)))
-                    {
-                        ConfigureBeans((config, sp) =>
+                        if (beanDef.Type == typeof(IBeanDefinitionCollection))
                         {
-                            config.AddFromExisting(defCol
-                                .Where(def => def.Type == typeof(IBeanDefinitionCollection))
-                                .SelectMany(def => ApplicationSP.GetServices<IBeanDefinitionCollection>())
-                                .Aggregate((acc, col) =>
-                                {
-                                    acc.AddFromExisting(col);
-                                    return acc;
-                                }));
-                        }, ApplicationContextEntryOrder.BeanMethod);
+                            ConfigureBeans((config, sp) =>
+                            {
+                                config.AddFromExisting(ApplicationSP.GetRequiredService<IBeanDefinitionCollection>(beanDef.Name));
+                            }, ApplicationContextEntryOrder.BeanMethod);
+                        }
                     }
+
+                    ConfigurationRegistry.RefreshConfigurations();
                 };
 
             });

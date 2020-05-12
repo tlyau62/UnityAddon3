@@ -21,7 +21,7 @@ namespace UnityAddon.Core.Bean
 
         private readonly HashSet<IBeanDefinition> _parsedConfigs = new HashSet<IBeanDefinition>();
 
-        public void RegisterConfigurations()
+        public void RefreshConfigurations()
         {
             var beanMethodDefs = BeanDefContainer.Registrations.Values
                 .SelectMany(holder => holder.GetAll().Where(def => def is MemberConfigurationBeanDefinition))
@@ -44,7 +44,8 @@ namespace UnityAddon.Core.Bean
                 return;
             }
 
-            AppContext.ConfigureBeans((config, sp) => {
+            AppContext.ConfigureBeans((config, sp) =>
+            {
                 config.AddRange(beanMethodDefs);
             }, ApplicationContextEntryOrder.BeanMethod);
         }

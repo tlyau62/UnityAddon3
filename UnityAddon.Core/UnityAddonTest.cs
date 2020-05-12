@@ -19,17 +19,17 @@ namespace UnityAddon.Core
     {
         public const string CONFIG_PREFIX = "configType_";
 
-        public const string CONFIG_ARGS_PREFIX = "configArg_";
+        protected IHostBuilder HostBuilder { get; private set; }
 
-        public UnityAddonTest()
+        public UnityAddonTest(bool isDefered = false)
         {
-            Host.CreateDefaultBuilder()
+            HostBuilder = Host.CreateDefaultBuilder()
                 .RegisterUA()
                 .ConfigureContainer<ApplicationContext>(ctx =>
                 {
                     ctx.ConfigureBeans((config, sp) =>
                     {
-                        var attrs = GetType().GetAttributes<ConfigParamAttribute>();
+                        var attrs = GetType().GetAttributes<ConfigArgAttribute>();
 
                         foreach (var attr in attrs)
                         {
@@ -43,26 +43,26 @@ namespace UnityAddon.Core
                                 {
                                     config.AddConfiguration((Type)arg[1]);
                                 }
-                                else if (key.StartsWith(CONFIG_ARGS_PREFIX))
+                                else
                                 {
                                     if (!type.IsAssignableFrom(val.GetType()))
                                     {
                                         throw new InvalidOperationException("Type mismatch");
                                     }
 
-                                    config.AddSingleton(type, val, new string(key.Skip(CONFIG_ARGS_PREFIX.Length).ToArray()));
-                                }
-                                else
-                                {
-                                    throw new NotImplementedException();
+                                    config.AddSingleton(type, val, key);
                                 }
                             }
                         }
                     });
-                })
-                .Build()
-                .Services
-                .GetRequiredService<IUnityAddonSP>().BuildUp(GetType(), this);
+                });
+
+            if (!isDefered)
+            {
+                HostBuilder.Build()
+                    .Services
+                    .GetRequiredService<IUnityAddonSP>().BuildUp(GetType(), this);
+            }
         }
     }
 }

@@ -25,7 +25,8 @@ namespace UnityAddon.CoreTest.Bean.TransientBean
         public Helper Helper2 { get; set; }
     }
 
-    public class TransientBeanTests : UnityAddonComponentScanTest
+    [ComponentScan(typeof(TransientBeanTests))]
+    public class TransientBeanTests : UnityAddonTest
     {
         [Dependency]
         public Service Service { get; set; }
