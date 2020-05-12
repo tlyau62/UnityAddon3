@@ -22,7 +22,7 @@ namespace UnityAddon.EfTest.Transaction.Repository
         [Dependency]
         public IDbContextTemplate DbContextTemplate { get; set; }
 
-        private DbSet<Item> _items => DbContextTemplate.GetEntity<TestDbContext,Item>();
+        private DbSet<Item> _items => DbContextTemplate.GetEntity<TestDbContext, Item>();
 
         public void InsertItem(Item item)
         {

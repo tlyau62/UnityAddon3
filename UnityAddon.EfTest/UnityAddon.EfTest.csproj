@@ -7,6 +7,30 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="MultipleContext\**" />
+    <Compile Remove="Transaction\CustomRollbackLogic\**" />
+    <Compile Remove="Transaction\MultiThreads\**" />
+    <Compile Remove="Transaction\RequireDbContext\**" />
+    <Compile Remove="Transaction\TransactionCallback\**" />
+    <Compile Remove="Transaction\TransactionInterceptorsException\**" />
+    <Compile Remove="Transaction\TransactionInterceptors\**" />
+    <EmbeddedResource Remove="MultipleContext\**" />
+    <EmbeddedResource Remove="Transaction\CustomRollbackLogic\**" />
+    <EmbeddedResource Remove="Transaction\MultiThreads\**" />
+    <EmbeddedResource Remove="Transaction\RequireDbContext\**" />
+    <EmbeddedResource Remove="Transaction\TransactionCallback\**" />
+    <EmbeddedResource Remove="Transaction\TransactionInterceptorsException\**" />
+    <EmbeddedResource Remove="Transaction\TransactionInterceptors\**" />
+    <None Remove="MultipleContext\**" />
+    <None Remove="Transaction\CustomRollbackLogic\**" />
+    <None Remove="Transaction\MultiThreads\**" />
+    <None Remove="Transaction\RequireDbContext\**" />
+    <None Remove="Transaction\TransactionCallback\**" />
+    <None Remove="Transaction\TransactionInterceptorsException\**" />
+    <None Remove="Transaction\TransactionInterceptors\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.6" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
     <PackageReference Include="xunit" Version="2.4.0" />

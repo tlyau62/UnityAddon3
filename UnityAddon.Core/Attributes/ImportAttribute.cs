@@ -4,7 +4,7 @@ using System.Text;
 
 namespace UnityAddon.Core.Attributes
 {
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class ImportAttribute : ConfigArgAttribute
     {
         public ImportAttribute(params Type[] configs)
