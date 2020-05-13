@@ -1,4 +1,5 @@
 ﻿using C5;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections;
@@ -147,6 +148,10 @@ namespace UnityAddon.Core.Context
             // add value resolve logic
             ConfigureBeans((config, sp) =>
             {
+                if (!sp.IsRegistered<IConfiguration>())
+                {
+                    return;
+                }
                 config.AddSingleton<ValueProvider, ValueProvider>();
                 config.AddSingleton<ConfigBracketParser, ConfigBracketParser>();
 
@@ -197,15 +202,16 @@ namespace UnityAddon.Core.Context
             var container = ApplicationSP.UnityContainer;
             var currentRegs = container.Registrations.Count();
 
-            foreach (var reg in container.Registrations)
+            foreach (var reg in container.Registrations.ToArray())
             {
-                if (!(reg.LifetimeManager is ContainerControlledLifetimeManager))
+                if (!(reg.LifetimeManager is ContainerControlledLifetimeManager) || reg.Name.EndsWith("factory")) // skip bean method factory bean
                 {
                     continue;
                 }
 
                 if (!reg.RegisteredType.IsGenericType || !reg.RegisteredType.ContainsGenericParameters)
                 {
+
                     sp.GetRequiredService(reg.RegisteredType, reg.Name);
                 }
             }
