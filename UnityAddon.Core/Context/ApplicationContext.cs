@@ -186,7 +186,34 @@ namespace UnityAddon.Core.Context
 
             Refresh();
 
+            PreInstantiateSingleton();
+
             return CoreContainer.Resolve<IUnityAddonSP>();
+        }
+
+        public void PreInstantiateSingleton()
+        {
+            var sp = ApplicationSP;
+            var container = ApplicationSP.UnityContainer;
+            var currentRegs = container.Registrations.Count();
+
+            foreach (var reg in container.Registrations)
+            {
+                if (!(reg.LifetimeManager is ContainerControlledLifetimeManager))
+                {
+                    continue;
+                }
+
+                if (!reg.RegisteredType.IsGenericType || !reg.RegisteredType.ContainsGenericParameters)
+                {
+                    sp.GetRequiredService(reg.RegisteredType, reg.Name);
+                }
+            }
+
+            if (container.Registrations.Count() != currentRegs)
+            {
+                PreInstantiateSingleton();
+            }
         }
     }
 }
