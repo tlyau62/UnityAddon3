@@ -13,6 +13,8 @@ namespace UnityAddon.Ef.Transaction
 
         public IList<Type> TxInterceptors { get; } = new List<Type>();
 
+        public Type GlobalDataSource { get; set; }
+
         public void RegisterRollbackLogic<TReturn>(Func<TReturn, bool> rollbackLogic)
         {
             AddRollbackLogic(typeof(TReturn), rollbackLogic);

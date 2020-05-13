@@ -1,11 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
+using UnityAddon.Core.Bean.Config;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.Reflection;
 using UnityAddon.Ef.Transaction;
@@ -25,7 +27,35 @@ namespace UnityAddon.Ef
         [Dependency]
         public IBeanDefinitionContainer BeanDefinitionContainer { get; set; }
 
-        public Type GlobalDataSource { get => BeanDefinitionContainer.GetBeanDefinition(typeof(DbContext)).Type; }
+        [Dependency]
+        public IConfigs<DbContextTemplateOption> DbContextTemplateOption { get; set; }
+
+        private Type _globalDataSource;
+
+        public Type GlobalDataSource
+        {
+            get
+            {
+                if (_globalDataSource != null)
+                {
+                    return _globalDataSource;
+                }
+                else if (DbContextTemplateOption.Value.GlobalDataSource != null)
+                {
+                    return _globalDataSource = DbContextTemplateOption.Value.GlobalDataSource;
+                }
+
+                var dbCtxTypes = BeanDefinitionContainer.Registrations.Keys
+                    .Where(beanType => typeof(DbContext).IsAssignableFrom(beanType));
+
+                if (dbCtxTypes.Count() != 1)
+                {
+                    throw new InvalidOperationException("Cannot find a suitable db context.");
+                }
+
+                return _globalDataSource = dbCtxTypes.Single();
+            }
+        }
 
         public Type ExtractDataSource(MethodInfo method)
         {
@@ -45,11 +75,8 @@ namespace UnityAddon.Ef
             {
                 return type.GetAttribute<DataSourceAttribute>(true).Entity;
             }
-            else
-            {
-                return GlobalDataSource;
-            }
-        }
 
+            return GlobalDataSource;
+        }
     }
 }
