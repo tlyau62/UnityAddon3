@@ -1,6 +1,8 @@
 using Moq;
 using System;
 using Unity;
+using UnityAddon.Core;
+using UnityAddon.Core.Attributes;
 using UnityAddon.Moq;
 using Xunit;
 
@@ -22,7 +24,8 @@ namespace UnityAddon.MoqTest.Moq
         }
     }
 
-    public class MoqTest : AbstractUnityAddonMoqTest
+    [EnableUnityAddonMoq(false)]
+    public class MoqTest : UnityAddonTest
     {
         [Mock]
         public Mock<IMessageRepository> MessageRepository { get; set; }
