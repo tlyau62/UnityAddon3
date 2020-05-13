@@ -10,23 +10,14 @@ using UnityAddon.Core;
 using UnityAddon.Core.Context;
 using Xunit;
 using UnityAddon.Core.Util.ComponentScanning;
+using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.CacheTest
 {
-    public class CacheTest : UnityAddonComponentScanTest
+    [ComponentScan(typeof(CacheTest))]
+    [Import(typeof(UnityAddonCacheConfig))]
+    public class CacheTest : UnityAddonTest
     {
-        private static Action<IHostBuilder, UnityAddonTest> TestConfig => (builder, t) =>
-        {
-            builder.ConfigureServices(services =>
-            {
-                services.AddMemoryCache();
-            }).EnableUnityAddonCache();
-        };
-
-        public CacheTest() : base(new[] { TestConfig }, "UnityAddon.CacheTest")
-        {
-        }
-
         [Dependency]
         public IMyRepository myRepository { get; set; }
 
