@@ -1,40 +1,30 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
+using Unity;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Context;
+using UnityAddon.Ef.Transaction;
 
 namespace UnityAddon.EfTest.Common
 {
     [Configuration]
-    public class TestDbConfig
+    public class TestDbConfig<TDbContext> where TDbContext : DbContext
     {
-        [Bean]
-        [Scope(ScopeType.Transient)]
-        public virtual TestDbContext TestDbContext()
-        {
-            return new TestDbContext($"Data source={Guid.NewGuid()}.db");
-        }
+        private readonly string _uuidContext = Guid.NewGuid().ToString();
 
         [Bean]
         [Scope(ScopeType.Transient)]
-        public virtual DbContext TestDbContextPrimary()
+        public virtual TDbContext TestDbContext()
         {
-            return TestDbContext();
-        }
-
-        [Bean]
-        [Scope(ScopeType.Transient)]
-        public virtual TestDbContext2 TestDbContext2()
-        {
-            return new TestDbContext2($"Data source={Guid.NewGuid()}.db");
+            return (TDbContext)Activator.CreateInstance(typeof(TDbContext), new[] { $"Data source={_uuidContext}.db" });
         }
     }
 
     public abstract class AbstractDbContext : DbContext
     {
-        public DbSet<Item> Items { get; set; }
-
         private readonly string _connectionString;
 
         public AbstractDbContext(string connectionString)
@@ -49,12 +39,14 @@ namespace UnityAddon.EfTest.Common
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(TestDbContext).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }
 
     public class TestDbContext : AbstractDbContext
     {
+        public DbSet<Item> Items { get; set; }
+
         public TestDbContext(string connectionString) : base(connectionString)
         {
         }
@@ -62,6 +54,8 @@ namespace UnityAddon.EfTest.Common
 
     public class TestDbContext2 : AbstractDbContext
     {
+        public DbSet<Item2> Items { get; set; }
+
         public TestDbContext2(string connectionString) : base(connectionString)
         {
         }

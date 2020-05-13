@@ -16,11 +16,11 @@ namespace UnityAddon.EfTest.Transaction.Repository
 {
     [ComponentScan(typeof(RepositoryTests))]
     [Import(typeof(UnityAddonEfConfig))]
-    [Import(typeof(TestDbConfig))]
+    [Import(typeof(TestDbConfig<TestDbContext>))]
     public class RepositoryTests : EfTest<TestDbContext>
     {
         [Dependency]
-        public IConfigs<AopInterceptorContainerOption> AopInterceptorContainerOption { get; set; }
+        public IRepo Repo { get; set; }
 
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
@@ -28,19 +28,17 @@ namespace UnityAddon.EfTest.Transaction.Repository
         [Fact]
         public void Repository_Read()
         {
-            var a = Sp.GetRequiredService<IRepo>();
+            Assert.Equal(0, Repo.CountItem());
 
-            //Assert.Equal(0, Repo.CountItem());
-
-            //Assert.False(DbContextFactory.IsOpen());
+            Assert.False(DbContextFactory.IsOpen());
         }
 
-        //[Fact]
-        //public void Repository_WriteWithoutTransaction()
-        //{
-        //    var ex = Assert.Throws<InvalidOperationException>(() => Repo.InsertItem(new Item("testitem")));
+        [Fact]
+        public void Repository_WriteWithoutTransaction()
+        {
+            var ex = Assert.Throws<InvalidOperationException>(() => Repo.InsertItem(new Item("testitem")));
 
-        //    Assert.Equal($"Detected dbcontext is changed by method InsertItem at class {typeof(Repo).FullName}, but transaction is not opened.", ex.Message);
-        //}
+            Assert.Equal($"Detected dbcontext is changed by method InsertItem at class {typeof(Repo).FullName}, but transaction is not opened.", ex.Message);
+        }
     }
 }
