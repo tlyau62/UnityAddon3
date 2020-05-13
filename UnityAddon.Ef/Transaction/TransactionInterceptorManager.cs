@@ -29,7 +29,14 @@ namespace UnityAddon.Ef.Transaction
         [PostConstruct]
         public void Init()
         {
-            foreach (var itctType in DbCtxTemplateOption.Value.TxInterceptors)
+            Refresh(DbCtxTemplateOption.Value);
+
+            DbCtxTemplateOption.OnChange += Refresh;
+        }
+
+        public void Refresh(DbContextTemplateOption option)
+        {
+            foreach (var itctType in option.TxInterceptors)
             {
                 PostRegistry.AddSingleton(typeof(ITransactionInterceptor), itctType, null);
             }
