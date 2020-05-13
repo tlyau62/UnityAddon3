@@ -22,7 +22,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.Proper
         public IB B { get; set; }
     }
 
-    [ComponentScan(typeof(NoSuchBeanDefinitionPropertyExceptionTests))]
+    [ComponentScan]
     public class NoSuchBeanDefinitionPropertyExceptionTests : UnityAddonTest
     {
         public NoSuchBeanDefinitionPropertyExceptionTests() : base(true)

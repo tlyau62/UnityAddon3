@@ -36,7 +36,7 @@ namespace UnityAddon.CoreTest.Bean.HostServiceBean
         }
     }
 
-    [ComponentScan(typeof(HostServiceTests))]
+    [ComponentScan]
     public class HostServiceTests : UnityAddonTest
     {
         [Dependency]

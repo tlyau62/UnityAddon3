@@ -15,7 +15,7 @@ using UnityAddon.Ef.Transaction;
 
 namespace UnityAddon.EfTest.MultipleContext
 {
-    [ComponentScan(typeof(MultipleContextTests))]
+    [ComponentScan]
     [Import(typeof(UnityAddonEfConfig))]
     [Import(typeof(TestDbConfig<TestDbContext>))]
     [Import(typeof(TestDbConfig<TestDbContext2>))]

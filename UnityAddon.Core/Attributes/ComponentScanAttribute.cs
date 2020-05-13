@@ -11,10 +11,9 @@ namespace UnityAddon.Core.Attributes
     [AttributeUsage(AttributeTargets.All)]
     public class ComponentScanAttribute : ConfigArgAttribute
     {
-        public ComponentScanAttribute(Type testcase, params string[] namespaces)
+        public ComponentScanAttribute(params string[] namespaces)
         {
             Args.Add(new object[] { UnityAddonTest.CONFIG_PREFIX + "ComponentScan", typeof(ComponentScanConfig), typeof(Type) });
-            Args.Add(new object[] { "TestCase", testcase, typeof(Type) });
             Args.Add(new object[] { "Namespaces", namespaces, typeof(string[]) });
         }
     }

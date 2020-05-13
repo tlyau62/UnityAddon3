@@ -25,7 +25,7 @@ namespace UnityAddon.CoreIntegrationTest.BeanRegistry.PostRegister
         }
     }
 
-    [ComponentScan(typeof(PostRegisterTests))]
+    [ComponentScan]
     public class PostRegisterTests : UnityAddonTest
     {
         [Dependency]

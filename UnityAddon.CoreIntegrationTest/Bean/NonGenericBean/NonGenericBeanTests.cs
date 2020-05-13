@@ -35,7 +35,7 @@ namespace UnityAddon.CoreTest.Dependency.Bean.NonGenericBean
     {
     }
 
-    [ComponentScan(typeof(NonGenericBeanTests))]
+    [ComponentScan]
     public class NonGenericBeanTests : UnityAddonTest
     {
         [Dependency]

@@ -16,7 +16,7 @@ namespace UnityAddon.EfTest.Transaction.TransactionCallback
         public string Log = "";
     }
 
-    [ComponentScan(typeof(TransactionCallbackTests))]
+    [ComponentScan]
     [Import(typeof(UnityAddonEfConfig))]
     [Import(typeof(TestDbConfig<TestDbContext>))]
     public class TransactionCallbackTests : UnityAddonEfTest

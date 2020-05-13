@@ -25,7 +25,7 @@ namespace UnityAddon.CoreTest.Configuration.GenericBeanMethod
         }
     }
 
-    [ComponentScan(typeof(GenericBeanMethodTests))]
+    [ComponentScan]
     public class GenericBeanMethodTests : UnityAddonTest
     {
         [Dependency]

@@ -13,7 +13,7 @@ using Xunit;
 
 namespace UnityAddon.EfTest.Transaction.MultiThreads
 {
-    [ComponentScan(typeof(MultiThreadsTests))]
+    [ComponentScan]
     [Import(typeof(UnityAddonEfConfig))]
     [Import(typeof(TestDbConfig<TestDbContext>))]
     public class MultiThreadsTests : UnityAddonEfTest

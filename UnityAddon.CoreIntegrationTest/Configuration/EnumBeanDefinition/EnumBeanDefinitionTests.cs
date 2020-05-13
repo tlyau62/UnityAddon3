@@ -24,7 +24,7 @@ namespace UnityAddon.CoreTest.Configuration.EnumBeanDefinition
         }
     }
 
-    [ComponentScan(typeof(EnumBeanDefinitionTests))]
+    [ComponentScan]
     public class EnumBeanDefinitionTests : UnityAddonTest
     {
         [Dependency]

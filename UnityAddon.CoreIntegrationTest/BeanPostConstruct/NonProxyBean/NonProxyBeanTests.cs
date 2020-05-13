@@ -63,7 +63,7 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.NonProxy
         }
     }
 
-    [ComponentScan(typeof(NonProxyBeanTests))]
+    [ComponentScan]
     public class NonProxyBeanTests : UnityAddonTest
     {
         [Dependency]

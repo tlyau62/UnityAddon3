@@ -23,7 +23,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.Parame
         }
     }
 
-    [ComponentScan(typeof(NoSuchBeanDefinitionExceptionParameterTests))]
+    [ComponentScan]
     public class NoSuchBeanDefinitionExceptionParameterTests : UnityAddonTest
     {
         public NoSuchBeanDefinitionExceptionParameterTests() : base(true)

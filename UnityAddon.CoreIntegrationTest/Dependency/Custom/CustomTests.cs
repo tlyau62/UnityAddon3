@@ -29,7 +29,7 @@ namespace UnityAddon.CoreTest.Dependency.Custom
         public string CustomProp { get; set; }
     }
 
-    [ComponentScan(typeof(CustomTests))]
+    [ComponentScan]
     public class CustomTests : UnityAddonTest
     {
         public CustomTests() : base(true) { }

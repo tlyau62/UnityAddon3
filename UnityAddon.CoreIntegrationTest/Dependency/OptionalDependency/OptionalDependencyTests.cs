@@ -33,7 +33,7 @@ namespace UnityAddon.CoreTest.Dependency.OptionalDependency
         public ITest Test { get; set; }
     }
 
-    [ComponentScan(typeof(OptionalDependencyTests))]
+    [ComponentScan]
     public class OptionalDependencyTests : UnityAddonTest
     {
         [Dependency]

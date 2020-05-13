@@ -17,7 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
 {
-    [ComponentScan(typeof(CustomRollbackLogicTests))]
+    [ComponentScan]
     [Import(typeof(UnityAddonEfConfig))]
     [Import(typeof(TestDbConfig<TestDbContext>))]
     public class CustomRollbackLogicTests : UnityAddonEfTest

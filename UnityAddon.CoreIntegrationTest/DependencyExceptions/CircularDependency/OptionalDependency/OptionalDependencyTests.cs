@@ -38,7 +38,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.OptionalDe
     {
     }
 
-    [ComponentScan(typeof(OptionalDependencyTests))]
+    [ComponentScan]
     public class OptionalDependencyTests : UnityAddonTest
     {
         [Dependency]

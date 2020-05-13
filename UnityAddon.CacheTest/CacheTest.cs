@@ -14,7 +14,7 @@ using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.CacheTest
 {
-    [ComponentScan(typeof(CacheTest))]
+    [ComponentScan]
     [Import(typeof(UnityAddonCacheConfig))]
     public class CacheTest : UnityAddonTest
     {

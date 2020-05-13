@@ -43,7 +43,7 @@ namespace UnityAddon.CoreTest.Bean.InterfaceBean
         public string Log = "";
     }
 
-    [ComponentScan(typeof(InterfaceBeanTests))]
+    [ComponentScan]
     public class InterfaceBeanTests : UnityAddonTest
     {
         [Dependency]

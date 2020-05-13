@@ -61,7 +61,7 @@ namespace UnityAddon.HangfireTest.HangfireComponentScannerStrategy
         public string Log = "";
     }
 
-    [ComponentScan(typeof(HangfireComponentScannerStrategy))]
+    [ComponentScan]
     [Import(typeof(UnityAddonHangfireConfig))]
     [Import(typeof(UnityAddonEfConfig))]
     [Import(typeof(TestDbConfig<TestDbContext>))]

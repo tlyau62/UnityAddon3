@@ -58,7 +58,7 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.ProxyBean
         }
     }
 
-    [ComponentScan(typeof(ProxyBeanTests))]
+    [ComponentScan]
     public class ProxyBeanTests : UnityAddonTest
     {
         public ProxyBeanTests() : base(true) { }

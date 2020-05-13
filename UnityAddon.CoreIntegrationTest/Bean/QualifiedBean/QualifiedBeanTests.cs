@@ -52,7 +52,7 @@ namespace UnityAddon.CoreTest.Bean.QualifiedBean
     {
     }
 
-    [ComponentScan(typeof(QualifiedBeanTests))]
+    [ComponentScan]
     public class QualifiedBeanTests : UnityAddonTest
     {
         [Dependency("CommonA")]

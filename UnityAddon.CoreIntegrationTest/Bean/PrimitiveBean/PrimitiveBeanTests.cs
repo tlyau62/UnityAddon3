@@ -36,7 +36,7 @@ namespace UnityAddon.CoreTest.Bean.PrimitiveBean
         public int IntBean { get; set; }
     }
 
-    [ComponentScan(typeof(PrimitiveBeanTests))]
+    [ComponentScan]
     public class PrimitiveBeanTests : UnityAddonTest
     {
         [Dependency]

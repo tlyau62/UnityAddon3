@@ -14,13 +14,13 @@ namespace UnityAddon.Core.Util.ComponentScanning
     public class ComponentScanConfig
     {
         [Bean]
-        public virtual IBeanDefinitionCollection ComponentScan([Dependency("TestCase")] Type testcase, [Dependency("Namespaces")] string[] namespaces)
+        public virtual IBeanDefinitionCollection ComponentScan(UnityAddonTest testcase, [Dependency("Namespaces")] string[] namespaces)
         {
             IBeanDefinitionCollection col = new BeanDefinitionCollection();
 
-            var nsmerge = new[] { testcase.Namespace }.Union(namespaces).ToArray();
+            var nsmerge = new[] { testcase.GetType().Namespace }.Union(namespaces).ToArray();
 
-            col.AddFromComponentScanner(testcase.Assembly, nsmerge);
+            col.AddFromComponentScanner(testcase.GetType().Assembly, nsmerge);
 
             return col;
         }

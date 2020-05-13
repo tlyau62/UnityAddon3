@@ -19,7 +19,7 @@ namespace UnityAddon.CoreTest.Bean.PrimaryBean
     [Primary]
     public class ServiceB : IService { }
 
-    [ComponentScan(typeof(PrimaryBeanTests))]
+    [ComponentScan]
     public class PrimaryBeanTests : UnityAddonTest
     {
         [Dependency]

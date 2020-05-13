@@ -43,7 +43,7 @@ namespace UnityAddon.CoreTest.Configuration.BeanMethod
         }
     }
 
-    [ComponentScan(typeof(BeanMethodTests))]
+    [ComponentScan]
     public class BeanMethodTests : UnityAddonTest
     {
         [Dependency]

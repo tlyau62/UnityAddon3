@@ -36,7 +36,7 @@ namespace UnityAddon.CoreTest.Configuration.DependencyInjection
         }
     }
 
-    [ComponentScan(typeof(DependencyInjectionTests))]
+    [ComponentScan]
     public class DependencyInjectionTests : UnityAddonTest
     {
         [Dependency]

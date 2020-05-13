@@ -29,7 +29,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.DAG
     {
     }
 
-    [ComponentScan(typeof(DAGTests))]
+    [ComponentScan]
     public class DAGTests : UnityAddonTest
     {
         [Dependency]

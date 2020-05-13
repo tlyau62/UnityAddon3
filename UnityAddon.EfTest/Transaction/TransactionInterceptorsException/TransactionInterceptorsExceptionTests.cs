@@ -65,7 +65,7 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
         }
     }
 
-    [ComponentScan(typeof(TransactionInterceptorsExceptionTests))]
+    [ComponentScan]
     [Import(typeof(UnityAddonEfConfig))]
     [Import(typeof(TestDbConfig<TestDbContext>))]
     public class TransactionInterceptorsExceptionTests : UnityAddonEfTest

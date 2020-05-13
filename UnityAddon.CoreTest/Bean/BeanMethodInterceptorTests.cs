@@ -21,7 +21,7 @@ namespace UnityAddon.CoreTest.Bean
         }
     }
 
-    [ComponentScan(typeof(BeanMethodInterceptorTests))]
+    [ComponentScan]
     public class BeanMethodInterceptorTests : UnityAddonTest
     {
         [Dependency]

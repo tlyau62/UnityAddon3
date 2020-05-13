@@ -15,7 +15,7 @@ namespace UnityAddon.CoreTest.Bean.SingletonBean
     {
     }
 
-    [ComponentScan(typeof(SingletonBeanTests))]
+    [ComponentScan]
     public class SingletonBeanTests : UnityAddonTest
     {
         [Dependency]

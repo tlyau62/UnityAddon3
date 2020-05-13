@@ -28,7 +28,7 @@ namespace UnityAddon.CoreTest.Dependency.Value
         public ServiceType Type { get; set; }
     }
 
-    [ComponentScan(typeof(ValueTests))]
+    [ComponentScan]
     public class ValueTests : UnityAddonTest
     {
         public ValueTests() : base(true) { }

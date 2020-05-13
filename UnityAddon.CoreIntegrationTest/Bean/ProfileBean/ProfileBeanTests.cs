@@ -31,7 +31,7 @@ namespace UnityAddon.CoreTest.Dependency.Bean.ProfileBean
     {
     }
 
-    [ComponentScan(typeof(ProfileBeanTests))]
+    [ComponentScan]
     public class ProfileBeanTests : UnityAddonTest
     {
         public ProfileBeanTests() : base(true)

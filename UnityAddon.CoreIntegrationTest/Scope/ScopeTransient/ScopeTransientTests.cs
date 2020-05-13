@@ -12,7 +12,7 @@ namespace UnityAddon.CoreIntegrationTest.Scope.ScopeTransient
     /// <summary>
     /// Test case from https://github.com/unitycontainer/microsoft-dependency-injection/blob/master/tests/ScopedDepencencyTests.cs
     /// </summary>
-    [ComponentScan(typeof(ScopeTransientTests))]
+    [ComponentScan]
     public class ScopeTransientTests : UnityAddonTest
     {
         [Dependency]

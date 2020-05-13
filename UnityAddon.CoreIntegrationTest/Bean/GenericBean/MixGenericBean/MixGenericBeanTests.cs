@@ -27,7 +27,7 @@ namespace UnityAddon.CoreTest.Dependency.GenericDependency
         public IService<string> StringService { get; set; }
     }
 
-    [ComponentScan(typeof(MixGenericBeanTests))]
+    [ComponentScan]
     public class MixGenericBeanTests : UnityAddonTest
     {
         [Dependency]
