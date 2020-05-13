@@ -30,32 +30,32 @@ namespace UnityAddon.Ef
         [Dependency]
         public IConfigs<DbContextTemplateOption> DbContextTemplateOption { get; set; }
 
-        private Type _globalDataSource;
-
         public Type GlobalDataSource
         {
             get
             {
-                if (_globalDataSource != null)
+                if (DbContextTemplateOption.Value.GlobalDataSource != null)
                 {
-                    return _globalDataSource;
-                }
-                else if (DbContextTemplateOption.Value.GlobalDataSource != null)
-                {
-                    return _globalDataSource = DbContextTemplateOption.Value.GlobalDataSource;
+                    return DbContextTemplateOption.Value.GlobalDataSource;
                 }
 
-                var dbCtxTypes = BeanDefinitionContainer.Registrations.Keys
-                    .Where(beanType => typeof(DbContext).IsAssignableFrom(beanType));
+                var datasources = DataSources;
 
-                if (dbCtxTypes.Count() != 1)
+                if (datasources.Count() != 1)
                 {
                     throw new InvalidOperationException("Cannot find a suitable db context.");
                 }
 
-                return _globalDataSource = dbCtxTypes.Single();
+                return datasources.Single();
             }
         }
+
+        private IEnumerable<Type> _dataSources;
+
+        public IEnumerable<Type> DataSources =>
+            _dataSources ??= BeanDefinitionContainer.Registrations.Keys
+                .Where(beanType => typeof(DbContext).IsAssignableFrom(beanType))
+                .ToArray();
 
         public Type ExtractDataSource(MethodInfo method)
         {
@@ -78,5 +78,7 @@ namespace UnityAddon.Ef
 
             return GlobalDataSource;
         }
+
+
     }
 }
