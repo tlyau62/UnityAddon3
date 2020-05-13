@@ -7,22 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="MultipleContext\**" />
-    <Compile Remove="Transaction\CustomRollbackLogic\**" />
-    <Compile Remove="Transaction\MultiThreads\**" />
-    <EmbeddedResource Remove="MultipleContext\**" />
-    <EmbeddedResource Remove="Transaction\CustomRollbackLogic\**" />
-    <EmbeddedResource Remove="Transaction\MultiThreads\**" />
-    <None Remove="MultipleContext\**" />
-    <None Remove="Transaction\CustomRollbackLogic\**" />
-    <None Remove="Transaction\MultiThreads\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Transaction\TransactionInterceptorsException\TransactionInterceptorsExceptionTests.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.6" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
     <PackageReference Include="xunit" Version="2.4.0" />
@@ -32,10 +16,6 @@
   <ItemGroup>
     <ProjectReference Include="..\UnityAddon.Core\UnityAddon.Core.csproj" />
     <ProjectReference Include="..\UnityAddon.Ef\UnityAddon.Ef.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Transaction\TransactionInterceptorsException\" />
   </ItemGroup>
 
 </Project>

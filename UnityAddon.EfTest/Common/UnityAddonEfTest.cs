@@ -19,7 +19,7 @@ namespace UnityAddon.EfTest.Common
         [Dependency]
         public DataSourceExtractor DataSourceExtractor { get; set; }
 
-        public UnityAddonEfTest()
+        public UnityAddonEfTest(bool isDefered = false) : base(isDefered)
         {
             foreach (var datasource in DataSourceExtractor.DataSources)
             {

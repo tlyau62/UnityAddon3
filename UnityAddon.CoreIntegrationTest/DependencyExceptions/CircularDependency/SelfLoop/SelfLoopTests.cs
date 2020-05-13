@@ -21,13 +21,17 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.SelfLoop
     [ComponentScan(typeof(SelfLoopTests))]
     public class SelfLoopTests : UnityAddonTest
     {
+        public SelfLoopTests() : base(true)
+        {
+        }
+
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 
         [Fact]
         public void SelfLoop()
         {
-            Assert.Throws<CircularDependencyException>(() => Sp.GetRequiredService<A>());
+            Assert.Throws<CircularDependencyException>(() => HostBuilder.Build());
         }
     }
 }

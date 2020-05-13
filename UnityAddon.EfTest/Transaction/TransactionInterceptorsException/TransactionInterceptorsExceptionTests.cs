@@ -11,6 +11,7 @@ using UnityAddon.Ef.Transaction;
 using UnityAddon.EfTest.Common;
 using UnityAddon.Core.Util.ComponentScanning;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
 {
@@ -64,58 +65,42 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
         }
     }
 
-    public class TransactionInterceptorsExceptionTests
+    [ComponentScan(typeof(TransactionInterceptorsExceptionTests))]
+    [Import(typeof(UnityAddonEfConfig))]
+    [Import(typeof(TestDbConfig<TestDbContext>))]
+    public class TransactionInterceptorsExceptionTests : UnityAddonEfTest
     {
-        [Dependency]
-        public IDbContextFactory<TestDbContext> DbContextFactory { get; set; }
-
         [Dependency]
         public IDbContextTemplate DbContextTemplate { get; set; }
 
         [Dependency]
         public LogService LogService { get; set; }
 
-        private void TestBuilder(int normalOrder, int exOrder)
-        {
-            ((IUnityAddonSP)new HostBuilder()
-                   .RegisterUA()
-                   .ConfigureContainer<ApplicationContext>(ctx =>
-                   {
-                       ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.EfTest.Common"));
-                       ctx.ConfigureContext<DbContextTemplateOption>(option =>
-                       {
-                           if (normalOrder < exOrder)
-                           {
-                               option.AddTransactionInterceptor<TestTxInterceptor>();
-                               option.AddTransactionInterceptor<TestTxExceptionInterceptor>();
-                           }
-                           else
-                           {
-                               option.AddTransactionInterceptor<TestTxExceptionInterceptor>();
-                               option.AddTransactionInterceptor<TestTxInterceptor>();
-                           }
-                       });
-                   })
-                   .EnableUnityAddonEf()
-                   .Build()
-                   .Services)
-                   .BuildUp(this);
-        }
+        [Dependency]
+        public ApplicationContext ApplicationContext { get; set; }
 
         [Theory]
         [InlineData(0, 1)]
         [InlineData(1, 0)]
         public void TransactionInterceptorManager_ExecuteTransaction_InterceptorExecuted(int normalOrder, int exOrder)
         {
-            TestBuilder(normalOrder, exOrder);
+            ApplicationContext.ConfigureContext<DbContextTemplateOption>(option =>
+            {
+                if (normalOrder < exOrder)
+                {
+                    option.AddTransactionInterceptor<TestTxInterceptor>();
+                    option.AddTransactionInterceptor<TestTxExceptionInterceptor>();
+                }
+                else
+                {
+                    option.AddTransactionInterceptor<TestTxExceptionInterceptor>();
+                    option.AddTransactionInterceptor<TestTxInterceptor>();
+                }
+            });
 
-            DbSetupUtility.CreateDb(DbContextFactory);
-
-            DbContextTemplate.ExecuteTransaction<TestDbContext, object>(tx =>
+            DbContextTemplate.ExecuteTransaction<TestDbContext>(tx =>
             {
                 LogService.Log += "Z";
-
-                return null;
             });
 
             if (normalOrder < exOrder)
@@ -126,8 +111,6 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
             {
                 Assert.Equal("ZCA", LogService.Log);
             }
-
-            DbSetupUtility.DropDb(DbContextFactory);
         }
 
         [Theory]
@@ -135,11 +118,21 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
         [InlineData(1, 0)]
         public void TransactionInterceptorManager_ExecuteTransactionWithException_InterceptorExecuted(int normalOrder, int exOrder)
         {
-            TestBuilder(normalOrder, exOrder);
+            ApplicationContext.ConfigureContext<DbContextTemplateOption>(option =>
+            {
+                if (normalOrder < exOrder)
+                {
+                    option.AddTransactionInterceptor<TestTxInterceptor>();
+                    option.AddTransactionInterceptor<TestTxExceptionInterceptor>();
+                }
+                else
+                {
+                    option.AddTransactionInterceptor<TestTxExceptionInterceptor>();
+                    option.AddTransactionInterceptor<TestTxInterceptor>();
+                }
+            });
 
-            DbSetupUtility.CreateDb(DbContextFactory);
-
-            Assert.Throws<InvalidOperationException>(() => DbContextTemplate.ExecuteTransaction<TestDbContext, object>(tx =>
+            Assert.Throws<InvalidOperationException>(() => DbContextTemplate.ExecuteTransaction<TestDbContext>(tx =>
             {
                 LogService.Log += "Z";
 
@@ -154,8 +147,6 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
             {
                 Assert.Equal("ZDB", LogService.Log);
             }
-
-            DbSetupUtility.DropDb(DbContextFactory);
         }
     }
 }

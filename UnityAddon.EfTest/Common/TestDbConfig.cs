@@ -10,7 +10,6 @@ using UnityAddon.Ef.Transaction;
 
 namespace UnityAddon.EfTest.Common
 {
-    [Configuration]
     public class TestDbConfig<TDbContext> where TDbContext : DbContext
     {
         private readonly string _uuidContext = Guid.NewGuid().ToString();

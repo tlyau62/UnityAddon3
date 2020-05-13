@@ -140,9 +140,7 @@ namespace UnityAddon.CoreTest.Bean
 
             var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
-            var usp = factory.CreateServiceProvider(defCol);
-
-            var ex = Assert.Throws<BeanCreationException>(() => usp.GetRequiredService<Service>().Choice);
+            var ex = Assert.Throws<BeanCreationException>(() => factory.CreateServiceProvider(defCol));
 
             Assert.Equal("Ambiguous constructors are found\r\n- Void .ctor(UnityAddon.CoreTest.Bean.Mocks.ConstructorResolver.IA, UnityAddon.CoreTest.Bean.Mocks.ConstructorResolver.IB)\r\n- Void .ctor(UnityAddon.CoreTest.Bean.Mocks.ConstructorResolver.IA, UnityAddon.CoreTest.Bean.Mocks.ConstructorResolver.IC)", ex.Message);
         }
@@ -156,9 +154,7 @@ namespace UnityAddon.CoreTest.Bean
 
             var factory = new ServiceProviderFactory();
             var defCol = factory.CreateBuilder(serCol);
-            var usp = factory.CreateServiceProvider(defCol);
-
-            var ex = Assert.Throws<BeanCreationException>(() => usp.GetRequiredService<FailService>());
+            var ex = Assert.Throws<BeanCreationException>(() => factory.CreateServiceProvider(defCol));
 
             Assert.Equal("Fail to satisfy any of these constructors\r\n- Void .ctor(UnityAddon.CoreTest.Bean.Mocks.ConstructorResolver.ID)", ex.Message);
         }
