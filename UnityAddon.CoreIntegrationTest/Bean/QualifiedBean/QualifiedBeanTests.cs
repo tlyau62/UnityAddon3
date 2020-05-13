@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using Unity;
 using UnityAddon;
@@ -51,7 +52,8 @@ namespace UnityAddon.CoreTest.Bean.QualifiedBean
     {
     }
 
-    public class QualifiedBeanTests : UnityAddonComponentScanTest
+    [ComponentScan]
+    public class QualifiedBeanTests : UnityAddonTest
     {
         [Dependency("CommonA")]
         public ICommon A { get; set; }

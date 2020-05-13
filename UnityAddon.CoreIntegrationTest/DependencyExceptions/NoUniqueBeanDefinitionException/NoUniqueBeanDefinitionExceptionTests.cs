@@ -36,11 +36,12 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.NoUniq
         }
     }
 
-    [Trait("DependencyExceptions", "NoUniqueBeanDefinition")]
-    public class NoUniqueBeanDefinitionExceptionTests : UnityAddonComponentScanTest
+    [ComponentScan(typeof(NoUniqueBeanDefinitionExceptionTests))]
+    [Obsolete("Asp core not support multiple bean exception")]
+    public class NoUniqueBeanDefinitionExceptionTests : UnityAddonTest
     {
         [Dependency]
-        public IServiceProvider Sp { get; set; }
+        public IUnityAddonSP Sp { get; set; }
 
         [Fact]
         public void PropertyFill_NoUniqueBeanDefinition_ExceptionThrown()

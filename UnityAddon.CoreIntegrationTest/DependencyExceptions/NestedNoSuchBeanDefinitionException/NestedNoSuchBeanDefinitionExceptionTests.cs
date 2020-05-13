@@ -33,15 +33,20 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NestedNoSuchBeanDefinitionExc
         public ICommonService CommonService { get; set; }
     }
 
-    public class NestedNoSuchBeanDefinitionExceptionTests : UnityAddonComponentScanTest
+    [ComponentScan]
+    public class NestedNoSuchBeanDefinitionExceptionTests : UnityAddonTest
     {
+        public NestedNoSuchBeanDefinitionExceptionTests() : base(true)
+        {
+        }
+
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 
         [Fact]
         public void NestedNoSuchBeanDefinitionException()
         {
-            var ex = Assert.Throws<NoSuchBeanDefinitionException>(() => Sp.GetRequiredService<IService>());
+            var ex = Assert.Throws<NoSuchBeanDefinitionException>(() => HostBuilder.Build());
 
             Assert.Equal($"Property Root in {typeof(CommonService).FullName} required a bean of type '{typeof(IRoot).FullName}' that could not be found.", ex.Message);
         }

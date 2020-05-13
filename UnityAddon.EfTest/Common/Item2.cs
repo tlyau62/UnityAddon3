@@ -9,36 +9,6 @@ using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.EfTest.Common
 {
-    [Configuration]
-    public class DbConfig2
-    {
-        [Bean]
-        public virtual string ConnectionString2()
-        {
-            return $"Data source={Guid.NewGuid()}.db";
-        }
-    }
-
-    [Component]
-    [Scope(ScopeType.Transient)]
-    public class TestDbContext2 : DbContext
-    {
-        public DbSet<Item> Items { get; set; }
-
-        [Dependency("ConnectionString2")]
-        public string ConnectionString { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlite(ConnectionString);
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(TestDbContext2).Assembly);
-        }
-    }
-
     public class Item2
     {
         public Item2()

@@ -44,7 +44,8 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.AsyncResolve
         }
     }
 
-    public class AsyncResolveTests : UnityAddonComponentScanTest
+    [ComponentScan]
+    public class AsyncResolveTests : UnityAddonTest
     {
         [Dependency]
         public IUnityAddonSP Sp { get; set; }

@@ -54,8 +54,13 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.ComplexLoo
         public M7(M4 m4) { }
     }
 
-    public class ComplexLoopTests : UnityAddonComponentScanTest
+    [ComponentScan]
+    public class ComplexLoopTests : UnityAddonTest
     {
+        public ComplexLoopTests() : base(true)
+        {
+        }
+
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 
@@ -64,12 +69,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.ComplexLoo
         {
             Assert.Throws<CircularDependencyException>(() =>
             {
-                var types = new[] { typeof(M1), typeof(M2), typeof(M3), typeof(M4), typeof(M5), typeof(M6), typeof(M7) };
-
-                foreach (var type in types)
-                {
-                    Sp.GetRequiredService(type);
-                }
+                HostBuilder.Build();
             });
         }
     }

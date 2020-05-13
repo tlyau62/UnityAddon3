@@ -54,7 +54,8 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.ComplexDAG
         public N7(N4 n4) { }
     }
 
-    public class ComplexDAGTests : UnityAddonComponentScanTest
+    [ComponentScan]
+    public class ComplexDAGTests : UnityAddonTest
     {
         [Dependency]
         public IUnityAddonSP Sp { get; set; }

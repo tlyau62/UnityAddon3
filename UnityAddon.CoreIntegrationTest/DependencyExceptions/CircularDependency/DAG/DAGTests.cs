@@ -29,14 +29,14 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.DAG
     {
     }
 
-    [Trait("DependencyExceptions", "CircularDependency/DAG")]
-    public class DAGTests : UnityAddonComponentScanTest
+    [ComponentScan]
+    public class DAGTests : UnityAddonTest
     {
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 
         [Fact]
-        public void BeanDependencyValidatorStrategy_ResolveDAGDependency_NoExceptionThrown()
+        public void DAG()
         {
             Sp.GetRequiredService<D>();
             Sp.GetRequiredService<E>();

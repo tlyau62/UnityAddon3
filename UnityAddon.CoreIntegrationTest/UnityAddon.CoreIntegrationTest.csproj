@@ -7,21 +7,47 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Aop\**" />
     <Compile Remove="BeanPostProcessor\**" />
+    <Compile Remove="Bean\GenericBean\GenericDefinitionBean\**" />
+    <Compile Remove="Bean\HostServiceBean\**" />
+    <Compile Remove="Bean\InterfaceBean\**" />
+    <Compile Remove="Bean\ProfileBean\**" />
+    <Compile Remove="Bean\TransientBean\**" />
     <Compile Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
     <Compile Remove="Properties\PublishProfiles\**" />
     <Compile Remove="Util\**" />
     <Compile Remove="Value\**" />
+    <EmbeddedResource Remove="Aop\**" />
     <EmbeddedResource Remove="BeanPostProcessor\**" />
+    <EmbeddedResource Remove="Bean\GenericBean\GenericDefinitionBean\**" />
+    <EmbeddedResource Remove="Bean\HostServiceBean\**" />
+    <EmbeddedResource Remove="Bean\InterfaceBean\**" />
+    <EmbeddedResource Remove="Bean\ProfileBean\**" />
+    <EmbeddedResource Remove="Bean\TransientBean\**" />
     <EmbeddedResource Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
     <EmbeddedResource Remove="Properties\PublishProfiles\**" />
     <EmbeddedResource Remove="Util\**" />
     <EmbeddedResource Remove="Value\**" />
+    <None Remove="Aop\**" />
     <None Remove="BeanPostProcessor\**" />
+    <None Remove="Bean\GenericBean\GenericDefinitionBean\**" />
+    <None Remove="Bean\HostServiceBean\**" />
+    <None Remove="Bean\InterfaceBean\**" />
+    <None Remove="Bean\ProfileBean\**" />
+    <None Remove="Bean\TransientBean\**" />
     <None Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
     <None Remove="Properties\PublishProfiles\**" />
     <None Remove="Util\**" />
     <None Remove="Value\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Bean\GenericBean\GenericDefinitionBean\GenericDefinitionBeanTests.cs" />
+    <Compile Include="Bean\HostServiceBean\HostServiceTests.cs" />
+    <Compile Include="Bean\InterfaceBean\InterfaceBeanTests.cs" />
+    <Compile Include="Bean\ProfileBean\ProfileBeanTests.cs" />
+    <Compile Include="Bean\TransientBean\TransientBeanTests.cs" />
   </ItemGroup>
 
   <ItemGroup>

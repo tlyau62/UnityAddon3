@@ -44,7 +44,8 @@ namespace UnityAddon.CoreIntegrationTest.Bean.GuidBean
     {
     }
 
-    public class GuidBeanTests : UnityAddonComponentScanTest
+    [ComponentScan]
+    public class GuidBeanTests : UnityAddonTest
     {
         [Dependency]
         public GeneralService GeneralService { get; set; }

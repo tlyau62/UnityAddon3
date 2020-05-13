@@ -9,6 +9,6 @@ namespace UnityAddon.Core.Bean.Config
     {
         TConfigs Value { get; }
 
-        Action<TConfigs> OnChange { get; }
+        Action<TConfigs> OnChange { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -28,16 +29,18 @@ namespace UnityAddon.CoreTest.Dependency.Custom
         public string CustomProp { get; set; }
     }
 
-    public class CustomTests
+    [ComponentScan]
+    public class CustomTests : UnityAddonTest
     {
+        public CustomTests() : base(true) { }
+
         [Dependency]
         public Service Service { get; set; }
 
         [Fact]
         public void Custom()
         {
-            var host = Host.CreateDefaultBuilder()
-               .RegisterUA()
+            HostBuilder
                .ConfigureContainer<ApplicationContext>(ctx =>
                {
                    ctx.ConfigureBeans((config, sp) => config.AddComponent(typeof(Service)));
@@ -48,9 +51,10 @@ namespace UnityAddon.CoreTest.Dependency.Custom
                            => attr.Descriptor + "TestString");
                    });
                })
-               .Build();
-
-            ((IUnityAddonSP)host.Services).BuildUp(this);
+               .Build()
+               .Services
+               .GetRequiredService<IUnityAddonSP>()
+               .BuildUp(this);
 
             Assert.Equal("My_TestString", Service.CustomProp);
         }

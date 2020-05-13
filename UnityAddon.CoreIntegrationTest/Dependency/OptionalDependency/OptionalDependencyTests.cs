@@ -33,7 +33,8 @@ namespace UnityAddon.CoreTest.Dependency.OptionalDependency
         public ITest Test { get; set; }
     }
 
-    public class OptionalDependencyTests : UnityAddonComponentScanTest
+    [ComponentScan]
+    public class OptionalDependencyTests : UnityAddonTest
     {
         [Dependency]
         public Service Service { get; set; }

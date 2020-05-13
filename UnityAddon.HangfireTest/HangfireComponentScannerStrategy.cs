@@ -14,8 +14,8 @@ using UnityAddon.Core.Context;
 using UnityAddon.Core.Util.ComponentScanning;
 using UnityAddon.Ef;
 using UnityAddon.Ef.Transaction;
+using UnityAddon.EfTest.Common;
 using UnityAddon.Hangfire;
-using UnityAddon.HangfireTest.Common;
 using Xunit;
 
 namespace UnityAddon.HangfireTest.HangfireComponentScannerStrategy
@@ -61,7 +61,11 @@ namespace UnityAddon.HangfireTest.HangfireComponentScannerStrategy
         public string Log = "";
     }
 
-    public class HangfireComponentScannerStrategy
+    [ComponentScan]
+    [Import(typeof(UnityAddonHangfireConfig))]
+    [Import(typeof(UnityAddonEfConfig))]
+    [Import(typeof(TestDbConfig<TestDbContext>))]
+    public class HangfireComponentScannerStrategy : UnityAddonTest
     {
         [HangfireProxy]
         public IThumbnailTask ThumbnailTaskClient { get; set; }
@@ -77,18 +81,6 @@ namespace UnityAddon.HangfireTest.HangfireComponentScannerStrategy
 
         [Dependency]
         public Logger Logger { get; set; }
-
-        public HangfireComponentScannerStrategy()
-        {
-            var host = new HostBuilder()
-                .RegisterUA()
-                .ConfigureContainer<ApplicationContext>(ctx => ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.HangfireTest.Common")))
-                .EnableUnityAddonEf()
-                .EnableUnityAddonHangfire()
-                .Build();
-
-            ((IUnityAddonSP)host.Services).BuildUp(this);
-        }
 
         [Fact]
         public void ScanHangfireComponentsOnClient()

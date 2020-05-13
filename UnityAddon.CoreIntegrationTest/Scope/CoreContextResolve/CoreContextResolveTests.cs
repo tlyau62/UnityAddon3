@@ -8,7 +8,7 @@ using Xunit;
 
 namespace UnityAddon.CoreIntegrationTest.Scope.CoreContextResolve
 {
-    public class CoreContextResolveTests : UnityAddonComponentScanTest
+    public class CoreContextResolveTests : UnityAddonTest
     {
         [Dependency]
         public IUnityAddonSP Sp { get; set; }

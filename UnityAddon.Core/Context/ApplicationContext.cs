@@ -1,4 +1,5 @@
 ﻿using C5;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections;
@@ -28,6 +29,8 @@ namespace UnityAddon.Core.Context
         private readonly CoreContext _coreContext;
 
         private bool _isRefreshing = false;
+
+        private System.Collections.Generic.HashSet<IBeanDefinitionCollection> HashSet { get; set; } = new System.Collections.Generic.HashSet<IBeanDefinitionCollection>();
 
         public ApplicationContext(IUnityContainer appContainer)
         {
@@ -82,24 +85,17 @@ namespace UnityAddon.Core.Context
 
                         BeanDefinitionContainer.RegisterBeanDefinition(beanDef);
                         ApplicationSP.UnityContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(new UnityAddonSP(c), t, n), (IFactoryLifetimeManager)beanDef.Scope);
-                    }
 
-                    ConfigurationRegistry.RegisterConfigurations();
-
-                    if (defCol.Any(def => def.Type == typeof(IBeanDefinitionCollection)))
-                    {
-                        ConfigureBeans((config, sp) =>
+                        if (beanDef.Type == typeof(IBeanDefinitionCollection))
                         {
-                            config.AddFromExisting(defCol
-                                .Where(def => def.Type == typeof(IBeanDefinitionCollection))
-                                .SelectMany(def => ApplicationSP.GetServices<IBeanDefinitionCollection>())
-                                .Aggregate((acc, col) =>
-                                {
-                                    acc.AddFromExisting(col);
-                                    return acc;
-                                }));
-                        }, ApplicationContextEntryOrder.BeanMethod);
+                            ConfigureBeans((config, sp) =>
+                            {
+                                config.AddFromExisting(ApplicationSP.GetRequiredService<IBeanDefinitionCollection>(beanDef.Name));
+                            }, ApplicationContextEntryOrder.BeanMethod);
+                        }
                     }
+
+                    ConfigurationRegistry.RefreshConfigurations();
                 };
 
             });
@@ -152,6 +148,10 @@ namespace UnityAddon.Core.Context
             // add value resolve logic
             ConfigureBeans((config, sp) =>
             {
+                if (!sp.IsRegistered<IConfiguration>())
+                {
+                    return;
+                }
                 config.AddSingleton<ValueProvider, ValueProvider>();
                 config.AddSingleton<ConfigBracketParser, ConfigBracketParser>();
 
@@ -191,7 +191,35 @@ namespace UnityAddon.Core.Context
 
             Refresh();
 
+            PreInstantiateSingleton();
+
             return CoreContainer.Resolve<IUnityAddonSP>();
+        }
+
+        public void PreInstantiateSingleton()
+        {
+            var sp = ApplicationSP;
+            var container = ApplicationSP.UnityContainer;
+            var currentRegs = container.Registrations.Count();
+
+            foreach (var reg in container.Registrations.ToArray())
+            {
+                if (!(reg.LifetimeManager is ContainerControlledLifetimeManager) || reg.Name.EndsWith("factory")) // skip bean method factory bean
+                {
+                    continue;
+                }
+
+                if (!reg.RegisteredType.IsGenericType || !reg.RegisteredType.ContainsGenericParameters)
+                {
+
+                    sp.GetRequiredService(reg.RegisteredType, reg.Name);
+                }
+            }
+
+            if (container.Registrations.Count() != currentRegs)
+            {
+                PreInstantiateSingleton();
+            }
         }
     }
 }

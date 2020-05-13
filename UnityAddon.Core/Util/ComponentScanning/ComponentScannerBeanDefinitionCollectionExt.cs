@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using UnityAddon.Core.BeanDefinition;
+using UnityAddon.Core.Util.ComponentScanning;
 
-namespace UnityAddon.Core.Util.ComponentScanning
+namespace UnityAddon.Core.Bean
 {
     public static class ComponentScannerBeanDefinitionCollectionExt
     {

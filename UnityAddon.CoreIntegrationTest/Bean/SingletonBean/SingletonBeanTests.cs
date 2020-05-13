@@ -15,7 +15,8 @@ namespace UnityAddon.CoreTest.Bean.SingletonBean
     {
     }
 
-    public class SingletonBeanTests : UnityAddonComponentScanTest
+    [ComponentScan]
+    public class SingletonBeanTests : UnityAddonTest
     {
         [Dependency]
         public IUnityAddonSP Sp { get; set; }

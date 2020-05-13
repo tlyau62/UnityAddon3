@@ -5,20 +5,28 @@ using System.Collections.Generic;
 using System.Text;
 using Unity;
 using UnityAddon.Core;
+using UnityAddon.Core.Aop;
+using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Bean.Config;
 using UnityAddon.Ef;
 using UnityAddon.EfTest.Common;
 using Xunit;
 
 namespace UnityAddon.EfTest.Transaction.Repository
 {
-    [Trait("Transaction", "Repository")]
-    public class RepositoryTests : EfDefaultTest<TestDbContext>
+    [ComponentScan]
+    [Import(typeof(UnityAddonEfConfig))]
+    [Import(typeof(TestDbConfig<TestDbContext>))]
+    public class RepositoryTests : UnityAddonEfTest
     {
         [Dependency]
         public IRepo Repo { get; set; }
 
+        [Dependency]
+        public IDbContextFactory<TestDbContext> DbContextFactory { get; set; }
+
         [Fact]
-        public void RequireDbContextHandler_QueryItem_ResultReceived()
+        public void Repository_Read()
         {
             Assert.Equal(0, Repo.CountItem());
 
@@ -26,12 +34,11 @@ namespace UnityAddon.EfTest.Transaction.Repository
         }
 
         [Fact]
-        public void RequireDbContextHandler_ModifyDbWithoutTransaction_ExceptionThrown()
+        public void Repository_WriteWithoutTransaction()
         {
             var ex = Assert.Throws<InvalidOperationException>(() => Repo.InsertItem(new Item("testitem")));
 
             Assert.Equal($"Detected dbcontext is changed by method InsertItem at class {typeof(Repo).FullName}, but transaction is not opened.", ex.Message);
         }
-
     }
 }

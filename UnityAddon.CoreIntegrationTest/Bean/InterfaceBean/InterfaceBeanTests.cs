@@ -1,4 +1,5 @@
 ﻿using Castle.DynamicProxy;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,8 @@ namespace UnityAddon.CoreTest.Bean.InterfaceBean
         public string Log = "";
     }
 
-    public class InterfaceBeanTests
+    [ComponentScan]
+    public class InterfaceBeanTests : UnityAddonTest
     {
         [Dependency]
         public INoImplService NoImplService { get; set; }
@@ -50,18 +52,14 @@ namespace UnityAddon.CoreTest.Bean.InterfaceBean
         [Dependency]
         public Logger Logger { get; set; }
 
-        public InterfaceBeanTests()
+        public InterfaceBeanTests() : base(true)
         {
-            var host = Host.CreateDefaultBuilder()
-                .RegisterUA()
-                .ConfigureContainer<ApplicationContext>(ctx =>
-                {
-                    ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace));
-                    ctx.ConfigureContext<AopInterceptorContainerOption>(option => option.AddAopIntercetor<NoImplInterceptor>());
-                })
-                .Build();
-
-            ((IUnityAddonSP)host.Services).BuildUp(this);
+            HostBuilder
+                .ConfigureContainer<ApplicationContext>(ctx => ctx.ConfigureContext<AopInterceptorContainerOption>(option => option.AddAopIntercetor<NoImplInterceptor>()))
+                .Build()
+                .Services
+                .GetRequiredService<IUnityAddonSP>()
+                .BuildUp(this);
         }
 
         [Fact]
