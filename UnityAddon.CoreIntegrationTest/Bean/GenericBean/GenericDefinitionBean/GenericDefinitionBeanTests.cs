@@ -13,7 +13,8 @@ namespace UnityAddon.CoreTest.Bean.GenericBean.GenericDefinitionBean
     [Component]
     public class Service<T> : IService<T> { }
 
-    public class GenericDefinitionBeanTests : UnityAddonComponentScanTest
+    [ComponentScan]
+    public class GenericDefinitionBeanTests : UnityAddonTest
     {
         [Dependency]
         public IService<int> Service { get; set; }

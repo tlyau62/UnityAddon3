@@ -10,10 +10,9 @@ using Xunit;
 
 namespace UnityAddon.CoreTest.BeanBuildStrategies
 {
-    [Component]
     public class Service { }
 
-    public class BeanSingletonStrategyTests : UnityAddonComponentScanTest
+    public class BeanSingletonStrategyTests : UnityAddonTest
     {
         [Dependency]
         public IUnityAddonSP Sp { get; set; }

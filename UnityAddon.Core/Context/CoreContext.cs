@@ -75,7 +75,11 @@ namespace UnityAddon.Core.Context
 
         public void Configure<TConfig>(Action<TConfig> config) where TConfig : class, new()
         {
-            config(Container.Resolve<IConfigs<TConfig>>().Value);
+            var confBean = Container.Resolve<IConfigs<TConfig>>();
+
+            config(confBean.Value);
+
+            confBean.OnChange(confBean.Value);
         }
     }
 }

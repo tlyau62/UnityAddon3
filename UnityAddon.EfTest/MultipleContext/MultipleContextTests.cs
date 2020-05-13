@@ -10,11 +10,16 @@ using UnityAddon.Ef;
 using UnityAddon.EfTest.Common;
 using UnityAddon.Core.Util.ComponentScanning;
 using Xunit;
+using UnityAddon.Core.Attributes;
+using UnityAddon.Ef.Transaction;
 
 namespace UnityAddon.EfTest.MultipleContext
 {
-    [Trait("Transaction", "Repository")]
-    public class MultipleContextTests : IDisposable
+    [ComponentScan]
+    [Import(typeof(UnityAddonEfConfig))]
+    [Import(typeof(TestDbConfig<TestDbContext>))]
+    [Import(typeof(TestDbConfig<TestDbContext2>))]
+    public class MultipleContextTests : UnityAddonEfTest
     {
         [Dependency]
         public IDbContextFactory<TestDbContext> DbContextFactory { get; set; }
@@ -25,27 +30,15 @@ namespace UnityAddon.EfTest.MultipleContext
         [Dependency]
         public IRepo Repo { get; set; }
 
+        [Dependency]
+        public ApplicationContext ApplicationContext { get; set; }
+
         public MultipleContextTests()
         {
-            var host = new HostBuilder()
-                .RegisterUA()
-                .ConfigureContainer<ApplicationContext>(ctx =>
-                {
-                    ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.EfTest.Common"));
-                })
-                .EnableUnityAddonEf()
-                .Build();
-
-            ((IUnityAddonSP)host.Services).BuildUp(this);
-
-            DbSetupUtility.CreateDb(DbContextFactory);
-            DbSetupUtility.CreateDb(DbContextFactory2);
-        }
-
-        public void Dispose()
-        {
-            DbSetupUtility.DropDb(DbContextFactory);
-            DbSetupUtility.DropDb(DbContextFactory2);
+            ApplicationContext.ConfigureContext<DbContextTemplateOption>(option =>
+            {
+                option.GlobalDataSource = typeof(TestDbContext);
+            });
         }
 
         [Fact]

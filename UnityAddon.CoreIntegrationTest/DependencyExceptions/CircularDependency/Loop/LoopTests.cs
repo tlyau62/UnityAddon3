@@ -27,19 +27,17 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.Loop
         public B(IA a) { }
     }
 
-    public class SelfLoopTests : UnityAddonComponentScanTest
+    [ComponentScan]
+    public class SelfLoopTests : UnityAddonTest
     {
-        [Dependency]
-        public IUnityAddonSP Sp { get; set; }
+        public SelfLoopTests() : base(true)
+        {
+        }
 
         [Fact]
         public void BeanDependencyValidatorStrategy_ResolveLoopDependency_ExceptionThrown()
         {
-            Assert.Throws<CircularDependencyException>(() =>
-            {
-                Sp.GetRequiredService<IA>();
-                Sp.GetRequiredService<IB>();
-            });
+            Assert.Throws<CircularDependencyException>(() => HostBuilder.Build());
         }
     }
 }

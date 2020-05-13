@@ -6,17 +6,23 @@ using System.Threading;
 using System.Threading.Tasks;
 using Unity;
 using UnityAddon.Core;
+using UnityAddon.Core.Attributes;
 using UnityAddon.Ef;
 using UnityAddon.EfTest.Common;
 using Xunit;
 
 namespace UnityAddon.EfTest.Transaction.MultiThreads
 {
-    [Trait("Transaction", "MultiThreads")]
-    public class MultiThreadsTests : EfDefaultTest<TestDbContext>
+    [ComponentScan]
+    [Import(typeof(UnityAddonEfConfig))]
+    [Import(typeof(TestDbConfig<TestDbContext>))]
+    public class MultiThreadsTests : UnityAddonEfTest
     {
         [Dependency]
         public IRepo Repo { get; set; }
+
+        [Dependency]
+        public IDbContextFactory<TestDbContext> DbContextFactory { get; set; }
 
         private readonly Random _random = new Random();
 

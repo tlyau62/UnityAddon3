@@ -16,7 +16,7 @@ namespace UnityAddon.CoreTest.Configuration.EnumBeanDefinition
         [Bean]
         public virtual IBeanDefinitionCollection BeanDefinitions()
         {
-            var defs = new BeanDefinitionCollection();
+            IBeanDefinitionCollection defs = new BeanDefinitionCollection();
 
             defs.Add(new InstanceBeanDefintion(typeof(string), "test", null, ScopeType.Singleton));
 
@@ -24,7 +24,8 @@ namespace UnityAddon.CoreTest.Configuration.EnumBeanDefinition
         }
     }
 
-    public class EnumBeanDefinitionTests : UnityAddonComponentScanTest
+    [ComponentScan]
+    public class EnumBeanDefinitionTests : UnityAddonTest
     {
         [Dependency]
         public string TestString { get; set; }

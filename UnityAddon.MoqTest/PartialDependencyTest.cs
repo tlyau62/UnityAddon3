@@ -21,12 +21,11 @@ namespace UnityAddon.MoqTest.PartialDependency
         public IMessageRepository MessageRepository { get; set; }
     }
 
-    public class PartialDependencyTest : AbstractUnityAddonMoqTest
+    [EnableUnityAddonMoq(true)]
+    public class PartialDependencyTest : UnityAddonTest
     {
         [TestSubject]
         public MessageService MessageService { get; set; }
-
-        public PartialDependencyTest() : base(true) { }
 
         [Fact]
         public void Test()

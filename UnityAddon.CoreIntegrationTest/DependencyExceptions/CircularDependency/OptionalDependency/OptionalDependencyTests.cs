@@ -38,7 +38,8 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.OptionalDe
     {
     }
 
-    public class OptionalDependencyTests : UnityAddonComponentScanTest
+    [ComponentScan]
+    public class OptionalDependencyTests : UnityAddonTest
     {
         [Dependency]
         public IUnityAddonSP Sp { get; set; }

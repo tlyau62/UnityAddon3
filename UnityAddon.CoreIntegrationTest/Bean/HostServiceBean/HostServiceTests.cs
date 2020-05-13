@@ -12,6 +12,7 @@ using Xunit;
 
 namespace UnityAddon.CoreTest.Bean.HostServiceBean
 {
+    [Component]
     public class LifetimeEventsHostedService : IHostedService
     {
         [Value("TestValue")]
@@ -35,22 +36,16 @@ namespace UnityAddon.CoreTest.Bean.HostServiceBean
         }
     }
 
-    public class HostServiceTests
+    [ComponentScan]
+    public class HostServiceTests : UnityAddonTest
     {
-        private IHost _host;
-
-        public HostServiceTests()
-        {
-            _host = new HostBuilder()
-                .RegisterUA()
-                .ConfigureServices(c => c.AddHostedService<LifetimeEventsHostedService>())
-                .Build();
-        }
+        [Dependency]
+        public IHost Host { get; set; }
 
         [Fact]
         public void HostService()
         {
-            _host.Run();
+            Host.Run();
         }
     }
 }

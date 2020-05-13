@@ -7,6 +7,8 @@ namespace UnityAddon.Core.Bean.Config
 {
     public interface IConfigs<TConfigs> where TConfigs : class, new()
     {
-        public TConfigs Value { get; }
+        TConfigs Value { get; }
+
+        Action<TConfigs> OnChange { get; set; }
     }
 }

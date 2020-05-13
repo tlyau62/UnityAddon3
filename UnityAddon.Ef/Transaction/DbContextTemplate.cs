@@ -15,7 +15,9 @@ namespace UnityAddon.Ef.Transaction
     public interface IDbContextTemplate
     {
         TTxResult ExecuteTransaction<TDbContext, TTxResult>(Func<TDbContext, TTxResult> transaction) where TDbContext : DbContext;
-        TTxResult ExecuteQuery<TDbContext, TTxResult>(Func<TDbContext, TTxResult> query, string noModifyMsg) where TDbContext : DbContext;
+        void ExecuteTransaction<TDbContext>(Action<TDbContext> transaction) where TDbContext : DbContext;
+        TTxResult ExecuteQuery<TDbContext, TTxResult>(Func<TDbContext, TTxResult> query, string noModifyMsg = null) where TDbContext : DbContext;
+        void ExecuteQuery<TDbContext>(Action<TDbContext> query, string noModifyMsg = null) where TDbContext : DbContext;
         TDbContext GetDbContext<TDbContext>() where TDbContext : DbContext;
         DbSet<TEntity> GetEntity<TDbContext, TEntity>() where TDbContext : DbContext where TEntity : class;
         bool TestRollback(object returnValue);
@@ -57,10 +59,19 @@ namespace UnityAddon.Ef.Transaction
             {
                 var result = query(ctx);
 
-                AssertNoModifyDbContext(ctx, noModifyMsg);
+                AssertNoModifyDbContext(ctx, noModifyMsg ?? "Detected dbcontext is changed by method, but transaction is not opened.");
 
                 return result;
             });
+        }
+
+        public void ExecuteQuery<TDbContext>(Action<TDbContext> query, string noModifyMsg) where TDbContext : DbContext
+        {
+            ExecuteQuery<TDbContext, object>(ctx =>
+            {
+                query(ctx);
+                return null;
+            }, noModifyMsg);
         }
 
         public TTxResult ExecuteTransaction<TDbContext, TTxResult>(Func<TDbContext, TTxResult> transaction) where TDbContext : DbContext
@@ -106,6 +117,15 @@ namespace UnityAddon.Ef.Transaction
             });
         }
 
+        public void ExecuteTransaction<TDbContext>(Action<TDbContext> transaction) where TDbContext : DbContext
+        {
+            ExecuteTransaction<TDbContext, object>(ctx =>
+            {
+                transaction(ctx);
+                return null;
+            });
+        }
+
         public IDbContextFactory<TDbContext> GetDbContextFactory<TDbContext>() where TDbContext : DbContext
         {
             return Sp.GetRequiredService<IDbContextFactory<TDbContext>>();
@@ -121,7 +141,7 @@ namespace UnityAddon.Ef.Transaction
             return GetDbContext<TDbContext>().Set<TEntity>();
         }
 
-        private void AssertNoModifyDbContext<TDbContext>(TDbContext dbContext, string noModifyMsg = "Detected dbcontext is changed by method, but transaction is not opened.") where TDbContext : DbContext
+        private void AssertNoModifyDbContext<TDbContext>(TDbContext dbContext, string noModifyMsg) where TDbContext : DbContext
         {
             if (dbContext.ChangeTracker.HasChanges() && dbContext.Database.CurrentTransaction == null)
             {
@@ -198,5 +218,6 @@ namespace UnityAddon.Ef.Transaction
         {
             TxCallbacks.OnCommit(callback);
         }
+
     }
 }
