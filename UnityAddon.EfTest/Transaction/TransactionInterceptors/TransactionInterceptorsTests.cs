@@ -41,45 +41,39 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptors
         }
     }
 
-    public class TransactionInterceptorsTests : IDisposable
+    [Configuration]
+    public class TransactionInterceptorsTestsConfig
     {
         [Dependency]
-        public IDbContextFactory<TestDbContext> DbContextFactory { get; set; }
+        public ApplicationContext ApplicationContext { get; set; }
 
+        [PostConstruct]
+        public void Setup()
+        {
+            ApplicationContext.ConfigureContext<DbContextTemplateOption>(option =>
+            {
+                option.AddTransactionInterceptor<TestTxInterceptor>();
+            });
+        }
+    }
+
+    [ComponentScan(typeof(TransactionInterceptorsTests))]
+    [Import(typeof(UnityAddonEfConfig))]
+    [Import(typeof(TestDbConfig<TestDbContext>))]
+    public class TransactionInterceptorsTests : UnityAddonEfTest
+    {
         [Dependency]
         public IDbContextTemplate DbContextTemplate { get; set; }
 
         [Dependency]
         public LogService LogService { get; set; }
 
-        public TransactionInterceptorsTests()
-        {
-            ((IUnityAddonSP)new HostBuilder()
-                .RegisterUA()
-                .ConfigureContainer<ApplicationContext>(ctx =>
-                {
-                    ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace, "UnityAddon.EfTest.Common"));
-                    ctx.ConfigureContext<DbContextTemplateOption>(option =>
-                    {
-                        option.AddTransactionInterceptor<TestTxInterceptor>();
-                    });
-                })
-                .EnableUnityAddonEf()
-                .Build()
-                .Services)
-                .BuildUp(this);
-
-            DbSetupUtility.CreateDb(DbContextFactory);
-        }
-
         [Fact]
         public void TransactionInterceptorManager_ExecuteTransaction_InterceptorExecuted()
         {
-            DbContextTemplate.ExecuteTransaction<TestDbContext, object>(tx =>
+            DbContextTemplate.ExecuteTransaction<TestDbContext>(tx =>
             {
                 LogService.Log += "Z";
-
-                return null;
             });
 
             Assert.Equal("AZB", LogService.Log);
@@ -89,7 +83,7 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptors
         public void TransactionInterceptorManager_ExecuteTransactionWithException_InterceptorExecuted()
         {
             Assert.Throws<InvalidOperationException>(() =>
-                DbContextTemplate.ExecuteTransaction<TestDbContext, object>(tx =>
+                DbContextTemplate.ExecuteTransaction<TestDbContext>(tx =>
                 {
                     LogService.Log += "Z";
 
@@ -97,11 +91,6 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptors
                 }));
 
             Assert.Equal("AZC", LogService.Log);
-        }
-
-        public void Dispose()
-        {
-            DbSetupUtility.DropDb(DbContextFactory);
         }
     }
 }

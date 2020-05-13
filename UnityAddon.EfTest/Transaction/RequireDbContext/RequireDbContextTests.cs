@@ -6,13 +6,16 @@ using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Ef;
+using UnityAddon.Ef.Transaction;
 using UnityAddon.EfTest.Common;
 using Xunit;
 
 namespace UnityAddon.EfTest.Transaction.RequireDbContext
 {
-    [Trait("Transaction", "RequireDbContext")]
-    public class RequireDbContextTests : EfDefaultTest<TestDbContext>
+    [ComponentScan(typeof(RequireDbContextTests))]
+    [Import(typeof(UnityAddonEfConfig))]
+    [Import(typeof(TestDbConfig<TestDbContext>))]
+    public class RequireDbContextTests : UnityAddonEfTest
     {
         [Dependency]
         public IRepoA RepoA { get; set; }
@@ -20,7 +23,13 @@ namespace UnityAddon.EfTest.Transaction.RequireDbContext
         [Dependency]
         public IRepoB RepoB { get; set; }
 
-        private DbSet<Item> _items => (DbContextFactory.IsOpen() ? DbContextFactory.Get() : DbContextFactory.Open()).Items;
+        [Dependency]
+        public IDbContextFactory<TestDbContext> DbContextFactory { get; set; }
+
+        [Dependency]
+        public IDbContextTemplate DbContextTemplate { get; set; }
+
+        private DbSet<Item> Items => DbContextTemplate.GetEntity<TestDbContext, Item>();
 
         [Fact]
         public void RequireDbContextHandler_AddItem_ItemCreated()
@@ -29,7 +38,9 @@ namespace UnityAddon.EfTest.Transaction.RequireDbContext
 
             Assert.False(DbContextFactory.IsOpen());
 
-            Assert.Equal("testitem", _items.Single().Name);
+            DbContextTemplate.ExecuteQuery<TestDbContext>(ctx => Assert.Equal("testitem", Items.Single().Name));
+
+            Assert.False(DbContextFactory.IsOpen());
         }
 
         [Fact]
@@ -39,7 +50,9 @@ namespace UnityAddon.EfTest.Transaction.RequireDbContext
 
             Assert.False(DbContextFactory.IsOpen());
 
-            Assert.Empty(_items);
+            DbContextTemplate.ExecuteQuery<TestDbContext>(ctx => Assert.Empty(Items));
+
+            Assert.False(DbContextFactory.IsOpen());
         }
 
         [Fact]
@@ -49,7 +62,7 @@ namespace UnityAddon.EfTest.Transaction.RequireDbContext
 
             Assert.False(DbContextFactory.IsOpen());
 
-            Assert.Equal(2, _items.Count());
+            DbContextTemplate.ExecuteQuery<TestDbContext>(ctx => Assert.Equal(2, Items.Count()));
         }
 
         [Fact]
@@ -59,13 +72,13 @@ namespace UnityAddon.EfTest.Transaction.RequireDbContext
 
             Assert.False(DbContextFactory.IsOpen());
 
-            Assert.Empty(_items);
+            DbContextTemplate.ExecuteQuery<TestDbContext>(ctx => Assert.Empty(Items));
         }
 
         [Fact]
         public void RequireDbContextHandler_NormalQuery_ResultReceived()
         {
-            Assert.Equal(0, RepoB.CountItems());
+            DbContextTemplate.ExecuteQuery<TestDbContext>(ctx => Assert.Equal(0, RepoB.CountItems()));
         }
 
         [Fact]

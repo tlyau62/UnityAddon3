@@ -17,13 +17,13 @@ namespace UnityAddon.EfTest.Transaction.Repository
     [ComponentScan(typeof(RepositoryTests))]
     [Import(typeof(UnityAddonEfConfig))]
     [Import(typeof(TestDbConfig<TestDbContext>))]
-    public class RepositoryTests : EfTest<TestDbContext>
+    public class RepositoryTests : UnityAddonEfTest
     {
         [Dependency]
         public IRepo Repo { get; set; }
 
         [Dependency]
-        public IUnityAddonSP Sp { get; set; }
+        public IDbContextFactory<TestDbContext> DbContextFactory { get; set; }
 
         [Fact]
         public void Repository_Read()
