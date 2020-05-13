@@ -47,4 +47,12 @@ namespace UnityAddon.Hangfire
             return col;
         }
     }
+
+    public static class UnityAddonHangfireExt
+    {
+        public static void AddUnityAddonHangfire(this IBeanRegistry beanRegistry)
+        {
+            beanRegistry.AddConfiguration<UnityAddonHangfireConfig>();
+        }
+    }
 }

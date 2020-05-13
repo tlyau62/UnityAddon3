@@ -14,6 +14,7 @@ using UnityAddon.Core.Context;
 using Microsoft.Extensions.DependencyInjection;
 using UnityAddon.Core.BeanDefinition.GeneralBean;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Core.Bean;
 
 namespace UnityAddon.Moq
 {
@@ -66,6 +67,14 @@ namespace UnityAddon.Moq
                 .ForEach(p => beanDefCol.AddSingleton(p.PropertyType, p.PropertyType));
 
             return beanDefCol;
+        }
+    }
+
+    public static class UnityAddonMoqExt
+    {
+        public static void AddUnityAddonMoq(this IBeanRegistry beanRegistry)
+        {
+            beanRegistry.AddConfiguration<UnityAddonMoqConfig>();
         }
     }
 }

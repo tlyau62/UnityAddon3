@@ -42,4 +42,12 @@ namespace UnityAddon.Ef
             return col;
         }
     }
+
+    public static class UnityAddonEfExt
+    {
+        public static void AddUnityAddonEf(this IBeanRegistry beanRegistry)
+        {
+            beanRegistry.AddConfiguration<UnityAddonEfConfig>();
+        }
+    }
 }
