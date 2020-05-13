@@ -31,6 +31,8 @@ namespace UnityAddon.Core
                     {
                         var attrs = GetType().GetAttributes<ConfigArgAttribute>();
 
+                        config.AddSingleton(this);
+
                         foreach (var attr in attrs)
                         {
                             foreach (var arg in attr.Args)
