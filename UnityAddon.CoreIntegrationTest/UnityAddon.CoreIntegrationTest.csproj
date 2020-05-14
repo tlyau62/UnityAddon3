@@ -46,6 +46,7 @@
     <Compile Include="Aop\MethodAttributeInterceptor\Components.cs" />
     <Compile Include="Aop\MethodAttributeInterceptor\Interceptors.cs" />
     <Compile Include="Aop\MethodAttributeInterceptor\MethodAttributeInterceptorTests.cs" />
+    <Compile Include="BeanPostConstruct\ProxyBean\ProxyBeanTests.cs" />
     <Compile Include="Bean\GenericBean\ConcreteGenericBean\ConcreteGenericBeanTests.cs" />
     <Compile Include="Bean\GenericBean\GenericDefinitionBean\GenericDefinitionBeanTests.cs" />
     <Compile Include="Bean\GenericBean\MixGenericBean\MixGenericBeanTests.cs" />
