@@ -22,15 +22,12 @@ namespace UnityAddon.Core.Aop
     public class AopInterceptorContainer
     {
         [Dependency]
-        public IConfigs<AopInterceptorContainerOption> AopInterceptorContainerOption { get; set; }
-
-        [Dependency]
         public IServicePostRegistry ServicePostRegistry { get; set; }
 
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 
-        private IDictionary<Type, IEnumerable<IInterceptor>> _interceptorMap;
+        private IDictionary<Type, IEnumerable<IInterceptor>> _interceptorMap = new Dictionary<Type, IEnumerable<IInterceptor>>();
 
         private bool _isInit = false;
 
@@ -41,8 +38,35 @@ namespace UnityAddon.Core.Aop
                 throw new InvalidOperationException("Can only initialized once");
             }
 
-            Refresh(AopInterceptorContainerOption.Value);
-            AopInterceptorContainerOption.OnChange += Refresh;
+            var interceptorMaps = Sp.GetServices<AopInterceptorOption>()
+                .Select(option => option.InterceptorMap);
+            IDictionary<Type, IList<Type>> interceptorMap = new Dictionary<Type, IList<Type>>();
+
+            if (interceptorMaps.Count() > 0)
+            {
+                interceptorMap = interceptorMaps.Aggregate((a, map) =>
+                 {
+                     foreach (var entry in map)
+                     {
+                         a.Add(entry.Key, entry.Value);
+                     }
+
+                     return a;
+                 });
+            }
+
+            _interceptorMap = interceptorMap.ToDictionary(
+                e => e.Key,
+                e => e.Value.Select(t =>
+                {
+                    if (!Sp.IsRegistered(t))
+                    {
+                        ServicePostRegistry.AddSingleton(t, t);
+                    }
+
+                    return (IInterceptor)Sp.GetRequiredService(t);
+                }));
+
 
             _isInit = true;
         }
@@ -52,11 +76,6 @@ namespace UnityAddon.Core.Aop
         /// </summary>
         public IDictionary<Type, IEnumerable<IInterceptor>> FindInterceptors(AttributeTargets interceptorType)
         {
-            if (!_isInit)
-            {
-                throw new InvalidOperationException("AopInterceptorContainer is not initialized");
-            }
-
             return _interceptorMap.Where(entry => IsAttributeTargetMatch(interceptorType, entry.Key.GetAttribute<AttributeUsageAttribute>().ValidOn))
                 .ToDictionary(dict => dict.Key, dict => dict.Value);
         }
@@ -66,19 +85,5 @@ namespace UnityAddon.Core.Aop
             return (actualInterceptorType & requiredInterceptorType) > 0;
         }
 
-        private void Refresh(AopInterceptorContainerOption val)
-        {
-            foreach (var type in val.InterceptorMap.Values.SelectMany(v => v))
-            {
-                if (!Sp.IsRegistered(type))
-                {
-                    ServicePostRegistry.AddSingleton(type, type);
-                }
-            }
-
-            _interceptorMap = val.InterceptorMap.ToDictionary(
-                e => e.Key,
-                e => e.Value.Select(t => (IInterceptor)Sp.GetRequiredService(t)));
-        }
     }
 }

@@ -22,7 +22,7 @@ namespace UnityAddon.Cache
         [PostConstruct]
         public void Setup()
         {
-            ApplicationContext.ConfigureContext<AopInterceptorContainerOption>(option =>
+            ApplicationContext.ConfigureContext<AopInterceptorOption>(option =>
             {
                 option
                     .AddAopIntercetor<CacheInterceptor>()

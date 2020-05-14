@@ -31,7 +31,7 @@ namespace UnityAddon.Hangfire
                 });
             });
 
-            ApplicationContext.ConfigureContext<AopInterceptorContainerOption>(option =>
+            ApplicationContext.ConfigureContext<AopInterceptorOption>(option =>
             {
                 option.AddAopIntercetor<HangfireProxyInterceptor>();
             });

@@ -25,7 +25,7 @@ namespace UnityAddon.Ef
         [PostConstruct]
         public void Setup()
         {
-            ApplicationContext.ConfigureContext<AopInterceptorContainerOption>(config =>
+            ApplicationContext.ConfigureContext<AopInterceptorOption>(config =>
             {
                 config.AddAopIntercetor<RequireDbContextInterceptor>()
                     .AddAopIntercetor<RepositoryInterceptor>();
