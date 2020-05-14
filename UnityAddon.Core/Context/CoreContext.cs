@@ -70,7 +70,8 @@ namespace UnityAddon.Core.Context
                 .RegisterType(typeof(IConfigs<>), typeof(Configs<>), new SingletonLifetimeManager());
 
             Container
-                .RegisterType<ConfigurationRegistry>(new SingletonLifetimeManager());
+                .RegisterType<ConfigurationRegistry>(new SingletonLifetimeManager())
+                .RegisterType<BeanDefinitionRegistry>(new SingletonLifetimeManager());
 
             Container
                 .RegisterType<AopInterceptorContainer>(new SingletonLifetimeManager())

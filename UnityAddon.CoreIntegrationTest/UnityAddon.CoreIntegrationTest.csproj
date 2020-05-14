@@ -46,6 +46,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Aop\ClassAttributeInterceptor\ClassAttributeInterceptorTests.cs" />
+    <Compile Include="Bean\GenericBean\ConcreteGenericBean\ConcreteGenericBeanTests.cs" />
+    <Compile Include="Bean\GenericBean\GenericDefinitionBean\GenericDefinitionBeanTests.cs" />
+    <Compile Include="Bean\GenericBean\MixGenericBean\MixGenericBeanTests.cs" />
     <Compile Include="Bean\GuidBean\GuidBeanTests.cs" />
   </ItemGroup>
 

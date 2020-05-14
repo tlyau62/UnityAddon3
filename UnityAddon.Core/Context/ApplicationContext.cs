@@ -38,6 +38,8 @@ namespace UnityAddon.Core.Context
 
         public ConfigurationRegistry ConfigurationRegistry => CoreContainer.Resolve<ConfigurationRegistry>();
 
+        public BeanDefinitionRegistry BeanDefinitionRegistry => CoreContainer.Resolve<BeanDefinitionRegistry>();
+
         public void ConfigureBeans(Action<IBeanDefinitionCollection> config)
         {
             var defCol = new BeanDefinitionCollection();
@@ -137,51 +139,39 @@ namespace UnityAddon.Core.Context
 
             ConfigureBeans(config => config.AddFromUnityContainer(CoreContainer));
 
-            //// add value resolve logic
-            //ConfigureBeans((config, sp) =>
-            //{
-            //    if (!sp.IsRegistered<IConfiguration>())
-            //    {
-            //        return;
-            //    }
-            //    config.AddSingleton<ValueProvider, ValueProvider>();
-            //    config.AddSingleton<ConfigBracketParser, ConfigBracketParser>();
-
-            //    ConfigureContext<DependencyResolverOption>(config
-            //        => config.AddResolveStrategy<ValueAttribute>((type, attr, sp)
-            //            => sp.GetRequiredService<ValueProvider>().GetValue(type, attr.Value)));
-            //}, ApplicationContextEntryOrder.AppPreConfig);
-
             //// beandefintion candidate selector
             //ConfigureBeans((config, sp) =>
             //    config.AddSingleton<BeanDefintionCandidateSelector, BeanDefintionCandidateSelector>(), ApplicationContextEntryOrder.AppPreConfig);
 
-            //// aop
+            ApplicationSP.UnityContainer.AddExtension(CoreContainer.Resolve<AopBuildStrategyExtension>());
 
-            //ConfigureBeans((config, sp) =>
-            //{
-            //    sp.UnityContainer.AddExtension(sp.GetRequiredService<AopBuildStrategyExtension>());
-            //}, ApplicationContextEntryOrder.AppPreConfig + 2);
+            PostRegistry();
 
-            //AddContextEntry(entry =>
-            //{
-            //    entry.Order = ApplicationContextEntryOrder.AppPostConfig;
-            //    entry.Process += sp =>
-            //    {
-            //        sp.GetRequiredService<AopInterceptorContainer>().Init();
-            //        return;
-            //    };
-            //});
-
-            //Refresh();
-
-            ConfigurationRegistry.RefreshConfigurations();
-
-            ParseBeanDefintionCollection();
+            CoreContainer.Resolve<AopInterceptorContainer>().Init();
 
             PreInstantiateSingleton();
 
             return CoreContainer.Resolve<IUnityAddonSP>();
+        }
+
+        public void PostRegistry(int? count = null)
+        {
+            if (count == null)
+            {
+                count = 0;
+            }
+
+            var newCount = ApplicationSP.UnityContainer.Registrations.Count();
+
+            if (count == newCount)
+            {
+                return;
+            }
+
+            count = newCount;
+            ConfigurationRegistry.Refresh();
+            BeanDefinitionRegistry.Refresh();
+            PostRegistry(count);
         }
 
         public void ParseBeanDefintionCollection(HashSet<IBeanDefinition> hashSet = null)

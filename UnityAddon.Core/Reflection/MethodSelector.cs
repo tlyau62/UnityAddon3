@@ -19,19 +19,7 @@ namespace UnityAddon.Core.Reflection
 
         public static IEnumerable<MethodInfo> GetAllMethods(Type type)
         {
-            ISet<MethodInfo> methods = new HashSet<MethodInfo>();
-
-            while (type != null)
-            {
-                foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
-                {
-                    methods.Add(method);
-                }
-
-                type = type.BaseType;
-            }
-
-            return methods;
+            return type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
         }
     }
 }
