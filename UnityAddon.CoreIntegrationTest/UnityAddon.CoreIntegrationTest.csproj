@@ -47,10 +47,22 @@
 
   <ItemGroup>
     <Compile Include="Aop\ClassAttributeInterceptor\ClassAttributeInterceptorTests.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\Attributes.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\Components.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\GenericMethodAttributeInterceptorTests.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\Interceptors.cs" />
     <Compile Include="Bean\GenericBean\ConcreteGenericBean\ConcreteGenericBeanTests.cs" />
     <Compile Include="Bean\GenericBean\GenericDefinitionBean\GenericDefinitionBeanTests.cs" />
     <Compile Include="Bean\GenericBean\MixGenericBean\MixGenericBeanTests.cs" />
     <Compile Include="Bean\GuidBean\GuidBeanTests.cs" />
+    <Compile Include="Bean\HostServiceBean\HostServiceTests.cs" />
+    <Compile Include="Bean\InterfaceBean\InterfaceBeanTests.cs" />
+    <Compile Include="Bean\NonGenericBean\NonGenericBeanTests.cs" />
+    <Compile Include="Bean\PrimaryBean\PrimaryBeanTests.cs" />
+    <Compile Include="Bean\PrimitiveBean\PrimitiveBeanTests.cs" />
+    <Compile Include="Bean\QualifiedBean\QualifiedBeanTests.cs" />
+    <Compile Include="Bean\SingletonBean\SingletonBeanTests.cs" />
+    <Compile Include="Bean\TransientBean\TransientBeanTests.cs" />
   </ItemGroup>
 
   <ItemGroup>
