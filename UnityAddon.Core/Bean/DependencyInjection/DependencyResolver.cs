@@ -14,14 +14,45 @@ namespace UnityAddon.Core.Bean.DependencyInjection
 {
     public class DependencyResolver
     {
-        private readonly IDictionary<Type, object> _resolveStrategies;
+        private IDictionary<Type, object> _resolveStrategies;
 
         private static readonly MethodInfo InvokeStrategyMethod = typeof(DependencyResolver)
             .GetMethod(nameof(InvokeStrategy), BindingFlags.NonPublic | BindingFlags.Instance);
 
-        public DependencyResolver(IConfigs<DependencyResolverOption> resolverOption)
+        public DependencyResolver()
         {
-            _resolveStrategies = resolverOption.Value.ResolveStrategies;
+            AddInternalResolveStrategies();
+        }
+
+        [Dependency]
+        public IUnityAddonSP Sp { get; set; }
+
+        public void Init()
+        {
+            foreach (var option in Sp.GetServices<DependencyResolverOption>())
+            {
+                foreach (var entry in option.ResolveStrategies)
+                {
+                    _resolveStrategies[entry.Key] = entry.Value;
+                }
+            }
+        }
+
+        protected void AddInternalResolveStrategies()
+        {
+            var defaultOption = new DependencyResolverOption();
+
+            defaultOption.AddResolveStrategy<DependencyAttribute>((type, attr, sp) =>
+            {
+                return sp.GetRequiredService(type, attr.Name);
+            });
+
+            defaultOption.AddResolveStrategy<OptionalDependencyAttribute>((type, attr, sp) =>
+            {
+                return sp.GetService(type, attr.Name);
+            });
+
+            _resolveStrategies = defaultOption.ResolveStrategies;
         }
 
         public object Resolve(Type resolveType, IEnumerable<Attribute> attributes, IUnityAddonSP sp)

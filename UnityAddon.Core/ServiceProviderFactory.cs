@@ -39,21 +39,11 @@ namespace UnityAddon.Core
         {
             var appCtx = new ApplicationContext(_container);
 
+            // asp core
             appCtx.ConfigureBeans(config => config.AddFromServiceCollection(services));
 
-            // add value resolve logic
-            if (services.Any(service => service.ServiceType == typeof(IConfiguration)))
-            {
-                appCtx.ConfigureBeans(config =>
-                {
-                    config.AddSingleton<ValueProvider, ValueProvider>();
-                    config.AddSingleton<ConfigBracketParser, ConfigBracketParser>();
-                });
-
-                appCtx.ConfigureContext<DependencyResolverOption>(config
-                    => config.AddResolveStrategy<ValueAttribute>((type, attr, sp)
-                        => sp.GetRequiredService<ValueProvider>().GetValue(type, attr.Value)));
-            }
+            // value provider
+            appCtx.ConfigureBeans(config => config.AddConfiguration<ValueConfig>());
 
             return appCtx;
         }
@@ -63,6 +53,8 @@ namespace UnityAddon.Core
             return appCtx.Build();
         }
     }
+
 }
+
 
 

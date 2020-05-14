@@ -148,6 +148,7 @@ namespace UnityAddon.Core.Context
             PostRegistry();
 
             CoreContainer.Resolve<AopInterceptorContainer>().Init();
+            CoreContainer.Resolve<DependencyResolver>().Init();
 
             PreInstantiateSingleton();
 

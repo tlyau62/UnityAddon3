@@ -29,33 +29,30 @@ namespace UnityAddon.CoreTest.Dependency.Custom
         public string CustomProp { get; set; }
     }
 
+    [Configuration]
+    public class CustomConfig : DependencyResolverConfig
+    {
+        [Bean]
+        public override DependencyResolverOption DependencyResolverOption()
+        {
+            var option = new DependencyResolverOption();
+
+            option.AddResolveStrategy<CustomAttribute>((type, attr, container) =>
+                attr.Descriptor + "TestString");
+
+            return option;
+        }
+    }
+
     [ComponentScan]
     public class CustomTests : UnityAddonTest
     {
-        public CustomTests() : base(true) { }
-
         [Dependency]
         public Service Service { get; set; }
 
         [Fact]
         public void Custom()
         {
-            HostBuilder
-               .ConfigureContainer<ApplicationContext>(ctx =>
-               {
-                   ctx.ConfigureBeans((config, sp) => config.AddComponent(typeof(Service)));
-
-                   ctx.ConfigureContext<DependencyResolverOption>(config =>
-                   {
-                       config.AddResolveStrategy<CustomAttribute>((type, attr, container)
-                           => attr.Descriptor + "TestString");
-                   });
-               })
-               .Build()
-               .Services
-               .GetRequiredService<IUnityAddonSP>()
-               .BuildUp(this);
-
             Assert.Equal("My_TestString", Service.CustomProp);
         }
     }
