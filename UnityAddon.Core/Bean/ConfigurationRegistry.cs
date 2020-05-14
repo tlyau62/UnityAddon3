@@ -44,10 +44,7 @@ namespace UnityAddon.Core.Bean
                 return;
             }
 
-            AppContext.ConfigureBeans((config, sp) =>
-            {
-                config.AddRange(beanMethodDefs);
-            }, ApplicationContextEntryOrder.BeanMethod);
+            AppContext.ConfigureBeans(config => config.AddRange(beanMethodDefs));
         }
 
         public IBeanDefinitionCollection ParseBeanMethods(Type configType)

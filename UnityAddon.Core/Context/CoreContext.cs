@@ -71,6 +71,14 @@ namespace UnityAddon.Core.Context
 
             Container
                 .RegisterType<ConfigurationRegistry>(new SingletonLifetimeManager());
+
+            Container
+                .RegisterType<AopInterceptorContainer>(new SingletonLifetimeManager())
+                .RegisterType<AopBuildStrategyExtension>(new SingletonLifetimeManager())
+                .RegisterType<AopMethodBootstrapInterceptor>(new SingletonLifetimeManager())
+                .RegisterType<InterfaceProxyFactory>(new SingletonLifetimeManager())
+                .RegisterType<BeanAopStrategy>(new SingletonLifetimeManager())
+                .RegisterType<AopBuildStrategyExtension>(new SingletonLifetimeManager());
         }
 
         public void Configure<TConfig>(Action<TConfig> config) where TConfig : class, new()

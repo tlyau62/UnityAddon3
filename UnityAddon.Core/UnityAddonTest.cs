@@ -27,7 +27,7 @@ namespace UnityAddon.Core
                 .RegisterUA()
                 .ConfigureContainer<ApplicationContext>(ctx =>
                 {
-                    ctx.ConfigureBeans((config, sp) =>
+                    ctx.ConfigureBeans(config =>
                     {
                         var attrs = GetType().GetAttributes<ConfigArgAttribute>();
 
