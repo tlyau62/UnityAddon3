@@ -28,7 +28,7 @@ namespace UnityAddon.CoreTest.Mocks.BeanTypeMappingStrategy
 
 namespace UnityAddon.CoreTest
 {
-    public class BeanTypeMappingStrategy
+    public class BeanTypeMappingStrategyTests
     {
         [Fact]
         public void ConcreteType()
