@@ -1,28 +1,22 @@
-﻿using Microsoft.Extensions.Hosting;
-using System.Collections.Generic;
-using System.Text;
-using UnityAddon.Core;
-using UnityAddon.Core.Attributes;
+﻿using UnityAddon.Core.Attributes;
 using UnityAddon.Ef;
 using UnityAddon.EfTest.Common;
-using UnityAddon.Core.Util.ComponentScanning;
 using Xunit;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
 {
     [ComponentScan]
     [Import(typeof(UnityAddonEfConfig))]
     [Import(typeof(TestDbConfig<TestDbContext>))]
-    [Import(typeof(TransactionInterceptorsTestsConfig<TestTxInterceptor, TestTxExceptionInterceptor>))]
-    public class TransactionInterceptorsExceptionTests : TransactionInterceptorsCommonExceptionTests<TestTxInterceptor, TestTxExceptionInterceptor>
+    [Import(typeof(TransactionInterceptorsTestsConfig<TestTxExceptionInterceptor, TestTxInterceptor>))]
+    public class TransactionInterceptorsException2Tests : TransactionInterceptorsCommonExceptionTests<TestTxExceptionInterceptor, TestTxInterceptor>
     {
         [Fact]
         public override void TransactionInterceptorManager_ExecuteTransaction_InterceptorExecuted()
         {
             base.TransactionInterceptorManager_ExecuteTransaction_InterceptorExecuted();
 
-            Assert.Equal("ZAC", LogService.Log);
+            Assert.Equal("ZCA", LogService.Log);
         }
 
         [Fact]
@@ -30,7 +24,7 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
         {
             base.TransactionInterceptorManager_ExecuteTransactionWithException_InterceptorExecuted();
 
-            Assert.Equal("ZBD", LogService.Log);
+            Assert.Equal("ZDB", LogService.Log);
         }
     }
 }
