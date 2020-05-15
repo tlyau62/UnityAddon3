@@ -48,13 +48,6 @@ namespace UnityAddon.Ef
         public static void AddUnityAddonEf(this IBeanRegistry beanRegistry)
         {
             beanRegistry.AddConfiguration<UnityAddonEfConfig>();
-            beanRegistry.AddConfiguration<UnityAddonEfCustomConfig>();
-        }
-
-        public static void AddUnityAddonEf<TCustomConfig>(this IBeanRegistry beanRegistry) where TCustomConfig : UnityAddonEfCustomConfig
-        {
-            beanRegistry.AddConfiguration<UnityAddonEfConfig>();
-            beanRegistry.AddConfiguration<TCustomConfig>();
         }
     }
 }
