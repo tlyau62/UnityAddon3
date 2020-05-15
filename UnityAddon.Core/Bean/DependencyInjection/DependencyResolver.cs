@@ -6,7 +6,6 @@ using System.Runtime.ExceptionServices;
 using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
-using UnityAddon.Core.Bean.Config;
 using UnityAddon.Core.Context;
 using UnityAddon.Core.Exceptions;
 using UnityAddon.Core.Value;

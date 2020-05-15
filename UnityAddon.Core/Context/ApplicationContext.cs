@@ -11,7 +11,6 @@ using Unity.Lifetime;
 using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
-using UnityAddon.Core.Bean.Config;
 using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.BeanBuildStrategies;
 using UnityAddon.Core.BeanDefinition;
@@ -58,12 +57,6 @@ namespace UnityAddon.Core.Context
                 ApplicationSP.UnityContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(new UnityAddonSP(c), t, n), (IFactoryLifetimeManager)beanDef.Scope);
             }
         }
-
-        public void ConfigureContext<TConfig>(Action<TConfig> config) where TConfig : class, new()
-        {
-            _coreContext.Configure(config);
-        }
-
 
         public IUnityAddonSP Build()
         {

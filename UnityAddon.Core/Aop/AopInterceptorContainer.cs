@@ -12,7 +12,6 @@ using UnityAddon.Core.BeanDefinition.GeneralBean;
 using UnityAddon.Core.Context;
 using UnityAddon.Core.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using UnityAddon.Core.Bean.Config;
 
 namespace UnityAddon.Core.Aop
 {

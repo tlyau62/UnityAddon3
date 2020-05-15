@@ -10,14 +10,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="BeanDefinition\Candidate\**" />
     <Compile Remove="BeanPostprocessor\**" />
     <Compile Remove="Context\ContainerBuilderEntry\**" />
     <Compile Remove="Exceptions\**" />
     <Compile Remove="Thread\**" />
+    <EmbeddedResource Remove="BeanDefinition\Candidate\**" />
     <EmbeddedResource Remove="BeanPostprocessor\**" />
     <EmbeddedResource Remove="Context\ContainerBuilderEntry\**" />
     <EmbeddedResource Remove="Exceptions\**" />
     <EmbeddedResource Remove="Thread\**" />
+    <None Remove="BeanDefinition\Candidate\**" />
     <None Remove="BeanPostprocessor\**" />
     <None Remove="Context\ContainerBuilderEntry\**" />
     <None Remove="Exceptions\**" />

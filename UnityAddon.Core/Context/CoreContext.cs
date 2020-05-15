@@ -8,7 +8,6 @@ using Unity.Injection;
 using Unity.Lifetime;
 using UnityAddon.Core.Aop;
 using UnityAddon.Core.Bean;
-using UnityAddon.Core.Bean.Config;
 using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.BeanBuildStrategies;
 using UnityAddon.Core.BeanDefinition;
@@ -67,9 +66,6 @@ namespace UnityAddon.Core.Context
                 .RegisterType<BeanBuildStrategyExtension>(new SingletonLifetimeManager());
 
             Container
-                .RegisterType(typeof(IConfigs<>), typeof(Configs<>), new SingletonLifetimeManager());
-
-            Container
                 .RegisterType<ConfigurationRegistry>(new SingletonLifetimeManager())
                 .RegisterType<BeanDefinitionRegistry>(new SingletonLifetimeManager());
 
@@ -86,13 +82,5 @@ namespace UnityAddon.Core.Context
                 .RegisterFactory<IContextPostRegistryInitiable>("AopInterceptorContainer", c => c.Resolve<AopInterceptorContainer>(), new SingletonLifetimeManager());
         }
 
-        public void Configure<TConfig>(Action<TConfig> config) where TConfig : class, new()
-        {
-            var confBean = Container.Resolve<IConfigs<TConfig>>();
-
-            config(confBean.Value);
-
-            confBean.OnChange(confBean.Value);
-        }
     }
 }

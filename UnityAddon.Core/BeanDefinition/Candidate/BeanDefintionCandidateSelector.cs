@@ -6,7 +6,6 @@ using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
-using UnityAddon.Core.Bean.Config;
 using UnityAddon.Core.BeanDefinition;
 
 namespace UnityAddon.Core.BeanDefinition
