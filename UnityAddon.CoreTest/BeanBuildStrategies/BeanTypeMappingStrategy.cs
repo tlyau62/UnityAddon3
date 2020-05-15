@@ -113,5 +113,20 @@ namespace UnityAddon.CoreTest
 
             Assert.Null(usp.GetService<IEnum>());
         }
+
+        [Fact]
+        public void ResolveNull()
+        {
+            var serCol = new ServiceCollection();
+
+            serCol.AddSingleton<string>(sp => null);
+
+            var factory = new ServiceProviderFactory();
+            var defCol = factory.CreateBuilder(serCol);
+            var usp = (IUnityAddonSP)factory.CreateServiceProvider(defCol);
+
+            Assert.Null(usp.GetService<string>());
+            Assert.True(usp.IsRegistered<string>());
+        }
     }
 }
