@@ -79,6 +79,8 @@ namespace UnityAddon.Core.Context
 
             PostRegistry();
 
+            ApplicationSP.GetServices<IContextPostRegistryInitiable>().ToList().ForEach(init => init.Initialize());
+
             PreInstantiateSingleton();
 
             return CoreContainer.Resolve<IUnityAddonSP>();

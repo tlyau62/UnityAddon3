@@ -7,12 +7,13 @@ using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean.Config;
+using UnityAddon.Core.Context;
 using UnityAddon.Core.Exceptions;
 using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core.Bean.DependencyInjection
 {
-    public class DependencyResolver
+    public class DependencyResolver : IContextPostRegistryInitiable
     {
         private IDictionary<Type, object> _resolveStrategies;
 
@@ -27,7 +28,7 @@ namespace UnityAddon.Core.Bean.DependencyInjection
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 
-        public void Init()
+        public void Initialize()
         {
             foreach (var option in Sp.GetServices<DependencyResolverOption>())
             {

@@ -19,7 +19,7 @@ namespace UnityAddon.Core.Aop
     /// <summary>
     /// Hold all the aop interceptors scanned after component scanning.
     /// </summary>
-    public class AopInterceptorContainer
+    public class AopInterceptorContainer : IContextPostRegistryInitiable
     {
         [Dependency]
         public IServicePostRegistry ServicePostRegistry { get; set; }
@@ -29,15 +29,8 @@ namespace UnityAddon.Core.Aop
 
         private IDictionary<Type, IEnumerable<IInterceptor>> _interceptorMap = new Dictionary<Type, IEnumerable<IInterceptor>>();
 
-        private bool _isInit = false;
-
-        public void Init()
+        public void Initialize()
         {
-            if (_isInit)
-            {
-                throw new InvalidOperationException("Can only initialized once");
-            }
-
             var interceptorMaps = Sp.GetServices<AopInterceptorOption>()
                 .Select(option => option.InterceptorMap);
             IDictionary<Type, IList<Type>> interceptorMap = new Dictionary<Type, IList<Type>>();
@@ -45,19 +38,19 @@ namespace UnityAddon.Core.Aop
             if (interceptorMaps.Count() > 0)
             {
                 interceptorMap = interceptorMaps.Aggregate((a, map) =>
-                 {
-                     foreach (var entry in map)
-                     {
-                         a.Add(entry.Key, entry.Value);
-                     }
+                {
+                    foreach (var entry in map)
+                    {
+                        a.Add(entry.Key, entry.Value);
+                    }
 
-                     return a;
-                 });
+                    return a;
+                });
             }
 
-            _interceptorMap = interceptorMap.ToDictionary(
-                e => e.Key,
-                e => e.Value.Select(t =>
+            foreach (var entry in interceptorMap)
+            {
+                _interceptorMap[entry.Key] = entry.Value.Select(t =>
                 {
                     if (!Sp.IsRegistered(t))
                     {
@@ -65,10 +58,8 @@ namespace UnityAddon.Core.Aop
                     }
 
                     return (IInterceptor)Sp.GetRequiredService(t);
-                }));
-
-
-            _isInit = true;
+                });
+            }
         }
 
         /// <summary>
