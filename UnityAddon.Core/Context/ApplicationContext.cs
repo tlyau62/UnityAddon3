@@ -40,6 +40,8 @@ namespace UnityAddon.Core.Context
 
         public BeanDefinitionRegistry BeanDefinitionRegistry => CoreContainer.Resolve<BeanDefinitionRegistry>();
 
+        public BeanDefintionCandidateSelector BeanDefintionCandidateSelector => CoreContainer.Resolve<BeanDefintionCandidateSelector>();
+
         public void ConfigureBeans(Action<IBeanDefinitionCollection> config)
         {
             var defCol = new BeanDefinitionCollection();
@@ -53,6 +55,11 @@ namespace UnityAddon.Core.Context
         {
             foreach (var beanDef in defCollection)
             {
+                if (!BeanDefintionCandidateSelector.Filter(beanDef))
+                {
+                    continue;
+                }
+
                 BeanDefinitionContainer.RegisterBeanDefinition(beanDef);
                 ApplicationSP.UnityContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(new UnityAddonSP(c), t, n), (IFactoryLifetimeManager)beanDef.Scope);
             }
@@ -63,10 +70,6 @@ namespace UnityAddon.Core.Context
             ApplicationSP.UnityContainer.AddExtension(CoreContainer.Resolve<BeanBuildStrategyExtension>());
 
             ConfigureBeans(config => config.AddFromUnityContainer(CoreContainer));
-
-            //// beandefintion candidate selector
-            //ConfigureBeans((config, sp) =>
-            //    config.AddSingleton<BeanDefintionCandidateSelector, BeanDefintionCandidateSelector>(), ApplicationContextEntryOrder.AppPreConfig);
 
             ApplicationSP.UnityContainer.AddExtension(CoreContainer.Resolve<AopBuildStrategyExtension>());
 

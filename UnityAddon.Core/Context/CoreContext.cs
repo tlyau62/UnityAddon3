@@ -1,4 +1,5 @@
 ﻿using Castle.DynamicProxy;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -80,6 +81,17 @@ namespace UnityAddon.Core.Context
             Container
                 .RegisterFactory<IContextPostRegistryInitiable>("DependencyResolver", c => c.Resolve<DependencyResolver>(), new SingletonLifetimeManager())
                 .RegisterFactory<IContextPostRegistryInitiable>("AopInterceptorContainer", c => c.Resolve<AopInterceptorContainer>(), new SingletonLifetimeManager());
+
+            var configBuilder = new ConfigurationBuilder();
+
+            configBuilder.AddEnvironmentVariables();
+            configBuilder.AddJsonFile("appsettings.json", true);
+
+            Container
+                .RegisterInstance<IConfiguration>(configBuilder.Build());
+
+            Container
+                .RegisterType<BeanDefintionCandidateSelector>(new SingletonLifetimeManager());
         }
 
     }

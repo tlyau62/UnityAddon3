@@ -56,6 +56,7 @@
     <Compile Include="Bean\NonGenericBean\NonGenericBeanTests.cs" />
     <Compile Include="Bean\PrimaryBean\PrimaryBeanTests.cs" />
     <Compile Include="Bean\PrimitiveBean\PrimitiveBeanTests.cs" />
+    <Compile Include="Bean\ProfileBean\ProfileBeanTests.cs" />
     <Compile Include="Bean\QualifiedBean\QualifiedBeanTests.cs" />
     <Compile Include="Bean\SingletonBean\SingletonBeanTests.cs" />
     <Compile Include="Bean\TransientBean\TransientBeanTests.cs" />
