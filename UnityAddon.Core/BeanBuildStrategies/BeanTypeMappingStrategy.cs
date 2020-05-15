@@ -22,6 +22,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
         public override void PreBuildUp(ref BuilderContext context)
         {
             object resolved = null;
+            bool isResolved = false;
             var exists = false;
             var container = context.Container;
 
@@ -34,6 +35,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
                 if (context.Type != beanDef.Type || context.Name != beanDef.Name)
                 {
                     resolved = context.Container.Resolve(beanDef.Type, beanDef.Name);
+                    isResolved = true;
                 }
             }
             else if (context.Type.IsGenericType && BeanDefinitionContainer.HasBeanDefinition(context.Type.GetGenericTypeDefinition(), context.Name))
@@ -47,6 +49,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
                 if (context.Type.GetGenericTypeDefinition() != beanDef.Type || context.Name != beanDef.Name)
                 {
                     resolved = context.Container.Resolve(makeGenericType, beanDef.Name);
+                    isResolved = true;
                 }
             }
             else if (context.Type.IsGenericType && context.Type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
@@ -59,9 +62,10 @@ namespace UnityAddon.Core.BeanBuildStrategies
                 Array.Copy(beanDefs.Select(def => container.Resolve(def.Type, def.Name)).ToArray(), array, beanDefs.Count());
 
                 resolved = array;
+                isResolved = true;
             }
 
-            if (resolved != null || !exists)
+            if (isResolved || !exists)
             {
                 context.Existing = resolved;
                 context.BuildComplete = true;

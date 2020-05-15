@@ -14,9 +14,30 @@ using UnityAddon.EfTest.Common;
 using UnityAddon.Core.Util.ComponentScanning;
 using Xunit;
 using Microsoft.Extensions.DependencyInjection;
+using UnityAddon.Ef.RollbackLogics;
 
 namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
 {
+    [Configuration]
+    public class CustomRollbackLogicConfig : UnityAddonEfCustomConfig
+    {
+        public override RollbackLogicOption RollbackLogicOption()
+        {
+            var option = new RollbackLogicOption();
+
+            // rollback depends on GenericResult<T> any type T
+            option.RegisterRollbackLogic(typeof(GenericResult<>), returnValue => !((dynamic)returnValue).IsSuccess);
+
+            // rollback depends on Result
+            option.RegisterRollbackLogic<Result>(returnValue => !((TestResult)returnValue).IsSuccess);
+
+            // rollback depends on ConcreteGenericResult<string> only
+            option.RegisterRollbackLogic<ConcreteGenericResult<string>>(returnValue => !returnValue.IsSuccess);
+
+            return option;
+        }
+    }
+
     [ComponentScan]
     [Import(typeof(UnityAddonEfConfig))]
     [Import(typeof(TestDbConfig<TestDbContext>))]
@@ -32,21 +53,6 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
         public ApplicationContext ApplicationContext { get; set; }
 
         private DbSet<Item> _items => (DbContextFactory.IsOpen() ? DbContextFactory.Get() : DbContextFactory.Open()).Items;
-
-        public CustomRollbackLogicTests()
-        {
-            ApplicationContext.ConfigureContext<DbContextTemplateOption>(option =>
-            {
-                // rollback depends on GenericResult<T> any type T
-                option.RegisterRollbackLogic(typeof(GenericResult<>), returnValue => !((dynamic)returnValue).IsSuccess);
-
-                // rollback depends on Result
-                option.RegisterRollbackLogic<Result>(returnValue => !((TestResult)returnValue).IsSuccess);
-
-                // rollback depends on ConcreteGenericResult<string> only
-                option.RegisterRollbackLogic<ConcreteGenericResult<string>>(returnValue => !returnValue.IsSuccess);
-            });
-        }
 
         [Theory]
         [InlineData(true)]

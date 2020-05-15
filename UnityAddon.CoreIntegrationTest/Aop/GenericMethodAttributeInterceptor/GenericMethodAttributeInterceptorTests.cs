@@ -8,33 +8,32 @@ using UnityAddon.Core.Aop;
 using UnityAddon.Core.Context;
 using Xunit;
 using UnityAddon.Core.Util.ComponentScanning;
+using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.CoreTest.Aop.GenericMethodAttributeInterceptor
 {
-    public class GenericMethodAttributeInterceptorTests
+    [Configuration]
+    public class GenericMethodAttributeConfig : AopInterceptorConfig
+    {
+        [Bean]
+        public override AopInterceptorOption AopInterceptorOption()
+        {
+            var aopInterceptorOption = new AopInterceptorOption();
+
+            aopInterceptorOption.AddAopIntercetor<IncInterceptor>();
+
+            return aopInterceptorOption;
+        }
+    }
+
+    [ComponentScan]
+    public class GenericMethodAttributeInterceptorTests : UnityAddonTest
     {
         [Dependency]
         public IService Service { get; set; }
 
         [Dependency]
         public Logger Logger { get; set; }
-
-        public GenericMethodAttributeInterceptorTests()
-        {
-            var host = new HostBuilder()
-                .RegisterUA()
-                .ConfigureContainer<ApplicationContext>(ctx =>
-                {
-                    ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace));
-                    ctx.ConfigureContext<AopInterceptorContainerOption>(option =>
-                    {
-                        option.AddAopIntercetor<IncInterceptor>();
-                    });
-                })
-                .Build();
-
-            ((IUnityAddonSP)host.Services).BuildUp(this);
-        }
 
         [Fact]
         public void GenericMethodAttributeInterceptor()

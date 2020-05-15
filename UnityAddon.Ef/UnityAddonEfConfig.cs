@@ -13,23 +13,23 @@ using UnityAddon.Core.Util.ComponentScanning;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.BeanDefinition;
-using UnityAddon.Core.Bean.Config;
+using UnityAddon.Ef.RollbackLogics;
+using UnityAddon.Ef.TransactionInterceptor;
 
 namespace UnityAddon.Ef
 {
-    public class UnityAddonEfConfig
+    public class UnityAddonEfConfig : AopInterceptorConfig
     {
-        [Dependency]
-        public ApplicationContext ApplicationContext { get; set; }
-
-        [PostConstruct]
-        public void Setup()
+        [Bean]
+        public override AopInterceptorOption AopInterceptorOption()
         {
-            ApplicationContext.ConfigureContext<AopInterceptorContainerOption>(config =>
-            {
-                config.AddAopIntercetor<RequireDbContextInterceptor>()
-                    .AddAopIntercetor<RepositoryInterceptor>();
-            });
+            var option = new AopInterceptorOption();
+
+            option
+                .AddAopIntercetor<RequireDbContextInterceptor>()
+                .AddAopIntercetor<RepositoryInterceptor>();
+
+            return option;
         }
 
         [Bean]

@@ -43,6 +43,20 @@ namespace UnityAddon.CoreTest.Bean.InterfaceBean
         public string Log = "";
     }
 
+    [Configuration]
+    public class InterfaceBeanConfig : AopInterceptorConfig
+    {
+        [Bean]
+        public override AopInterceptorOption AopInterceptorOption()
+        {
+            var aopInterceptorOption = new AopInterceptorOption();
+
+            aopInterceptorOption.AddAopIntercetor<NoImplInterceptor>();
+
+            return aopInterceptorOption;
+        }
+    }
+
     [ComponentScan]
     public class InterfaceBeanTests : UnityAddonTest
     {
@@ -51,16 +65,6 @@ namespace UnityAddon.CoreTest.Bean.InterfaceBean
 
         [Dependency]
         public Logger Logger { get; set; }
-
-        public InterfaceBeanTests() : base(true)
-        {
-            HostBuilder
-                .ConfigureContainer<ApplicationContext>(ctx => ctx.ConfigureContext<AopInterceptorContainerOption>(option => option.AddAopIntercetor<NoImplInterceptor>()))
-                .Build()
-                .Services
-                .GetRequiredService<IUnityAddonSP>()
-                .BuildUp(this);
-        }
 
         [Fact]
         public void InterfaceBean()

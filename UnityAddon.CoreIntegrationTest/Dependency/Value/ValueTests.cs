@@ -13,12 +13,13 @@ using Xunit;
 using UnityAddon.Core.Util.ComponentScanning;
 using UnityAddon.Core.Context;
 using Microsoft.Extensions.DependencyInjection;
+using UnityAddon.Core.BeanDefinition;
 
 namespace UnityAddon.CoreTest.Dependency.Value
 {
     public enum ServiceType
     {
-        Print, Write
+        None, Print, Write
     }
 
     [Component]
@@ -28,30 +29,31 @@ namespace UnityAddon.CoreTest.Dependency.Value
         public ServiceType Type { get; set; }
     }
 
+    [Configuration]
+    public class ValueConfig
+    {
+        [Bean]
+        public virtual IConfiguration Config()
+        {
+            var confBuilder = new ConfigurationBuilder();
+
+            confBuilder.AddInMemoryCollection(new Dictionary<string, string> {
+                {"serviceType", "Write"}
+            });
+
+            return confBuilder.Build();
+        }
+    }
+
     [ComponentScan]
     public class ValueTests : UnityAddonTest
     {
-        public ValueTests() : base(true) { }
-
         [Dependency]
         public Service Service { get; set; }
 
         [Fact]
         public void Value()
         {
-            HostBuilder
-               .ConfigureAppConfiguration(config =>
-               {
-                   config.AddInMemoryCollection(new Dictionary<string, string>
-                    {
-                        {"serviceType", "Write"},
-                    });
-               })
-               .Build()
-               .Services
-               .GetRequiredService<IUnityAddonSP>()
-               .BuildUp(this);
-
             Assert.Equal(ServiceType.Write, Service.Type);
         }
     }

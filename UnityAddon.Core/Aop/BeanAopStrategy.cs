@@ -41,21 +41,31 @@ namespace UnityAddon.Core.BeanBuildStrategies
 
         public override void PostBuildUp(ref BuilderContext context)
         {
-            var interceptors = new List<IInterceptor>();
-
-            // class/interface interceptor
-            var classInterceptorsMap = AopInterceptorContainer.FindInterceptors(AttributeTargets.Class | AttributeTargets.Interface);
-
-            foreach (var attribute in context.Type.GetCustomAttributes(false))
+            if (context.Existing == null)
             {
-                if (classInterceptorsMap.ContainsKey(attribute.GetType()))
+                base.PostBuildUp(ref context);
+                return;
+            }
+
+            var interceptors = new List<IInterceptor>();
+            var types = GetUnproxiedTypes(context.Existing);
+
+            // class interceptor
+            var typeInterceptorsMap = AopInterceptorContainer.FindInterceptors(AttributeTargets.Class | AttributeTargets.Interface);
+
+            foreach (var type in types)
+            {
+                foreach (var attribute in type.GetCustomAttributes(false))
                 {
-                    interceptors.AddRange(classInterceptorsMap[attribute.GetType()]);
+                    if (typeInterceptorsMap.ContainsKey(attribute.GetType()))
+                    {
+                        interceptors.AddRange(typeInterceptorsMap[attribute.GetType()]);
+                    }
                 }
             }
 
             // method interceptor
-            if (IsMethodBootstrapInterceptorNeeded(context.Type))
+            if (IsMethodBootstrapInterceptorNeeded(types))
             {
                 interceptors.Add(AopInterceptor);
             }
@@ -72,14 +82,19 @@ namespace UnityAddon.Core.BeanBuildStrategies
                 }
             }
 
+            if (ProxyUtil.IsProxy(context.Existing) && !HasInterceptors(context.Existing))
+            {
+                throw new InvalidOperationException($"No interceptor found for this proxy bean {context.Existing}.");
+            }
+
             base.PostBuildUp(ref context);
         }
 
-        private bool IsMethodBootstrapInterceptorNeeded(Type type)
+        private bool IsMethodBootstrapInterceptorNeeded(IEnumerable<Type> types)
         {
             var methodInterceptorsMap = AopInterceptorContainer.FindInterceptors(AttributeTargets.Method);
 
-            return MethodSelector.GetAllMethods(type)
+            return types.SelectMany(type => MethodSelector.GetAllMethods(type))
                 .SelectMany(m => m.GetCustomAttributes())
                 .Select(attr => attr.GetType())
                 .Any(attrType => methodInterceptorsMap.ContainsKey(attrType));
@@ -97,5 +112,26 @@ namespace UnityAddon.Core.BeanBuildStrategies
 
             field.SetValue(proxy, proxyInterceptors.ToList().Union(interceptors).ToArray());
         }
+
+        private static bool HasInterceptors(object proxy)
+        {
+            var field = (FieldInfo)proxy.GetType().GetMember("__interceptors", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(0);
+            var proxyInterceptors = (IInterceptor[])field.GetValue(proxy);
+
+            return proxyInterceptors.Length > 0;
+        }
+
+        private IEnumerable<Type> GetUnproxiedTypes(object instance)
+        {
+            var type = ProxyUtil.GetUnproxiedType(instance);
+
+            if (ProxyUtil.IsProxyType(type))
+            {
+                return type.GetInterfaces();
+            }
+
+            return new[] { type };
+        }
+
     }
 }

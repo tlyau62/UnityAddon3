@@ -12,31 +12,6 @@ namespace UnityAddon.Core.Bean.DependencyInjection
     {
         public IDictionary<Type, object> ResolveStrategies { get; } = new Dictionary<Type, object>();
 
-        public DependencyResolverOption() : this(true)
-        {
-        }
-
-        public DependencyResolverOption(bool useDefault)
-        {
-            if (useDefault)
-            {
-                AddInternalResolveStrategies();
-            }
-        }
-
-        protected void AddInternalResolveStrategies()
-        {
-            AddResolveStrategy<DependencyAttribute>((type, attr, sp) =>
-            {
-                return sp.GetRequiredService(type, attr.Name);
-            });
-
-            AddResolveStrategy<OptionalDependencyAttribute>((type, attr, sp) =>
-            {
-                return sp.GetService(type, attr.Name);
-            });
-        }
-
         public void AddResolveStrategy<TAttribute>(Func<Type, TAttribute, IUnityAddonSP, object> strategy) where TAttribute : Attribute
         {
             ResolveStrategies[typeof(TAttribute)] = strategy;

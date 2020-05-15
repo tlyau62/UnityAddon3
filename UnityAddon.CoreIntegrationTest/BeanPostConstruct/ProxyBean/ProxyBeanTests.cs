@@ -58,11 +58,22 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.ProxyBean
         }
     }
 
+    [Configuration]
+    public class ProxyBeanConfig : AopInterceptorConfig
+    {
+        public override AopInterceptorOption AopInterceptorOption()
+        {
+            var option = new AopInterceptorOption();
+
+            option.AddAopIntercetor<IncInterceptor>();
+
+            return option;
+        }
+    }
+
     [ComponentScan]
     public class ProxyBeanTests : UnityAddonTest
     {
-        public ProxyBeanTests() : base(true) { }
-
         [Dependency]
         public IService Service { get; set; }
 
@@ -72,19 +83,6 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.ProxyBean
         [Fact]
         public void ProxyBean()
         {
-            HostBuilder
-                .ConfigureContainer<ApplicationContext>(ctx =>
-                {
-                    ctx.ConfigureContext<AopInterceptorContainerOption>(option =>
-                    {
-                        option.AddAopIntercetor<IncInterceptor>();
-                    });
-                })
-                .Build()
-                .Services
-                .GetRequiredService<IUnityAddonSP>()
-                .BuildUp(this);
-
             Assert.Equal(1, Counter.Count);
         }
     }

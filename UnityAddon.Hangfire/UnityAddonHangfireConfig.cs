@@ -17,24 +17,27 @@ namespace UnityAddon.Hangfire
 {
     public class UnityAddonHangfireConfig
     {
-        [Dependency]
-        public ApplicationContext ApplicationContext { get; set; }
-
-        [PostConstruct]
-        public void Init()
+        [Bean]
+        public virtual DependencyResolverOption DependencyResolverOption()
         {
-            ApplicationContext.ConfigureContext<DependencyResolverOption>(option =>
+            var option = new DependencyResolverOption();
+
+            option.AddResolveStrategy<HangfireProxyAttribute>((t, n, sp) =>
             {
-                option.AddResolveStrategy<HangfireProxyAttribute>((t, n, sp) =>
-                {
-                    return sp.GetRequiredService(t, t.Name);
-                });
+                return sp.GetRequiredService(t, t.Name);
             });
 
-            ApplicationContext.ConfigureContext<AopInterceptorContainerOption>(option =>
-            {
-                option.AddAopIntercetor<HangfireProxyInterceptor>();
-            });
+            return option;
+        }
+
+        [Bean]
+        public virtual AopInterceptorOption AopInterceptorOption()
+        {
+            var option = new AopInterceptorOption();
+
+            option.AddAopIntercetor<HangfireProxyInterceptor>();
+
+            return option;
         }
 
         [Bean]

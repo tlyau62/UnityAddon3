@@ -7,8 +7,10 @@ using System.Reflection;
 using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
-using UnityAddon.Core.Bean.Config;
+using UnityAddon.Core.Context;
 using UnityAddon.Core.Reflection;
+using UnityAddon.Ef.RollbackLogics;
+using UnityAddon.Ef.TransactionInterceptor;
 
 namespace UnityAddon.Ef.Transaction
 {
@@ -29,28 +31,38 @@ namespace UnityAddon.Ef.Transaction
     /// </summary>
     /// <typeparam name="TDbContext"></typeparam>
     [Component]
-    public class DbContextTemplate : IDbContextTemplate
+    public class DbContextTemplate : IDbContextTemplate, IContextPostRegistryInitiable
     {
         private static readonly MethodInfo LogicInvokerMethod = typeof(DbContextTemplate).GetMethod(nameof(LogicInvoker), BindingFlags.NonPublic | BindingFlags.Instance);
 
         private IDictionary<Type, List<object>> _rollbackLogics;
 
-        [Dependency]
-        public IConfigs<DbContextTemplateOption> DbCtxTemplateOption { get; set; }
+        [OptionalDependency]
+        public RollbackLogicOption RollbackLogicOption { get; set; }
+
+        [OptionalDependency]
+        public TransactionInterceptorOption TransactionInterceptorOption { get; set; }
 
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 
         [Dependency]
-        public TransactionInterceptorManager TxInterceptorManager { get; set; }
+        public IServicePostRegistry ServicePostRegistry { get; set; }
 
         [Dependency]
-        public ITransactionCallbacks TxCallbacks { get; set; }
+        public ITransactionCallbacks TransactionCallbacks { get; set; }
 
-        [PostConstruct]
-        public void Init()
+        public void Initialize()
         {
-            _rollbackLogics = DbCtxTemplateOption.Value.RollbackLogics;
+            _rollbackLogics = RollbackLogicOption == null ? new Dictionary<Type, List<object>>() : RollbackLogicOption.RollbackLogics;
+
+            if (TransactionInterceptorOption != null)
+            {
+                foreach (var itctType in TransactionInterceptorOption.TxInterceptors)
+                {
+                    ServicePostRegistry.AddSingleton(typeof(ITransactionInterceptor), itctType, null);
+                }
+            }
         }
 
         public TTxResult ExecuteQuery<TDbContext, TTxResult>(Func<TDbContext, TTxResult> query, string noModifyMsg) where TDbContext : DbContext
@@ -84,7 +96,9 @@ namespace UnityAddon.Ef.Transaction
                 }
 
                 var tx = ctx.Database.BeginTransaction();
-                TxInterceptorManager.ExecuteBeginCallbacks();
+                var txInterceptorManager = Sp.GetRequiredService<TransactionInterceptorManager>();
+
+                txInterceptorManager.ExecuteBeginCallbacks();
 
                 try
                 {
@@ -93,13 +107,13 @@ namespace UnityAddon.Ef.Transaction
                     if (TestRollback(result))
                     {
                         tx.Rollback();
-                        TxInterceptorManager.ExecuteRollbackCallbacks();
+                        txInterceptorManager.ExecuteRollbackCallbacks();
                     }
                     else
                     {
                         ctx.SaveChanges();
                         tx.Commit();
-                        TxInterceptorManager.ExecuteCommitCallbacks();
+                        txInterceptorManager.ExecuteCommitCallbacks();
                     }
 
                     return result;
@@ -107,7 +121,7 @@ namespace UnityAddon.Ef.Transaction
                 catch (Exception)
                 {
                     tx.Rollback();
-                    TxInterceptorManager.ExecuteRollbackCallbacks();
+                    txInterceptorManager.ExecuteRollbackCallbacks();
                     throw;
                 }
                 finally
@@ -216,7 +230,7 @@ namespace UnityAddon.Ef.Transaction
 
         public void RegisterTransactionCallback(Action callback)
         {
-            TxCallbacks.OnCommit(callback);
+            TransactionCallbacks.OnCommit(callback);
         }
 
     }

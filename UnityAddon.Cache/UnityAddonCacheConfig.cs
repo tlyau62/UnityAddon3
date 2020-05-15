@@ -19,17 +19,6 @@ namespace UnityAddon.Cache
         [Dependency]
         public ApplicationContext ApplicationContext { get; set; }
 
-        [PostConstruct]
-        public void Setup()
-        {
-            ApplicationContext.ConfigureContext<AopInterceptorContainerOption>(option =>
-            {
-                option
-                    .AddAopIntercetor<CacheInterceptor>()
-                    .AddAopIntercetor<InvalidateCacheInterceptor>();
-            });
-        }
-
         [Bean]
         public virtual IBeanDefinitionCollection EnableUnityAddonCache()
         {
@@ -42,6 +31,18 @@ namespace UnityAddon.Cache
             });
 
             return col;
+        }
+
+        [Bean]
+        public virtual AopInterceptorOption AopInterceptorOption()
+        {
+            var option = new AopInterceptorOption();
+
+            option
+                .AddAopIntercetor<CacheInterceptor>()
+                .AddAopIntercetor<InvalidateCacheInterceptor>();
+
+            return option;
         }
     }
 

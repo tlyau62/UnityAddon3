@@ -39,7 +39,11 @@ namespace UnityAddon.Core
         {
             var appCtx = new ApplicationContext(_container);
 
-            appCtx.ConfigureBeans((config, sp) => config.AddFromServiceCollection(services), ApplicationContextEntryOrder.NetAsp);
+            // asp core
+            appCtx.ConfigureBeans(config => config.AddFromServiceCollection(services));
+
+            // value provider
+            appCtx.ConfigureBeans(config => config.AddConfiguration<ValueConfig>());
 
             return appCtx;
         }
@@ -49,6 +53,8 @@ namespace UnityAddon.Core
             return appCtx.Build();
         }
     }
+
 }
+
 
 

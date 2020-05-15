@@ -4,6 +4,7 @@ using System.Text;
 using Unity;
 using Unity.Builder;
 using Unity.Extension;
+using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.Core.BeanBuildStrategies

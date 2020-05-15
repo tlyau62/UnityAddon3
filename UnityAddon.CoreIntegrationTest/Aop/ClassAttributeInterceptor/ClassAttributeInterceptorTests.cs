@@ -63,30 +63,28 @@ namespace UnityAddon.CoreTest.Aop.ClassAttributeInterceptor
         }
     }
 
-    public class ClassAttributeInterceptorTests
+    public class ClassAttributeAopConfig : AopInterceptorConfig
+    {
+        [Bean]
+        public override AopInterceptorOption AopInterceptorOption()
+        {
+            var option = new AopInterceptorOption();
+
+            option.AddAopIntercetor<IncInterceptor>();
+
+            return option;
+        }
+    }
+
+    [ComponentScan]
+    [Import(typeof(ClassAttributeAopConfig))]
+    public class ClassAttributeInterceptorTests : UnityAddonTest
     {
         [Dependency]
         public IService Service { get; set; }
 
         [Dependency]
         public Counter Counter { get; set; }
-
-        public ClassAttributeInterceptorTests()
-        {
-            var host = new HostBuilder()
-                .RegisterUA()
-                .ConfigureContainer<ApplicationContext>(ctx =>
-                {
-                    ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace));
-                    ctx.ConfigureContext<AopInterceptorContainerOption>(option =>
-                    {
-                        option.AddAopIntercetor<IncInterceptor>();
-                    });
-                })
-                .Build();
-
-            ((IUnityAddonSP)host.Services).BuildUp(this);
-        }
 
         [Fact]
         public void ClassAttributeInterceptor()

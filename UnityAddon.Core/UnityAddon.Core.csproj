@@ -4,9 +4,9 @@
     <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>2.2.0</AssemblyVersion>
-    <FileVersion>2.2.0</FileVersion>
-    <Version>2.2.0</Version>
+    <AssemblyVersion>2.3.0</AssemblyVersion>
+    <FileVersion>2.3.0</FileVersion>
+    <Version>2.3.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,6 +29,8 @@
     <Compile Remove="BeanBuildStrategies\BeanPostConstructStrategy.cs" />
     <Compile Remove="BeanBuildStrategies\BeanPostProcessorStrategy.cs" />
     <Compile Remove="Bean\ConfigurationFactory.cs" />
+    <Compile Remove="Context\ApplicationContextEntry.cs" />
+    <Compile Remove="Context\IAppContextEntry.cs" />
     <Compile Remove="UnityAddonContainer.cs" />
     <Compile Remove="UnityAddonContainerExt.cs" />
     <Compile Remove="UnityAddonVendor.cs" />
@@ -56,10 +58,6 @@
     <PackageReference Include="System.Runtime" Version="4.3.1" />
     <PackageReference Include="Unity" Version="5.11.4" />
     <PackageReference Include="Unity.Microsoft.DependencyInjection" Version="5.11.5" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Configs\" />
   </ItemGroup>
 
   <PropertyGroup>
