@@ -39,7 +39,7 @@ namespace UnityAddon.Core.Bean
                 var beanDef = DefContainer.GetAllBeanDefinitions(method.ReturnType)
                     .Where(def => def is MemberMethodBeanDefinition)
                     .Cast<MemberMethodBeanDefinition>()
-                    .Where(def => def.Method == invocation.Method)
+                    .Where(def => def.Method == invocation.MethodInvocationTarget)
                     .Single();
 
                 lock (_lockObj)
