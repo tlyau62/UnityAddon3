@@ -12,26 +12,14 @@ namespace UnityAddon.Core.Reflection
     /// </summary>
     public static class MethodSelector
     {
-        public static IEnumerable<MethodInfo> GetAllMethodsByAttribute<TAttribute>(Type type, bool isInherited = false) where TAttribute : Attribute
+        public static IEnumerable<MethodInfo> GetAllMethodsByAttribute<TAttribute>(Type type) where TAttribute : Attribute
         {
-            return GetAllMethods(type).Where(m => m.HasAttribute<TAttribute>(isInherited));
+            return GetAllMethods(type).Where(m => m.GetCustomAttributes().Any(attr => attr is TAttribute));
         }
 
-        public static IEnumerable<MethodInfo> GetAllMethods(Type type)
+        public static IEnumerable<MethodInfo> GetAllMethods(Type type, BindingFlags flags = BindingFlags.Default)
         {
-            ISet<MethodInfo> methods = new HashSet<MethodInfo>();
-
-            while (type != null)
-            {
-                foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
-                {
-                    methods.Add(method);
-                }
-
-                type = type.BaseType;
-            }
-
-            return methods;
+            return type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy | flags);
         }
     }
 }

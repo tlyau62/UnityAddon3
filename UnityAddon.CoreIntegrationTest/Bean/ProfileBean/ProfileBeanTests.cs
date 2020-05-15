@@ -46,13 +46,9 @@ namespace UnityAddon.CoreTest.Dependency.Bean.ProfileBean
         [InlineData("dev", typeof(DevService))]
         public void ProfileBean(string activeProfile, Type resolveType)
         {
-            HostBuilder.ConfigureAppConfiguration(config =>
-            {
-                config.AddInMemoryCollection(new Dictionary<string, string>
-                    {
-                        {"profiles:active", activeProfile},
-                    });
-            }).Build().Services.GetRequiredService<IUnityAddonSP>().BuildUp(this);
+            Environment.SetEnvironmentVariable("UNITY_ADDON_PROFILES", activeProfile);
+
+            HostBuilder.Build().Services.GetRequiredService<IUnityAddonSP>().BuildUp(this);
 
             Assert.IsType(resolveType, Service);
         }

@@ -7,7 +7,6 @@ using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
-using UnityAddon.Core.Bean.Config;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.Reflection;
 using UnityAddon.Ef.Transaction;
@@ -27,16 +26,16 @@ namespace UnityAddon.Ef
         [Dependency]
         public IBeanDefinitionContainer BeanDefinitionContainer { get; set; }
 
-        [Dependency]
-        public IConfigs<DbContextTemplateOption> DbContextTemplateOption { get; set; }
+        [OptionalDependency("DataSource")]
+        public Type DataSource { get; set; }
 
         public Type GlobalDataSource
         {
             get
             {
-                if (DbContextTemplateOption.Value.GlobalDataSource != null)
+                if (DataSource != null)
                 {
-                    return DbContextTemplateOption.Value.GlobalDataSource;
+                    return DataSource;
                 }
 
                 var datasources = DataSources;

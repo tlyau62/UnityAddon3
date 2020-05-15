@@ -15,6 +15,16 @@ using UnityAddon.Ef.Transaction;
 
 namespace UnityAddon.EfTest.MultipleContext
 {
+    [Configuration]
+    public class MultipleContextConfig : UnityAddonEfCustomConfig
+    {
+        [Bean]
+        public override Type DataSource()
+        {
+            return typeof(TestDbContext);
+        }
+    }
+
     [ComponentScan]
     [Import(typeof(UnityAddonEfConfig))]
     [Import(typeof(TestDbConfig<TestDbContext>))]
@@ -29,17 +39,6 @@ namespace UnityAddon.EfTest.MultipleContext
 
         [Dependency]
         public IRepo Repo { get; set; }
-
-        [Dependency]
-        public ApplicationContext ApplicationContext { get; set; }
-
-        public MultipleContextTests()
-        {
-            ApplicationContext.ConfigureContext<DbContextTemplateOption>(option =>
-            {
-                option.GlobalDataSource = typeof(TestDbContext);
-            });
-        }
 
         [Fact]
         public void RepositoryInterceptor_InsertItemsOnMultipleDbContext_ItemsInserted()

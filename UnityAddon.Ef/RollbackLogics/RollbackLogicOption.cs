@@ -1,19 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Unity;
-using UnityAddon.Core;
 
-namespace UnityAddon.Ef.Transaction
+namespace UnityAddon.Ef.RollbackLogics
 {
-    public class DbContextTemplateOption
+    public class RollbackLogicOption
     {
         public IDictionary<Type, List<object>> RollbackLogics { get; } = new Dictionary<Type, List<object>>();
-
-        public IList<Type> TxInterceptors { get; } = new List<Type>();
-
-        public Type GlobalDataSource { get; set; }
 
         public void RegisterRollbackLogic<TReturn>(Func<TReturn, bool> rollbackLogic)
         {
@@ -33,11 +26,6 @@ namespace UnityAddon.Ef.Transaction
             }
 
             RollbackLogics[returnType].Add(rollbackLogic);
-        }
-
-        public void AddTransactionInterceptor<TTransactionInterceptor>() where TTransactionInterceptor : ITransactionInterceptor
-        {
-            TxInterceptors.Add(typeof(TTransactionInterceptor));
         }
     }
 }

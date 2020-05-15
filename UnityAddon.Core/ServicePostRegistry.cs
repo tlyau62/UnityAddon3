@@ -31,9 +31,7 @@ namespace UnityAddon.Core
 
         public override void Add(IBeanDefinition beanDefinition)
         {
-            AppContext.ConfigureBeans((config, sp) => config.Add(beanDefinition));
-
-            AppContext.Refresh();
+            AppContext.ConfigureBeans(config => config.Add(beanDefinition));
         }
 
         public void Unregister(Type type, string name)

@@ -20,27 +20,23 @@ namespace UnityAddon.Moq
 {
     public class UnityAddonMoqConfig
     {
-        [Dependency]
-        public ApplicationContext ApplicationContext { get; set; }
-
         [Dependency("UAMoqPartial")]
         public bool Partial { get; set; }
 
-        public UnityAddonTest Testcase { get; set; }
-
-        [PostConstruct]
-        public void Setup()
+        [Bean]
+        public virtual DependencyResolverOption DependencyResolverOption()
         {
-            ApplicationContext.ConfigureContext<DependencyResolverOption>(option =>
-            {
-                option.AddResolveStrategy<MockAttribute>((type, attr, sp) => sp.GetRequiredService(type));
-                option.AddResolveStrategy<TestSubjectAttribute>((type, attr, sp) => sp.GetRequiredService(type));
+            var option = new DependencyResolverOption();
 
-                if (Partial)
-                {
-                    option.AddResolveStrategy<DependencyAttribute>((type, attr, sp) => sp.GetService(type, attr.Name));
-                }
-            });
+            option.AddResolveStrategy<MockAttribute>((type, attr, sp) => sp.GetRequiredService(type));
+            option.AddResolveStrategy<TestSubjectAttribute>((type, attr, sp) => sp.GetRequiredService(type));
+
+            if (Partial)
+            {
+                option.AddResolveStrategy<DependencyAttribute>((type, attr, sp) => sp.GetService(type, attr.Name));
+            }
+
+            return option;
         }
 
         [Bean]

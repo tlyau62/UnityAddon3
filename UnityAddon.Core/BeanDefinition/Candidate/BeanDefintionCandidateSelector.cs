@@ -6,7 +6,6 @@ using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
-using UnityAddon.Core.Bean.Config;
 using UnityAddon.Core.BeanDefinition;
 
 namespace UnityAddon.Core.BeanDefinition
@@ -17,18 +16,17 @@ namespace UnityAddon.Core.BeanDefinition
     /// </summary>
     public class BeanDefintionCandidateSelector
     {
-        private readonly IConfiguration _configuration;
+        private readonly List<IBeanDefinitionCandidateFilter> _includeFilters = new List<IBeanDefinitionCandidateFilter>();
 
-        private readonly IEnumerable<IBeanDefinitionCandidateFilter> _includeFilters;
+        private readonly List<IBeanDefinitionCandidateFilter> _excludeFilters = new List<IBeanDefinitionCandidateFilter>();
 
-        private readonly IEnumerable<IBeanDefinitionCandidateFilter> _excludeFilters;
-
-        public BeanDefintionCandidateSelector(IConfigs<BeanDefintionCandidateSelectorOption> option, [OptionalDependency]IConfiguration configuration)
+        public BeanDefintionCandidateSelector()
         {
-            _includeFilters = option.Value.IncludeFilters;
-            _excludeFilters = option.Value.ExcludeFilters;
-            _configuration = configuration;
+            _excludeFilters.Add(new InactiveProfileFilter());
         }
+
+        [Dependency]
+        public IConfiguration Configuration { get; set; }
 
         public IEnumerable<IBeanDefinition> Select(IEnumerable<IBeanDefinition> beanDefinitions)
         {
@@ -37,17 +35,12 @@ namespace UnityAddon.Core.BeanDefinition
 
         public bool Filter(IBeanDefinition definition)
         {
-            if (_configuration == null)
-            {
-                return true;
-            }
-
-            if (_excludeFilters.Any(f => f.IsMatch(definition, _configuration)))
+            if (_excludeFilters.Any(f => f.IsMatch(definition, Configuration)))
             {
                 return false;
             }
 
-            if (_includeFilters.Count() == 0 || _includeFilters.Any(f => f.IsMatch(definition, _configuration)))
+            if (_includeFilters.Count() == 0 || _includeFilters.Any(f => f.IsMatch(definition, Configuration)))
             {
                 return true;
             }

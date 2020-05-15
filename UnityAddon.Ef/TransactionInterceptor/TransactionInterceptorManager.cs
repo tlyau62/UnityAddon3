@@ -6,19 +6,16 @@ using System.Text;
 using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
-using UnityAddon.Core.Bean.Config;
+using UnityAddon.Core.Context;
+using UnityAddon.Ef.TransactionInterceptor;
 
 namespace UnityAddon.Ef.Transaction
 {
     [Component]
+    [Scope(ScopeType.Transient)]
     public class TransactionInterceptorManager
     {
         private readonly ILogger _logger = Log.ForContext<TransactionInterceptorManager>();
-
-        private IEnumerable<ITransactionInterceptor> _txInterceptors;
-
-        [Dependency]
-        public IConfigs<DbContextTemplateOption> DbCtxTemplateOption { get; set; }
 
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
@@ -26,27 +23,12 @@ namespace UnityAddon.Ef.Transaction
         [Dependency]
         public IServicePostRegistry PostRegistry { get; set; }
 
-        [PostConstruct]
-        public void Init()
-        {
-            Refresh(DbCtxTemplateOption.Value);
-
-            DbCtxTemplateOption.OnChange += Refresh;
-        }
-
-        public void Refresh(DbContextTemplateOption option)
-        {
-            foreach (var itctType in option.TxInterceptors)
-            {
-                PostRegistry.AddSingleton(typeof(ITransactionInterceptor), itctType, null);
-            }
-
-            _txInterceptors = Sp.GetServices<ITransactionInterceptor>();
-        }
+        [Dependency]
+        public IEnumerable<ITransactionInterceptor> TxInterceptors { get; set; }
 
         public void ExecuteBeginCallbacks()
         {
-            foreach (var itr in _txInterceptors)
+            foreach (var itr in TxInterceptors)
             {
                 itr.Begin();
             }
@@ -54,7 +36,7 @@ namespace UnityAddon.Ef.Transaction
 
         public void ExecuteCommitCallbacks()
         {
-            foreach (var itr in _txInterceptors)
+            foreach (var itr in TxInterceptors)
             {
                 try
                 {
@@ -69,7 +51,7 @@ namespace UnityAddon.Ef.Transaction
 
         public void ExecuteRollbackCallbacks()
         {
-            foreach (var itr in _txInterceptors)
+            foreach (var itr in TxInterceptors)
             {
                 try
                 {

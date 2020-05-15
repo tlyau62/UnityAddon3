@@ -11,16 +11,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace UnityAddon.Core.Aop
 {
-    public class AopInterceptorContainerOption
+    public class AopInterceptorOption
     {
         public IDictionary<Type, IList<Type>> InterceptorMap { get; } // (attrtype, interceptor type)
 
-        public AopInterceptorContainerOption()
+        public AopInterceptorOption()
         {
             InterceptorMap = new Dictionary<Type, IList<Type>>();
         }
 
-        public AopInterceptorContainerOption AddAopIntercetor<TAopAttribute, TInterceptor>()
+        public AopInterceptorOption AddAopIntercetor<TAopAttribute, TInterceptor>()
             where TAopAttribute : Attribute
             where TInterceptor : IInterceptor
         {
@@ -29,7 +29,7 @@ namespace UnityAddon.Core.Aop
             return this;
         }
 
-        public AopInterceptorContainerOption AddAopIntercetor<TInterceptor>()
+        public AopInterceptorOption AddAopIntercetor<TInterceptor>()
             where TInterceptor : IInterceptor
         {
             var aopAttributes = typeof(TInterceptor).GetAllAttributes<AopAttributeAttribute>();

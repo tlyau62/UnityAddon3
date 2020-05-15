@@ -13,11 +13,27 @@ using UnityAddon.Core.Util.ComponentScanning;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Assert = Xunit.Assert;
+using UnityAddon.Core.Attributes;
 
 namespace UnityAddon.CoreTest.Aop.MethodAttributeInterceptor
 {
-    [Trait("Aop", "MethodAttributeInterceptor")]
-    public class MethodAttributeInterceptorTests
+    [Configuration]
+    public class MethodAttributeInterceptorConfig : AopInterceptorConfig
+    {
+        [Bean]
+        public override AopInterceptorOption AopInterceptorOption()
+        {
+            var aopInterceptorOption = new AopInterceptorOption();
+
+            aopInterceptorOption.AddAopIntercetor<IncInterceptor>();
+            aopInterceptorOption.AddAopIntercetor<MulInterceptor>();
+
+            return aopInterceptorOption;
+        }
+    }
+
+    [ComponentScan]
+    public class MethodAttributeInterceptorTests : UnityAddonTest
     {
         [Dependency]
         public IService Service { get; set; }
@@ -27,24 +43,6 @@ namespace UnityAddon.CoreTest.Aop.MethodAttributeInterceptor
 
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
-
-        public MethodAttributeInterceptorTests()
-        {
-            var host = new HostBuilder()
-                .RegisterUA()
-                .ConfigureContainer<ApplicationContext>(ctx =>
-                {
-                    ctx.ConfigureBeans((config, sp) => config.AddFromComponentScanner(GetType().Assembly, GetType().Namespace));
-                    ctx.ConfigureContext<AopInterceptorContainerOption>(option =>
-                    {
-                        option.AddAopIntercetor<IncInterceptor>();
-                        option.AddAopIntercetor<MulInterceptor>();
-                    });
-                })
-                .Build();
-
-            ((IUnityAddonSP)host.Services).BuildUp(this);
-        }
 
         [Fact]
         public void BeanInterceptionStrategy_ChainInterceptors_AllInterceptorsAndTargetMethodAreExecuted()

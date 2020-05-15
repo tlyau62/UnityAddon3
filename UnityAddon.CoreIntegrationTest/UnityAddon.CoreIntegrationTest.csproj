@@ -8,34 +8,28 @@
 
   <ItemGroup>
     <Compile Remove="Aop\**" />
+    <Compile Remove="BeanPostConstruct\ProxyBean\**" />
     <Compile Remove="BeanPostProcessor\**" />
-    <Compile Remove="Bean\GenericBean\GenericDefinitionBean\**" />
-    <Compile Remove="Bean\HostServiceBean\**" />
-    <Compile Remove="Bean\InterfaceBean\**" />
-    <Compile Remove="Bean\ProfileBean\**" />
-    <Compile Remove="Bean\TransientBean\**" />
+    <Compile Remove="BeanRegistry\ComponentScan\**" />
+    <Compile Remove="Bean\**" />
     <Compile Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
     <Compile Remove="Properties\PublishProfiles\**" />
     <Compile Remove="Util\**" />
     <Compile Remove="Value\**" />
     <EmbeddedResource Remove="Aop\**" />
+    <EmbeddedResource Remove="BeanPostConstruct\ProxyBean\**" />
     <EmbeddedResource Remove="BeanPostProcessor\**" />
-    <EmbeddedResource Remove="Bean\GenericBean\GenericDefinitionBean\**" />
-    <EmbeddedResource Remove="Bean\HostServiceBean\**" />
-    <EmbeddedResource Remove="Bean\InterfaceBean\**" />
-    <EmbeddedResource Remove="Bean\ProfileBean\**" />
-    <EmbeddedResource Remove="Bean\TransientBean\**" />
+    <EmbeddedResource Remove="BeanRegistry\ComponentScan\**" />
+    <EmbeddedResource Remove="Bean\**" />
     <EmbeddedResource Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
     <EmbeddedResource Remove="Properties\PublishProfiles\**" />
     <EmbeddedResource Remove="Util\**" />
     <EmbeddedResource Remove="Value\**" />
     <None Remove="Aop\**" />
+    <None Remove="BeanPostConstruct\ProxyBean\**" />
     <None Remove="BeanPostProcessor\**" />
-    <None Remove="Bean\GenericBean\GenericDefinitionBean\**" />
-    <None Remove="Bean\HostServiceBean\**" />
-    <None Remove="Bean\InterfaceBean\**" />
-    <None Remove="Bean\ProfileBean\**" />
-    <None Remove="Bean\TransientBean\**" />
+    <None Remove="BeanRegistry\ComponentScan\**" />
+    <None Remove="Bean\**" />
     <None Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
     <None Remove="Properties\PublishProfiles\**" />
     <None Remove="Util\**" />
@@ -43,10 +37,28 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Aop\ClassAttributeInterceptor\ClassAttributeInterceptorTests.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\Attributes.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\Components.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\GenericMethodAttributeInterceptorTests.cs" />
+    <Compile Include="Aop\GenericMethodAttributeInterceptor\Interceptors.cs" />
+    <Compile Include="Aop\MethodAttributeInterceptor\Attributes.cs" />
+    <Compile Include="Aop\MethodAttributeInterceptor\Components.cs" />
+    <Compile Include="Aop\MethodAttributeInterceptor\Interceptors.cs" />
+    <Compile Include="Aop\MethodAttributeInterceptor\MethodAttributeInterceptorTests.cs" />
+    <Compile Include="BeanPostConstruct\ProxyBean\ProxyBeanTests.cs" />
+    <Compile Include="Bean\GenericBean\ConcreteGenericBean\ConcreteGenericBeanTests.cs" />
     <Compile Include="Bean\GenericBean\GenericDefinitionBean\GenericDefinitionBeanTests.cs" />
+    <Compile Include="Bean\GenericBean\MixGenericBean\MixGenericBeanTests.cs" />
+    <Compile Include="Bean\GuidBean\GuidBeanTests.cs" />
     <Compile Include="Bean\HostServiceBean\HostServiceTests.cs" />
     <Compile Include="Bean\InterfaceBean\InterfaceBeanTests.cs" />
+    <Compile Include="Bean\NonGenericBean\NonGenericBeanTests.cs" />
+    <Compile Include="Bean\PrimaryBean\PrimaryBeanTests.cs" />
+    <Compile Include="Bean\PrimitiveBean\PrimitiveBeanTests.cs" />
     <Compile Include="Bean\ProfileBean\ProfileBeanTests.cs" />
+    <Compile Include="Bean\QualifiedBean\QualifiedBeanTests.cs" />
+    <Compile Include="Bean\SingletonBean\SingletonBeanTests.cs" />
     <Compile Include="Bean\TransientBean\TransientBeanTests.cs" />
   </ItemGroup>
 

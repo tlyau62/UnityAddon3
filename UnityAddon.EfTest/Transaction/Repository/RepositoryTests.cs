@@ -7,7 +7,6 @@ using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
-using UnityAddon.Core.Bean.Config;
 using UnityAddon.Ef;
 using UnityAddon.EfTest.Common;
 using Xunit;

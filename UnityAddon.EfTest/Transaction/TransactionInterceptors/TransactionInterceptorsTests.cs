@@ -11,6 +11,7 @@ using UnityAddon.Ef.Transaction;
 using UnityAddon.EfTest.Common;
 using UnityAddon.Core.Util.ComponentScanning;
 using Xunit;
+using UnityAddon.Ef.TransactionInterceptor;
 
 namespace UnityAddon.EfTest.Transaction.TransactionInterceptors
 {
@@ -42,18 +43,16 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptors
     }
 
     [Configuration]
-    public class TransactionInterceptorsTestsConfig
+    public class TransactionInterceptorsTestsConfig : UnityAddonEfCustomConfig
     {
-        [Dependency]
-        public ApplicationContext ApplicationContext { get; set; }
-
-        [PostConstruct]
-        public void Setup()
+        [Bean]
+        public override TransactionInterceptorOption TransactionInterceptorOption()
         {
-            ApplicationContext.ConfigureContext<DbContextTemplateOption>(option =>
-            {
-                option.AddTransactionInterceptor<TestTxInterceptor>();
-            });
+            var option = new TransactionInterceptorOption();
+
+            option.AddTransactionInterceptor<TestTxInterceptor>();
+
+            return option;
         }
     }
 

@@ -1,5 +1,4 @@
-﻿using C5;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections;
@@ -12,11 +11,11 @@ using Unity.Lifetime;
 using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
-using UnityAddon.Core.Bean.Config;
 using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.BeanBuildStrategies;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.BeanDefinition.GeneralBean;
+using UnityAddon.Core.Reflection;
 using UnityAddon.Core.Thread;
 using UnityAddon.Core.Value;
 
@@ -24,13 +23,7 @@ namespace UnityAddon.Core.Context
 {
     public class ApplicationContext
     {
-        private readonly IntervalHeap<ApplicationContextEntry> _entries = new IntervalHeap<ApplicationContextEntry>(Comparer<ApplicationContextEntry>.Create((a, b) => a.Order - b.Order));
-
         private readonly CoreContext _coreContext;
-
-        private bool _isRefreshing = false;
-
-        private System.Collections.Generic.HashSet<IBeanDefinitionCollection> HashSet { get; set; } = new System.Collections.Generic.HashSet<IBeanDefinitionCollection>();
 
         public ApplicationContext(IUnityContainer appContainer)
         {
@@ -45,155 +38,68 @@ namespace UnityAddon.Core.Context
 
         public ConfigurationRegistry ConfigurationRegistry => CoreContainer.Resolve<ConfigurationRegistry>();
 
-        public void AddContextEntry(Action<ApplicationContextEntry> entryConfig)
+        public BeanDefinitionRegistry BeanDefinitionRegistry => CoreContainer.Resolve<BeanDefinitionRegistry>();
+
+        public BeanDefintionCandidateSelector BeanDefintionCandidateSelector => CoreContainer.Resolve<BeanDefintionCandidateSelector>();
+
+        public void ConfigureBeans(Action<IBeanDefinitionCollection> config)
         {
-            var entry = new ApplicationContextEntry();
+            var defCol = new BeanDefinitionCollection();
 
-            entryConfig(entry);
+            config(defCol);
 
-            _entries.Add(entry);
+            ConfigureBeans(defCol);
         }
 
-        public void AddContextEntry(ApplicationContextEntry entry)
+        public void ConfigureBeans(IBeanDefinitionCollection defCollection)
         {
-            _entries.Add(entry);
-        }
-
-        public void ConfigureBeans(Action<IBeanDefinitionCollection, IUnityAddonSP> config)
-        {
-            ConfigureBeans(config, ApplicationContextEntryOrder.App);
-        }
-
-        public void ConfigureBeans(Action<IBeanDefinitionCollection, IUnityAddonSP> config, ApplicationContextEntryOrder order)
-        {
-            AddContextEntry(entry =>
+            foreach (var beanDef in defCollection)
             {
-                entry.Order = order;
-                entry.Process = sp =>
+                if (!BeanDefintionCandidateSelector.Filter(beanDef))
                 {
-                    var defCol = new BeanDefinitionCollection();
-                    var candidateSelector = ApplicationSP.GetService<BeanDefintionCandidateSelector>();
+                    continue;
+                }
 
-                    config(defCol, ApplicationSP);
-
-                    foreach (var beanDef in defCol)
-                    {
-                        if (!(candidateSelector?.Filter(beanDef) ?? true))
-                        {
-                            continue;
-                        }
-
-                        BeanDefinitionContainer.RegisterBeanDefinition(beanDef);
-                        ApplicationSP.UnityContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(new UnityAddonSP(c), t, n), (IFactoryLifetimeManager)beanDef.Scope);
-
-                        if (beanDef.Type == typeof(IBeanDefinitionCollection))
-                        {
-                            ConfigureBeans((config, sp) =>
-                            {
-                                config.AddFromExisting(ApplicationSP.GetRequiredService<IBeanDefinitionCollection>(beanDef.Name));
-                            }, ApplicationContextEntryOrder.BeanMethod);
-                        }
-                    }
-
-                    ConfigurationRegistry.RefreshConfigurations();
-                };
-
-            });
-        }
-
-        //public void AddContextEntry(IAppContainerBuilderEntry entry)
-        //{
-        //    var wrapEntry = new ApplicationContextEntry(entry.Order);
-
-        //    wrapEntry.PreProcess += (container) =>
-        //    {
-        //        entry.PreProcess(container);
-        //        entry.ConfigureBeanDefinitions(wrapEntry.BeanDefinitionCollection);
-        //    };
-        //    wrapEntry.PostProcess += (container) => entry.PostProcess(container);
-
-        //    _entries.Add(wrapEntry);
-        //}
-
-        public void ConfigureContext<TConfig>(Action<TConfig> config) where TConfig : class, new()
-        {
-            _coreContext.Configure(config);
-        }
-
-        public void Refresh()
-        {
-            if (_isRefreshing)
-            {
-                return;
+                BeanDefinitionContainer.RegisterBeanDefinition(beanDef);
+                ApplicationSP.UnityContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(new UnityAddonSP(c), t, n), (IFactoryLifetimeManager)beanDef.Scope);
             }
-
-            _isRefreshing = true;
-
-            while (_entries.Count > 0)
-            {
-                var min = _entries.DeleteMin();
-
-                min.Process(ApplicationSP);
-            }
-
-            _isRefreshing = false;
         }
 
         public IUnityAddonSP Build()
         {
             ApplicationSP.UnityContainer.AddExtension(CoreContainer.Resolve<BeanBuildStrategyExtension>());
 
-            ConfigureBeans((config, sp) => config.AddFromUnityContainer(CoreContainer), ApplicationContextEntryOrder.Intern);
+            ConfigureBeans(config => config.AddFromUnityContainer(CoreContainer));
 
-            // add value resolve logic
-            ConfigureBeans((config, sp) =>
-            {
-                if (!sp.IsRegistered<IConfiguration>())
-                {
-                    return;
-                }
-                config.AddSingleton<ValueProvider, ValueProvider>();
-                config.AddSingleton<ConfigBracketParser, ConfigBracketParser>();
+            ApplicationSP.UnityContainer.AddExtension(CoreContainer.Resolve<AopBuildStrategyExtension>());
 
-                ConfigureContext<DependencyResolverOption>(config
-                    => config.AddResolveStrategy<ValueAttribute>((type, attr, sp)
-                        => sp.GetRequiredService<ValueProvider>().GetValue(type, attr.Value)));
-            }, ApplicationContextEntryOrder.AppPreConfig);
+            PostRegistry();
 
-            // beandefintion candidate selector
-            ConfigureBeans((config, sp) =>
-                config.AddSingleton<BeanDefintionCandidateSelector, BeanDefintionCandidateSelector>(), ApplicationContextEntryOrder.AppPreConfig);
-
-            // aop
-            ConfigureBeans((config, sp) =>
-            {
-                config.AddSingleton<AopInterceptorContainer, AopInterceptorContainer>();
-                config.AddSingleton<AopBuildStrategyExtension, AopBuildStrategyExtension>();
-                config.AddSingleton<AopMethodBootstrapInterceptor, AopMethodBootstrapInterceptor>();
-                config.AddSingleton<InterfaceProxyFactory, InterfaceProxyFactory>();
-                config.AddSingleton<BeanAopStrategy, BeanAopStrategy>();
-            }, ApplicationContextEntryOrder.AppPreConfig + 1);
-
-            ConfigureBeans((config, sp) =>
-            {
-                sp.UnityContainer.AddExtension(sp.GetRequiredService<AopBuildStrategyExtension>());
-            }, ApplicationContextEntryOrder.AppPreConfig + 2);
-
-            AddContextEntry(entry =>
-            {
-                entry.Order = ApplicationContextEntryOrder.AppPostConfig;
-                entry.Process += sp =>
-                {
-                    sp.GetRequiredService<AopInterceptorContainer>().Init();
-                    return;
-                };
-            });
-
-            Refresh();
+            ApplicationSP.GetServices<IContextPostRegistryInitiable>().ToList().ForEach(init => init.Initialize());
 
             PreInstantiateSingleton();
 
             return CoreContainer.Resolve<IUnityAddonSP>();
+        }
+
+        public void PostRegistry(int? count = null)
+        {
+            if (count == null)
+            {
+                count = 0;
+            }
+
+            var newCount = ApplicationSP.UnityContainer.Registrations.Count();
+
+            if (count == newCount)
+            {
+                return;
+            }
+
+            count = newCount;
+            ConfigurationRegistry.Refresh();
+            BeanDefinitionRegistry.Refresh();
+            PostRegistry(count);
         }
 
         public void PreInstantiateSingleton()
@@ -211,7 +117,6 @@ namespace UnityAddon.Core.Context
 
                 if (!reg.RegisteredType.IsGenericType || !reg.RegisteredType.ContainsGenericParameters)
                 {
-
                     sp.GetRequiredService(reg.RegisteredType, reg.Name);
                 }
             }
