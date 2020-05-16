@@ -26,45 +26,30 @@ namespace UnityAddon.Core.Aop
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 
-        private IDictionary<Type, IEnumerable<IInterceptor>> _interceptorMap = new Dictionary<Type, IEnumerable<IInterceptor>>();
+        private readonly IDictionary<Type, IEnumerable<Type>> _interceptorMap = new Dictionary<Type, IEnumerable<Type>>();
 
         public void Initialize()
         {
-            var interceptorMaps = Sp.GetServices<AopInterceptorOption>()
-                .Select(option => option.InterceptorMap);
-            IDictionary<Type, IList<Type>> interceptorMap = new Dictionary<Type, IList<Type>>();
+            var regs = Sp.GetServices<AopInterceptorOption>().Select(option => option.InterceptorMap);
 
-            if (interceptorMaps.Count() > 0)
+            foreach (var entry in Sp.GetServices<AopInterceptorOption>().SelectMany(option => option.InterceptorMap))
             {
-                interceptorMap = interceptorMaps.Aggregate((a, map) =>
-                {
-                    foreach (var entry in map)
-                    {
-                        a.Add(entry.Key, entry.Value);
-                    }
-
-                    return a;
-                });
+                _interceptorMap.Add(entry.Key, entry.Value);
             }
 
-            foreach (var entry in interceptorMap)
+            foreach (var t in _interceptorMap.Values.SelectMany(vals => vals).Distinct())
             {
-                _interceptorMap[entry.Key] = entry.Value.Select(t =>
+                if (!Sp.IsRegistered(t))
                 {
-                    if (!Sp.IsRegistered(t))
-                    {
-                        ServicePostRegistry.AddSingleton(t, t);
-                    }
-
-                    return (IInterceptor)Sp.GetRequiredService(t);
-                });
+                    ServicePostRegistry.AddScoped(t, t);
+                }
             }
         }
 
         /// <summary>
         /// Use AttributeTargets.All to get all interceptors
         /// </summary>
-        public IDictionary<Type, IEnumerable<IInterceptor>> FindInterceptors(AttributeTargets interceptorType)
+        public IDictionary<Type, IEnumerable<Type>> FindInterceptors(AttributeTargets interceptorType)
         {
             return _interceptorMap.Where(entry => IsAttributeTargetMatch(interceptorType, entry.Key.GetAttribute<AttributeUsageAttribute>().ValidOn))
                 .ToDictionary(dict => dict.Key, dict => dict.Value);

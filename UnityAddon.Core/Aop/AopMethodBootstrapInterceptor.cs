@@ -34,6 +34,9 @@ namespace UnityAddon.Core.Aop
         [Dependency]
         public AopInterceptorContainer InterceptorContainer { get; set; }
 
+        [Dependency]
+        public IUnityAddonSP Sp { get; set; }
+
         public void Intercept(IInvocation invocation)
         {
             object newProxy;
@@ -70,7 +73,7 @@ namespace UnityAddon.Core.Aop
             {
                 if (methodInterceptorMap.ContainsKey(attr.GetType()))
                 {
-                    interceptors.AddRange(methodInterceptorMap[attr.GetType()]);
+                    interceptors.AddRange(methodInterceptorMap[attr.GetType()].Select(t => (IInterceptor)Sp.GetRequiredService(t)));
                 }
             }
 

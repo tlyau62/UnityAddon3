@@ -28,9 +28,6 @@ namespace UnityAddon.Core.BeanBuildStrategies
     public class BeanAopStrategy : BuilderStrategy
     {
         [Dependency]
-        public AopMethodBootstrapInterceptor AopInterceptor { get; set; }
-
-        [Dependency]
         public InterfaceProxyFactory InterfaceProxyFactory { get; set; }
 
         [Dependency]
@@ -41,12 +38,17 @@ namespace UnityAddon.Core.BeanBuildStrategies
 
         public override void PostBuildUp(ref BuilderContext context)
         {
+            if (context.Type.Name.EndsWith("Service")) { 
+                var a = 10;
+                }
+
             if (context.Existing == null)
             {
                 base.PostBuildUp(ref context);
                 return;
             }
 
+            var container = context.Container;
             var interceptors = new List<IInterceptor>();
             var types = GetUnproxiedTypes(context.Existing);
 
@@ -59,7 +61,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
                 {
                     if (typeInterceptorsMap.ContainsKey(attribute.GetType()))
                     {
-                        interceptors.AddRange(typeInterceptorsMap[attribute.GetType()]);
+                        interceptors.AddRange(typeInterceptorsMap[attribute.GetType()].Select(t => (IInterceptor)container.Resolve(t)));
                     }
                 }
             }
@@ -67,7 +69,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
             // method interceptor
             if (IsMethodBootstrapInterceptorNeeded(types))
             {
-                interceptors.Add(AopInterceptor);
+                interceptors.Add(container.Resolve<AopMethodBootstrapInterceptor>());
             }
 
             if (interceptors.Count() > 0)

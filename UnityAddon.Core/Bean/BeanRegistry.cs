@@ -34,6 +34,14 @@ namespace UnityAddon.Core.Bean
 
         void AddTransient(Type type, Func<IUnityAddonSP, Type, string, object> factory, string name = null);
 
+        void AddScoped<TMap>(Func<IUnityAddonSP, Type, string, TMap> factory, string name = null);
+
+        void AddScoped(Type type, Type implType, string name = null);
+
+        void AddScoped<TMap, TImpl>(string name = null) where TImpl : class;
+
+        void AddScoped(Type type, Func<IUnityAddonSP, Type, string, object> factory, string name = null);
+
         void AddTransient<TMap>(Func<IUnityAddonSP, Type, string, TMap> factory, string name = null);
 
         void AddComponent<TImpl>() where TImpl : class;
@@ -201,6 +209,26 @@ namespace UnityAddon.Core.Bean
         public void AddConfiguration(Type type)
         {
             Add(new MemberConfigurationBeanDefinition(type));
+        }
+
+        public void AddScoped(Type type, Type implType, string name)
+        {
+            Add(new TypeBeanDefintion(type, implType, name, ScopeType.Scoped));
+        }
+
+        public void AddScoped<TMap, TImpl>(string name) where TImpl : class
+        {
+            AddScoped(typeof(TMap), typeof(TImpl), name);
+        }
+
+        public void AddScoped(Type type, Func<IUnityAddonSP, Type, string, object> factory, string name)
+        {
+            Add(new FactoryBeanDefinition(type, factory, name, ScopeType.Scoped));
+        }
+
+        public void AddScoped<TMap>(Func<IUnityAddonSP, Type, string, TMap> factory, string name)
+        {
+            AddTransient(typeof(TMap), (sp, t, n) => factory(sp, t, n), name);
         }
     }
 }
