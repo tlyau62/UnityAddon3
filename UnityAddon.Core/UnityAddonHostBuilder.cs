@@ -30,29 +30,9 @@ namespace UnityAddon.Core
 {
     public static class UnityAddonHostBuilder
     {
-        public static IHostBuilder RegisterUA(this IHostBuilder hostBuilder, IUnityContainer container)
-        {
-            return hostBuilder.UseServiceProviderFactory(new ServiceProviderFactory(container));
-        }
-
         public static IHostBuilder RegisterUA(this IHostBuilder hostBuilder)
         {
             return hostBuilder.UseServiceProviderFactory(new ServiceProviderFactory());
         }
-
-        //public static IHostBuilder ConfigureUA<ConfigT>(this IHostBuilder hostBuilder, Action<ConfigT> config)
-        //{
-        //    return hostBuilder.ConfigureContainer<IUnityContainer>((s, c) =>
-        //    {
-        //        var sp = c.Resolve<IServiceProvider>();
-
-        //        if (!sp.IsRegistered<ConfigT>())
-        //        {
-        //            c.RegisterTypeUA<ConfigT, ConfigT>(new ContainerControlledLifetimeManager());
-        //        }
-
-        //        config(c.ResolveUA<ConfigT>());
-        //    });
-        //}
     }
 }

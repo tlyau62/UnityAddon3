@@ -18,30 +18,23 @@ namespace UnityAddon.Core.Context
 {
     public class CoreContext
     {
-        private readonly ApplicationContext _applicationContext;
-
-        private readonly IUnityContainer _applicationContainer;
-
-        public CoreContext(ApplicationContext applicationContext, IUnityContainer applicationContainer)
+        public CoreContext()
         {
-            _applicationContext = applicationContext;
-            _applicationContainer = applicationContainer;
-
             Setup();
         }
 
         public IUnityContainer Container { get; } = new UnityContainer();
 
-        public void Setup()
+        protected void Setup()
         {
             Container
                 .RegisterType<IBeanDefinitionContainer, BeanDefinitionContainer>(new SingletonLifetimeManager());
 
             Container
-                .RegisterInstance(_applicationContext, new SingletonLifetimeManager());
+                .RegisterType<ApplicationContext>(new SingletonLifetimeManager());
 
             var sp = Container
-                .RegisterType<UnityAddonSP>(new SingletonLifetimeManager(), new InjectionConstructor(_applicationContainer))
+                .RegisterType<UnityAddonSP>(new SingletonLifetimeManager(), new InjectionConstructor(new UnityContainer()))
                 .Resolve<UnityAddonSP>();
             Container
                 .RegisterInstance<IUnityAddonSP>(sp, new SingletonLifetimeManager())
@@ -61,7 +54,7 @@ namespace UnityAddon.Core.Context
                 .RegisterType<BeanMethodInterceptor>(new SingletonLifetimeManager());
 
             Container
-                .RegisterType<IServicePostRegistry, ServicePostRegistry>(new SingletonLifetimeManager());
+                .RegisterType<IServiceRegistry, ServiceRegistry>(new SingletonLifetimeManager());
 
             Container
                 .RegisterType<BeanBuildStrategyExtension>(new SingletonLifetimeManager());

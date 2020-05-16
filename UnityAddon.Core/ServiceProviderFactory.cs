@@ -24,26 +24,18 @@ namespace UnityAddon.Core
 {
     public class ServiceProviderFactory : IServiceProviderFactory<ApplicationContext>
     {
-        private readonly IUnityContainer _container;
-
-        public ServiceProviderFactory() : this(new UnityContainer())
-        {
-        }
-
-        public ServiceProviderFactory(IUnityContainer container)
-        {
-            _container = container;
-        }
-
         public ApplicationContext CreateBuilder(IServiceCollection services = null)
         {
-            var appCtx = new ApplicationContext(_container);
+            var coreCtx = new CoreContext();
+            var appCtx = coreCtx.Container.Resolve<ApplicationContext>();
+            var beanReg = appCtx.ServiceRegistry;
 
-            // asp core
-            appCtx.ConfigureBeans(config => config.AddFromServiceCollection(services));
+            coreCtx.Container.RegisterInstance(appCtx);
+            coreCtx.Container.BuildUp(appCtx);
 
-            // value provider
-            appCtx.ConfigureBeans(config => config.AddConfiguration<ValueConfig>());
+            beanReg.ConfigureBeans(config => config.AddFromUnityContainer(coreCtx.Container));
+            beanReg.ConfigureBeans(config => config.AddConfiguration<ValueConfig>());
+            beanReg.ConfigureBeans(config => config.AddFromServiceCollection(services));
 
             return appCtx;
         }
