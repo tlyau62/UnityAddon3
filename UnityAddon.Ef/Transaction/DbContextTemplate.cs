@@ -40,30 +40,14 @@ namespace UnityAddon.Ef.Transaction
         [OptionalDependency]
         public RollbackLogicOption RollbackLogicOption { get; set; }
 
-        [OptionalDependency]
-        public TransactionInterceptorOption TransactionInterceptorOption { get; set; }
-
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 
         [Dependency]
-        public IServicePostRegistry ServicePostRegistry { get; set; }
-
-        [Dependency]
         public ITransactionCallbacks TransactionCallbacks { get; set; }
 
-        public void Initialize()
-        {
-            _rollbackLogics = RollbackLogicOption == null ? new Dictionary<Type, List<object>>() : RollbackLogicOption.RollbackLogics;
-
-            if (TransactionInterceptorOption != null)
-            {
-                foreach (var itctType in TransactionInterceptorOption.TxInterceptors)
-                {
-                    ServicePostRegistry.AddSingleton(typeof(ITransactionInterceptor), itctType, null);
-                }
-            }
-        }
+        [Dependency]
+        public TransactionInterceptorManager TransactionInterceptorManager { get; set; }
 
         public TTxResult ExecuteQuery<TDbContext, TTxResult>(Func<TDbContext, TTxResult> query, string noModifyMsg) where TDbContext : DbContext
         {
@@ -96,9 +80,8 @@ namespace UnityAddon.Ef.Transaction
                 }
 
                 var tx = ctx.Database.BeginTransaction();
-                var txInterceptorManager = Sp.GetRequiredService<TransactionInterceptorManager>();
 
-                txInterceptorManager.ExecuteBeginCallbacks();
+                TransactionInterceptorManager.ExecuteBeginCallbacks();
 
                 try
                 {
@@ -107,13 +90,13 @@ namespace UnityAddon.Ef.Transaction
                     if (TestRollback(result))
                     {
                         tx.Rollback();
-                        txInterceptorManager.ExecuteRollbackCallbacks();
+                        TransactionInterceptorManager.ExecuteRollbackCallbacks();
                     }
                     else
                     {
                         ctx.SaveChanges();
                         tx.Commit();
-                        txInterceptorManager.ExecuteCommitCallbacks();
+                        TransactionInterceptorManager.ExecuteCommitCallbacks();
                     }
 
                     return result;
@@ -121,7 +104,7 @@ namespace UnityAddon.Ef.Transaction
                 catch (Exception)
                 {
                     tx.Rollback();
-                    txInterceptorManager.ExecuteRollbackCallbacks();
+                    TransactionInterceptorManager.ExecuteRollbackCallbacks();
                     throw;
                 }
                 finally
@@ -233,5 +216,9 @@ namespace UnityAddon.Ef.Transaction
             TransactionCallbacks.OnCommit(callback);
         }
 
+        public void Initialize()
+        {
+            _rollbackLogics = RollbackLogicOption == null ? new Dictionary<Type, List<object>>() : RollbackLogicOption.RollbackLogics;
+        }
     }
 }
