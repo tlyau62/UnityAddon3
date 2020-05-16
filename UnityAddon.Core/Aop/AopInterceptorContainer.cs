@@ -41,7 +41,7 @@ namespace UnityAddon.Core.Aop
             {
                 if (!Sp.IsRegistered(t))
                 {
-                    ServicePostRegistry.AddScoped(t, t);
+                    ServicePostRegistry.AddSingleton(t, t);
                 }
             }
         }

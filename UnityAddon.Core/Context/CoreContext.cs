@@ -73,7 +73,7 @@ namespace UnityAddon.Core.Context
             Container
                 .RegisterType<AopInterceptorContainer>(new SingletonLifetimeManager())
                 .RegisterType<AopBuildStrategyExtension>(new SingletonLifetimeManager())
-                .RegisterType<AopMethodBootstrapInterceptor>(new HierarchicalLifetimeManager())
+                .RegisterType<AopMethodBootstrapInterceptor>(new SingletonLifetimeManager())
                 .RegisterType<InterfaceProxyFactory>(new SingletonLifetimeManager())
                 .RegisterType<BeanAopStrategy>(new SingletonLifetimeManager())
                 .RegisterType<AopBuildStrategyExtension>(new SingletonLifetimeManager());
