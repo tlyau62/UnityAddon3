@@ -32,7 +32,7 @@ namespace UnityAddon.CoreIntegrationTest.BeanRegistry.PostRegister
         public IUnityAddonSP Sp { get; set; }
 
         [Dependency]
-        public IServicePostRegistry ServicePostRegistry { get; set; }
+        public IServiceRegistry ServicePostRegistry { get; set; }
 
         [Fact]
         public void ImplTypeSingleton()

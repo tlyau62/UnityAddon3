@@ -22,13 +22,13 @@ namespace UnityAddon.Ef.Transaction
         public IUnityAddonSP Sp { get; set; }
 
         [Dependency]
-        public IServicePostRegistry PostRegistry { get; set; }
+        public IServiceRegistry PostRegistry { get; set; }
 
         [OptionalDependency]
         public TransactionInterceptorOption TransactionInterceptorOption { get; set; }
 
         [Dependency]
-        public IServicePostRegistry ServicePostRegistry { get; set; }
+        public IServiceRegistry ServicePostRegistry { get; set; }
 
         public void Initialize()
         {

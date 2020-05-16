@@ -21,7 +21,7 @@ namespace UnityAddon.Core.Aop
     public class AopInterceptorContainer : IContextPostRegistryInitiable
     {
         [Dependency]
-        public IServicePostRegistry ServicePostRegistry { get; set; }
+        public IServiceRegistry ServicePostRegistry { get; set; }
 
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
