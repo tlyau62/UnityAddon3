@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Unity;
 using UnityAddon.Core;
@@ -10,8 +11,13 @@ namespace UnityAddon.CoreTest.Bean.GenericBean.GenericDefinitionBean
 {
     public interface IService<T> { }
 
+    public interface IComplexService<T, U> { }
+
     [Component]
     public class Service<T> : IService<T> { }
+
+    [Component]
+    public class ComplexService<T, U> : IComplexService<T, U> { }
 
     [ComponentScan]
     public class GenericDefinitionBeanTests : UnityAddonTest
@@ -19,10 +25,14 @@ namespace UnityAddon.CoreTest.Bean.GenericBean.GenericDefinitionBean
         [Dependency]
         public IService<int> Service { get; set; }
 
+        [Dependency]
+        public IComplexService<int, string> ComplexService { get; set; }
+
         [Fact]
         public void GenericDefinitionBean()
         {
             Assert.IsType<Service<int>>(Service);
+            Assert.IsType<ComplexService<int, string>>(ComplexService);
         }
     }
 }
