@@ -70,9 +70,11 @@ namespace UnityAddon.Core.BeanDefinition
             return results.Single();
         }
 
-        public IEnumerable<IBeanDefinition> GetAll()
+        public IEnumerable<IBeanDefinition> GetAll(string name = null)
         {
-            return _beanDefinitions;
+            var results = Find(name);
+
+            return results.ToArray();
         }
 
         public override string ToString()
