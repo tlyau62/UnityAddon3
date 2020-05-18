@@ -14,24 +14,54 @@ using UnityAddon.Core.Exceptions;
 
 namespace UnityAddon.Core
 {
-    public interface IServicePostRegistry : IBeanRegistry
+    public interface IServiceRegistry : IBeanRegistry
     {
         void Unregister(Type type, string name = null);
 
         void Unregister<T>(string name = null);
+
+        void ConfigureBeans(Action<IBeanDefinitionCollection> config);
+
+        void ConfigureBeans(IBeanDefinitionCollection defCollection);
     }
 
-    public class ServicePostRegistry : BeanRegistry, IServicePostRegistry
+    public class ServiceRegistry : BeanRegistry, IServiceRegistry
     {
-        [Dependency]
-        public ApplicationContext AppContext { get; set; }
-
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 
+        [Dependency]
+        public IBeanDefinitionContainer BeanDefinitionContainer { get; set; }
+
+        [Dependency]
+        public BeanDefintionCandidateSelector BeanDefintionCandidateSelector { get; set; }
+
         public override void Add(IBeanDefinition beanDefinition)
         {
-            AppContext.ConfigureBeans(config => config.Add(beanDefinition));
+            ConfigureBeans(config => config.Add(beanDefinition));
+        }
+
+        public void ConfigureBeans(Action<IBeanDefinitionCollection> config)
+        {
+            var defCol = new BeanDefinitionCollection();
+
+            config(defCol);
+
+            ConfigureBeans(defCol);
+        }
+
+        public void ConfigureBeans(IBeanDefinitionCollection defCollection)
+        {
+            foreach (var beanDef in defCollection)
+            {
+                if (!BeanDefintionCandidateSelector.Filter(beanDef))
+                {
+                    continue;
+                }
+
+                BeanDefinitionContainer.RegisterBeanDefinition(beanDef);
+                Sp.UnityContainer.RegisterFactory(beanDef.Type, beanDef.Name, (c, t, n) => beanDef.Constructor(new UnityAddonSP(c), t, n), (IFactoryLifetimeManager)beanDef.Scope);
+            }
         }
 
         public void Unregister(Type type, string name)

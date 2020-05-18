@@ -13,11 +13,13 @@ namespace UnityAddon.Core.Aop
 {
     public class AopInterceptorOption
     {
-        public IDictionary<Type, IList<Type>> InterceptorMap { get; } // (attrtype, interceptor type)
+        private IDictionary<Type, IList<Type>> _interceptorMap; // (attrtype, interceptor type)
+
+        public IDictionary<Type, IEnumerable<Type>> InterceptorMap => _interceptorMap.ToDictionary(e => e.Key, e => (IEnumerable<Type>)e.Value);
 
         public AopInterceptorOption()
         {
-            InterceptorMap = new Dictionary<Type, IList<Type>>();
+            _interceptorMap = new Dictionary<Type, IList<Type>>();
         }
 
         public AopInterceptorOption AddAopIntercetor<TAopAttribute, TInterceptor>()
@@ -47,13 +49,13 @@ namespace UnityAddon.Core.Aop
 
         private void AddAopIntercetor(Type attrType, Type interceptorType)
         {
-            if (InterceptorMap.ContainsKey(attrType))
+            if (_interceptorMap.ContainsKey(attrType))
             {
-                InterceptorMap[attrType].Add(interceptorType);
+                _interceptorMap[attrType].Add(interceptorType);
             }
             else
             {
-                InterceptorMap[attrType] = new List<Type>() { interceptorType };
+                _interceptorMap[attrType] = new List<Type>() { interceptorType };
             }
         }
 

@@ -12,23 +12,40 @@ using UnityAddon.Ef.TransactionInterceptor;
 namespace UnityAddon.Ef.Transaction
 {
     [Component]
-    [Scope(ScopeType.Transient)]
-    public class TransactionInterceptorManager
+    public class TransactionInterceptorManager : IContextPostRegistryInitiable
     {
         private readonly ILogger _logger = Log.ForContext<TransactionInterceptorManager>();
+
+        private IEnumerable<ITransactionInterceptor> _txInterceptors;
 
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 
         [Dependency]
-        public IServicePostRegistry PostRegistry { get; set; }
+        public IServiceRegistry PostRegistry { get; set; }
+
+        [OptionalDependency]
+        public TransactionInterceptorOption TransactionInterceptorOption { get; set; }
 
         [Dependency]
-        public IEnumerable<ITransactionInterceptor> TxInterceptors { get; set; }
+        public IServiceRegistry ServicePostRegistry { get; set; }
+
+        public void Initialize()
+        {
+            if (TransactionInterceptorOption != null)
+            {
+                foreach (var itctType in TransactionInterceptorOption.TxInterceptors)
+                {
+                    ServicePostRegistry.AddSingleton(typeof(ITransactionInterceptor), itctType, null);
+                }
+            }
+
+            _txInterceptors = Sp.GetServices<ITransactionInterceptor>();
+        }
 
         public void ExecuteBeginCallbacks()
         {
-            foreach (var itr in TxInterceptors)
+            foreach (var itr in _txInterceptors)
             {
                 itr.Begin();
             }
@@ -36,7 +53,7 @@ namespace UnityAddon.Ef.Transaction
 
         public void ExecuteCommitCallbacks()
         {
-            foreach (var itr in TxInterceptors)
+            foreach (var itr in _txInterceptors)
             {
                 try
                 {
@@ -51,7 +68,7 @@ namespace UnityAddon.Ef.Transaction
 
         public void ExecuteRollbackCallbacks()
         {
-            foreach (var itr in TxInterceptors)
+            foreach (var itr in _txInterceptors)
             {
                 try
                 {
