@@ -46,12 +46,14 @@ namespace UnityAddon.Core.Reflection
 
         public static Type LoadType(Type type)
         {
-            if (ProxyUtil.IsProxyType(type) || type.IsGenericType && !type.ContainsGenericParameters)
+            if (type.AssemblyQualifiedName == null)
             {
-                return type;
+                var typeName = $"{type.Namespace}.{type.Name}, {type.Assembly.FullName}";
+
+                return Type.GetType(typeName) ?? throw new InvalidOperationException("Bad type resolve.");
             }
 
-            return Type.GetType($"{type.Namespace}.{type.Name}, {type.Assembly.FullName}");
+            return type;
         }
     }
 }
