@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Castle.DynamicProxy;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -45,50 +46,12 @@ namespace UnityAddon.Core.Reflection
 
         public static Type LoadType(Type type)
         {
-            var typeName = TypeToString(type);
-
-            if (string.IsNullOrEmpty(typeName))
-            {
-                throw new InvalidOperationException("Type full name should not be null.");
-            }
-
-            try
-            {
-                return Type.GetType(typeName) ?? type; // proxy type maybe null    
-            }
-            catch
+            if (ProxyUtil.IsProxyType(type) || type.IsGenericType && !type.ContainsGenericParameters)
             {
                 return type;
             }
-        }
 
-        private static string TypeToString(Type t)
-        {
-            if (t.IsGenericTypeParameter)
-            {
-                return "";
-            }
-
-            var str = $"{t.Namespace}.{t.Name}{TypeArgs(t)}, {t.Assembly.FullName}";
-
-            return str;
-        }
-
-        private static string TypeArgs(Type t)
-        {
-            if (t.GetGenericArguments().Length == 0)
-            {
-                return "";
-            }
-
-            var argParams = string.Join(',', t.GetGenericArguments().Select(arg => TypeToString(arg)));
-
-            if (string.IsNullOrEmpty(argParams))
-            {
-                return argParams;
-            }
-
-            return "[[" + argParams + "]]";
+            return Type.GetType($"{type.Namespace}.{type.Name}, {type.Assembly.FullName}");
         }
     }
 }
