@@ -17,6 +17,16 @@ namespace UnityAddon.CoreTest.Reflection
 
     public enum TestEnum { }
 
+    public class Nested
+    {
+        public static class InnerNested
+        {
+            public interface IInner<T, U> { }
+
+            public class Inner<T, U> : IInner<T, U> { }
+        }
+    }
+
     public class TypeResolverTests
     {
         [Fact]
@@ -41,6 +51,13 @@ namespace UnityAddon.CoreTest.Reflection
             var a = typeof(MixService<>).GetInterfaces().ToArray().First();
 
             Assert.Same(typeof(IComplexService<,>), TypeResolver.LoadType(a));
+        }
+
+        [Fact]
+        public void LoadInnerInterface()
+        {
+            var a = typeof(Nested.InnerNested.Inner<,>).GetInterfaces().ToArray().First();
+            Assert.Same(typeof(Nested.InnerNested.IInner<,>), TypeResolver.LoadType(a));
         }
 
         [Fact]

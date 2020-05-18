@@ -46,14 +46,25 @@ namespace UnityAddon.Core.Reflection
 
         public static Type LoadType(Type type)
         {
-            if (type.AssemblyQualifiedName == null)
+            if (type.AssemblyQualifiedName != null)
             {
-                var typeName = $"{type.Namespace}.{type.Name}, {type.Assembly.FullName}";
-
-                return Type.GetType(typeName) ?? throw new InvalidOperationException("Bad type resolve.");
+                return type;
             }
 
-            return type;
+            var typePtr = type;
+            var nestedClasses = new Stack<Type>();
+
+            while (typePtr.DeclaringType != null)
+            {
+                nestedClasses.Push(typePtr.DeclaringType);
+                typePtr = typePtr.DeclaringType;
+            }
+
+            var nestedClassesExp = nestedClasses.Count() == 0 ? "" : string.Join("+", nestedClasses.Select(c => c.Name)) + "+";
+
+            var typeName = $"{type.Namespace}.{nestedClassesExp}{type.Name}, {type.Assembly.FullName}";
+
+            return Type.GetType(typeName) ?? throw new InvalidOperationException("Bad type resolve.");
         }
     }
 }
