@@ -35,7 +35,11 @@ namespace UnityAddon.Core
 
             beanReg.ConfigureBeans(config => config.AddFromUnityContainer(coreCtx.Container));
             beanReg.ConfigureBeans(config => config.AddConfiguration<ValueConfig>());
-            beanReg.ConfigureBeans(config => config.AddFromServiceCollection(services));
+
+            if (services != null)
+            {
+                beanReg.ConfigureBeans(config => config.AddFromServiceCollection(services));
+            }
 
             return appCtx;
         }

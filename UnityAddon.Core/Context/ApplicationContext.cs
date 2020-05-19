@@ -41,12 +41,16 @@ namespace UnityAddon.Core.Context
         [Dependency]
         public IServiceRegistry ServiceRegistry { get; set; }
 
+        [Dependency]
+        public ImportRegistry ImportRegistry { get; set; }
+
         public IUnityAddonSP Build()
         {
             Config();
             PostRegistry();
             PostRegistryInit();
             PreInstantiateSingleton();
+            PostInstantiateSingleton();
 
             return ApplicationSP;
         }
@@ -60,6 +64,11 @@ namespace UnityAddon.Core.Context
         public void PostRegistryInit()
         {
             ApplicationSP.GetServices<IContextPostRegistryInitiable>().ToList().ForEach(init => init.Initialize());
+        }
+
+        public void PostInstantiateSingleton()
+        {
+            ApplicationSP.GetServices<IContextPostInstantiateSingleton>().ToList().ForEach(init => init.PostInitialize(ApplicationSP));
         }
 
         public void PostRegistry(int? count = null)
@@ -79,6 +88,7 @@ namespace UnityAddon.Core.Context
             count = newCount;
             ConfigurationRegistry.Refresh();
             BeanDefinitionRegistry.Refresh();
+            ImportRegistry.Refresh();
             PostRegistry(count);
         }
 

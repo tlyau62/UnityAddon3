@@ -20,7 +20,7 @@ namespace UnityAddon.Core.BeanDefinition
 
         IBeanDefinition GetBeanDefinition(Type type, string name = null);
 
-        IEnumerable<IBeanDefinition> GetAllBeanDefinitions(Type type);
+        IEnumerable<IBeanDefinition> GetAllBeanDefinitions(Type type, string name = null);
 
         IBeanDefinitionContainer RegisterBeanDefinition(IBeanDefinition beanDefinition);
 
@@ -78,14 +78,14 @@ namespace UnityAddon.Core.BeanDefinition
             return _registrations[type].Get(name);
         }
 
-        public IEnumerable<IBeanDefinition> GetAllBeanDefinitions(Type type)
+        public IEnumerable<IBeanDefinition> GetAllBeanDefinitions(Type type, string name)
         {
             if (!_registrations.ContainsKey(type))
             {
                 return new List<IBeanDefinition>();
             }
 
-            return _registrations[type].GetAll();
+            return _registrations[type].GetAll(name);
         }
 
         public IBeanDefinition RemoveBeanDefinition(Type type, string name = null)

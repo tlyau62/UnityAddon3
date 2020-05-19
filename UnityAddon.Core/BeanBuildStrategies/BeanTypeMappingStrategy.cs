@@ -56,7 +56,7 @@ namespace UnityAddon.Core.BeanBuildStrategies
             {
                 exists = true;
 
-                var beanDefs = BeanDefinitionContainer.GetAllBeanDefinitions(context.Type.GetGenericArguments()[0]);
+                var beanDefs = BeanDefinitionContainer.GetAllBeanDefinitions(context.Type.GetGenericArguments()[0], context.Name);
                 var array = (object[])Array.CreateInstance(context.Type.GetGenericArguments()[0], beanDefs.Count());
 
                 Array.Copy(beanDefs.Select(def => container.Resolve(def.Type, def.Name)).ToArray(), array, beanDefs.Count());
