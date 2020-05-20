@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
 using System.Text;
@@ -11,17 +12,15 @@ namespace UnityAddon.Serilog
     public class SerilogConfig
     {
         [Bean]
-        public virtual IBeanDefinitionCollection Serilog(HostBuilderContext hostBuilderContext, [OptionalDependency] Action<HostBuilderContext, LoggerConfiguration> configureLogger)
+        public virtual IBeanDefinitionCollection Serilog(HostBuilderContext hostBuilderContext, [OptionalDependency] LoggerConfiguration loggerConfig)
         {
             IBeanDefinitionCollection defCol = new BeanDefinitionCollection();
 
-            defCol.AddFromServiceCollection(services =>
-            {
-                new SerilogServiceCollectionTrap(hostBuilderContext, services).UseSerilog((hostContext, loggerConfig) =>
-                {
-                    configureLogger(hostContext, loggerConfig);
-                });
-            });
+            loggerConfig ??= new LoggerConfiguration();
+
+            Log.Logger = loggerConfig.CreateLogger();
+
+            defCol.AddFromServiceCollection(services => services.AddLogging(logging => logging.AddSerilog(Log.Logger)));
 
             return defCol;
         }

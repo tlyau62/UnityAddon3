@@ -21,9 +21,13 @@ namespace UnityAddon.SerilogTest
     public class TestConfig
     {
         [Bean]
-        public virtual Action<HostBuilderContext, LoggerConfiguration> LoggerConfig(IConfiguration config)
+        public virtual LoggerConfiguration LoggerConfig()
         {
-            return (hostContext, loggerConfig) => loggerConfig.WriteTo.InMemory();
+            var config = new LoggerConfiguration();
+
+            config.WriteTo.InMemory();
+
+            return config;
         }
     }
 
