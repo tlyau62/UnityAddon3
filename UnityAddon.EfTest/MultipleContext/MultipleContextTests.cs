@@ -26,9 +26,7 @@ namespace UnityAddon.EfTest.MultipleContext
     }
 
     [ComponentScan]
-    [Import(typeof(UnityAddonEfConfig))]
-    [Import(typeof(TestDbConfig<TestDbContext>))]
-    [Import(typeof(TestDbConfig<TestDbContext2>))]
+    [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>), typeof(TestDbConfig<TestDbContext2>))]
     public class MultipleContextTests : UnityAddonEfTest
     {
         [Dependency]

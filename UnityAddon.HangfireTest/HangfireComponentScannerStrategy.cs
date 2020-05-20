@@ -62,9 +62,7 @@ namespace UnityAddon.HangfireTest.HangfireComponentScannerStrategy
     }
 
     [ComponentScan]
-    [Import(typeof(UnityAddonHangfireConfig))]
-    [Import(typeof(UnityAddonEfConfig))]
-    [Import(typeof(TestDbConfig<TestDbContext>))]
+    [ContextConfiguration(typeof(UnityAddonHangfireConfig), typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
     public class HangfireComponentScannerStrategy : UnityAddonTest
     {
         [HangfireProxy]

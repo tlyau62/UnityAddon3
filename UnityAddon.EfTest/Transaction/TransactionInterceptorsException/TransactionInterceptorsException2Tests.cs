@@ -6,9 +6,7 @@ using Xunit;
 namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
 {
     [ComponentScan]
-    [Import(typeof(UnityAddonEfConfig))]
-    [Import(typeof(TestDbConfig<TestDbContext>))]
-    [Import(typeof(TransactionInterceptorsTestsConfig<TestTxExceptionInterceptor, TestTxInterceptor>))]
+    [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>), typeof(TransactionInterceptorsTestsConfig<TestTxExceptionInterceptor, TestTxInterceptor>))]
     public class TransactionInterceptorsException2Tests : TransactionInterceptorsCommonExceptionTests<TestTxExceptionInterceptor, TestTxInterceptor>
     {
         [Fact]

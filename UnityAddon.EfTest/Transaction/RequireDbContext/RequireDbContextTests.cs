@@ -13,8 +13,7 @@ using Xunit;
 namespace UnityAddon.EfTest.Transaction.RequireDbContext
 {
     [ComponentScan]
-    [Import(typeof(UnityAddonEfConfig))]
-    [Import(typeof(TestDbConfig<TestDbContext>))]
+    [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
     public class RequireDbContextTests : UnityAddonEfTest
     {
         [Dependency]

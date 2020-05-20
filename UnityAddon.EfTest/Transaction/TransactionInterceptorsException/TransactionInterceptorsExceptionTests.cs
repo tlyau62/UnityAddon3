@@ -12,9 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
 {
     [ComponentScan]
-    [Import(typeof(UnityAddonEfConfig))]
-    [Import(typeof(TestDbConfig<TestDbContext>))]
-    [Import(typeof(TransactionInterceptorsTestsConfig<TestTxInterceptor, TestTxExceptionInterceptor>))]
+    [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>), typeof(TransactionInterceptorsTestsConfig<TestTxInterceptor, TestTxExceptionInterceptor>))]
     public class TransactionInterceptorsExceptionTests : TransactionInterceptorsCommonExceptionTests<TestTxInterceptor, TestTxExceptionInterceptor>
     {
         [Fact]
