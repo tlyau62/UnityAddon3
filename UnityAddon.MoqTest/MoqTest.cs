@@ -5,6 +5,7 @@ using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Moq;
 using Xunit;
+using static Moq.Mock;
 
 namespace UnityAddon.MoqTest.Moq
 {
@@ -36,6 +37,8 @@ namespace UnityAddon.MoqTest.Moq
         [Fact]
         public void Test()
         {
+            EchoService.MessageRepository = MessageRepository.Object;
+
             MessageRepository.Setup(m => m.GetMessage())
                 .Returns("hi");
             var msg = EchoService.Echo();

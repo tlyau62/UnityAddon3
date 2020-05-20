@@ -5,14 +5,13 @@ using System.Text;
 namespace UnityAddon.Core.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class ImportAttribute : ConfigArgAttribute
+    public class ImportAttribute : Attribute
     {
-        public ImportAttribute(params Type[] configs)
+        public IEnumerable<Type> Classes { get; }
+
+        public ImportAttribute(params Type[] classes)
         {
-            foreach (var config in configs)
-            {
-                Args.Add(new object[] { UnityAddonTest.CONFIG_PREFIX + config.Name, config, typeof(Type) });
-            }
+            Classes = classes;
         }
     }
 }

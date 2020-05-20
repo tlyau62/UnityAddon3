@@ -34,7 +34,7 @@ namespace UnityAddon.CoreTest.Context
         [Dependency]
         public Logger Logger { get; set; }
 
-        public void PostInitialize(IUnityAddonSP sp)
+        public void PostInitialize()
         {
             Logger.Log += "B";
         }
