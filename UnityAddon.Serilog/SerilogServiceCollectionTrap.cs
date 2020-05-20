@@ -1,17 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Unity;
-using UnityAddon.Core.Attributes;
-using UnityAddon.Core.BeanDefinition;
 
-namespace UnityAddon.Core.Util.Serilog
+namespace UnityAddon.Serilog
 {
-    public class Trap : IHostBuilder
+    public class SerilogServiceCollectionTrap : IHostBuilder
     {
         public IDictionary<object, object> Properties { get; } = new Dictionary<object, object>();
 
@@ -19,7 +14,7 @@ namespace UnityAddon.Core.Util.Serilog
 
         private HostBuilderContext _hostBuilderContext;
 
-        public Trap(HostBuilderContext hostBuilderContext, IServiceCollection serviceCollection)
+        public SerilogServiceCollectionTrap(HostBuilderContext hostBuilderContext, IServiceCollection serviceCollection)
         {
             _hostBuilderContext = hostBuilderContext;
             _serviceCollection = serviceCollection;
@@ -60,25 +55,6 @@ namespace UnityAddon.Core.Util.Serilog
         public IHostBuilder UseServiceProviderFactory<TContainerBuilder>(Func<HostBuilderContext, IServiceProviderFactory<TContainerBuilder>> factory)
         {
             throw new NotImplementedException();
-        }
-    }
-
-    public class SerilogConfig
-    {
-        [Bean]
-        public virtual IBeanDefinitionCollection Serilog(HostBuilderContext hostBuilderContext, [OptionalDependency] Action<HostBuilderContext, LoggerConfiguration> configureLogger)
-        {
-            IBeanDefinitionCollection defCol = new BeanDefinitionCollection();
-
-            defCol.AddFromServiceCollection(services =>
-            {
-                new Trap(hostBuilderContext, services).UseSerilog((hostContext, loggerConfig) =>
-                {
-                    configureLogger(hostContext, loggerConfig);
-                });
-            });
-
-            return defCol;
         }
     }
 }
