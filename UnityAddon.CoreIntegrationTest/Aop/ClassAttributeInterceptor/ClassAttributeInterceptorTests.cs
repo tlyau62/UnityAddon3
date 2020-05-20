@@ -63,6 +63,7 @@ namespace UnityAddon.CoreTest.Aop.ClassAttributeInterceptor
         }
     }
 
+    [Configuration]
     public class ClassAttributeAopConfig : AopInterceptorConfig
     {
         [Bean]
@@ -77,7 +78,6 @@ namespace UnityAddon.CoreTest.Aop.ClassAttributeInterceptor
     }
 
     [ComponentScan]
-    [Import(typeof(ClassAttributeAopConfig))]
     public class ClassAttributeInterceptorTests : UnityAddonTest
     {
         [Dependency]
