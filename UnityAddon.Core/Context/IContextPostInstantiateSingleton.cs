@@ -6,6 +6,6 @@ namespace UnityAddon.Core.Context
 {
     public interface IContextPostInstantiateSingleton
     {
-        void PostInitialize(IUnityAddonSP sp);
+        void PostInitialize();
     }
 }

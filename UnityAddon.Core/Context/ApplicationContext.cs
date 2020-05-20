@@ -68,7 +68,7 @@ namespace UnityAddon.Core.Context
 
         public void PostInstantiateSingleton()
         {
-            ApplicationSP.GetServices<IContextPostInstantiateSingleton>().ToList().ForEach(init => init.PostInitialize(ApplicationSP));
+            ApplicationSP.GetServices<IContextPostInstantiateSingleton>().ToList().ForEach(init => init.PostInitialize());
         }
 
         public void PostRegistry(int? count = null)
