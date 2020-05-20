@@ -17,7 +17,7 @@ namespace UnityAddon.Core.Bean
         public IBeanDefinitionContainer BeanDefContainer { get; set; }
 
         [Dependency]
-        public IServiceRegistry ServicePostRegistry { get; set; }
+        public IServiceRegistry ServiceRegistry { get; set; }
 
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
@@ -37,7 +37,7 @@ namespace UnityAddon.Core.Bean
 
                 _parsedCols.Add(colDef);
 
-                ServicePostRegistry.ConfigureBeans(config => config.AddFromExisting(Sp.GetRequiredService<IBeanDefinitionCollection>(colDef.Name)));
+                ServiceRegistry.ConfigureBeans(config => config.AddFromExisting(Sp.GetRequiredService<IBeanDefinitionCollection>(colDef.Name)));
 
                 hasNew = true;
             }

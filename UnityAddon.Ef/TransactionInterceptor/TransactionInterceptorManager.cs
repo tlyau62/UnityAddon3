@@ -28,7 +28,7 @@ namespace UnityAddon.Ef.Transaction
         public TransactionInterceptorOption TransactionInterceptorOption { get; set; }
 
         [Dependency]
-        public IServiceRegistry ServicePostRegistry { get; set; }
+        public IServiceRegistry ServiceRegistry { get; set; }
 
         public void Initialize()
         {
@@ -36,7 +36,7 @@ namespace UnityAddon.Ef.Transaction
             {
                 foreach (var itctType in TransactionInterceptorOption.TxInterceptors)
                 {
-                    ServicePostRegistry.AddSingleton(typeof(ITransactionInterceptor), itctType, null);
+                    ServiceRegistry.AddSingleton(typeof(ITransactionInterceptor), itctType, null);
                 }
             }
 

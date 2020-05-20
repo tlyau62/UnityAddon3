@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\UnityAddon.CoreTest\UnityAddon.CoreTest.csproj" />
     <ProjectReference Include="..\UnityAddon.Core\UnityAddon.Core.csproj" />
   </ItemGroup>
 
