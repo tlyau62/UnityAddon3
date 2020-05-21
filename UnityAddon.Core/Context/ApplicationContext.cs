@@ -71,6 +71,11 @@ namespace UnityAddon.Core.Context
             ApplicationSP.GetServices<IContextPostInstantiateSingleton>().ToList().ForEach(init => init.PostInitialize());
         }
 
+        /// <summary>
+        /// No bean resolve in this stage.
+        /// Except for bean definition.
+        /// </summary>
+        /// <param name="count"></param>
         public void PostRegistry(int? count = null)
         {
             if (count == null)
