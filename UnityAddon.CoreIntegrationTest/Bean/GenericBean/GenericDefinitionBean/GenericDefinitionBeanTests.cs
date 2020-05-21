@@ -5,6 +5,8 @@ using System.Text;
 using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Bean.GenericBean.GenericDefinitionBean
@@ -22,6 +24,10 @@ namespace UnityAddon.CoreTest.Bean.GenericBean.GenericDefinitionBean
     [ComponentScan]
     public class GenericDefinitionBeanTests : UnityAddonTest
     {
+        public GenericDefinitionBeanTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IService<int> Service { get; set; }
 

@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Assert = Xunit.Assert;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 
 namespace UnityAddon.CoreTest.Aop.MethodAttributeInterceptor
 {
@@ -35,6 +37,10 @@ namespace UnityAddon.CoreTest.Aop.MethodAttributeInterceptor
     [ComponentScan]
     public class MethodAttributeInterceptorTests : UnityAddonTest
     {
+        public MethodAttributeInterceptorTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IService Service { get; set; }
 

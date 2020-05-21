@@ -9,6 +9,8 @@ using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
 using Xunit;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 
 namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.ComplexLoop
 {
@@ -57,7 +59,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.ComplexLoo
     [ComponentScan]
     public class ComplexLoopTests : UnityAddonTest
     {
-        public ComplexLoopTests() : base(true)
+        public ComplexLoopTests(UnityAddonTestFixture testFixture) : base(testFixture, true)
         {
         }
 
@@ -69,7 +71,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.ComplexLoo
         {
             Assert.Throws<CircularDependencyException>(() =>
             {
-                HostBuilder.Build();
+                Refresh();
             });
         }
     }

@@ -11,13 +11,19 @@ using UnityAddon.Core.Context;
 using Xunit;
 using UnityAddon.Core.Util.ComponentScanning;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 
 namespace UnityAddon.CacheTest
 {
     [ComponentScan]
-    [Import(typeof(UnityAddonCacheConfig))]
+    [ContextConfiguration(typeof(UnityAddonCacheConfig))]
     public class CacheTest : UnityAddonTest
     {
+        public CacheTest(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IMyRepository myRepository { get; set; }
 

@@ -8,6 +8,7 @@ using UnityAddon.Core;
 using UnityAddon.Core.Context;
 using UnityAddon.Core.Util.ComponentScanning;
 using UnityAddon.Ef;
+using UnityAddon.Test;
 
 namespace UnityAddon.EfTest.Common
 {
@@ -19,7 +20,11 @@ namespace UnityAddon.EfTest.Common
         [Dependency]
         public DataSourceExtractor DataSourceExtractor { get; set; }
 
-        public UnityAddonEfTest(bool isDefered = false) : base(isDefered)
+        public UnityAddonEfTest(UnityAddonTestFixture testFixture) : this(testFixture, false)
+        {
+        }
+
+        public UnityAddonEfTest(UnityAddonTestFixture testFixture, bool isDefered) : base(testFixture, isDefered)
         {
             foreach (var datasource in DataSourceExtractor.DataSources)
             {

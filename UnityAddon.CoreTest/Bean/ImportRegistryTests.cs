@@ -6,6 +6,8 @@ using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.BeanDefinition;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Bean
@@ -37,11 +39,15 @@ namespace UnityAddon.CoreTest.Bean
     [ContextConfiguration(typeof(ConfigMain))]
     public class ImportRegistryTests : UnityAddonTest
     {
+        public ImportRegistryTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 
         [Fact]
-        public void Refresh()
+        public void Refresh_Import()
         {
             Assert.True(Sp.IsRegistered<ConfigA>());
             Assert.Equal("TestStringA", Sp.GetRequiredService<string>("TestA"));

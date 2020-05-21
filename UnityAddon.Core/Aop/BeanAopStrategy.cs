@@ -38,10 +38,6 @@ namespace UnityAddon.Core.BeanBuildStrategies
 
         public override void PostBuildUp(ref BuilderContext context)
         {
-            if (context.Type.Name.EndsWith("Service")) { 
-                var a = 10;
-                }
-
             if (context.Existing == null)
             {
                 base.PostBuildUp(ref context);

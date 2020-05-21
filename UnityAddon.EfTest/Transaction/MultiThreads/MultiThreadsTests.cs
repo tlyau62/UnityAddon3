@@ -9,13 +9,14 @@ using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Ef;
 using UnityAddon.EfTest.Common;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.EfTest.Transaction.MultiThreads
 {
     [ComponentScan]
-    [Import(typeof(UnityAddonEfConfig))]
-    [Import(typeof(TestDbConfig<TestDbContext>))]
+    [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
     public class MultiThreadsTests : UnityAddonEfTest
     {
         [Dependency]
@@ -25,6 +26,10 @@ namespace UnityAddon.EfTest.Transaction.MultiThreads
         public IDbContextFactory<TestDbContext> DbContextFactory { get; set; }
 
         private readonly Random _random = new Random();
+
+        public MultiThreadsTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
 
         [Theory]
         [InlineData(100, 20)]

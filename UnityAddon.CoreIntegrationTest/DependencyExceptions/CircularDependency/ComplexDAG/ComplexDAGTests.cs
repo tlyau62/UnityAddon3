@@ -9,6 +9,8 @@ using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
 using Xunit;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 
 namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.ComplexDAG
 {
@@ -57,6 +59,10 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.ComplexDAG
     [ComponentScan]
     public class ComplexDAGTests : UnityAddonTest
     {
+        public ComplexDAGTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 

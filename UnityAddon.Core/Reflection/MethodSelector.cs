@@ -19,7 +19,7 @@ namespace UnityAddon.Core.Reflection
 
         public static IEnumerable<MethodInfo> GetAllMethods(Type type, BindingFlags flags = BindingFlags.Default)
         {
-            return type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy | flags);
+            return type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | flags);
         }
     }
 }

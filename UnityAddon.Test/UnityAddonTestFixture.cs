@@ -1,37 +1,36 @@
-﻿using Castle.Core.Internal;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Text;
-using Unity;
 using UnityAddon.Core;
-using UnityAddon.Core.Attributes;
-using UnityAddon.Core.Bean;
 using UnityAddon.Core.Context;
-using UnityAddon.Core.Util.ComponentScanning;
+using UnityAddon.Test.Attributes;
 
-namespace UnityAddon.Core
+namespace UnityAddon.Test
 {
-    public abstract class UnityAddonTest
+    public class UnityAddonTestFixture
     {
         public const string CONFIG_PREFIX = "configType_";
 
-        protected IHostBuilder HostBuilder { get; private set; }
+        public IHostBuilder TestHostBuilder { get; private set; }
 
-        public UnityAddonTest(bool isDefered = false)
+        public IHost TestHost { get; set; }
+
+        public UnityAddonTest UnityAddonTest { get; set; }
+
+        public void Init()
         {
-            HostBuilder = Host.CreateDefaultBuilder()
+            TestHostBuilder = Host.CreateDefaultBuilder()
                 .RegisterUA()
                 .ConfigureContainer<ApplicationContext>(ctx =>
                 {
                     ctx.ServiceRegistry.ConfigureBeans(config =>
                     {
-                        var attrs = GetType().GetAttributes<ConfigArgAttribute>();
+                        var attrs = UnityAddonTest.GetType().GetCustomAttributes<ConfigArgAttribute>();
 
-                        config.AddSingleton(this);
+                        config.AddSingleton(UnityAddonTest);
 
                         foreach (var attr in attrs)
                         {
@@ -58,13 +57,19 @@ namespace UnityAddon.Core
                         }
                     });
                 });
+        }
 
-            if (!isDefered)
-            {
-                HostBuilder.Build()
-                    .Services
-                    .GetRequiredService<IUnityAddonSP>().BuildUp(GetType(), this);
-            }
+        public void Build()
+        {
+            TestHost = TestHostBuilder.Build();
+        }
+
+        public void BuildUp()
+        {
+            TestHost
+                .Services
+                .GetRequiredService<IUnityAddonSP>()
+                .BuildUp(UnityAddonTest.GetType(), UnityAddonTest);
         }
     }
 }

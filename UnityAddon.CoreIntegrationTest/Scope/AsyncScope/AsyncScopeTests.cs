@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreIntegrationTest.Scope.AsyncScope
@@ -103,6 +105,10 @@ namespace UnityAddon.CoreIntegrationTest.Scope.AsyncScope
         private ConcurrentDictionary<Service, int> _serviceDict = new ConcurrentDictionary<Service, int>();
 
         private ConcurrentDictionary<Request, int> _reqDict = new ConcurrentDictionary<Request, int>();
+
+        public AsyncScopeTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
 
         [Theory]
         [InlineData(1)]

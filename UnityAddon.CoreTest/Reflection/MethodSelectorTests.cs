@@ -24,6 +24,7 @@ namespace UnityAddon.CoreTest.Reflection
 
         public virtual int E() => 1;
     }
+
     public class Config : AbstractConfig
     {
         public override int A() => 1;
@@ -36,6 +37,9 @@ namespace UnityAddon.CoreTest.Reflection
 
         [Bean]
         public override int E() => 1;
+
+        [Bean]
+        internal int F() => 1;
     }
 
 
@@ -77,6 +81,14 @@ namespace UnityAddon.CoreTest.Reflection
         public void GetAllMethodsByAttribute_ImplVirtualMethodAnnotated()
         {
             var a = MethodSelector.GetAllMethodsByAttribute<BeanAttribute>(typeof(Config)).Where(m => m.Name == "E");
+
+            Assert.Single(a);
+        }
+
+        [Fact]
+        public void GetAllMethodsByAttribute_InternalMethod()
+        {
+            var a = MethodSelector.GetAllMethodsByAttribute<BeanAttribute>(typeof(Config)).Where(m => m.Name == "F");
 
             Assert.Single(a);
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityAddon.Core.Util.ComponentScanning;
 
-namespace UnityAddon.Core.Attributes
+namespace UnityAddon.Test.Attributes
 {
     /// <summary>
     /// Define the scope (base namespaces) for component scanner to scan.
@@ -13,7 +13,7 @@ namespace UnityAddon.Core.Attributes
     {
         public ComponentScanAttribute(params string[] namespaces)
         {
-            Args.Add(new object[] { UnityAddonTest.CONFIG_PREFIX + "ComponentScan", typeof(ComponentScanConfig), typeof(Type) });
+            Args.Add(new object[] { UnityAddonTestFixture.CONFIG_PREFIX + "ComponentScan", typeof(ComponentScanConfig), typeof(Type) });
             Args.Add(new object[] { "Namespaces", namespaces, typeof(string[]) });
         }
     }

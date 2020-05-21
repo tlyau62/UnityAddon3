@@ -4,12 +4,17 @@ using System.Collections.Generic;
 using System.Text;
 using Unity;
 using UnityAddon.Core;
+using UnityAddon.Test;
 using Xunit;
 
 namespace UnityAddon.CoreIntegrationTest.Scope.CoreContextResolve
 {
     public class CoreContextResolveTests : UnityAddonTest
     {
+        public CoreContextResolveTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 

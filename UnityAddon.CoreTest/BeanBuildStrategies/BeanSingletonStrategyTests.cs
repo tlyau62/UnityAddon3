@@ -6,6 +6,7 @@ using System.Text;
 using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Test;
 using Xunit;
 
 namespace UnityAddon.CoreTest.BeanBuildStrategies
@@ -14,6 +15,10 @@ namespace UnityAddon.CoreTest.BeanBuildStrategies
 
     public class BeanSingletonStrategyTests : UnityAddonTest
     {
+        public BeanSingletonStrategyTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 

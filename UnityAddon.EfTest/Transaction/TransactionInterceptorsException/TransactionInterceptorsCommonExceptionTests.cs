@@ -3,6 +3,7 @@ using Unity;
 using UnityAddon.Core.Context;
 using UnityAddon.Ef.Transaction;
 using UnityAddon.EfTest.Common;
+using UnityAddon.Test;
 using Xunit;
 
 namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
@@ -11,6 +12,10 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
         where T1 : ITransactionInterceptor
         where T2 : ITransactionInterceptor
     {
+        public TransactionInterceptorsCommonExceptionTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IDbContextTemplate DbContextTemplate { get; set; }
 

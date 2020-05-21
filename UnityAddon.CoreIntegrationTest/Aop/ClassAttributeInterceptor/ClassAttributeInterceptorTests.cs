@@ -12,6 +12,8 @@ using UnityAddon.Core.Context;
 using Xunit;
 using UnityAddon.Core.Util.ComponentScanning;
 using UnityAddon.Core.BeanDefinition.GeneralBean;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 
 namespace UnityAddon.CoreTest.Aop.ClassAttributeInterceptor
 {
@@ -63,6 +65,7 @@ namespace UnityAddon.CoreTest.Aop.ClassAttributeInterceptor
         }
     }
 
+    [Configuration]
     public class ClassAttributeAopConfig : AopInterceptorConfig
     {
         [Bean]
@@ -77,9 +80,12 @@ namespace UnityAddon.CoreTest.Aop.ClassAttributeInterceptor
     }
 
     [ComponentScan]
-    [Import(typeof(ClassAttributeAopConfig))]
     public class ClassAttributeInterceptorTests : UnityAddonTest
     {
+        public ClassAttributeInterceptorTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IService Service { get; set; }
 

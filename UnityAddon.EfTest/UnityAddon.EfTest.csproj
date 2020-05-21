@@ -9,13 +9,14 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.6" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
-    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\UnityAddon.Core\UnityAddon.Core.csproj" />
     <ProjectReference Include="..\UnityAddon.Ef\UnityAddon.Ef.csproj" />
+    <ProjectReference Include="..\UnityAddon.Test\UnityAddon.Test.csproj" />
   </ItemGroup>
 
 </Project>

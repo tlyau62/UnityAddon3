@@ -8,6 +8,8 @@ using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 using Assert = Xunit.Assert;
 
@@ -25,14 +27,14 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.Proper
     [ComponentScan]
     public class NoSuchBeanDefinitionPropertyExceptionTests : UnityAddonTest
     {
-        public NoSuchBeanDefinitionPropertyExceptionTests() : base(true)
+        public NoSuchBeanDefinitionPropertyExceptionTests(UnityAddonTestFixture testFixture) : base(testFixture, true)
         {
         }
 
         [Fact]
         public void Properties()
         {
-            var ex = Assert.Throws<NoSuchBeanDefinitionException>(() => HostBuilder.Build());
+            var ex = Assert.Throws<NoSuchBeanDefinitionException>(() => Refresh());
 
             Assert.Equal($"Property B in {typeof(PropService).FullName} required a bean of type '{typeof(IB).FullName}' that could not be found.", ex.Message);
         }

@@ -6,6 +6,8 @@ using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreIntegrationTest.BeanRegistry.PostRegister
@@ -28,6 +30,10 @@ namespace UnityAddon.CoreIntegrationTest.BeanRegistry.PostRegister
     [ComponentScan]
     public class PostRegisterTests : UnityAddonTest
     {
+        public PostRegisterTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 

@@ -9,15 +9,20 @@ using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Ef;
 using UnityAddon.EfTest.Common;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.EfTest.Transaction.Repository
 {
     [ComponentScan]
-    [Import(typeof(UnityAddonEfConfig))]
-    [Import(typeof(TestDbConfig<TestDbContext>))]
+    [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
     public class RepositoryTests : UnityAddonEfTest
     {
+        public RepositoryTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IRepo Repo { get; set; }
 

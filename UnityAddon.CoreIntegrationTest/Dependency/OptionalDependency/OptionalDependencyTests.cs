@@ -5,6 +5,8 @@ using Unity;
 using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Dependency.OptionalDependency
@@ -36,6 +38,10 @@ namespace UnityAddon.CoreTest.Dependency.OptionalDependency
     [ComponentScan]
     public class OptionalDependencyTests : UnityAddonTest
     {
+        public OptionalDependencyTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public Service Service { get; set; }
 

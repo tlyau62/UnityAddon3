@@ -8,7 +8,7 @@ using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
 using UnityAddon.Core.BeanDefinition;
 
-namespace UnityAddon.Core.Util.ComponentScanning
+namespace UnityAddon.Test
 {
     [Configuration]
     public class ComponentScanConfig

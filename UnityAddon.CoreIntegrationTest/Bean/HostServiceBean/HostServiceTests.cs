@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Bean.HostServiceBean
@@ -39,6 +41,10 @@ namespace UnityAddon.CoreTest.Bean.HostServiceBean
     [ComponentScan]
     public class HostServiceTests : UnityAddonTest
     {
+        public HostServiceTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IHost Host { get; set; }
 

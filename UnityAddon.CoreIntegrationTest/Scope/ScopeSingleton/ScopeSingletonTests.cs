@@ -7,6 +7,8 @@ using System.Text;
 using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreIntegrationTest.ScopeSingleton
@@ -17,6 +19,10 @@ namespace UnityAddon.CoreIntegrationTest.ScopeSingleton
     [ComponentScan]
     public class ScopeSingletonTests : UnityAddonTest
     {
+        public ScopeSingletonTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 

@@ -14,6 +14,7 @@ using UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.B;
 using UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.A;
 using UnityAddon.Core.Context;
 using Microsoft.Extensions.DependencyInjection;
+using UnityAddon.Test;
 
 namespace UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter.A
 {
@@ -37,7 +38,9 @@ namespace UnityAddon.CoreTest.BeanRegistry.ComponentScan.NamespaceExcludeFilter
 
     public class NamespaceFilterTests : UnityAddonTest
     {
-        public NamespaceFilterTests() : base(true) { }
+        public NamespaceFilterTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
 
         [Dependency]
         public ISerivce Service { get; set; }

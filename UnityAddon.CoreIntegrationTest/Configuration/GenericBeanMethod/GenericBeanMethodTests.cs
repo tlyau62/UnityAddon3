@@ -5,6 +5,8 @@ using Unity;
 using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Configuration.GenericBeanMethod
@@ -28,6 +30,10 @@ namespace UnityAddon.CoreTest.Configuration.GenericBeanMethod
     [ComponentScan]
     public class GenericBeanMethodTests : UnityAddonTest
     {
+        public GenericBeanMethodTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public List<int> A { get; set; }
 

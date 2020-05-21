@@ -17,7 +17,7 @@ namespace UnityAddon.Core.Bean
         public IBeanDefinitionContainer BeanDefContainer { get; set; }
 
         [Dependency]
-        public IServiceRegistry ServicePostRegistry { get; set; }
+        public IServiceRegistry ServiceRegistry { get; set; }
 
         private readonly HashSet<IBeanDefinition> _parsedConfigs = new HashSet<IBeanDefinition>();
 
@@ -44,7 +44,7 @@ namespace UnityAddon.Core.Bean
                 return;
             }
 
-            ServicePostRegistry.ConfigureBeans(config => config.AddRange(beanMethodDefs));
+            ServiceRegistry.ConfigureBeans(config => config.AddRange(beanMethodDefs));
             Refresh();
         }
 

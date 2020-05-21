@@ -21,7 +21,7 @@ namespace UnityAddon.Core.Aop
     public class AopInterceptorContainer : IContextPostRegistryInitiable
     {
         [Dependency]
-        public IServiceRegistry ServicePostRegistry { get; set; }
+        public IServiceRegistry ServiceRegistry { get; set; }
 
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
@@ -41,7 +41,7 @@ namespace UnityAddon.Core.Aop
             {
                 if (!Sp.IsRegistered(t))
                 {
-                    ServicePostRegistry.AddSingleton(t, t);
+                    ServiceRegistry.AddSingleton(t, t);
                 }
             }
         }

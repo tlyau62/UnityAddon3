@@ -16,6 +16,8 @@ using UnityAddon.Ef;
 using UnityAddon.Ef.Transaction;
 using UnityAddon.EfTest.Common;
 using UnityAddon.Hangfire;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.HangfireTest.HangfireComponentScannerStrategy
@@ -62,11 +64,13 @@ namespace UnityAddon.HangfireTest.HangfireComponentScannerStrategy
     }
 
     [ComponentScan]
-    [Import(typeof(UnityAddonHangfireConfig))]
-    [Import(typeof(UnityAddonEfConfig))]
-    [Import(typeof(TestDbConfig<TestDbContext>))]
+    [ContextConfiguration(typeof(UnityAddonHangfireConfig), typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
     public class HangfireComponentScannerStrategy : UnityAddonTest
     {
+        public HangfireComponentScannerStrategy(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [HangfireProxy]
         public IThumbnailTask ThumbnailTaskClient { get; set; }
 

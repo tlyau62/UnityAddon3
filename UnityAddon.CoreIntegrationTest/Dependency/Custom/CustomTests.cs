@@ -12,6 +12,8 @@ using UnityAddon.Core.Bean;
 using UnityAddon.Core.Bean.DependencyInjection;
 using UnityAddon.Core.Context;
 using UnityAddon.Core.Value;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Dependency.Custom
@@ -47,6 +49,10 @@ namespace UnityAddon.CoreTest.Dependency.Custom
     [ComponentScan]
     public class CustomTests : UnityAddonTest
     {
+        public CustomTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public Service Service { get; set; }
 

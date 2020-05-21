@@ -5,6 +5,8 @@ using Unity;
 using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Dependency.Bean.NonGenericBean
@@ -38,6 +40,10 @@ namespace UnityAddon.CoreTest.Dependency.Bean.NonGenericBean
     [ComponentScan]
     public class NonGenericBeanTests : UnityAddonTest
     {
+        public NonGenericBeanTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public AbstractA A { get; set; }
 

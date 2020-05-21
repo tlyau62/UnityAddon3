@@ -8,15 +8,19 @@ using UnityAddon.EfTest.Common;
 using UnityAddon.Core.Util.ComponentScanning;
 using Xunit;
 using Microsoft.Extensions.DependencyInjection;
+using UnityAddon.Test.Attributes;
+using UnityAddon.Test;
 
 namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
 {
     [ComponentScan]
-    [Import(typeof(UnityAddonEfConfig))]
-    [Import(typeof(TestDbConfig<TestDbContext>))]
-    [Import(typeof(TransactionInterceptorsTestsConfig<TestTxInterceptor, TestTxExceptionInterceptor>))]
+    [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>), typeof(TransactionInterceptorsTestsConfig<TestTxInterceptor, TestTxExceptionInterceptor>))]
     public class TransactionInterceptorsExceptionTests : TransactionInterceptorsCommonExceptionTests<TestTxInterceptor, TestTxExceptionInterceptor>
     {
+        public TransactionInterceptorsExceptionTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Fact]
         public override void TransactionInterceptorManager_ExecuteTransaction_InterceptorExecuted()
         {

@@ -9,6 +9,8 @@ using UnityAddon.Core.Context;
 using Xunit;
 using UnityAddon.Core.Util.ComponentScanning;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 
 namespace UnityAddon.CoreTest.Aop.GenericMethodAttributeInterceptor
 {
@@ -29,6 +31,10 @@ namespace UnityAddon.CoreTest.Aop.GenericMethodAttributeInterceptor
     [ComponentScan]
     public class GenericMethodAttributeInterceptorTests : UnityAddonTest
     {
+        public GenericMethodAttributeInterceptorTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IService Service { get; set; }
 

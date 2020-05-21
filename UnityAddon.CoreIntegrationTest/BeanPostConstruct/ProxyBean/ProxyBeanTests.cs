@@ -11,6 +11,8 @@ using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Context;
 using UnityAddon.Core.Util.ComponentScanning;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreTest.BeanPostConstruct.ProxyBean
@@ -74,6 +76,10 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.ProxyBean
     [ComponentScan]
     public class ProxyBeanTests : UnityAddonTest
     {
+        public ProxyBeanTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IService Service { get; set; }
 

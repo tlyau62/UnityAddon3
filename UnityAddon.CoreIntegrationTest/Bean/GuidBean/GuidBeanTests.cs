@@ -17,6 +17,8 @@ using System.Reflection;
 using Unity.Lifetime;
 using UnityAddon.Core.Util.ComponentScanning;
 using UnityAddon.Core.Bean;
+using UnityAddon.Test.Attributes;
+using UnityAddon.Test;
 
 namespace UnityAddon.CoreIntegrationTest.Bean.GuidBean
 {
@@ -47,6 +49,10 @@ namespace UnityAddon.CoreIntegrationTest.Bean.GuidBean
     [ComponentScan]
     public class GuidBeanTests : UnityAddonTest
     {
+        public GuidBeanTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public GeneralService GeneralService { get; set; }
 

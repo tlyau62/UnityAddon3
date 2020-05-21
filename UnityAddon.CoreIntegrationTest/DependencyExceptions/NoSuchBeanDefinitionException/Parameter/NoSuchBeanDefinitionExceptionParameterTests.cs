@@ -8,6 +8,8 @@ using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 using Assert = Xunit.Assert;
 
@@ -26,14 +28,14 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NoUniqueBeanDefinition.Parame
     [ComponentScan]
     public class NoSuchBeanDefinitionExceptionParameterTests : UnityAddonTest
     {
-        public NoSuchBeanDefinitionExceptionParameterTests() : base(true)
+        public NoSuchBeanDefinitionExceptionParameterTests(UnityAddonTestFixture testFixture) : base(testFixture, true)
         {
         }
 
         [Fact]
         public void Paramters()
         {
-            var ex = Assert.Throws<BeanCreationException>(() => HostBuilder.Build());
+            var ex = Assert.Throws<BeanCreationException>(() => Refresh());
 
             Assert.Equal($"Fail to satisfy any of these constructors\r\n- {typeof(CtorService).GetConstructors().First()}", ex.Message);
         }

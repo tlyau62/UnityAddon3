@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace UnityAddon.Core.Attributes
+namespace UnityAddon.Test.Attributes
 {
     /// <summary>
     /// arg[0] = key string

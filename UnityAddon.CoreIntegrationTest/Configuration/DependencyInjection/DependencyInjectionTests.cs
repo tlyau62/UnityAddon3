@@ -6,6 +6,8 @@ using Unity;
 using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Configuration.DependencyInjection
@@ -39,6 +41,10 @@ namespace UnityAddon.CoreTest.Configuration.DependencyInjection
     [ComponentScan]
     public class DependencyInjectionTests : UnityAddonTest
     {
+        public DependencyInjectionTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public CtorHelper CtorHelper { get; set; }
 

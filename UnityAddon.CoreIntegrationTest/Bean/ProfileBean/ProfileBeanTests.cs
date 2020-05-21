@@ -11,6 +11,8 @@ using UnityAddon.Core.Attributes;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.Context;
 using UnityAddon.Core.Util.ComponentScanning;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Dependency.Bean.ProfileBean
@@ -34,7 +36,7 @@ namespace UnityAddon.CoreTest.Dependency.Bean.ProfileBean
     [ComponentScan]
     public class ProfileBeanTests : UnityAddonTest
     {
-        public ProfileBeanTests() : base(true)
+        public ProfileBeanTests(UnityAddonTestFixture testFixture) : base(testFixture, true)
         {
         }
 
@@ -48,7 +50,9 @@ namespace UnityAddon.CoreTest.Dependency.Bean.ProfileBean
         {
             Environment.SetEnvironmentVariable("UNITY_ADDON_PROFILES", activeProfile);
 
-            HostBuilder.Build().Services.GetRequiredService<IUnityAddonSP>().BuildUp(this);
+            Refresh();
+
+            Host.Services.GetRequiredService<IUnityAddonSP>().BuildUp(this);
 
             Assert.IsType(resolveType, Service);
         }
