@@ -61,9 +61,17 @@ namespace UnityAddon.Core.Context
             ApplicationSP.UnityContainer.AddExtension(AopBuildStrategyExtension);
         }
 
+        /// <summary>
+        /// Order of creating IContextPostRegistryInitiable is important.
+        /// </summary>
         public void PostRegistryInit()
         {
-            ApplicationSP.GetServices<IContextPostRegistryInitiable>().ToList().ForEach(init => init.Initialize());
+            var defContainer = ApplicationSP.GetService<IBeanDefinitionContainer>();
+
+            foreach (var def in defContainer.GetAllBeanDefinitions(typeof(IContextPostRegistryInitiable)))
+            {
+                ((IContextPostRegistryInitiable)ApplicationSP.GetService(def.Type, def.Name)).Initialize();
+            }
         }
 
         public void PostInstantiateSingleton()
@@ -71,6 +79,11 @@ namespace UnityAddon.Core.Context
             ApplicationSP.GetServices<IContextPostInstantiateSingleton>().ToList().ForEach(init => init.PostInitialize());
         }
 
+        /// <summary>
+        /// No bean resolve in this stage.
+        /// Except for bean definition.
+        /// </summary>
+        /// <param name="count"></param>
         public void PostRegistry(int? count = null)
         {
             if (count == null)
