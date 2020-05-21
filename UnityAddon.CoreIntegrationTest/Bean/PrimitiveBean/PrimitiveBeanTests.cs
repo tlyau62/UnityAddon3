@@ -6,6 +6,8 @@ using Unity;
 using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Bean.PrimitiveBean
@@ -39,6 +41,10 @@ namespace UnityAddon.CoreTest.Bean.PrimitiveBean
     [ComponentScan]
     public class PrimitiveBeanTests : UnityAddonTest
     {
+        public PrimitiveBeanTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public Config Config { get; set; }
 

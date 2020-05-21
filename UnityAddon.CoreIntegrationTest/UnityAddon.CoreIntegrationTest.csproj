@@ -8,45 +8,44 @@
 
   <ItemGroup>
     <Compile Remove="Aop\**" />
-    <Compile Remove="BeanPostConstruct\ProxyBean\**" />
+    <Compile Remove="BeanPostConstruct\**" />
     <Compile Remove="BeanPostProcessor\**" />
-    <Compile Remove="BeanRegistry\ComponentScan\**" />
+    <Compile Remove="BeanRegistry\**" />
     <Compile Remove="Bean\**" />
-    <Compile Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
+    <Compile Remove="Configuration\**" />
+    <Compile Remove="DependencyExceptions\**" />
+    <Compile Remove="Dependency\**" />
     <Compile Remove="Properties\PublishProfiles\**" />
+    <Compile Remove="Scope\**" />
     <Compile Remove="Util\**" />
     <Compile Remove="Value\**" />
     <EmbeddedResource Remove="Aop\**" />
-    <EmbeddedResource Remove="BeanPostConstruct\ProxyBean\**" />
+    <EmbeddedResource Remove="BeanPostConstruct\**" />
     <EmbeddedResource Remove="BeanPostProcessor\**" />
-    <EmbeddedResource Remove="BeanRegistry\ComponentScan\**" />
+    <EmbeddedResource Remove="BeanRegistry\**" />
     <EmbeddedResource Remove="Bean\**" />
-    <EmbeddedResource Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
+    <EmbeddedResource Remove="Configuration\**" />
+    <EmbeddedResource Remove="DependencyExceptions\**" />
+    <EmbeddedResource Remove="Dependency\**" />
     <EmbeddedResource Remove="Properties\PublishProfiles\**" />
+    <EmbeddedResource Remove="Scope\**" />
     <EmbeddedResource Remove="Util\**" />
     <EmbeddedResource Remove="Value\**" />
     <None Remove="Aop\**" />
-    <None Remove="BeanPostConstruct\ProxyBean\**" />
+    <None Remove="BeanPostConstruct\**" />
     <None Remove="BeanPostProcessor\**" />
-    <None Remove="BeanRegistry\ComponentScan\**" />
+    <None Remove="BeanRegistry\**" />
     <None Remove="Bean\**" />
-    <None Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
+    <None Remove="Configuration\**" />
+    <None Remove="DependencyExceptions\**" />
+    <None Remove="Dependency\**" />
     <None Remove="Properties\PublishProfiles\**" />
+    <None Remove="Scope\**" />
     <None Remove="Util\**" />
     <None Remove="Value\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Aop\ClassAttributeInterceptor\ClassAttributeInterceptorTests.cs" />
-    <Compile Include="Aop\GenericMethodAttributeInterceptor\Attributes.cs" />
-    <Compile Include="Aop\GenericMethodAttributeInterceptor\Components.cs" />
-    <Compile Include="Aop\GenericMethodAttributeInterceptor\GenericMethodAttributeInterceptorTests.cs" />
-    <Compile Include="Aop\GenericMethodAttributeInterceptor\Interceptors.cs" />
-    <Compile Include="Aop\MethodAttributeInterceptor\Attributes.cs" />
-    <Compile Include="Aop\MethodAttributeInterceptor\Components.cs" />
-    <Compile Include="Aop\MethodAttributeInterceptor\Interceptors.cs" />
-    <Compile Include="Aop\MethodAttributeInterceptor\MethodAttributeInterceptorTests.cs" />
-    <Compile Include="BeanPostConstruct\ProxyBean\ProxyBeanTests.cs" />
     <Compile Include="Bean\GenericBean\ConcreteGenericBean\ConcreteGenericBeanTests.cs" />
     <Compile Include="Bean\GenericBean\GenericDefinitionBean\GenericDefinitionBeanTests.cs" />
     <Compile Include="Bean\GenericBean\MixGenericBean\MixGenericBeanTests.cs" />
@@ -64,13 +63,17 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
-    <PackageReference Include="xunit" Version="2.4.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="coverlet.collector" Version="1.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\UnityAddon.Core\UnityAddon.Core.csproj" />
+    <ProjectReference Include="..\UnityAddon.Test\UnityAddon.Test.csproj" />
   </ItemGroup>
 
 </Project>

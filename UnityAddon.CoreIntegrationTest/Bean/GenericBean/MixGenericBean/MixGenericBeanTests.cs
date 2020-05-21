@@ -5,6 +5,8 @@ using Unity;
 using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Dependency.GenericDependency
@@ -30,6 +32,10 @@ namespace UnityAddon.CoreTest.Dependency.GenericDependency
     [ComponentScan]
     public class MixGenericBeanTests : UnityAddonTest
     {
+        public MixGenericBeanTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IService<int> IntService { get; set; }
 

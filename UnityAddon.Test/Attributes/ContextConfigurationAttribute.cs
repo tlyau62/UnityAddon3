@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace UnityAddon.Core.Attributes
+namespace UnityAddon.Test.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class ContextConfigurationAttribute : ConfigArgAttribute
@@ -11,7 +11,7 @@ namespace UnityAddon.Core.Attributes
         {
             foreach (var config in classes)
             {
-                Args.Add(new object[] { UnityAddonTest.CONFIG_PREFIX + config.Name, config, typeof(Type) });
+                Args.Add(new object[] { UnityAddonTestFixture.CONFIG_PREFIX + config.Name, config, typeof(Type) });
             }
         }
     }

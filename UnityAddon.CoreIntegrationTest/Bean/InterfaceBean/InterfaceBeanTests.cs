@@ -10,6 +10,8 @@ using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Context;
 using UnityAddon.Core.Util.ComponentScanning;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Bean.InterfaceBean
@@ -60,6 +62,10 @@ namespace UnityAddon.CoreTest.Bean.InterfaceBean
     [ComponentScan]
     public class InterfaceBeanTests : UnityAddonTest
     {
+        public InterfaceBeanTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public INoImplService NoImplService { get; set; }
 
