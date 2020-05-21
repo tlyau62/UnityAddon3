@@ -12,6 +12,8 @@ using UnityAddon.Core.Util.ComponentScanning;
 using Xunit;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Ef.Transaction;
+using UnityAddon.Test.Attributes;
+using UnityAddon.Test;
 
 namespace UnityAddon.EfTest.MultipleContext
 {
@@ -29,6 +31,10 @@ namespace UnityAddon.EfTest.MultipleContext
     [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>), typeof(TestDbConfig<TestDbContext2>))]
     public class MultipleContextTests : UnityAddonEfTest
     {
+        public MultipleContextTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IDbContextFactory<TestDbContext> DbContextFactory { get; set; }
 

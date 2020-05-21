@@ -9,6 +9,8 @@ using UnityAddon.Core.Aop;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Ef;
 using UnityAddon.EfTest.Common;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.EfTest.Transaction.Repository
@@ -17,6 +19,10 @@ namespace UnityAddon.EfTest.Transaction.Repository
     [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
     public class RepositoryTests : UnityAddonEfTest
     {
+        public RepositoryTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IRepo Repo { get; set; }
 

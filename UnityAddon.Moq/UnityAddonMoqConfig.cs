@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using UnityAddon.Core.BeanDefinition.GeneralBean;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
+using UnityAddon.Test;
 
 namespace UnityAddon.Moq
 {

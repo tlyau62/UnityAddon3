@@ -4,6 +4,8 @@ using System.Text;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.CoreTest.Bean;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 
 namespace UnityAddon.Serilog
 {
@@ -13,7 +15,7 @@ namespace UnityAddon.Serilog
         {
             var config = typeof(SerilogConfig);
 
-            Args.Add(new object[] { UnityAddonTest.CONFIG_PREFIX + config.Name, config, typeof(Type) });
+            Args.Add(new object[] { UnityAddonTestFixture.CONFIG_PREFIX + config.Name, config, typeof(Type) });
         }
     }
 }

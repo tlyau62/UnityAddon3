@@ -12,6 +12,8 @@ using UnityAddon.EfTest.Common;
 using UnityAddon.Core.Util.ComponentScanning;
 using Xunit;
 using UnityAddon.Ef.TransactionInterceptor;
+using UnityAddon.Test.Attributes;
+using UnityAddon.Test;
 
 namespace UnityAddon.EfTest.Transaction.TransactionInterceptors
 {
@@ -60,6 +62,10 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptors
     [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
     public class TransactionInterceptorsTests : UnityAddonEfTest
     {
+        public TransactionInterceptorsTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IDbContextTemplate DbContextTemplate { get; set; }
 

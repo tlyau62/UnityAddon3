@@ -15,6 +15,8 @@ using UnityAddon.Core.Util.ComponentScanning;
 using Xunit;
 using Microsoft.Extensions.DependencyInjection;
 using UnityAddon.Ef.RollbackLogics;
+using UnityAddon.Test.Attributes;
+using UnityAddon.Test;
 
 namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
 {
@@ -42,6 +44,10 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
     [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
     public class CustomRollbackLogicTests : UnityAddonEfTest
     {
+        public CustomRollbackLogicTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IDbContextFactory<TestDbContext> DbContextFactory { get; set; }
 

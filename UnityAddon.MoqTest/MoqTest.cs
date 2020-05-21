@@ -4,6 +4,7 @@ using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Moq;
+using UnityAddon.Test;
 using Xunit;
 using static Moq.Mock;
 
@@ -28,6 +29,10 @@ namespace UnityAddon.MoqTest.Moq
     [EnableUnityAddonMoq(false)]
     public class MoqTest : UnityAddonTest
     {
+        public MoqTest(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Mock]
         public Mock<IMessageRepository> MessageRepository { get; set; }
 

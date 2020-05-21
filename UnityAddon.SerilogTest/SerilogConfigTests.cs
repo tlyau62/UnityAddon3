@@ -14,6 +14,8 @@ using Unity.Builder;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Serilog;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.SerilogTest
@@ -34,6 +36,10 @@ namespace UnityAddon.SerilogTest
     [ContextConfiguration(typeof(TestConfig), typeof(SerilogConfig))]
     public class SerilogConfigTests : UnityAddonTest
     {
+        public SerilogConfigTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Fact]
         public void ConfigTest()
         {

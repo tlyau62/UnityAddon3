@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\UnityAddon.Core\UnityAddon.Core.csproj" />
+    <ProjectReference Include="..\UnityAddon.Test\UnityAddon.Test.csproj" />
   </ItemGroup>
 
 </Project>

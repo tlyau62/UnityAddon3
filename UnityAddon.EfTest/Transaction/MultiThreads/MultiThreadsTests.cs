@@ -9,6 +9,8 @@ using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Ef;
 using UnityAddon.EfTest.Common;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.EfTest.Transaction.MultiThreads
@@ -24,6 +26,10 @@ namespace UnityAddon.EfTest.Transaction.MultiThreads
         public IDbContextFactory<TestDbContext> DbContextFactory { get; set; }
 
         private readonly Random _random = new Random();
+
+        public MultiThreadsTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
 
         [Theory]
         [InlineData(100, 20)]

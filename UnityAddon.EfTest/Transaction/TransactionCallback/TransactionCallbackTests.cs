@@ -6,6 +6,8 @@ using UnityAddon.Core.Attributes;
 using UnityAddon.Ef;
 using UnityAddon.Ef.Transaction;
 using UnityAddon.EfTest.Common;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.EfTest.Transaction.TransactionCallback
@@ -20,6 +22,10 @@ namespace UnityAddon.EfTest.Transaction.TransactionCallback
     [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
     public class TransactionCallbackTests : UnityAddonEfTest
     {
+        public TransactionCallbackTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IDbContextTemplate DbContextTemplate { get; set; }
 

@@ -8,6 +8,8 @@ using UnityAddon.Core.Attributes;
 using UnityAddon.Ef;
 using UnityAddon.Ef.Transaction;
 using UnityAddon.EfTest.Common;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.EfTest.Transaction.RequireDbContext
@@ -16,6 +18,10 @@ namespace UnityAddon.EfTest.Transaction.RequireDbContext
     [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
     public class RequireDbContextTests : UnityAddonEfTest
     {
+        public RequireDbContextTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IRepoA RepoA { get; set; }
 
