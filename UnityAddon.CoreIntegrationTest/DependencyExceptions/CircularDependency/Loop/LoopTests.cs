@@ -8,6 +8,8 @@ using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.Loop
@@ -30,14 +32,14 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.Loop
     [ComponentScan]
     public class SelfLoopTests : UnityAddonTest
     {
-        public SelfLoopTests() : base(true)
+        public SelfLoopTests(UnityAddonTestFixture testFixture) : base(testFixture, true)
         {
         }
 
         [Fact]
         public void BeanDependencyValidatorStrategy_ResolveLoopDependency_ExceptionThrown()
         {
-            Assert.Throws<CircularDependencyException>(() => HostBuilder.Build());
+            Assert.Throws<CircularDependencyException>(() => Refresh());
         }
     }
 }

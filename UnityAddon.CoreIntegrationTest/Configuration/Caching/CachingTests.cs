@@ -5,6 +5,8 @@ using Unity;
 using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Configuration.Caching
@@ -39,6 +41,10 @@ namespace UnityAddon.CoreTest.Configuration.Caching
     [ComponentScan]
     public class CachingTests : UnityAddonTest
     {
+        public CachingTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public Config Config { get; set; }
 

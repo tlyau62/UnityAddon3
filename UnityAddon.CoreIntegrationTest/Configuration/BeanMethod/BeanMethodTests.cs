@@ -5,6 +5,8 @@ using Unity;
 using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Configuration.BeanMethod
@@ -46,6 +48,10 @@ namespace UnityAddon.CoreTest.Configuration.BeanMethod
     [ComponentScan]
     public class BeanMethodTests : UnityAddonTest
     {
+        public BeanMethodTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IService ServiceA { get; set; }
 

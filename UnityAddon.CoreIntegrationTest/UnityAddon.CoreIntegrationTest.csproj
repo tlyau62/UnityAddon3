@@ -7,40 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Aop\**" />
-    <Compile Remove="BeanPostConstruct\**" />
     <Compile Remove="BeanPostProcessor\**" />
-    <Compile Remove="BeanRegistry\**" />
+    <Compile Remove="BeanRegistry\ComponentScan\**" />
     <Compile Remove="Bean\**" />
-    <Compile Remove="Configuration\**" />
-    <Compile Remove="DependencyExceptions\**" />
-    <Compile Remove="Dependency\**" />
+    <Compile Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
     <Compile Remove="Properties\PublishProfiles\**" />
-    <Compile Remove="Scope\**" />
     <Compile Remove="Util\**" />
     <Compile Remove="Value\**" />
-    <EmbeddedResource Remove="Aop\**" />
-    <EmbeddedResource Remove="BeanPostConstruct\**" />
     <EmbeddedResource Remove="BeanPostProcessor\**" />
-    <EmbeddedResource Remove="BeanRegistry\**" />
+    <EmbeddedResource Remove="BeanRegistry\ComponentScan\**" />
     <EmbeddedResource Remove="Bean\**" />
-    <EmbeddedResource Remove="Configuration\**" />
-    <EmbeddedResource Remove="DependencyExceptions\**" />
-    <EmbeddedResource Remove="Dependency\**" />
+    <EmbeddedResource Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
     <EmbeddedResource Remove="Properties\PublishProfiles\**" />
-    <EmbeddedResource Remove="Scope\**" />
     <EmbeddedResource Remove="Util\**" />
     <EmbeddedResource Remove="Value\**" />
-    <None Remove="Aop\**" />
-    <None Remove="BeanPostConstruct\**" />
     <None Remove="BeanPostProcessor\**" />
-    <None Remove="BeanRegistry\**" />
+    <None Remove="BeanRegistry\ComponentScan\**" />
     <None Remove="Bean\**" />
-    <None Remove="Configuration\**" />
-    <None Remove="DependencyExceptions\**" />
-    <None Remove="Dependency\**" />
+    <None Remove="DependencyExceptions\NoUniqueBeanDefinitionException\**" />
     <None Remove="Properties\PublishProfiles\**" />
-    <None Remove="Scope\**" />
     <None Remove="Util\**" />
     <None Remove="Value\**" />
   </ItemGroup>

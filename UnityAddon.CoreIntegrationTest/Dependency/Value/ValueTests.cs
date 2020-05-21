@@ -14,6 +14,8 @@ using UnityAddon.Core.Util.ComponentScanning;
 using UnityAddon.Core.Context;
 using Microsoft.Extensions.DependencyInjection;
 using UnityAddon.Core.BeanDefinition;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 
 namespace UnityAddon.CoreTest.Dependency.Value
 {
@@ -48,6 +50,10 @@ namespace UnityAddon.CoreTest.Dependency.Value
     [ComponentScan]
     public class ValueTests : UnityAddonTest
     {
+        public ValueTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public Service Service { get; set; }
 

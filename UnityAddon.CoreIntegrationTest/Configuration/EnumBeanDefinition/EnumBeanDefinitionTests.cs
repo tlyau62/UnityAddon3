@@ -6,6 +6,8 @@ using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.BeanDefinition;
 using UnityAddon.Core.BeanDefinition.GeneralBean;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreTest.Configuration.EnumBeanDefinition
@@ -27,6 +29,10 @@ namespace UnityAddon.CoreTest.Configuration.EnumBeanDefinition
     [ComponentScan]
     public class EnumBeanDefinitionTests : UnityAddonTest
     {
+        public EnumBeanDefinitionTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public string TestString { get; set; }
 

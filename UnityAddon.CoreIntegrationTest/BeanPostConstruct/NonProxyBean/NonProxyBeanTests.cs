@@ -6,6 +6,8 @@ using Unity;
 using UnityAddon;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreTest.BeanPostConstruct.NonProxy
@@ -66,6 +68,10 @@ namespace UnityAddon.CoreTest.BeanPostConstruct.NonProxy
     [ComponentScan]
     public class NonProxyBeanTests : UnityAddonTest
     {
+        public NonProxyBeanTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 

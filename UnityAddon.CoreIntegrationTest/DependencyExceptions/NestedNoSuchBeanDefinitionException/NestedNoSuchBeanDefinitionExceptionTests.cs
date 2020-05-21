@@ -8,6 +8,8 @@ using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Exceptions;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 using Assert = Xunit.Assert;
 
@@ -36,7 +38,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NestedNoSuchBeanDefinitionExc
     [ComponentScan]
     public class NestedNoSuchBeanDefinitionExceptionTests : UnityAddonTest
     {
-        public NestedNoSuchBeanDefinitionExceptionTests() : base(true)
+        public NestedNoSuchBeanDefinitionExceptionTests(UnityAddonTestFixture testFixture) : base(testFixture, true)
         {
         }
 
@@ -46,7 +48,7 @@ namespace UnityAddon.CoreTest.DependencyExceptions.NestedNoSuchBeanDefinitionExc
         [Fact]
         public void NestedNoSuchBeanDefinitionException()
         {
-            var ex = Assert.Throws<NoSuchBeanDefinitionException>(() => HostBuilder.Build());
+            var ex = Assert.Throws<NoSuchBeanDefinitionException>(() => Refresh());
 
             Assert.Equal($"Property Root in {typeof(CommonService).FullName} required a bean of type '{typeof(IRoot).FullName}' that could not be found.", ex.Message);
         }

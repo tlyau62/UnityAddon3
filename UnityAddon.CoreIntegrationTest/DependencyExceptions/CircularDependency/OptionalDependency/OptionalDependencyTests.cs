@@ -7,6 +7,8 @@ using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
 using Xunit;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 
 namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.OptionalDependency
 {
@@ -41,6 +43,10 @@ namespace UnityAddon.CoreTest.DependencyExceptions.CircularDependency.OptionalDe
     [ComponentScan]
     public class OptionalDependencyTests : UnityAddonTest
     {
+        public OptionalDependencyTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 

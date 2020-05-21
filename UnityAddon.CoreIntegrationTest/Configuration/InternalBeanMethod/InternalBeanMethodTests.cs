@@ -4,6 +4,8 @@ using System.Text;
 using Unity;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
+using UnityAddon.Test;
+using UnityAddon.Test.Attributes;
 using Xunit;
 
 namespace UnityAddon.CoreIntegrationTest.Configuration.InternalBeanMethod
@@ -25,6 +27,10 @@ namespace UnityAddon.CoreIntegrationTest.Configuration.InternalBeanMethod
     [ComponentScan]
     public class InternalBeanMethodTests : UnityAddonTest
     {
+        public InternalBeanMethodTests(UnityAddonTestFixture testFixture) : base(testFixture)
+        {
+        }
+
         [Dependency]
         public IService Service { get; set; }
 
