@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using Unity;
@@ -40,7 +40,18 @@ namespace UnityAddon.CoreTest.Bean
         public virtual string TestC() => "TestStringC";
     }
 
-    [ContextConfiguration(typeof(ConfigMain))]
+    public interface IComponent { }
+
+    [Component]
+    public class Component : IComponent { }
+
+    [Import(typeof(Component))]
+    [Configuration]
+    public class ConfigComponent
+    {
+    }
+
+    [Import(typeof(ConfigMain), typeof(ConfigComponent))]
     public class ImportRegistryTests : UnityAddonTest
     {
         public ImportRegistryTests(UnityAddonTestFixture testFixture) : base(testFixture)
@@ -61,6 +72,12 @@ namespace UnityAddon.CoreTest.Bean
 
             Assert.True(Sp.IsRegistered<ConfigC>());
             Assert.Equal("TestStringC", Sp.GetRequiredService<string>("TestC"));
+        }
+
+        [Fact]
+        public void Import()
+        {
+            Assert.NotNull(Sp.GetRequiredService<IComponent>());
         }
     }
 }
