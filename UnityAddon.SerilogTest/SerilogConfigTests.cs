@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -20,6 +20,7 @@ using Xunit;
 
 namespace UnityAddon.SerilogTest
 {
+    [Configuration]
     public class TestConfig
     {
         [Bean]

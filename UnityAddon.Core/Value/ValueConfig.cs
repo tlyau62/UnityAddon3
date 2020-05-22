@@ -7,6 +7,7 @@ using UnityAddon.Core.BeanDefinition;
 
 namespace UnityAddon.Core.Value
 {
+    [Configuration]
     public class ValueConfig : DependencyResolverConfig
     {
         [Bean]

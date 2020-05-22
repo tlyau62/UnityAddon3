@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Unity;
@@ -13,10 +13,12 @@ using Xunit;
 namespace UnityAddon.CoreTest.Bean
 {
     [Import(typeof(ConfigA), typeof(ConfigB))]
+    [Configuration]
     public class ConfigMain
     {
     }
 
+    [Configuration]
     public class ConfigA
     {
         [Bean]
@@ -24,12 +26,14 @@ namespace UnityAddon.CoreTest.Bean
     }
 
     [Import(typeof(ConfigC))]
+    [Configuration]
     public class ConfigB
     {
         [Bean]
         public virtual string TestB() => "TestStringB";
     }
 
+    [Configuration]
     public class ConfigC
     {
         [Bean]

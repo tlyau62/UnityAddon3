@@ -9,6 +9,7 @@ using UnityAddon.Core.BeanDefinition;
 
 namespace UnityAddon.Serilog
 {
+    [Configuration]
     public class SerilogConfig
     {
         [Bean]

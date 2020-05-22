@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -15,6 +15,7 @@ using UnityAddon.Core.Util.ComponentScanning;
 
 namespace UnityAddon.Hangfire
 {
+    [Configuration]
     public class UnityAddonHangfireConfig
     {
         [Bean]

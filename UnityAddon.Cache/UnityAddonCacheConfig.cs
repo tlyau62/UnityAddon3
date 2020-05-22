@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -14,6 +14,7 @@ using UnityAddon.Core.Util.ComponentScanning;
 
 namespace UnityAddon.Cache
 {
+    [Configuration]
     public class UnityAddonCacheConfig
     {
         [Dependency]

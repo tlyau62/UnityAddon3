@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -19,6 +19,7 @@ using UnityAddon.Test;
 
 namespace UnityAddon.Moq
 {
+    [Configuration]
     public class UnityAddonMoqConfig
     {
         [Dependency("UAMoqPartial")]

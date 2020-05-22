@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -18,6 +18,7 @@ using UnityAddon.Ef.TransactionInterceptor;
 
 namespace UnityAddon.Ef
 {
+    [Configuration]
     public class UnityAddonEfConfig : AopInterceptorConfig
     {
         [Bean]
