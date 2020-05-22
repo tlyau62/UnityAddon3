@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -15,6 +15,7 @@ using UnityAddon.Core.Util.ComponentScanning;
 
 namespace UnityAddon.Hangfire
 {
+    [IgnoreDuringScan]
     [Configuration]
     public class UnityAddonHangfireConfig
     {
@@ -49,14 +50,6 @@ namespace UnityAddon.Hangfire
             col.AddFromComponentScanner(Assembly.GetExecutingAssembly(), "UnityAddon.Hangfire");
 
             return col;
-        }
-    }
-
-    public static class UnityAddonHangfireExt
-    {
-        public static void AddUnityAddonHangfire(this IBeanRegistry beanRegistry)
-        {
-            beanRegistry.AddConfiguration<UnityAddonHangfireConfig>();
         }
     }
 }

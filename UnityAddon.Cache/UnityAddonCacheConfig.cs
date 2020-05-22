@@ -15,6 +15,7 @@ using UnityAddon.Core.Util.ComponentScanning;
 namespace UnityAddon.Cache
 {
     [Configuration]
+    [IgnoreDuringScan]
     public class UnityAddonCacheConfig
     {
         [Dependency]

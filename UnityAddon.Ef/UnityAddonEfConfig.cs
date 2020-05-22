@@ -19,6 +19,7 @@ using UnityAddon.Ef.TransactionInterceptor;
 namespace UnityAddon.Ef
 {
     [Configuration]
+    [IgnoreDuringScan]
     public class UnityAddonEfConfig : AopInterceptorConfig
     {
         [Bean]
