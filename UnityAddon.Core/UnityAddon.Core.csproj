@@ -4,9 +4,9 @@
     <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>2.5.3</AssemblyVersion>
-    <FileVersion>2.5.3</FileVersion>
-    <Version>2.5.3</Version>
+    <AssemblyVersion>2.5.4</AssemblyVersion>
+    <FileVersion>2.5.4</FileVersion>
+    <Version>2.5.4</Version>
   </PropertyGroup>
 
   <ItemGroup>
