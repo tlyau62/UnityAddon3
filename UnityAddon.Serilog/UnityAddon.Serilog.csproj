@@ -4,9 +4,9 @@
     <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>2.5.0</AssemblyVersion>
-    <FileVersion>2.5.0</FileVersion>
-    <Version>2.5.0</Version>
+    <AssemblyVersion>2.5.2</AssemblyVersion>
+    <FileVersion>2.5.2</FileVersion>
+    <Version>2.5.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UnityAddon.CoreTest\UnityAddon.CoreTest.csproj" />
     <ProjectReference Include="..\UnityAddon.Core\UnityAddon.Core.csproj" />
+    <ProjectReference Include="..\UnityAddon.Test\UnityAddon.Test.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using UnityAddon.Core;
 using UnityAddon.Core.Attributes;
-using UnityAddon.CoreTest.Bean;
 using UnityAddon.Test;
 using UnityAddon.Test.Attributes;
 
