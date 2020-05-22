@@ -1,10 +1,11 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using UnityAddon.Core;
+using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Context;
 using UnityAddon.Test.Attributes;
 
@@ -51,7 +52,7 @@ namespace UnityAddon.Test
 
                                 if (key.StartsWith(CONFIG_PREFIX))
                                 {
-                                    config.AddConfiguration((Type)arg[1]);
+                                    config.AddComponent((Type)arg[1]);
                                 }
                                 else
                                 {

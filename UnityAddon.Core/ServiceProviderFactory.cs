@@ -34,7 +34,7 @@ namespace UnityAddon.Core
             coreCtx.Container.BuildUp(appCtx);
 
             beanReg.ConfigureBeans(config => config.AddFromUnityContainer(coreCtx.Container));
-            beanReg.ConfigureBeans(config => config.AddConfiguration<ValueConfig>());
+            beanReg.ConfigureBeans(config => config.AddComponent<ValueConfig>());
 
             if (services != null)
             {

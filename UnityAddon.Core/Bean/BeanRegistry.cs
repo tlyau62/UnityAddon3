@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using Unity;
 using Unity.Lifetime;
@@ -47,10 +48,6 @@ namespace UnityAddon.Core.Bean
         void AddComponent<TImpl>() where TImpl : class;
 
         void AddComponent(Type type);
-
-        void AddConfiguration<TImpl>() where TImpl : class;
-
-        void AddConfiguration(Type type);
 
         void AddFromExisting(IEnumerable<IBeanDefinition> beanDefCollection);
 
@@ -117,7 +114,18 @@ namespace UnityAddon.Core.Bean
 
         public void AddComponent(Type type)
         {
-            Add(new MemberComponentBeanDefinition(type));
+            if (type.GetCustomAttribute<ConfigurationAttribute>() != null)
+            {
+                Add(new MemberConfigurationBeanDefinition(type));
+            }
+            else if (type.GetCustomAttribute<ComponentAttribute>() != null)
+            {
+                Add(new MemberComponentBeanDefinition(type));
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public void AddFromServiceCollection(Action<IServiceCollection> servicesCallback)
@@ -199,16 +207,6 @@ namespace UnityAddon.Core.Bean
         public void AddComponent<TImpl>() where TImpl : class
         {
             AddComponent(typeof(TImpl));
-        }
-
-        public void AddConfiguration<TImpl>() where TImpl : class
-        {
-            AddConfiguration(typeof(TImpl));
-        }
-
-        public void AddConfiguration(Type type)
-        {
-            Add(new MemberConfigurationBeanDefinition(type));
         }
 
         public void AddScoped(Type type, Type implType, string name)
