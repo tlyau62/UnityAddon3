@@ -1,4 +1,4 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -18,9 +18,6 @@ namespace UnityAddon.Cache
     [IgnoreDuringScan]
     public class UnityAddonCacheConfig
     {
-        [Dependency]
-        public ApplicationContext ApplicationContext { get; set; }
-
         [Bean]
         public virtual IBeanDefinitionCollection EnableUnityAddonCache()
         {

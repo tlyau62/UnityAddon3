@@ -46,12 +46,12 @@ namespace UnityAddon.CoreTest.Bean.HostServiceBean
         }
 
         [Dependency]
-        public IHost Host { get; set; }
+        public IHost TestHost { get; set; }
 
         [Fact]
         public void HostService()
         {
-            Host.Run();
+            TestHost.Run();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Bean;
@@ -24,14 +25,7 @@ namespace UnityAddon.Core.Util.ComponentScanning
         {
             IBeanDefinitionCollection col = new BeanDefinitionCollection();
 
-            if (type.HasAttribute<ConfigurationAttribute>())
-            {
-                col.AddConfiguration(type);
-            }
-            else
-            {
-                col.AddComponent(type);
-            }
+            col.AddComponent(type);
 
             return col;
         }
