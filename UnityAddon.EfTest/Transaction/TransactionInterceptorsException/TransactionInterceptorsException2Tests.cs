@@ -8,7 +8,7 @@ using Xunit;
 namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
 {
     [ComponentScan]
-    [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>), typeof(TransactionInterceptorsTestsConfig<TestTxExceptionInterceptor, TestTxInterceptor>))]
+    [Import(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>), typeof(TransactionInterceptorsTestsConfig<TestTxExceptionInterceptor, TestTxInterceptor>))]
     public class TransactionInterceptorsException2Tests : TransactionInterceptorsCommonExceptionTests<TestTxExceptionInterceptor, TestTxInterceptor>
     {
         public TransactionInterceptorsException2Tests(UnityAddonTestFixture testFixture) : base(testFixture)

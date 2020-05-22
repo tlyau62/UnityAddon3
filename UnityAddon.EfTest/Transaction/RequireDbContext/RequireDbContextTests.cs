@@ -15,7 +15,7 @@ using Xunit;
 namespace UnityAddon.EfTest.Transaction.RequireDbContext
 {
     [ComponentScan]
-    [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
+    [Import(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
     public class RequireDbContextTests : UnityAddonEfTest
     {
         public RequireDbContextTests(UnityAddonTestFixture testFixture) : base(testFixture)

@@ -64,7 +64,7 @@ namespace UnityAddon.HangfireTest.HangfireComponentScannerStrategy
     }
 
     [ComponentScan]
-    [ContextConfiguration(typeof(UnityAddonHangfireConfig), typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
+    [Import(typeof(UnityAddonHangfireConfig), typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
     public class HangfireComponentScannerStrategy : UnityAddonTest
     {
         public HangfireComponentScannerStrategy(UnityAddonTestFixture testFixture) : base(testFixture)

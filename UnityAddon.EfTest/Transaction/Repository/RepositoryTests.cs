@@ -16,7 +16,7 @@ using Xunit;
 namespace UnityAddon.EfTest.Transaction.Repository
 {
     [ComponentScan]
-    [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
+    [Import(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
     public class RepositoryTests : UnityAddonEfTest
     {
         public RepositoryTests(UnityAddonTestFixture testFixture) : base(testFixture)

@@ -14,7 +14,7 @@ using UnityAddon.Test;
 namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
 {
     [ComponentScan]
-    [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>), typeof(TransactionInterceptorsTestsConfig<TestTxInterceptor, TestTxExceptionInterceptor>))]
+    [Import(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>), typeof(TransactionInterceptorsTestsConfig<TestTxInterceptor, TestTxExceptionInterceptor>))]
     public class TransactionInterceptorsExceptionTests : TransactionInterceptorsCommonExceptionTests<TestTxInterceptor, TestTxExceptionInterceptor>
     {
         public TransactionInterceptorsExceptionTests(UnityAddonTestFixture testFixture) : base(testFixture)

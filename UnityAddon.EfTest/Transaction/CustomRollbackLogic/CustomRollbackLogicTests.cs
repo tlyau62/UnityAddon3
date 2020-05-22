@@ -41,7 +41,7 @@ namespace UnityAddon.EfTest.Transaction.CustomRollbackLogic
     }
 
     [ComponentScan]
-    [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
+    [Import(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
     public class CustomRollbackLogicTests : UnityAddonEfTest
     {
         public CustomRollbackLogicTests(UnityAddonTestFixture testFixture) : base(testFixture)

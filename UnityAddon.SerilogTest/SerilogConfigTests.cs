@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -34,7 +34,7 @@ namespace UnityAddon.SerilogTest
         }
     }
 
-    [ContextConfiguration(typeof(TestConfig), typeof(SerilogConfig))]
+    [Import(typeof(TestConfig), typeof(SerilogConfig))]
     public class SerilogConfigTests : UnityAddonTest
     {
         public SerilogConfigTests(UnityAddonTestFixture testFixture) : base(testFixture)

@@ -59,7 +59,7 @@ namespace UnityAddon.EfTest.Transaction.TransactionInterceptors
     }
 
     [ComponentScan]
-    [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
+    [Import(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
     public class TransactionInterceptorsTests : UnityAddonEfTest
     {
         public TransactionInterceptorsTests(UnityAddonTestFixture testFixture) : base(testFixture)
