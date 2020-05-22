@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -65,14 +65,6 @@ namespace UnityAddon.Moq
                 .ForEach(p => beanDefCol.AddSingleton(p.PropertyType, p.PropertyType));
 
             return beanDefCol;
-        }
-    }
-
-    public static class UnityAddonMoqExt
-    {
-        public static void AddUnityAddonMoq(this IBeanRegistry beanRegistry)
-        {
-            beanRegistry.AddConfiguration<UnityAddonMoqConfig>();
         }
     }
 }

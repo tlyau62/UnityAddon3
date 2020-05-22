@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -42,14 +42,6 @@ namespace UnityAddon.Ef
             col.AddFromComponentScanner(Assembly.GetExecutingAssembly(), "UnityAddon.Ef");
 
             return col;
-        }
-    }
-
-    public static class UnityAddonEfExt
-    {
-        public static void AddUnityAddonEf(this IBeanRegistry beanRegistry)
-        {
-            beanRegistry.AddConfiguration<UnityAddonEfConfig>();
         }
     }
 }

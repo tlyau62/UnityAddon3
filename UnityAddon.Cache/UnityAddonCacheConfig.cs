@@ -47,12 +47,4 @@ namespace UnityAddon.Cache
             return option;
         }
     }
-
-    public static class UnityAddonCacheExt
-    {
-        public static void AddUnityAddonCache(this IBeanRegistry beanRegistry)
-        {
-            beanRegistry.AddConfiguration<UnityAddonCacheConfig>();
-        }
-    }
 }
