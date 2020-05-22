@@ -22,6 +22,8 @@ namespace UnityAddon.Core.Bean
 
         private readonly HashSet<IBeanDefinition> _parsedConfigs = new HashSet<IBeanDefinition>();
 
+        private readonly HashSet<Type> _parsedComponents = new HashSet<Type>();
+
         public void Refresh()
         {
             var importComps = BeanDefContainer.Registrations.Values
@@ -49,6 +51,13 @@ namespace UnityAddon.Core.Bean
             {
                 foreach (var c in importComps)
                 {
+                    if (_parsedComponents.Contains(c))
+                    {
+                        continue;
+                    }
+
+                    _parsedComponents.Add(c);
+
                     beans.AddComponent(c);
                 }
             });
