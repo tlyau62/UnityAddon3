@@ -5,6 +5,8 @@ using UnityAddon.Ef.TransactionInterceptor;
 
 namespace UnityAddon.EfTest.Transaction.TransactionInterceptorsException
 {
+    [Configuration]
+    [IgnoreDuringScan]
     public class TransactionInterceptorsTestsConfig<T1, T2> : UnityAddonEfCustomConfig
         where T1 : ITransactionInterceptor
         where T2 : ITransactionInterceptor

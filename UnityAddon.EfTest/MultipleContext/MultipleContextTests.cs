@@ -28,7 +28,7 @@ namespace UnityAddon.EfTest.MultipleContext
     }
 
     [ComponentScan]
-    [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>), typeof(TestDbConfig<TestDbContext2>))]
+    [Import(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>), typeof(TestDbConfig<TestDbContext2>))]
     public class MultipleContextTests : UnityAddonEfTest
     {
         public MultipleContextTests(UnityAddonTestFixture testFixture) : base(testFixture)

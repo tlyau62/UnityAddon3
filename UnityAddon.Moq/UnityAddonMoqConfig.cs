@@ -19,6 +19,7 @@ using UnityAddon.Test;
 
 namespace UnityAddon.Moq
 {
+    [Configuration]
     public class UnityAddonMoqConfig
     {
         [Dependency("UAMoqPartial")]
@@ -64,14 +65,6 @@ namespace UnityAddon.Moq
                 .ForEach(p => beanDefCol.AddSingleton(p.PropertyType, p.PropertyType));
 
             return beanDefCol;
-        }
-    }
-
-    public static class UnityAddonMoqExt
-    {
-        public static void AddUnityAddonMoq(this IBeanRegistry beanRegistry)
-        {
-            beanRegistry.AddConfiguration<UnityAddonMoqConfig>();
         }
     }
 }

@@ -18,6 +18,8 @@ using UnityAddon.Ef.TransactionInterceptor;
 
 namespace UnityAddon.Ef
 {
+    [Configuration]
+    [IgnoreDuringScan]
     public class UnityAddonEfConfig : AopInterceptorConfig
     {
         [Bean]
@@ -40,14 +42,6 @@ namespace UnityAddon.Ef
             col.AddFromComponentScanner(Assembly.GetExecutingAssembly(), "UnityAddon.Ef");
 
             return col;
-        }
-    }
-
-    public static class UnityAddonEfExt
-    {
-        public static void AddUnityAddonEf(this IBeanRegistry beanRegistry)
-        {
-            beanRegistry.AddConfiguration<UnityAddonEfConfig>();
         }
     }
 }

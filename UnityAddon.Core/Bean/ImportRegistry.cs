@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using Unity;
 using UnityAddon.Core.Attributes;
@@ -21,7 +24,7 @@ namespace UnityAddon.Core.Bean
 
         public void Refresh()
         {
-            var importConfigs = BeanDefContainer.Registrations.Values
+            var importComps = BeanDefContainer.Registrations.Values
                 .SelectMany(holder => holder.GetAll().Where(def => def is MemberConfigurationBeanDefinition))
                 .Where(def =>
                 {
@@ -37,15 +40,18 @@ namespace UnityAddon.Core.Bean
                 .SelectMany(configBeanDef => ParseImport(configBeanDef.Type))
                 .ToArray();
 
-            if (importConfigs.Length == 0)
+            if (importComps.Length == 0)
             {
                 return;
             }
 
-            foreach (var config in importConfigs)
+            ServiceRegistry.ConfigureBeans(beans =>
             {
-                ServiceRegistry.ConfigureBeans(beans => beans.AddConfiguration(config));
-            }
+                foreach (var c in importComps)
+                {
+                    beans.AddComponent(c);
+                }
+            });
 
             Refresh();
         }

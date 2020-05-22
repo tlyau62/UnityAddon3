@@ -14,11 +14,10 @@ using UnityAddon.Core.Util.ComponentScanning;
 
 namespace UnityAddon.Cache
 {
+    [Configuration]
+    [IgnoreDuringScan]
     public class UnityAddonCacheConfig
     {
-        [Dependency]
-        public ApplicationContext ApplicationContext { get; set; }
-
         [Bean]
         public virtual IBeanDefinitionCollection EnableUnityAddonCache()
         {
@@ -43,14 +42,6 @@ namespace UnityAddon.Cache
                 .AddAopIntercetor<InvalidateCacheInterceptor>();
 
             return option;
-        }
-    }
-
-    public static class UnityAddonCacheExt
-    {
-        public static void AddUnityAddonCache(this IBeanRegistry beanRegistry)
-        {
-            beanRegistry.AddConfiguration<UnityAddonCacheConfig>();
         }
     }
 }

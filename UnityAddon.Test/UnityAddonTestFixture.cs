@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using UnityAddon.Core;
+using UnityAddon.Core.Attributes;
 using UnityAddon.Core.Context;
 using UnityAddon.Test.Attributes;
 
@@ -29,8 +30,17 @@ namespace UnityAddon.Test
                     ctx.ServiceRegistry.ConfigureBeans(config =>
                     {
                         var attrs = UnityAddonTest.GetType().GetCustomAttributes<ConfigArgAttribute>();
+                        var importAttrs = UnityAddonTest.GetType().GetCustomAttributes<ImportAttribute>();
 
                         config.AddSingleton(UnityAddonTest);
+
+                        foreach (var import in importAttrs)
+                        {
+                            foreach (var clazz in import.Classes)
+                            {
+                                config.AddComponent(clazz);
+                            }
+                        }
 
                         foreach (var attr in attrs)
                         {
@@ -42,7 +52,7 @@ namespace UnityAddon.Test
 
                                 if (key.StartsWith(CONFIG_PREFIX))
                                 {
-                                    config.AddConfiguration((Type)arg[1]);
+                                    config.AddComponent((Type)arg[1]);
                                 }
                                 else
                                 {

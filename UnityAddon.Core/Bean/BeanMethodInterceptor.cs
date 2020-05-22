@@ -36,11 +36,18 @@ namespace UnityAddon.Core.Bean
             }
             else
             {
-                var beanDef = DefContainer.GetAllBeanDefinitions(method.ReturnType)
+                var beanDefs = DefContainer.GetAllBeanDefinitions(method.ReturnType)
                     .Where(def => def is MemberMethodBeanDefinition)
                     .Cast<MemberMethodBeanDefinition>()
                     .Where(def => def.Method == invocation.MethodInvocationTarget)
-                    .Single();
+                    .ToArray();
+
+                if (beanDefs.Length != 1)
+                {
+                    throw new InvalidOperationException("No unique bean method is found.");
+                }
+
+                var beanDef = beanDefs[0];
 
                 lock (_lockObj)
                 {

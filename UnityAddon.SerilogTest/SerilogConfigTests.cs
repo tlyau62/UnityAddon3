@@ -20,6 +20,7 @@ using Xunit;
 
 namespace UnityAddon.SerilogTest
 {
+    [Configuration]
     public class TestConfig
     {
         [Bean]
@@ -33,7 +34,7 @@ namespace UnityAddon.SerilogTest
         }
     }
 
-    [ContextConfiguration(typeof(TestConfig), typeof(SerilogConfig))]
+    [Import(typeof(TestConfig), typeof(SerilogConfig))]
     public class SerilogConfigTests : UnityAddonTest
     {
         public SerilogConfigTests(UnityAddonTestFixture testFixture) : base(testFixture)

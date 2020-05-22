@@ -23,7 +23,7 @@ namespace UnityAddon.CoreTest.Bean
         }
     }
 
-    [ComponentScan]
+    [Import(typeof(Config))]
     public class BeanMethodInterceptorTests : UnityAddonTest
     {
         public BeanMethodInterceptorTests(UnityAddonTestFixture testFixture) : base(testFixture)

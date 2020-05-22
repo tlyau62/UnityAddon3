@@ -19,7 +19,7 @@ namespace UnityAddon.EfTest.Transaction.TransactionCallback
     }
 
     [ComponentScan]
-    [ContextConfiguration(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
+    [Import(typeof(UnityAddonEfConfig), typeof(TestDbConfig<TestDbContext>))]
     public class TransactionCallbackTests : UnityAddonEfTest
     {
         public TransactionCallbackTests(UnityAddonTestFixture testFixture) : base(testFixture)

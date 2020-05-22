@@ -7,7 +7,7 @@ using UnityAddon.Ef.TransactionInterceptor;
 
 namespace UnityAddon.Ef
 {
-    public class UnityAddonEfCustomConfig
+    public abstract class UnityAddonEfCustomConfig
     {
         [Bean]
         public virtual RollbackLogicOption RollbackLogicOption() => null;

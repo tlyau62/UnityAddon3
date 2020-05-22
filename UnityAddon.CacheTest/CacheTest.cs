@@ -17,7 +17,7 @@ using UnityAddon.Test.Attributes;
 namespace UnityAddon.CacheTest
 {
     [ComponentScan]
-    [ContextConfiguration(typeof(UnityAddonCacheConfig))]
+    [Import(typeof(UnityAddonCacheConfig))]
     public class CacheTest : UnityAddonTest
     {
         public CacheTest(UnityAddonTestFixture testFixture) : base(testFixture)
