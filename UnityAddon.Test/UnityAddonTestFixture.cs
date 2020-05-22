@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -29,8 +29,17 @@ namespace UnityAddon.Test
                     ctx.ServiceRegistry.ConfigureBeans(config =>
                     {
                         var attrs = UnityAddonTest.GetType().GetCustomAttributes<ConfigArgAttribute>();
+                        var importAttrs = UnityAddonTest.GetType().GetCustomAttributes<ImportAttribute>();
 
                         config.AddSingleton(UnityAddonTest);
+
+                        foreach (var import in importAttrs)
+                        {
+                            foreach (var clazz in import.Classes)
+                            {
+                                config.AddComponent(clazz);
+                            }
+                        }
 
                         foreach (var attr in attrs)
                         {
