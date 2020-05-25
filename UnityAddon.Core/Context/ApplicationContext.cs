@@ -76,7 +76,10 @@ namespace UnityAddon.Core.Context
 
         public void PostInstantiateSingleton()
         {
-            ApplicationSP.GetServices<IContextPostInstantiateSingleton>().ToList().ForEach(init => init.PostInitialize());
+            ApplicationSP.GetServices<IContextPostInstantiateSingleton>()
+                .OrderBy(bean => Ordered.GetOrder(bean.GetType()))
+                .ToList()
+                .ForEach(init => init.PostInitialize());
         }
 
         /// <summary>

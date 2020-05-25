@@ -31,7 +31,8 @@ namespace UnityAddon.CoreTest.Context
     }
 
     [Component]
-    public class PostInstantiate : IContextPostInstantiateSingleton
+    [Order(1)]
+    public class PostInstantiateA : IContextPostInstantiateSingleton
     {
         [Dependency]
         public Logger Logger { get; set; }
@@ -39,6 +40,45 @@ namespace UnityAddon.CoreTest.Context
         public void PostInitialize()
         {
             Logger.Log += "B";
+        }
+    }
+
+    [Component]
+    [Order(2)]
+    public class PostInstantiateB : IContextPostInstantiateSingleton
+    {
+        [Dependency]
+        public Logger Logger { get; set; }
+
+        public void PostInitialize()
+        {
+            Logger.Log += "C";
+        }
+    }
+
+    [Component]
+    [Order(4)]
+    public class PostInstantiateC : IContextPostInstantiateSingleton
+    {
+        [Dependency]
+        public Logger Logger { get; set; }
+
+        public void PostInitialize()
+        {
+            Logger.Log += "D";
+        }
+    }
+
+    [Component]
+    [Order(3)]
+    public class PostInstantiateD : IContextPostInstantiateSingleton
+    {
+        [Dependency]
+        public Logger Logger { get; set; }
+
+        public void PostInitialize()
+        {
+            Logger.Log += "E";
         }
     }
 
@@ -55,7 +95,7 @@ namespace UnityAddon.CoreTest.Context
         [Fact]
         public void PostInstantiateSingleton()
         {
-            Assert.Equal("AB", Logger.Log);
+            Assert.Equal("ABCED", Logger.Log);
         }
     }
 }
