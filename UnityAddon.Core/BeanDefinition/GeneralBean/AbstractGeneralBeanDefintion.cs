@@ -65,8 +65,6 @@ namespace UnityAddon.Core.BeanDefinition.GeneralBean
 
         public string Namespace => Type.Namespace;
 
-        public bool FromComponentScanning { get; set; } = false;
-
         public abstract object Constructor(IUnityAddonSP serviceProvider, Type type, string name);
     }
 }

@@ -23,7 +23,5 @@ namespace UnityAddon.Core.BeanDefinition
         bool IsPrimary { get; }
 
         string Namespace { get; }
-
-        bool FromComponentScanning { get; set; }
     }
 }

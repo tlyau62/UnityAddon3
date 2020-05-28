@@ -46,17 +46,7 @@ namespace UnityAddon.Core.Util.ComponentScanning
                 .Where(t => IsCandidate(t))
                 .Where(t => t.HasAttribute<ComponentAttribute>(true))
                 .SkipWhile(t => !_scannerStrategies.Any(stg => stg.IsMatch(t)))
-                .SelectMany(t =>
-                {
-                    var defs = _scannerStrategies.First(stg => stg.IsMatch(t)).Create(t);
-
-                    foreach (var def in defs)
-                    {
-                        def.FromComponentScanning = true;
-                    }
-
-                    return defs;
-                })
+                .SelectMany(t => _scannerStrategies.First(stg => stg.IsMatch(t)).Create(t))
                 .ToArray());
 
             return beanDefCol;
