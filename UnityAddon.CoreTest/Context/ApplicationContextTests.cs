@@ -32,12 +32,12 @@ namespace UnityAddon.CoreTest.Context
 
     [Component]
     [Order(1)]
-    public class PostInstantiateA : IContextPostInstantiateSingleton
+    public class PostInstantiateA : IAppCtxFinishPhase
     {
         [Dependency]
         public Logger Logger { get; set; }
 
-        public void PostInitialize()
+        public void Process()
         {
             Logger.Log += "B";
         }
@@ -45,12 +45,12 @@ namespace UnityAddon.CoreTest.Context
 
     [Component]
     [Order(2)]
-    public class PostInstantiateB : IContextPostInstantiateSingleton
+    public class PostInstantiateB : IAppCtxFinishPhase
     {
         [Dependency]
         public Logger Logger { get; set; }
 
-        public void PostInitialize()
+        public void Process()
         {
             Logger.Log += "C";
         }
@@ -58,12 +58,12 @@ namespace UnityAddon.CoreTest.Context
 
     [Component]
     [Order(4)]
-    public class PostInstantiateC : IContextPostInstantiateSingleton
+    public class PostInstantiateC : IAppCtxFinishPhase
     {
         [Dependency]
         public Logger Logger { get; set; }
 
-        public void PostInitialize()
+        public void Process()
         {
             Logger.Log += "D";
         }
@@ -71,12 +71,12 @@ namespace UnityAddon.CoreTest.Context
 
     [Component]
     [Order(3)]
-    public class PostInstantiateD : IContextPostInstantiateSingleton
+    public class PostInstantiateD : IAppCtxFinishPhase
     {
         [Dependency]
         public Logger Logger { get; set; }
 
-        public void PostInitialize()
+        public void Process()
         {
             Logger.Log += "E";
         }

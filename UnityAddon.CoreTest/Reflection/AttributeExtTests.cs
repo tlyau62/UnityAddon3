@@ -19,8 +19,15 @@ namespace UnityAddon.CoreTest.Reflection
     [AttributeUsage(AttributeTargets.All)]
     public class NonGeneralAttribute : Attribute { }
 
+    [AttributeUsage(AttributeTargets.All)]
+    public class AnotherParentAttribute : Attribute { }
+
+    [AttributeUsage(AttributeTargets.All)]
+    public class AnotherAttribute : AnotherParentAttribute { }
+
     [General]
     [General2]
+    [Another]
     public class AttributeTestClass { }
 
     public class AttributeExtTests
@@ -39,7 +46,7 @@ namespace UnityAddon.CoreTest.Reflection
         public void Type_GetAttribute()
         {
             Assert.IsType<GeneralAttribute>(typeof(AttributeTestClass).GetAttribute<GeneralAttribute>());
-            Assert.IsType<GeneralAttribute>(typeof(AttributeTestClass).GetAttribute<GeneralParentAttribute>(true));
+            Assert.IsType<AnotherAttribute>(typeof(AttributeTestClass).GetAttribute<AnotherParentAttribute>(true));
 
             Assert.Null(typeof(AttributeTestClass).GetAttribute<NonGeneralAttribute>());
             Assert.Null(typeof(AttributeTestClass).GetAttribute<GeneralParentAttribute>(false));
