@@ -12,17 +12,24 @@ namespace UnityAddon.Core.Value
     /// Parse any intermediate result from AbstrackBracketParser
     /// into a valud defined in "IConfiguration".
     /// </summary>
-    [Component]
     public class ConfigBracketParser : AbstrackBracketParser
     {
-        [OptionalDependency]
-        public IConfiguration Config { get; set; }
-
         private static readonly Regex DefaultValue = new Regex("^([^:\n]*)(:([^:\n]*))?$", RegexOptions.Compiled);
+
+        private readonly IConfiguration _config;
+
+        public ConfigBracketParser(): this(null)
+        {
+        }
+
+        public ConfigBracketParser(IConfiguration config)
+        {
+            _config = config;
+        }
 
         protected override string Process(string intermediateResult)
         {
-            if (Config == null)
+            if (_config == null)
             {
                 return null;
             }
@@ -36,7 +43,7 @@ namespace UnityAddon.Core.Value
             var propVal = match[0].Groups[1].Value;
             var hasDefaultValue = match[0].Groups[2].Value != "";
             var defaultVal = match[0].Groups[3].Value;
-            var configVal = Config[propVal.Replace('.', ':')];
+            var configVal = _config[propVal.Replace('.', ':')];
 
             if (configVal == null && !hasDefaultValue)
             {
