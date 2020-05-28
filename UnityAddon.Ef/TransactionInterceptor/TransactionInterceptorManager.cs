@@ -12,7 +12,7 @@ using UnityAddon.Ef.TransactionInterceptor;
 namespace UnityAddon.Ef.Transaction
 {
     [Component]
-    public class TransactionInterceptorManager : IContextPostRegistryInitiable
+    public class TransactionInterceptorManager : IAppCtxPreInstantiateSingletonPhase
     {
         private readonly ILogger _logger = Log.ForContext<TransactionInterceptorManager>();
 
@@ -30,7 +30,7 @@ namespace UnityAddon.Ef.Transaction
         [Dependency]
         public IServiceRegistry ServiceRegistry { get; set; }
 
-        public void Initialize()
+        public void Process()
         {
             if (TransactionInterceptorOption != null)
             {

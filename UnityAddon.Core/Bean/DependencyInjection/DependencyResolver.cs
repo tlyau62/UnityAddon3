@@ -12,7 +12,7 @@ using UnityAddon.Core.Value;
 
 namespace UnityAddon.Core.Bean.DependencyInjection
 {
-    public class DependencyResolver : IContextPostRegistryInitiable
+    public class DependencyResolver : IAppCtxPostServiceRegistrationPhase, IAppCtxPreInstantiateSingletonPhase
     {
         private IDictionary<Type, object> _resolveStrategies;
 
@@ -27,7 +27,7 @@ namespace UnityAddon.Core.Bean.DependencyInjection
         [Dependency]
         public IUnityAddonSP Sp { get; set; }
 
-        public void Initialize()
+        public void Process()
         {
             foreach (var option in Sp.GetServices<DependencyResolverOption>())
             {

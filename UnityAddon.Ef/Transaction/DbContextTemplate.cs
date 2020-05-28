@@ -31,7 +31,7 @@ namespace UnityAddon.Ef.Transaction
     /// </summary>
     /// <typeparam name="TDbContext"></typeparam>
     [Component]
-    public class DbContextTemplate : IDbContextTemplate, IContextPostRegistryInitiable
+    public class DbContextTemplate : IDbContextTemplate, IAppCtxPreInstantiateSingletonPhase
     {
         private static readonly MethodInfo LogicInvokerMethod = typeof(DbContextTemplate).GetMethod(nameof(LogicInvoker), BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -216,7 +216,7 @@ namespace UnityAddon.Ef.Transaction
             TransactionCallbacks.OnCommit(callback);
         }
 
-        public void Initialize()
+        public void Process()
         {
             _rollbackLogics = RollbackLogicOption == null ? new Dictionary<Type, List<object>>() : RollbackLogicOption.RollbackLogics;
         }

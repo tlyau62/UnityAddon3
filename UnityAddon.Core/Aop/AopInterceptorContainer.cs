@@ -18,7 +18,7 @@ namespace UnityAddon.Core.Aop
     /// <summary>
     /// Hold all the aop interceptors scanned after component scanning.
     /// </summary>
-    public class AopInterceptorContainer : IContextPostRegistryInitiable
+    public class AopInterceptorContainer : IAppCtxPreInstantiateSingletonPhase
     {
         [Dependency]
         public IServiceRegistry ServiceRegistry { get; set; }
@@ -28,7 +28,7 @@ namespace UnityAddon.Core.Aop
 
         private readonly IDictionary<Type, IEnumerable<Type>> _interceptorMap = new Dictionary<Type, IEnumerable<Type>>();
 
-        public void Initialize()
+        public void Process()
         {
             var regs = Sp.GetServices<AopInterceptorOption>().Select(option => option.InterceptorMap);
 
@@ -59,6 +59,7 @@ namespace UnityAddon.Core.Aop
         {
             return (actualInterceptorType & requiredInterceptorType) > 0;
         }
+
 
     }
 }
