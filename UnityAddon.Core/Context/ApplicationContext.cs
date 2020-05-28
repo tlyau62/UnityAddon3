@@ -47,39 +47,36 @@ namespace UnityAddon.Core.Context
         public IUnityAddonSP Build()
         {
             Config();
+            ExecutePhase<IAppCtxPostServiceRegistrationPhase>();
             PostRegistry();
-            PostRegistryInit();
+            ExecutePhase<IAppCtxPreInstantiateSingletonPhase>();
             PreInstantiateSingleton();
-            PostInstantiateSingleton();
+            ExecutePhase<IAppCtxFinishPhase>();
 
             return ApplicationSP;
+        }
+
+        /// <summary>
+        /// Order of creating bean is important.
+        /// </summary>
+        /// <param name="phase"></param>
+        public void ExecutePhase<TApplicationContextPhase>() where TApplicationContextPhase : IApplicationContextPhase
+        {
+            var defContainer = ApplicationSP.GetService<IBeanDefinitionContainer>();
+            var beanDefs = defContainer.GetAllBeanDefinitions(typeof(TApplicationContextPhase));
+            var beans = beanDefs.Select(def => ApplicationSP.GetRequiredService(def.Type, def.Name))
+                .Cast<IApplicationContextPhase>()
+                .ToArray();
+
+            beans.OrderBy(bean => Ordered.GetOrder(bean.GetType()))
+                .ToList()
+                .ForEach(bean => bean.Process());
         }
 
         public void Config()
         {
             ApplicationSP.UnityContainer.AddExtension(BeanBuildStrategyExtension);
             ApplicationSP.UnityContainer.AddExtension(AopBuildStrategyExtension);
-        }
-
-        /// <summary>
-        /// Order of creating IContextPostRegistryInitiable is important.
-        /// </summary>
-        public void PostRegistryInit()
-        {
-            var defContainer = ApplicationSP.GetService<IBeanDefinitionContainer>();
-
-            foreach (var def in defContainer.GetAllBeanDefinitions(typeof(IContextPostRegistryInitiable)))
-            {
-                ((IContextPostRegistryInitiable)ApplicationSP.GetService(def.Type, def.Name)).Initialize();
-            }
-        }
-
-        public void PostInstantiateSingleton()
-        {
-            ApplicationSP.GetServices<IContextPostInstantiateSingleton>()
-                .OrderBy(bean => Ordered.GetOrder(bean.GetType()))
-                .ToList()
-                .ForEach(init => init.PostInitialize());
         }
 
         /// <summary>

@@ -72,8 +72,9 @@ namespace UnityAddon.Core.Context
                 .RegisterType<AopBuildStrategyExtension>(new SingletonLifetimeManager());
 
             Container
-                .RegisterFactory<IContextPostRegistryInitiable>("DependencyResolver", c => c.Resolve<DependencyResolver>(), new SingletonLifetimeManager())
-                .RegisterFactory<IContextPostRegistryInitiable>("AopInterceptorContainer", c => c.Resolve<AopInterceptorContainer>(), new SingletonLifetimeManager());
+                .RegisterFactory<IAppCtxPostServiceRegistrationPhase>("DependencyResolver", c => c.Resolve<DependencyResolver>(), new SingletonLifetimeManager())
+                .RegisterFactory<IAppCtxPreInstantiateSingletonPhase>("DependencyResolver", c => c.Resolve<DependencyResolver>(), new SingletonLifetimeManager())
+                .RegisterFactory<IAppCtxPreInstantiateSingletonPhase>("AopInterceptorContainer", c => c.Resolve<AopInterceptorContainer>(), new SingletonLifetimeManager());
 
             var configBuilder = new ConfigurationBuilder();
 
