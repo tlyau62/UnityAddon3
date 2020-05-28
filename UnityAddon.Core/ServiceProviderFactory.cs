@@ -30,11 +30,8 @@ namespace UnityAddon.Core
             var appCtx = coreCtx.Container.Resolve<ApplicationContext>();
             var beanReg = appCtx.ServiceRegistry;
 
-            coreCtx.Container.RegisterInstance(appCtx);
-            coreCtx.Container.BuildUp(appCtx);
-
             beanReg.ConfigureBeans(config => config.AddFromUnityContainer(coreCtx.Container));
-            beanReg.ConfigureBeans(config => config.AddComponent<ValueConfig>());
+            beanReg.ConfigureBeans(config => config.AddFromUnityContainer(new ValueConfig().Build(appCtx.ApplicationSP)));
 
             if (services != null)
             {
