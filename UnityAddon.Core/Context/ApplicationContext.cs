@@ -33,12 +33,6 @@ namespace UnityAddon.Core.Context
         public BeanDefinitionRegistry BeanDefinitionRegistry { get; set; }
 
         [Dependency]
-        public BeanBuildStrategyExtension BeanBuildStrategyExtension { get; set; }
-
-        [Dependency]
-        public AopBuildStrategyExtension AopBuildStrategyExtension { get; set; }
-
-        [Dependency]
         public IServiceRegistry ServiceRegistry { get; set; }
 
         [Dependency]
@@ -46,7 +40,6 @@ namespace UnityAddon.Core.Context
 
         public IUnityAddonSP Build()
         {
-            Config();
             ExecutePhase<IAppCtxPostServiceRegistrationPhase>();
             PostRegistry();
             ExecutePhase<IAppCtxPreInstantiateSingletonPhase>();
@@ -71,12 +64,6 @@ namespace UnityAddon.Core.Context
             beans.OrderBy(bean => Ordered.GetOrder(bean.GetType()))
                 .ToList()
                 .ForEach(bean => bean.Process());
-        }
-
-        public void Config()
-        {
-            ApplicationSP.UnityContainer.AddExtension(BeanBuildStrategyExtension);
-            ApplicationSP.UnityContainer.AddExtension(AopBuildStrategyExtension);
         }
 
         /// <summary>

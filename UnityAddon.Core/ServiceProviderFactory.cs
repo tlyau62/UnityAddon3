@@ -30,6 +30,8 @@ namespace UnityAddon.Core
             var appCtx = coreCtx.Container.Resolve<ApplicationContext>();
             var beanReg = appCtx.ServiceRegistry;
 
+            ConfigAppContainer(appCtx.ApplicationSP.UnityContainer, coreCtx.Container);
+
             beanReg.ConfigureBeans(config => config.AddFromUnityContainer(coreCtx.Container));
             beanReg.ConfigureBeans(config => config.AddFromUnityContainer(new ValueConfig().Build(appCtx.ApplicationSP)));
 
@@ -44,6 +46,12 @@ namespace UnityAddon.Core
         public IServiceProvider CreateServiceProvider(ApplicationContext appCtx)
         {
             return appCtx.Build();
+        }
+
+        public void ConfigAppContainer(IUnityContainer appContainer, IUnityContainer coreContainer)
+        {
+            appContainer.AddExtension(coreContainer.Resolve<BeanBuildStrategyExtension>());
+            appContainer.AddExtension(coreContainer.Resolve<AopBuildStrategyExtension>());
         }
     }
 
